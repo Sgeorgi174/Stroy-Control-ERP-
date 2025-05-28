@@ -24,14 +24,14 @@ model User {
 
   object Object?
 
-  role Role
+  role Roles
 
   clothesHistory ClothesHistory[]
   toolsHistory   ToolHistory[]
   actionLogs     ActionLog[]
 }
 
-enum Role {
+enum Roles {
   OWNER
   MASTER
   ACCOUNTANT
@@ -53,6 +53,8 @@ model Object {
   tools     Tool[]
   employees Employee[]
   clothes   Clothes[]
+
+  @@unique([name, address], name: "object_name_address_unique")
 }
 
 model Tool {
