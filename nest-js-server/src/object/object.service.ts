@@ -44,6 +44,7 @@ export class ObjectService {
   public async getById(id: string) {
     const object = await this.prismaService.object.findUnique({
       where: { id },
+      include: { tools: true, employees: true, clothes: true },
     });
 
     if (!object) throw new NotFoundException('Объект не найден');
@@ -54,6 +55,7 @@ export class ObjectService {
   public async getByUserId(userId: string) {
     const object = await this.prismaService.object.findUnique({
       where: { userId },
+      include: { tools: true, employees: true, clothes: true },
     });
 
     if (!object)
@@ -72,6 +74,7 @@ export class ObjectService {
         address: dto.address,
         userId: dto.userId ?? null,
       },
+      include: { tools: true, employees: true, clothes: true },
     });
 
     return updatedObject;
