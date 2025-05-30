@@ -2,10 +2,12 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
 import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
+import { UpdateDto } from './dto/update.dto';
 
 @Injectable()
 export class ToolService {
@@ -35,11 +37,39 @@ export class ToolService {
     }
   }
 
-  public async getById() {}
+  public async getById(id: string) {
+    const tool = await this.prismaService.tool.findUnique({ where: { id } });
 
-  public async getAll() {}
+    if (!tool) throw new NotFoundException('Инструмент не найден');
 
-  public async update() {}
+    return tool;
+  }
 
-  public async delete() {}
+  public async getAll() {
+    return await this.prismaService.tool.findMany();
+  }
+
+  public async update(id: string, dto: UpdateDto) {
+    await this.getById(id);
+
+    const updatedTool = this.prismaService.tool.update({
+      where: { id },
+      data: {
+        name: dto.name,
+        status: dto.status ?? 'ON_OBJECT',
+        serialNumber: dto.serialNumber,
+        objectId: dto.objectId,
+      },
+    });
+
+    return updatedTool;
+  }
+
+  public async delete(id: string) {
+    await this.getById(id);
+
+    await this.prismaService.tool.delete({ where: { id } });
+
+    return true;
+  }
 }
