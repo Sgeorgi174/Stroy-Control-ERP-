@@ -156,12 +156,14 @@ model Employee {
   clothingSize Int      @map("clothing_size")
   footwearSize Int      @map("footwear_size")
   position     Position
-  debt         Int      @default(0)
+  debt         Int?     @default(0)
 
   clothing EmployeeClothing[]
 
   workPlace Object? @relation(fields: [objectId], references: [id])
   objectId  String? @map("object_id")
+
+  @@unique([firstName, lastName, phoneNumber], name: "employee_identity_unique")
 }
 
 enum Position {
