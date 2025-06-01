@@ -8,6 +8,7 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  Patch,
 } from '@nestjs/common';
 import { ToolService } from './tool.service';
 import { CreateDto } from './dto/create.dto';
@@ -42,6 +43,15 @@ export class ToolController {
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateDto) {
     return this.toolService.update(id, dto);
+  }
+
+  @Authorization(Roles.OWNER)
+  @Patch('transfer/:id')
+  async transfer(
+    @Param('id') id: string,
+    @Body() object: { objectId: string },
+  ) {
+    return this.toolService.transfer(id, object.objectId);
   }
 
   @Authorization(Roles.OWNER)

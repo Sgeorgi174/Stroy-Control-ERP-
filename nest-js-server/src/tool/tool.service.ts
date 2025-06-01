@@ -50,19 +50,57 @@ export class ToolService {
   }
 
   public async update(id: string, dto: UpdateDto) {
-    await this.getById(id);
+    try {
+      return await this.prismaService.tool.update({
+        where: { id },
+        data: {
+          name: dto.name,
+          status: dto.status ?? 'ON_OBJECT',
+          serialNumber: dto.serialNumber,
+          objectId: dto.objectId,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException('Сотрудник не найден');
+      }
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('Обновление нарушает уникальность данных');
+      }
+      throw new InternalServerErrorException('Не удалось обновить сотрудника');
+    }
+  }
 
-    const updatedTool = this.prismaService.tool.update({
-      where: { id },
-      data: {
-        name: dto.name,
-        status: dto.status ?? 'ON_OBJECT',
-        serialNumber: dto.serialNumber,
-        objectId: dto.objectId,
-      },
-    });
+  public async transfer(id: string, objectId: string) {
+    try {
+      return await this.prismaService.tool.update({
+        where: { id },
+        data: {
+          objectId: objectId,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException('Сотрудник не найден');
+      }
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('Обновление нарушает уникальность данных');
+      }
 
-    return updatedTool;
+      throw new InternalServerErrorException('Не удалось обновить сотрудника');
+    }
   }
 
   public async delete(id: string) {

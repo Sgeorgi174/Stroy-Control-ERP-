@@ -11,11 +11,11 @@ import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library'
 
 @Injectable()
 export class EmployeeService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   public async create(dto: CreateDto) {
     try {
-      return await this.prisma.employee.create({
+      return await this.prismaService.employee.create({
         data: {
           firstName: dto.firstName,
           lastName: dto.lastName,
@@ -42,7 +42,7 @@ export class EmployeeService {
 
   public async getById(id: string) {
     try {
-      const employee = await this.prisma.employee.findUniqueOrThrow({
+      const employee = await this.prismaService.employee.findUniqueOrThrow({
         where: { id },
         include: {
           workPlace: true,
@@ -63,7 +63,7 @@ export class EmployeeService {
 
   public async getAll() {
     try {
-      return await this.prisma.employee.findMany({
+      return await this.prismaService.employee.findMany({
         include: {
           workPlace: true,
           clothing: true,
@@ -79,7 +79,7 @@ export class EmployeeService {
 
   public async update(id: string, dto: UpdateDto) {
     try {
-      return await this.prisma.employee.update({
+      return await this.prismaService.employee.update({
         where: { id },
         data: {
           firstName: dto.firstName,
@@ -112,7 +112,7 @@ export class EmployeeService {
 
   public async transfer(id: string, objectId: string) {
     try {
-      return await this.prisma.employee.update({
+      return await this.prismaService.employee.update({
         where: { id },
         data: {
           objectId: objectId,
@@ -138,7 +138,7 @@ export class EmployeeService {
 
   public async changeDebt(id: string, amount: number) {
     try {
-      return this.prisma.employee.update({
+      return this.prismaService.employee.update({
         where: { id },
         data: {
           debt: { increment: amount },
@@ -163,7 +163,7 @@ export class EmployeeService {
 
   public async delete(id: string) {
     try {
-      await this.prisma.employee.delete({ where: { id } });
+      await this.prismaService.employee.delete({ where: { id } });
       return true;
     } catch (error) {
       if (
