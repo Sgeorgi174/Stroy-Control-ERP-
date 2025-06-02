@@ -27,7 +27,7 @@ export class ObjectController {
     return this.objectService.create(dto);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('all')
   async getAll() {
     return this.objectService.getAll();

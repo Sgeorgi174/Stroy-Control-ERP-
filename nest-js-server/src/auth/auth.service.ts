@@ -39,6 +39,7 @@ export class AuthService {
         phone: dto.phone,
         role: dto.role,
       },
+      include: { object: true },
     });
 
     return this.saveSession(req, newUser);

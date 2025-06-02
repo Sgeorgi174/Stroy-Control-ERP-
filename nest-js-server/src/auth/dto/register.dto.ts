@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, MinLength, IsEnum } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  MinLength,
+  IsEnum,
+  IsOptional,
+} from 'class-validator';
 
 export enum Role {
   OWNER = 'OWNER',
@@ -36,4 +42,8 @@ export class RegisterDto {
   })
   @IsNotEmpty({ message: 'Роль должна быть указана обязательно.' })
   role: Role;
+
+  @IsString({ message: 'Id объекта должен быть строкой.' })
+  @IsOptional()
+  objectId?: string;
 }
