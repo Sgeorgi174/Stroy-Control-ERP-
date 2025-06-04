@@ -37,11 +37,6 @@ export class CreateDto {
   @IsNotEmpty({ message: 'Размер обуви обязателен для заполнения' })
   footwearSize: number;
 
-  @IsInt({ message: 'Остаток долга должен быть целым числом' })
-  @Min(0, { message: 'Долг не может быть отрицательным' })
-  @IsOptional()
-  debt?: number;
-
   @IsEnum(Position, {
     message: `Должность должна быть одним из: ${Object.values(Position).join(', ')}`,
   })

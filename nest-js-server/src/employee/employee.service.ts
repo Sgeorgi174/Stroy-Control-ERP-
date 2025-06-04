@@ -90,7 +90,6 @@ export class EmployeeService {
           footwearSize: dto.footwearSize,
           position: dto.position,
           objectId: dto.objectId ?? null,
-          debt: dto.debt ?? 0,
         },
       });
     } catch (error) {
@@ -132,31 +131,6 @@ export class EmployeeService {
         throw new ConflictException('Обновление нарушает уникальность данных');
       }
 
-      throw new InternalServerErrorException('Не удалось обновить сотрудника');
-    }
-  }
-
-  public async changeDebt(id: string, amount: number) {
-    try {
-      return this.prismaService.employee.update({
-        where: { id },
-        data: {
-          debt: { increment: amount },
-        },
-      });
-    } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
-        throw new NotFoundException('Сотрудник не найден');
-      }
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        throw new ConflictException('Обновление нарушает уникальность данных');
-      }
       throw new InternalServerErrorException('Не удалось обновить сотрудника');
     }
   }

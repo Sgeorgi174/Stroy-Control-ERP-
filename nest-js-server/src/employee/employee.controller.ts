@@ -46,15 +46,6 @@ export class EmployeeController {
   }
 
   @Authorization(Roles.OWNER)
-  @Patch('debt/:id')
-  async changeDebt(
-    @Param('id') id: string,
-    @Body() object: { amount: number },
-  ) {
-    return this.employeeService.changeDebt(id, object.amount);
-  }
-
-  @Authorization(Roles.OWNER)
   @Patch('transfer/:id')
   async transfer(
     @Param('id') id: string,

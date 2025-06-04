@@ -54,6 +54,12 @@ model Object {
   employees Employee[]
   clothes   Clothes[]
 
+  fromClothesHistories ClothesHistory[] @relation("clothes_from_object_fk") @ignore
+  toClothesHistories   ClothesHistory[] @relation("clothes_to_object_fk") @ignore
+
+  fromToolHistories ToolHistory[] @relation("tool_from_object_fk") @ignore
+  toToolHistories   ToolHistory[] @relation("tool_to_object_fk") @ignore
+
   @@unique([name, address], name: "object_name_address_unique")
 }
 
@@ -90,8 +96,11 @@ model ToolHistory {
   movedBy User   @relation(fields: [userId], references: [id])
   userId  String @map("user_id")
 
-  fromObject String @map("from_object")
-  toObject   String @map("to_object")
+  fromObject   Object @relation(fields: [fromObjectId], references: [id], name: "tool_from_object_fk")
+  fromObjectId String
+
+  toObject   Object @relation(fields: [toObjectId], references: [id], name: "tool_to_object_fk")
+  toObjectId String
 }
 
 model Clothes {
@@ -140,8 +149,11 @@ model ClothesHistory {
   movedBy User   @relation(fields: [userId], references: [id])
   userId  String @map("user_id")
 
-  fromObject String @map("from_object")
-  toObject   String @map("to_object")
+  fromObject   Object @relation(fields: [fromObjectId], references: [id], name: "clothes_from_object_fk")
+  fromObjectId String
+
+  toObject   Object @relation(fields: [toObjectId], references: [id], name: "clothes_to_object_fk")
+  toObjectId String
 }
 
 model Employee {
@@ -158,7 +170,6 @@ model Employee {
   clothingSize Int      @map("clothing_size")
   footwearSize Int      @map("footwear_size")
   position     Position
-  debt         Int?     @default(0)
 
   clothing EmployeeClothing[]
 
@@ -185,6 +196,25 @@ model EmployeeClothing {
 
   clothing   Clothes @relation(fields: [clothingId], references: [id])
   clothingId String  @map("clothing_id")
+
+  issuedAt        DateTime @default(now()) @map("issued_at")
+  priceWhenIssued Int      @map("price_when_issued")
+  debtAmount      Int      @map("debt_amount ")
+  isReturned      Boolean  @default(false) @map("is_returned ")
+
+  payments EmployeeClothingPayment[]
+}
+
+model EmployeeClothingPayment {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  amount    Int
+  shiftId   String?
+  notes     String?
+
+  employeeClothing   EmployeeClothing @relation(fields: [employeeClothingId], references: [id])
+  employeeClothingId String           @map("employee_clothing_id")
 }
 
 model ActionLog {
