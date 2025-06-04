@@ -114,6 +114,8 @@ model Clothes {
 
   employeeClothes EmployeeClothing[]
   history         ClothesHistory[]
+
+  @@unique([objectId, name, size, type, season], name: "objectId_name_size_type_season")
 }
 
 enum ClothesType {

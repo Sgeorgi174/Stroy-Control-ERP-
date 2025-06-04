@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
 } from '@nestjs/common';
@@ -14,6 +15,8 @@ import { Authorization } from 'src/auth/decorators/auth.decorator';
 import { Roles } from 'generated/prisma';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
+import { TransferDto } from './dto/transfer.dto';
+import { ConfirmDto } from './dto/confirm.dto';
 
 @Controller('clothes')
 export class ClothesController {
@@ -42,6 +45,18 @@ export class ClothesController {
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateDto) {
     return this.clothesService.update(id, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
+  @Patch('transfer/:id')
+  async transfer(@Param('id') id: string, @Body() dto: TransferDto) {
+    return this.clothesService.transfer(id, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
+  @Patch('confirm/:id')
+  async confirmTransfer(@Param('id') id: string, @Body() dto: ConfirmDto) {
+    return this.clothesService.confirmTransfer(id, dto);
   }
 
   @Authorization(Roles.OWNER)
