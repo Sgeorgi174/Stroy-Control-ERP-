@@ -5,5 +5,6 @@ import { ToolHistoryController } from './tool-history.controller';
 @Module({
   controllers: [ToolHistoryController],
   providers: [ToolHistoryService],
+  exports: [ToolHistoryService],
 })
 export class ToolHistoryModule {}

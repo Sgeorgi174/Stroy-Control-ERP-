@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsUUID, Min } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateDto {
   @IsUUID()
@@ -7,7 +7,7 @@ export class CreateDto {
 
   @IsUUID()
   @IsNotEmpty()
-  clothesId: string;
+  toolId: string;
 
   @IsUUID()
   @IsNotEmpty()
@@ -16,8 +16,4 @@ export class CreateDto {
   @IsUUID()
   @IsNotEmpty()
   toObjectId: string;
-
-  @IsInt()
-  @Min(1)
-  quantity: number;
 }

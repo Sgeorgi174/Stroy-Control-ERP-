@@ -9,10 +9,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
 import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
 import { UpdateDto } from './dto/update.dto';
+import { ToolHistoryService } from 'src/tool-history/tool-history.service';
+import { TransferDto } from './dto/transfer.dto';
 
 @Injectable()
 export class ToolService {
-  public constructor(private readonly prismaService: PrismaService) {}
+  public constructor(
+    private readonly prismaService: PrismaService,
+    private readonly toolHistoryService: ToolHistoryService,
+  ) {}
 
   private async accessObject(id: string, userId: string) {
     const user = await this.prismaService.user.findUnique({
@@ -102,16 +107,28 @@ export class ToolService {
     }
   }
 
-  public async transfer(id: string, objectId: string, userId: string) {
+  public async transfer(id: string, dto: TransferDto, userId: string) {
     await this.accessObject(id, userId);
+    const tool = await this.getById(id);
     try {
-      return await this.prismaService.tool.update({
-        where: { id },
-        data: {
-          objectId: objectId,
-          status: 'IN_TRANSIT',
-        },
-        include: { storage: true },
+      return await this.prismaService.$transaction(async (prisma) => {
+        const transferedTool = await prisma.tool.update({
+          where: { id },
+          data: {
+            objectId: dto.objectId,
+            status: 'IN_TRANSIT',
+          },
+          include: { storage: true },
+        });
+
+        const recordHistory = await this.toolHistoryService.create({
+          userId: userId,
+          toolId: id,
+          fromObjectId: tool.objectId,
+          toObjectId: dto.objectId,
+        });
+
+        return { transferedTool, recordHistory };
       });
     } catch (error) {
       if (

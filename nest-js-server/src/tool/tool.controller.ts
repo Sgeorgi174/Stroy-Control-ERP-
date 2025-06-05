@@ -16,6 +16,7 @@ import { UpdateDto } from './dto/update.dto';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
 import { Roles } from 'generated/prisma';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
+import { TransferDto } from './dto/transfer.dto';
 
 @Controller('tools')
 export class ToolController {
@@ -50,10 +51,10 @@ export class ToolController {
   @Patch('transfer/:id')
   async transfer(
     @Param('id') id: string,
-    @Body() object: { objectId: string },
+    @Body() dto: TransferDto,
     @Authorized('id') userId: string,
   ) {
-    return this.toolService.transfer(id, object.objectId, userId);
+    return this.toolService.transfer(id, dto, userId);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
