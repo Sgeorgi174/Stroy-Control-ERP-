@@ -17,6 +17,7 @@ import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { TransferDto } from './dto/transfer.dto';
 import { ConfirmDto } from './dto/confirm.dto';
+import { Authorized } from 'src/auth/decorators/authorized.decorator';
 
 @Controller('clothes')
 export class ClothesController {
@@ -49,8 +50,12 @@ export class ClothesController {
 
   @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
   @Patch('transfer/:id')
-  async transfer(@Param('id') id: string, @Body() dto: TransferDto) {
-    return this.clothesService.transfer(id, dto);
+  async transfer(
+    @Param('id') id: string,
+    @Body() dto: TransferDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.clothesService.transfer(id, dto, userId);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)

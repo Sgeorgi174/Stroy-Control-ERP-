@@ -5,5 +5,6 @@ import { ClothesHistoryController } from './clothes-history.controller';
 @Module({
   controllers: [ClothesHistoryController],
   providers: [ClothesHistoryService],
+  exports: [ClothesHistoryService],
 })
 export class ClothesHistoryModule {}

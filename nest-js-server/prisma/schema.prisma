@@ -54,11 +54,11 @@ model Object {
   employees Employee[]
   clothes   Clothes[]
 
-  fromClothesHistories ClothesHistory[] @relation("clothes_from_object_fk") @ignore
-  toClothesHistories   ClothesHistory[] @relation("clothes_to_object_fk") @ignore
+  fromClothesHistories ClothesHistory[] @relation("clothes_from_object_fk")
+  toClothesHistories   ClothesHistory[] @relation("clothes_to_object_fk")
 
-  fromToolHistories ToolHistory[] @relation("tool_from_object_fk") @ignore
-  toToolHistories   ToolHistory[] @relation("tool_to_object_fk") @ignore
+  fromToolHistories ToolHistory[] @relation("tool_from_object_fk")
+  toToolHistories   ToolHistory[] @relation("tool_to_object_fk")
 
   @@unique([name, address], name: "object_name_address_unique")
 }
@@ -148,6 +148,8 @@ model ClothesHistory {
 
   movedBy User   @relation(fields: [userId], references: [id])
   userId  String @map("user_id")
+
+  quantity Int
 
   fromObject   Object @relation(fields: [fromObjectId], references: [id], name: "clothes_from_object_fk")
   fromObjectId String

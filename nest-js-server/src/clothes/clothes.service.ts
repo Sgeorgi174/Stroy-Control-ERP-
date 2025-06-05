@@ -11,10 +11,14 @@ import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library'
 import { UpdateDto } from './dto/update.dto';
 import { TransferDto } from './dto/transfer.dto';
 import { ConfirmDto } from './dto/confirm.dto';
+import { ClothesHistoryService } from 'src/clothes-history/clothes-history.service';
 
 @Injectable()
 export class ClothesService {
-  public constructor(private readonly prismaService: PrismaService) {}
+  public constructor(
+    private readonly prismaService: PrismaService,
+    private readonly clothesHostoryService: ClothesHistoryService,
+  ) {}
 
   public async create(dto: CreateDto) {
     try {
@@ -81,7 +85,7 @@ export class ClothesService {
     return updatedClothes;
   }
 
-  public async transfer(id: string, dto: TransferDto) {
+  public async transfer(id: string, dto: TransferDto, userId: string) {
     const clothes = await this.getById(id);
 
     if (clothes.quantity < dto.quantity) {
@@ -125,9 +129,18 @@ export class ClothesService {
           },
         });
 
+        const recordHistory = await this.clothesHostoryService.create({
+          userId,
+          clothesId: clothes.id,
+          fromObjectId: clothes.objectId,
+          toObjectId: dto.toObjectId,
+          quantity: dto.quantity,
+        });
+
         return {
           source: { id: updatedSource.id, quantity: updatedSource.quantity },
           target: targetClothes,
+          createdHistory: recordHistory,
         };
       });
     } catch (error) {
