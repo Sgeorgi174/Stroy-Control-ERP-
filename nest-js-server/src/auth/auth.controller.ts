@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -11,6 +12,8 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { Request, Response } from 'express';
 import { LoginDto } from './dto/login.dto';
+import { Authorized } from './decorators/authorized.decorator';
+import { Authorization } from './decorators/auth.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -28,6 +31,14 @@ export class AuthController {
     return this.authService.login(req, dto);
   }
 
+  @Authorization()
+  @Get('me')
+  @HttpCode(HttpStatus.OK)
+  public async getMe(@Authorized('id') userId: string) {
+    return this.authService.getMe(userId);
+  }
+
+  @Authorization()
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   public async logout(

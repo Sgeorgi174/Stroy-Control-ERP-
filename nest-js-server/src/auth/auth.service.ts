@@ -60,6 +60,28 @@ export class AuthService {
     return this.saveSession(req, user);
   }
 
+  public async getMe(id: string) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        phone: true,
+        object: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    return user;
+  }
+
   public async logout(req: Request, res: Response) {
     return new Promise((resolve, reject) => {
       req.session.destroy((err) => {
