@@ -1,9 +1,9 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TABS, type TabKey } from "./tabs";
-import { useStorageTabStore } from "@/stores/storage-tab-store";
+import { useFilterPanelStore } from "@/stores/filter-panel-store";
 
 export function TypeTabs() {
-  const { activeTab, setActiveTab } = useStorageTabStore();
+  const { activeTab, setActiveTab } = useFilterPanelStore();
   return (
     <Tabs
       value={activeTab}

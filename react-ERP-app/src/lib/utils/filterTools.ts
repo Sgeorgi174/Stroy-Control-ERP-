@@ -14,16 +14,19 @@ export function filterTools({
   const lowerSearch = searchQuery.toLowerCase();
 
   return data
-    .filter((item) =>
-      Object.values(item)
-        .flatMap((val) => {
-          if (typeof val === "string" || typeof val === "number")
-            return val.toString();
-          if (typeof val === "object" && val !== null)
-            return Object.values(val).map(String);
-          return [];
-        })
-        .some((value) => value.toLowerCase().includes(lowerSearch))
-    )
-    .filter((item) => !selectedObjectId || item.objectId === selectedObjectId);
+    .filter((item) => {
+      if (selectedObjectId) return item.objectId === selectedObjectId;
+      return true;
+    })
+    .filter((item) => {
+      if (!searchQuery) return true;
+
+      const searchFields = [item.name, item.serialNumber, item.status].filter(
+        Boolean
+      );
+
+      return searchFields.some((field) =>
+        field.toString().toLowerCase().includes(lowerSearch)
+      );
+    });
 }

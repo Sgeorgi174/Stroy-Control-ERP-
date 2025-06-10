@@ -1,4 +1,3 @@
-// types/clothes.ts
 export type Clothes = {
   id: string;
   createdAt: string;

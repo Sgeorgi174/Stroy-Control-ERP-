@@ -27,6 +27,7 @@ export function PageHeader({ location }: PageHeaderProps) {
         </h1>
         <div className="ml-auto flex items-center gap-2"></div>
       </div>
+
       <ModeToggle />
     </header>
   );

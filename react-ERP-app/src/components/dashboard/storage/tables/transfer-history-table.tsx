@@ -8,10 +8,10 @@ import {
 } from "@/components/ui/table";
 import { historyTransfer } from "@/constants/historyTransfer";
 import { formatDate, formatTime } from "@/lib/utils/format-date";
-import { useStorageTabStore } from "@/stores/storage-tab-store";
+import { useFilterPanelStore } from "@/stores/filter-panel-store";
 
 export function TransferHistoryTable() {
-  const { activeTab } = useStorageTabStore();
+  const { activeTab } = useFilterPanelStore();
   return (
     <Table className="mt-6">
       <TableHeader>

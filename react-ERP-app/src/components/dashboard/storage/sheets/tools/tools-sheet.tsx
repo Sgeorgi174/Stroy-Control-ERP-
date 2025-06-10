@@ -7,6 +7,9 @@ import {
 } from "@/components/ui/sheet";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import { ToolsDetails } from "./tools-details";
+import { ToolsAdd } from "./tools-add";
+import { ToolsEdit } from "./tools-edit";
+import { ToolsTransfer } from "./tools-transfer";
 
 export function ToolsSheet() {
   const { isOpen, mode, selectedTool, closeSheet } = useToolsSheetStore();
@@ -22,14 +25,19 @@ export function ToolsSheet() {
             {mode === "details" && `${selectedTool?.name}`}
           </SheetTitle>
           <SheetDescription className="text-center">
-            Подробная информация об инструменте
+            {mode === "add" && "Заполните данные о новом инструменте"}
+            {mode === "edit" && `Редактирование выбранного инструмента`}
+            {mode === "transfer" &&
+              `Заполните данные о перемещении инструмента`}
+            {mode === "details" && `Подробная информация об инструменте`}
           </SheetDescription>
         </SheetHeader>
 
-        {/* Тут можно рендерить нужный компонент по mode */}
-        {mode === "add" && <div>Форма добавления</div>}
-        {mode === "edit" && <div>Форма редактирования</div>}
-        {mode === "transfer" && <div>Форма перемещения</div>}
+        {mode === "add" && <ToolsAdd />}
+        {mode === "edit" && selectedTool && <ToolsEdit tool={selectedTool} />}
+        {mode === "transfer" && selectedTool && (
+          <ToolsTransfer tool={selectedTool} />
+        )}
         {mode === "details" && selectedTool && (
           <ToolsDetails tool={selectedTool} />
         )}

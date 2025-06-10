@@ -26,6 +26,7 @@ export function ClothesDropdown({ clothes }: { clothes: Clothes }) {
         <DropdownMenuItem onClick={() => openSheet("transfer", clothes)}>
           Переместить
         </DropdownMenuItem>
+        <DropdownMenuItem>Удалить</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

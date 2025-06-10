@@ -1,5 +1,3 @@
-// stores/storage-tab-store.ts
-
 import type { TabKey } from "@/components/dashboard/storage/filter-panel/tabs";
 import { create } from "zustand";
 
@@ -17,7 +15,7 @@ type TabState = {
   setSelectedSeason: (season: "SUMMER" | "WINTER" | null) => void;
 };
 
-export const useStorageTabStore = create<TabState>((set) => ({
+export const useFilterPanelStore = create<TabState>((set) => ({
   activeTab: "tool",
   setActiveTab: (tab) => set({ activeTab: tab }),
 

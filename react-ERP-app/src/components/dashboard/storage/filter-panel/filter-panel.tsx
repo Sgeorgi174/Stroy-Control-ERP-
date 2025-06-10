@@ -1,23 +1,31 @@
 import { AddButton } from "./add-button";
 import { TypeTabs } from "./type-tabs";
 import { Input } from "@/components/ui/input";
-import { ObjectSelect } from "./object-select";
-import { SeasonSelect } from "./season-select";
-import { useStorageTabStore } from "@/stores/storage-tab-store";
+import { ObjectSelectForFilter } from "./filter-object-select";
+import { SeasonSelectForFilter } from "./filter-season-select";
+import { useFilterPanelStore } from "@/stores/filter-panel-store";
+import { objects } from "@/constants/objects";
 
 export function FilterPanel() {
-  const { activeTab, searchQuery, setSearchQuery } = useStorageTabStore();
+  const { activeTab, searchQuery, setSearchQuery } = useFilterPanelStore();
 
   return (
-    <div className="flex items-center justify-between gap-6 mt-6">
+    <div className="flex items-center flex-wrap justify-between gap-6 mt-6">
       <div className="flex gap-8">
         <TypeTabs />
-        <ObjectSelect />
+        <div className="flex items-center gap-2">
+          <p className="font-medium">Объект:</p>
+          <ObjectSelectForFilter objects={objects} />
+        </div>
+
         {(activeTab === "footwear" || activeTab === "clothing") && (
-          <SeasonSelect />
+          <div className="flex items-center gap-2">
+            <p className="font-medium">Сезон:</p>
+            <SeasonSelectForFilter />
+          </div>
         )}
       </div>
-      <div className="flex gap-8">
+      <div className="flex  gap-8">
         <AddButton />
         <Input
           type="text"

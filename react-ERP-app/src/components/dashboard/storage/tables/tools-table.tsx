@@ -15,31 +15,41 @@ type ToolsTableProps = {
 
 export function ToolsTable({ tools }: ToolsTableProps) {
   return (
-    <Table className="mt-6">
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[200px]">Серийный №</TableHead>
-          <TableHead>Наименование</TableHead>
-          <TableHead>Статус</TableHead>
-          <TableHead>Место хранения</TableHead>
-          <TableHead></TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {tools.map((tool) => (
-          <TableRow key={tool.id}>
-            <TableCell className="font-medium">{tool.serialNumber}</TableCell>
-            <TableCell>{tool.name}</TableCell>
-            <TableCell>
-              {tool.status === "ON_OBJECT" ? "На объекте" : "В пути"}
-            </TableCell>
-            <TableCell>{tool.storage.name}</TableCell>
-            <TableCell>
-              <ToolsDropDown tool={tool} /> {/* 💡 ВАЖНО */}
-            </TableCell>
+    <div className="mt-6 rounded-lg border overflow-hidden">
+      <Table>
+        <TableHeader className="bg-primary pointer-events-none">
+          <TableRow>
+            <TableHead className="w-[30px]"></TableHead>
+            <TableHead className="text-secondary font-bold">
+              Серийный №
+            </TableHead>
+            <TableHead className="text-secondary font-bold">
+              Наименование
+            </TableHead>
+            <TableHead className="text-secondary font-bold">Статус</TableHead>
+            <TableHead className="text-secondary font-bold">
+              Место хранения
+            </TableHead>
+            <TableHead className="text-secondary font-bold"></TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {tools.map((tool) => (
+            <TableRow key={tool.id}>
+              <TableCell></TableCell>
+              <TableCell className="font-medium">{tool.serialNumber}</TableCell>
+              <TableCell>{tool.name}</TableCell>
+              <TableCell>
+                {tool.status === "ON_OBJECT" ? "На объекте" : "В пути"}
+              </TableCell>
+              <TableCell>{tool.storage.name}</TableCell>
+              <TableCell>
+                <ToolsDropDown tool={tool} /> {/* 💡 ВАЖНО */}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

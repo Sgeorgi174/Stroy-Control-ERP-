@@ -7,11 +7,11 @@ import { tools } from "@/constants/tools";
 import { ToolsTable } from "@/components/dashboard/storage/tables/tools-table";
 import { filterClothes } from "@/lib/utils/filterClothes";
 import { filterTools } from "@/lib/utils/filterTools";
-import { useStorageTabStore } from "@/stores/storage-tab-store";
+import { useFilterPanelStore } from "@/stores/filter-panel-store";
 
 export function Storage() {
   const { activeTab, searchQuery, selectedObjectId, selectedSeason } =
-    useStorageTabStore();
+    useFilterPanelStore();
 
   const filteredClothes = filterClothes({
     data: clothes_and_footwear,

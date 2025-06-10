@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { type TabKey } from "./tabs";
-import { useStorageTabStore } from "@/stores/storage-tab-store";
+import { useFilterPanelStore } from "@/stores/filter-panel-store";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 
@@ -11,7 +11,7 @@ const tabLabels: Record<TabKey, string> = {
 };
 
 export function AddButton() {
-  const { activeTab } = useStorageTabStore();
+  const { activeTab } = useFilterPanelStore();
   const openClothesSheet = useClothesSheetStore((s) => s.openSheet);
   const openToolsSheet = useToolsSheetStore((s) => s.openSheet);
 

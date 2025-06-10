@@ -19,27 +19,28 @@ export function filterClothes({
   const lowerSearch = searchQuery.toLowerCase();
 
   return data
-    .filter((item) =>
-      activeTab === "clothing"
-        ? item.type === "CLOTHING"
-        : item.type === "FOOTWEAR"
-    )
-    .filter((item) =>
-      Object.values(item)
-        .flatMap((val) => {
-          if (typeof val === "string" || typeof val === "number")
-            return val.toString();
-          if (typeof val === "object" && val !== null)
-            return Object.values(val).map(String);
-          return [];
-        })
-        .some((value) => value.toLowerCase().includes(lowerSearch))
-    )
-    .filter((item) => !selectedObjectId || item.objectId === selectedObjectId)
-    .filter(
-      (item) =>
-        activeTab === "tool" ||
-        !selectedSeason ||
-        item.season === selectedSeason
-    );
+    .filter((item) => {
+      if (activeTab === "clothing") return item.type === "CLOTHING";
+      if (activeTab === "footwear") return item.type === "FOOTWEAR";
+      return true;
+    })
+    .filter((item) => {
+      if (selectedObjectId) return item.objectId === selectedObjectId;
+      return true;
+    })
+    .filter((item) => {
+      if (activeTab !== "tool" && selectedSeason) {
+        return item.season === selectedSeason;
+      }
+      return true;
+    })
+    .filter((item) => {
+      if (!searchQuery) return true;
+
+      const searchFields = [item.name, item.size].filter(Boolean);
+
+      return searchFields.some((field) =>
+        field.toString().toLowerCase().includes(lowerSearch)
+      );
+    });
 }

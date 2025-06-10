@@ -37,8 +37,9 @@ export function LoginForm({
     try {
       await loginAction(data);
       toast.success("Вы успешно вошли в аккаунт");
-    } catch (error: any) {
-      toast.error(error?.message || "Не удалось войти, попробуйте снова");
+    } catch (error) {
+      toast.error("Не удалось войти, попробуйте снова");
+      console.error("Ошибка:", error);
     }
   };
 
