@@ -4,21 +4,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { EllipsisVertical } from "lucide-react";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import type { Tool } from "@/types/tool";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { AlertDialogDelete } from "../../alert-dialog-delete";
 
 export function ToolsDropDown({ tool }: { tool: Tool }) {
   const { openSheet } = useToolsSheetStore();
@@ -59,29 +50,12 @@ export function ToolsDropDown({ tool }: { tool: Tool }) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <AlertDialog
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Подтверждение удаления</AlertDialogTitle>
-            <AlertDialogDescription>
-              Вы уверены, что хотите удалить инструмент "{tool.name}"? Это
-              действие нельзя отменить.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Отмена</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-destructive hover:bg-destructive/70"
-            >
-              Удалить
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <AlertDialogDelete
+        isDeleteDialogOpen={isDeleteDialogOpen}
+        handleDelete={handleDelete}
+        setIsDeleteDialogOpen={setIsDeleteDialogOpen}
+        item={tool}
+      />
     </>
   );
 }

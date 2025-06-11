@@ -25,7 +25,11 @@ export function ClothesSheet() {
             {mode === "details" && `${selectedClothes?.name}`}
           </SheetTitle>
           <SheetDescription className="text-center">
-            Подробная информация об одежде
+            {mode === "add" && "Заполните данные о новой спец. одежде"}
+            {mode === "edit" && `Редактирование выбранного комплекта одежды`}
+            {mode === "transfer" &&
+              `Заполните данные о перемещении комплекта одежды`}
+            {mode === "details" && `Подробная информация о комплекте одежды`}
           </SheetDescription>
         </SheetHeader>
 

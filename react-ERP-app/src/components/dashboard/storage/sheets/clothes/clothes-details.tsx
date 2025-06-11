@@ -21,6 +21,9 @@ export function ClothesDetails({ clothes }: { clothes: Clothes }) {
           Количество: <span className="font-medium">{clothes.quantity}</span>
         </p>
         <p>
+          В пути: <span className="font-medium">{clothes.inTransit}</span>
+        </p>
+        <p>
           Место хранения:{" "}
           <span className="font-medium">{clothes.storage.name}</span>
         </p>

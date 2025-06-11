@@ -33,7 +33,7 @@ export function ClothesAdd() {
   } = useForm<FormData>({
     defaultValues: {
       name: "",
-      size: null,
+      size: activeTab === "clothing" ? 44 : 38,
       objectId: objects[0].id,
       price: null,
       quantity: null,

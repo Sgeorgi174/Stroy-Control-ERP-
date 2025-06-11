@@ -27,9 +27,12 @@ export function ToolsTable({ tools }: ToolsTableProps) {
               Наименование
             </TableHead>
             <TableHead className="text-secondary font-bold">Статус</TableHead>
+            <TableHead className="text-secondary font-bold">Бригадир</TableHead>
+            <TableHead className="text-secondary font-bold">Телефон</TableHead>
             <TableHead className="text-secondary font-bold">
               Место хранения
             </TableHead>
+
             <TableHead className="text-secondary font-bold"></TableHead>
           </TableRow>
         </TableHeader>
@@ -42,6 +45,8 @@ export function ToolsTable({ tools }: ToolsTableProps) {
               <TableCell>
                 {tool.status === "ON_OBJECT" ? "На объекте" : "В пути"}
               </TableCell>
+              <TableCell>{`${tool.user.lastName} ${tool.user.firstName}`}</TableCell>
+              <TableCell>{tool.user.phoneNumber}</TableCell>
               <TableCell>{tool.storage.name}</TableCell>
               <TableCell>
                 <ToolsDropDown tool={tool} /> {/* 💡 ВАЖНО */}

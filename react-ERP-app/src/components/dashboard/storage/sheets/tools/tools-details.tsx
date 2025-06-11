@@ -22,6 +22,13 @@ export function ToolsDetails({ tool }: { tool: Tool }) {
           Место хранения:{" "}
           <span className="font-medium">{tool.storage.name}</span>
         </p>
+        <p>
+          Бригадир:{" "}
+          <span className="font-medium">{`${tool.user.lastName} ${tool.user.firstName}`}</span>
+        </p>
+        <p>
+          Телефон: <span className="font-medium">{tool.user.phoneNumber}</span>
+        </p>
         <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
         <p className="text-center font-medium text-xl mt-5">
           Последние перемещения

@@ -10,4 +10,10 @@ export type Tool = {
     id: string;
     name: string;
   };
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+  };
 };

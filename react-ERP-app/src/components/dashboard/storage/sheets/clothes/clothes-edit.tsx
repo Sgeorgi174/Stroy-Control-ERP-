@@ -1,9 +1,156 @@
+import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-form";
+import { SeasonSelectForForms } from "@/components/dashboard/select-season-for-form";
+import { SizeSelectForForms } from "@/components/dashboard/select-size-for-form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { objects } from "@/constants/objects";
+import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
+import { useFilterPanelStore } from "@/stores/filter-panel-store";
 import type { Clothes } from "@/types/clothes";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
-export function ClothesEdit({ clothes }: { clothes: Clothes }) {
+type FormData = {
+  name: string;
+  size: number | null;
+  objectId: string | null;
+  price: number | null;
+  quantity: number | null;
+  type: "CLOTHING" | "FOOTWEAR" | null;
+  season: string | null;
+};
+
+type ClothesEditProps = { clothes: Clothes };
+
+export function ClothesEdit({ clothes }: ClothesEditProps) {
+  const { activeTab } = useFilterPanelStore();
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: {
+      name: clothes.name,
+      size: activeTab === "clothing" ? 44 : 38,
+      objectId: clothes.objectId,
+      price: clothes.price,
+      quantity: clothes.quantity,
+      type: clothes.type,
+      season: clothes.season,
+    },
+  });
+
+  const { closeSheet } = useClothesSheetStore();
+
+  const selectedObjectId = watch("objectId");
+  const selectedSeason = watch("season");
+  const selectedSize = watch("size");
+
+  const onSubmit = (data: FormData) => {
+    try {
+      console.log("Собранные данные:", {
+        name: data.name.trim(),
+        objectId: data.objectId,
+        type: data.type,
+      });
+      reset();
+      closeSheet();
+      toast.success(
+        `Успешно изменена одежда Имя: ${data.name.trim()} Объект: ${
+          data.objectId
+        } Тип: ${data.type}`
+      );
+    } catch (error) {
+      toast.error("Не удалось создать комплект одежды");
+      console.error("Ошибка:", error);
+    }
+  };
+
   return (
-    <div className="mt-4">
-      Edit: <strong>{clothes.name}</strong> (ID: {clothes.id})
+    <div className="p-5">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-6 m-auto w-[600px]"
+      >
+        <div className="flex justify-between">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="name">Наименование</Label>
+            <Input
+              className="w-[300px]"
+              id="name"
+              type="text"
+              {...register("name", { required: "Это поле обязательно" })}
+            />
+            {errors.name && (
+              <p className="text-sm text-red-500">{errors.name.message}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label>Сезон</Label>
+            <SeasonSelectForForms
+              selectedSeason={selectedSeason}
+              onSelectChange={(season) => setValue("season", season)}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-between">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="quantity">Количество</Label>
+            <Input
+              id="quantity"
+              type="number"
+              {...register("quantity", { required: "Это поле обязательно" })}
+            />
+            {errors.quantity && (
+              <p className="text-sm text-red-500">{errors.quantity.message}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label>Размер</Label>
+            <SizeSelectForForms
+              selectedSize={selectedSize}
+              onSelectChange={(size) => setValue("size", size)}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-between">
+          <div className="flex flex-col gap-2">
+            <Label>Место хранения</Label>
+            <ObjectSelectForForms
+              objects={objects}
+              selectedObjectId={selectedObjectId}
+              onSelectChange={(objectId) => setValue("objectId", objectId)}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="price">Цена</Label>
+            <Input
+              id="price"
+              type="number"
+              {...register("price", { required: "Это поле обязательно" })}
+            />
+            {errors.price && (
+              <p className="text-sm text-red-500">{errors.price.message}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-center mt-10">
+          <Button type="submit" className="w-[200px]">
+            Сохранить
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

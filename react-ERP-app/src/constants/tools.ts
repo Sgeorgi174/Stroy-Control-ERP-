@@ -8,6 +8,12 @@ export const tools = [
     serialNumber: "513427",
     objectId: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
     storage: { id: "c8bd225d-3eeb-4e14-a544-96d962ce5382", name: "Челябинск" },
+    user: {
+      id: "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
+      firstName: "Иван",
+      lastName: "Петров",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "10e9ce4f-0e03-4da5-b2a5-8aafa63c4b9f",
@@ -18,6 +24,12 @@ export const tools = [
     serialNumber: "936178",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
     storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    user: {
+      id: "b2c3d4e5-f6g7-8901-h2i3-j4k5l6m7n8o9",
+      firstName: "Алексей",
+      lastName: "Смирнов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "9a887227-4661-47b2-b9da-e7cf06b058c1",
@@ -28,6 +40,12 @@ export const tools = [
     serialNumber: "278117",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
     storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    user: {
+      id: "c3d4e5f6-g7h8-9012-i3j4-k5l6m7n8o9p0",
+      firstName: "Сергей",
+      lastName: "Иванов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "70af919c-a419-4f0e-9df0-e3d6150a8704",
@@ -38,6 +56,12 @@ export const tools = [
     serialNumber: "621037",
     objectId: "21c0e087-c056-4eca-9844-9818c032840b",
     storage: { id: "21c0e087-c056-4eca-9844-9818c032840b", name: "Миасс" },
+    user: {
+      id: "d4e5f6g7-h8i9-0123-j4k5-l6m7n8o9p0q1",
+      firstName: "Дмитрий",
+      lastName: "Кузнецов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "e7027f8c-666f-4a27-88a5-c45b6311f25a",
@@ -48,6 +72,12 @@ export const tools = [
     serialNumber: "278371",
     objectId: "21c0e087-c056-4eca-9844-9818c032840b",
     storage: { id: "21c0e087-c056-4eca-9844-9818c032840b", name: "Миасс" },
+    user: {
+      id: "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
+      firstName: "Иван",
+      lastName: "Петров",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "58819552-5011-469e-b8ab-d6d3b23aa493",
@@ -58,6 +88,12 @@ export const tools = [
     serialNumber: "692215",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
     storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    user: {
+      id: "b2c3d4e5-f6g7-8901-h2i3-j4k5l6m7n8o9",
+      firstName: "Алексей",
+      lastName: "Смирнов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "be2a684c-cceb-4ba3-8914-7a80fc17f0fc",
@@ -68,6 +104,12 @@ export const tools = [
     serialNumber: "604355",
     objectId: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
     storage: { id: "c8bd225d-3eeb-4e14-a544-96d962ce5382", name: "Челябинск" },
+    user: {
+      id: "c3d4e5f6-g7h8-9012-i3j4-k5l6m7n8o9p0",
+      firstName: "Сергей",
+      lastName: "Иванов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "71b8a980-be5e-45da-919c-ee2246b9b7c9",
@@ -78,6 +120,12 @@ export const tools = [
     serialNumber: "688904",
     objectId: "21c0e087-c056-4eca-9844-9818c032840b",
     storage: { id: "21c0e087-c056-4eca-9844-9818c032840b", name: "Миасс" },
+    user: {
+      id: "d4e5f6g7-h8i9-0123-j4k5-l6m7n8o9p0q1",
+      firstName: "Дмитрий",
+      lastName: "Кузнецов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "d6d8fa17-aa12-48f5-b69a-06e9dc5ec664",
@@ -88,6 +136,12 @@ export const tools = [
     serialNumber: "856162",
     objectId: "21c0e087-c056-4eca-9844-9818c032840b",
     storage: { id: "21c0e087-c056-4eca-9844-9818c032840b", name: "Миасс" },
+    user: {
+      id: "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
+      firstName: "Иван",
+      lastName: "Петров",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "793e4540-cf66-4fc3-8251-30399d04d6d9",
@@ -98,6 +152,12 @@ export const tools = [
     serialNumber: "836147",
     objectId: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
     storage: { id: "c8bd225d-3eeb-4e14-a544-96d962ce5382", name: "Челябинск" },
+    user: {
+      id: "b2c3d4e5-f6g7-8901-h2i3-j4k5l6m7n8o9",
+      firstName: "Алексей",
+      lastName: "Смирнов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "1b816858-9c8e-415b-99c9-3f720dce25de",
@@ -108,6 +168,12 @@ export const tools = [
     serialNumber: "449404",
     objectId: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
     storage: { id: "c8bd225d-3eeb-4e14-a544-96d962ce5382", name: "Челябинск" },
+    user: {
+      id: "c3d4e5f6-g7h8-9012-i3j4-k5l6m7n8o9p0",
+      firstName: "Сергей",
+      lastName: "Иванов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "d067b2a4-5c68-4798-8695-ac87de08c855",
@@ -118,6 +184,12 @@ export const tools = [
     serialNumber: "775927",
     objectId: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
     storage: { id: "c8bd225d-3eeb-4e14-a544-96d962ce5382", name: "Челябинск" },
+    user: {
+      id: "d4e5f6g7-h8i9-0123-j4k5-l6m7n8o9p0q1",
+      firstName: "Дмитрий",
+      lastName: "Кузнецов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "94a15470-1655-4c6a-bb4c-decbe66e6da1",
@@ -128,6 +200,12 @@ export const tools = [
     serialNumber: "293042",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
     storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    user: {
+      id: "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
+      firstName: "Иван",
+      lastName: "Петров",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "d1a6e58e-1f76-4950-9d44-9fd20b946a12",
@@ -138,6 +216,12 @@ export const tools = [
     serialNumber: "301481",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
     storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    user: {
+      id: "b2c3d4e5-f6g7-8901-h2i3-j4k5l6m7n8o9",
+      firstName: "Алексей",
+      lastName: "Смирнов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "385c0059-1205-4d54-ad31-36a379cffe9b",
@@ -148,6 +232,12 @@ export const tools = [
     serialNumber: "748165",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
     storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    user: {
+      id: "c3d4e5f6-g7h8-9012-i3j4-k5l6m7n8o9p0",
+      firstName: "Сергей",
+      lastName: "Иванов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "4a301746-5355-4f49-ae73-d20f5657966b",
@@ -158,6 +248,12 @@ export const tools = [
     serialNumber: "771341",
     objectId: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
     storage: { id: "c8bd225d-3eeb-4e14-a544-96d962ce5382", name: "Челябинск" },
+    user: {
+      id: "d4e5f6g7-h8i9-0123-j4k5-l6m7n8o9p0q1",
+      firstName: "Дмитрий",
+      lastName: "Кузнецов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "bf018de5-429b-4d8e-872d-a03b68a78cbb",
@@ -168,6 +264,12 @@ export const tools = [
     serialNumber: "887466",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
     storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    user: {
+      id: "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
+      firstName: "Иван",
+      lastName: "Петров",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "7d76f7a5-b285-48b7-8ee1-3f12254bbbef",
@@ -178,6 +280,12 @@ export const tools = [
     serialNumber: "865001",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
     storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    user: {
+      id: "b2c3d4e5-f6g7-8901-h2i3-j4k5l6m7n8o9",
+      firstName: "Алексей",
+      lastName: "Смирнов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "42b829a4-d2ce-48de-b5a2-4eecdc7b9c9d",
@@ -188,6 +296,12 @@ export const tools = [
     serialNumber: "139478",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
     storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    user: {
+      id: "c3d4e5f6-g7h8-9012-i3j4-k5l6m7n8o9p0",
+      firstName: "Сергей",
+      lastName: "Иванов",
+      phoneNumber: "+79028746532",
+    },
   },
   {
     id: "51146cb9-104c-481c-8c83-b5f727a61f0e",
@@ -198,5 +312,11 @@ export const tools = [
     serialNumber: "311434",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
     storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    user: {
+      id: "d4e5f6g7-h8i9-0123-j4k5-l6m7n8o9p0q1",
+      firstName: "Дмитрий",
+      lastName: "Кузнецов",
+      phoneNumber: "+79028746532",
+    },
   },
 ];
