@@ -1,4 +1,4 @@
-import type { TabKey } from "@/components/dashboard/storage/filter-panel/tabs";
+import type { TabKey } from "@/types/tabs";
 import type { Clothes } from "@/types/clothes";
 
 type FilterParams = {

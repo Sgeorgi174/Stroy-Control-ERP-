@@ -12,30 +12,32 @@ import {
 } from "@/components/ui/sidebar";
 import { Link } from "react-router";
 
-// Menu items.
 const items = [
   {
     title: "Склад",
     url: "/storage",
+    tab: "tool",
     icon: Store,
-  },
-  {
-    title: "Сотрудники",
-    url: "/employees",
-    icon: Users,
   },
   {
     title: "Объекты",
     url: "/objects",
+    tab: "object",
     icon: Building,
+  },
+  {
+    title: "Сотрудники",
+    url: "/employees",
+    tab: "employee",
+    icon: Users,
   },
 ];
 
 type AppSidebarProps = {
   active: string;
-  onClick: () => void;
+  handleClick: () => void;
 };
-export function AppSidebar({ active, onClick }: AppSidebarProps) {
+export function AppSidebar({ active, handleClick }: AppSidebarProps) {
   return (
     <Sidebar variant="inset">
       <SidebarContent>
@@ -52,7 +54,7 @@ export function AppSidebar({ active, onClick }: AppSidebarProps) {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     size="lg"
-                    onClick={onClick}
+                    onClick={handleClick}
                     isActive={item.url === active}
                     asChild
                   >

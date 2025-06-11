@@ -5,4 +5,11 @@ export type Object = {
   name: string;
   address: string;
   userId: null;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+  };
+  employees: number;
 };

@@ -1,6 +1,24 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TABS, type TabKey } from "./tabs";
+import { type TabKey } from "../../../types/tabs";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
+
+const TABS: {
+  key: TabKey;
+  label: string;
+}[] = [
+  {
+    key: "tool",
+    label: "Инструменты",
+  },
+  {
+    key: "clothing",
+    label: "Одежда",
+  },
+  {
+    key: "footwear",
+    label: "Обувь",
+  },
+];
 
 export function TypeTabs() {
   const { activeTab, setActiveTab } = useFilterPanelStore();

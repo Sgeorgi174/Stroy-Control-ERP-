@@ -1,4 +1,4 @@
-import { FilterPanel } from "@/components/dashboard/storage/filter-panel/filter-panel";
+import { StorageFilters } from "@/components/dashboard/storage/storage-filters";
 import { ClothesSheet } from "@/components/dashboard/storage/sheets/clothes/clothes-sheet";
 import { ToolsSheet } from "@/components/dashboard/storage/sheets/tools/tools-sheet";
 import { ClothesTable } from "@/components/dashboard/storage/tables/clothes-table";
@@ -29,7 +29,7 @@ export function Storage() {
 
   return (
     <div>
-      <FilterPanel />
+      <StorageFilters />
       {activeTab === "tool" ? (
         <ToolsTable tools={filteredTools} />
       ) : (
