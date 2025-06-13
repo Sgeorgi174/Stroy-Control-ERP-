@@ -5,13 +5,7 @@ import {
   IsEnum,
   IsOptional,
 } from 'class-validator';
-
-export enum Role {
-  OWNER = 'OWNER',
-  MASTER = 'MASTER',
-  ACCOUNTANT = 'ACCOUNTANT',
-  FOREMAN = 'FOREMAN',
-}
+import { Roles } from 'generated/prisma';
 
 export class RegisterDto {
   @IsString({ message: 'Логин должен быть строкой.' })
@@ -37,11 +31,11 @@ export class RegisterDto {
   @IsNotEmpty({ message: 'Телефон должен быть указан обязательно.' })
   phone: string;
 
-  @IsEnum(Role, {
-    message: `Роль должна быть одной из: ${Object.values(Role).join(', ')}`,
+  @IsEnum(Roles, {
+    message: `Роль должна быть одной из: ${Object.values(Roles).join(', ')}`,
   })
   @IsNotEmpty({ message: 'Роль должна быть указана обязательно.' })
-  role: Role;
+  role: Roles;
 
   @IsString({ message: 'Id объекта должен быть строкой.' })
   @IsOptional()

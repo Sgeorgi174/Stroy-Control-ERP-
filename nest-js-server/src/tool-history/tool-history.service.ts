@@ -1,10 +1,11 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
+import { handlePrismaError } from '../libs/common/utils/prisma-error.util';
 
 @Injectable()
 export class ToolHistoryService {
-  public constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   public async create(dto: CreateDto) {
     try {
@@ -22,11 +23,9 @@ export class ToolHistoryService {
         },
       });
     } catch (error) {
-      console.log(error);
-
-      throw new InternalServerErrorException(
-        'Ошибка создания записи перемещения инструмента',
-      );
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка создания записи перемещения инструмента',
+      });
     }
   }
 
@@ -41,11 +40,9 @@ export class ToolHistoryService {
         },
       });
     } catch (error) {
-      console.log(error);
-
-      throw new InternalServerErrorException(
-        'Ошибка получения записей перемещения инструмента',
-      );
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка получения записей перемещения инструмента',
+      });
     }
   }
 
@@ -55,11 +52,10 @@ export class ToolHistoryService {
         where: { id: historyId },
       });
     } catch (error) {
-      console.log(error);
-
-      throw new InternalServerErrorException(
-        'Ошибка удаления записи перемещения инструмента',
-      );
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись перемещения не найдена',
+        defaultMessage: 'Ошибка удаления записи перемещения инструмента',
+      });
     }
   }
 }

@@ -1,26 +1,20 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
-import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
 import { UpdateDto } from './dto/update.dto';
 import { TransferDto } from './dto/transfer.dto';
 import { ConfirmDto } from './dto/confirm.dto';
 import { ClothesHistoryService } from 'src/clothes-history/clothes-history.service';
+import { handlePrismaError } from '../libs/common/utils/prisma-error.util';
 
 @Injectable()
 export class ClothesService {
-  public constructor(
+  constructor(
     private readonly prismaService: PrismaService,
-    private readonly clothesHostoryService: ClothesHistoryService,
+    private readonly clothesHistoryService: ClothesHistoryService,
   ) {}
 
-  public async create(dto: CreateDto) {
+  async create(dto: CreateDto) {
     try {
       return await this.prismaService.clothes.create({
         data: {
@@ -35,58 +29,65 @@ export class ClothesService {
         },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      )
-        throw new ConflictException(
-          'Инструмент с таким серийным номером уже существует',
-        );
-
-      throw new InternalServerErrorException(
-        'Ошибка создания нового инструмента',
-      );
+      handlePrismaError(error, {
+        conflictMessage: 'Одежда с таким набором параметров уже существует',
+        defaultMessage: 'Ошибка создания новой одежды',
+      });
     }
   }
 
-  public async getById(id: string) {
-    const clothes = await this.prismaService.clothes.findUnique({
-      where: { id },
-    });
-
-    if (!clothes) throw new NotFoundException('Инструмент не найден');
-
-    return clothes;
+  async getById(id: string) {
+    try {
+      return await this.prismaService.clothes.findUniqueOrThrow({
+        where: { id },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Одежда не найдена',
+      });
+    }
   }
 
-  public async getAll() {
+  async getAll() {
     return await this.prismaService.clothes.findMany({
       include: { storage: true },
     });
   }
 
-  public async update(id: string, dto: UpdateDto) {
-    await this.getById(id);
+  async update(id: string, dto: UpdateDto) {
+    try {
+      await this.getById(id); // чтобы вызвать NotFound заранее
 
-    const updatedClothes = this.prismaService.clothes.update({
-      where: { id },
-      data: {
-        name: dto.name,
-        size: dto.size,
-        price: dto.price,
-        quantity: dto.quantity,
-        inTransit: dto.inTransit,
-        objectId: dto.objectId,
-        type: dto.type,
-        season: dto.season,
-      },
-    });
-
-    return updatedClothes;
+      return await this.prismaService.clothes.update({
+        where: { id },
+        data: {
+          name: dto.name,
+          size: dto.size,
+          price: dto.price,
+          quantity: dto.quantity,
+          inTransit: dto.inTransit,
+          objectId: dto.objectId,
+          type: dto.type,
+          season: dto.season,
+        },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        notFoundMessage: 'Одежда для обновления не найдена',
+        defaultMessage: 'Ошибка обновления одежды',
+      });
+    }
   }
 
-  public async transfer(id: string, dto: TransferDto, userId: string) {
+  async transfer(id: string, dto: TransferDto, userId: string) {
     const clothes = await this.getById(id);
+
+    if (dto.quantity <= 0) {
+      throw new BadRequestException(
+        'Количество для перемещения должно быть положительным',
+      );
+    }
 
     if (clothes.quantity < dto.quantity) {
       throw new BadRequestException(
@@ -94,8 +95,9 @@ export class ClothesService {
       );
     }
 
-    if (clothes.objectId === dto.toObjectId)
+    if (clothes.objectId === dto.toObjectId) {
       throw new BadRequestException('Нельзя перемещать в тот же объект');
+    }
 
     try {
       return await this.prismaService.$transaction(async (prisma) => {
@@ -129,7 +131,7 @@ export class ClothesService {
           },
         });
 
-        const recordHistory = await this.clothesHostoryService.create({
+        const recordHistory = await this.clothesHistoryService.create({
           userId,
           clothesId: clothes.id,
           fromObjectId: clothes.objectId,
@@ -144,22 +146,25 @@ export class ClothesService {
         };
       });
     } catch (error) {
-      console.log(error);
-
-      throw new InternalServerErrorException('Ошибка при перемещении одежды');
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка при перемещении одежды',
+      });
     }
   }
 
-  public async confirmTransfer(id: string, dto: ConfirmDto) {
+  async confirmTransfer(id: string, dto: ConfirmDto) {
     const clothes = await this.getById(id);
 
-    if (!clothes) {
-      throw new NotFoundException('Одежда на целевом объекте не найдена');
+    if (dto.quantity <= 0) {
+      throw new BadRequestException(
+        'Количество подтверждения должно быть положительным',
+      );
     }
 
     if (clothes.inTransit < dto.quantity) {
       throw new BadRequestException('Недостаточное количество одежды в пути');
     }
+
     try {
       await this.prismaService.clothes.update({
         where: { id },
@@ -171,24 +176,24 @@ export class ClothesService {
 
       return { success: true };
     } catch (error) {
-      console.log(error);
-
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        throw new ConflictException('Обновление нарушает уникальность данных');
-      }
-
-      throw new InternalServerErrorException('Не удалось обновить сотрудника');
+      handlePrismaError(error, {
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось подтвердить перемещение одежды',
+      });
     }
   }
 
-  public async delete(id: string) {
-    await this.getById(id);
-
-    await this.prismaService.clothes.delete({ where: { id } });
-
-    return true;
+  async delete(id: string) {
+    try {
+      await this.prismaService.clothes.delete({
+        where: { id },
+      });
+      return true;
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Одежда для удаления не найдена',
+        defaultMessage: 'Ошибка при удалении одежды',
+      });
+    }
   }
 }

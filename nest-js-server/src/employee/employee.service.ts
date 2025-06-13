@@ -1,13 +1,8 @@
-import {
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
-import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
+import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 
 @Injectable()
 export class EmployeeService {
@@ -28,36 +23,30 @@ export class EmployeeService {
         },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        throw new ConflictException(
+      console.error(error);
+      handlePrismaError(error, {
+        conflictMessage:
           'Сотрудник с таким именем, фамилией и телефоном уже существует',
-        );
-      }
-      throw new InternalServerErrorException('Не удалось создать сотрудника');
+        defaultMessage: 'Не удалось создать сотрудника',
+      });
     }
   }
 
   public async getById(id: string) {
     try {
-      const employee = await this.prismaService.employee.findUniqueOrThrow({
+      return await this.prismaService.employee.findUniqueOrThrow({
         where: { id },
         include: {
           workPlace: true,
           clothing: true,
         },
       });
-      return employee;
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
-        throw new NotFoundException('Сотрудник не найден');
-      }
-      throw new InternalServerErrorException('Ошибка при поиске сотрудника');
+      console.error(error);
+      handlePrismaError(error, {
+        notFoundMessage: 'Сотрудник не найден',
+        defaultMessage: 'Ошибка при поиске сотрудника',
+      });
     }
   }
 
@@ -70,7 +59,8 @@ export class EmployeeService {
         },
         orderBy: { lastName: 'asc' },
       });
-    } catch {
+    } catch (error) {
+      console.error(error);
       throw new InternalServerErrorException(
         'Не удалось получить список сотрудников',
       );
@@ -93,19 +83,12 @@ export class EmployeeService {
         },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
-        throw new NotFoundException('Сотрудник не найден');
-      }
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        throw new ConflictException('Обновление нарушает уникальность данных');
-      }
-      throw new InternalServerErrorException('Не удалось обновить сотрудника');
+      console.error(error);
+      handlePrismaError(error, {
+        notFoundMessage: 'Сотрудник не найден',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось обновить сотрудника',
+      });
     }
   }
 
@@ -118,20 +101,12 @@ export class EmployeeService {
         },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
-        throw new NotFoundException('Сотрудник не найден');
-      }
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        throw new ConflictException('Обновление нарушает уникальность данных');
-      }
-
-      throw new InternalServerErrorException('Не удалось обновить сотрудника');
+      console.error(error);
+      handlePrismaError(error, {
+        notFoundMessage: 'Сотрудник не найден',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось обновить сотрудника',
+      });
     }
   }
 
@@ -140,13 +115,11 @@ export class EmployeeService {
       await this.prismaService.employee.delete({ where: { id } });
       return true;
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
-        throw new NotFoundException('Сотрудник не найден');
-      }
-      throw new InternalServerErrorException('Не удалось удалить сотрудника');
+      console.error(error);
+      handlePrismaError(error, {
+        notFoundMessage: 'Сотрудник не найден',
+        defaultMessage: 'Не удалось удалить сотрудника',
+      });
     }
   }
 }

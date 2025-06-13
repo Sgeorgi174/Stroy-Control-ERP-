@@ -25,10 +25,28 @@ export class AuthService {
       where: { login: dto.login },
     });
 
-    if (isExists)
+    if (isExists) {
       throw new ConflictException(
         'Пользователь с таким логином уже существует',
       );
+    }
+
+    // Если указан объект — проверить, не занят ли он
+    if (dto.objectId) {
+      const object = await this.prismaService.object.findUnique({
+        where: { id: dto.objectId },
+      });
+
+      if (!object) {
+        throw new NotFoundException('Объект с указанным ID не найден');
+      }
+
+      if (object.userId !== null) {
+        throw new ConflictException(
+          'Указанный объект уже закреплён за другим пользователем. Освободите его перед назначением.',
+        );
+      }
+    }
 
     const newUser = await this.prismaService.user.create({
       data: {
@@ -41,6 +59,14 @@ export class AuthService {
       },
       include: { object: true },
     });
+
+    // Если передан объект — привязать его к новому пользователю
+    if (dto.objectId) {
+      await this.prismaService.object.update({
+        where: { id: dto.objectId },
+        data: { userId: newUser.id },
+      });
+    }
 
     return this.saveSession(req, newUser);
   }

@@ -26,9 +26,10 @@ model User {
 
   role Roles
 
-  clothesHistory ClothesHistory[]
-  toolsHistory   ToolHistory[]
-  actionLogs     ActionLog[]
+  clothesHistory  ClothesHistory[]
+  toolsHistory    ToolHistory[]
+  actionLogs      ActionLog[]
+  statusHistories ToolStatusHistory[]
 }
 
 enum Roles {
@@ -53,6 +54,7 @@ model Object {
   tools     Tool[]
   employees Employee[]
   clothes   Clothes[]
+  devices   Device[]
 
   fromClothesHistories ClothesHistory[] @relation("clothes_from_object_fk")
   toClothesHistories   ClothesHistory[] @relation("clothes_to_object_fk")
@@ -76,12 +78,16 @@ model Tool {
   storage  Object @relation(fields: [objectId], references: [id])
   objectId String @map("object_id")
 
-  history ToolHistory[]
+  history         ToolHistory[]
+  statusHistories ToolStatusHistory[]
 }
 
 enum ToolStatus {
   ON_OBJECT
   IN_TRANSIT
+  IN_REPAIR
+  LOST
+  WRITTEN_OFF
 }
 
 model ToolHistory {
@@ -101,6 +107,23 @@ model ToolHistory {
 
   toObject   Object @relation(fields: [toObjectId], references: [id], name: "tool_to_object_fk")
   toObjectId String
+}
+
+model ToolStatusHistory {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  tool   Tool   @relation(fields: [toolId], references: [id])
+  toolId String @map("tool_id")
+
+  changedBy User   @relation(fields: [userId], references: [id])
+  userId    String @map("user_id")
+
+  fromStatus ToolStatus
+  toStatus   ToolStatus
+
+  comment String?
 }
 
 model Clothes {
@@ -158,6 +181,35 @@ model ClothesHistory {
   toObjectId String
 }
 
+model Device {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  name         String
+  serialNumber String  @unique @map("serial_number")
+  category     String? // Например: "router", "switch", "tablet", "printer" и т.д.
+  notes        String? // Свободное описание
+
+  status DeviceStatus @default(ACTIVE)
+
+  // либо принадлежит объекту:
+  object   Object? @relation(fields: [objectId], references: [id])
+  objectId String? @map("object_id")
+
+  // либо сотруднику:
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String?   @map("employee_id")
+}
+
+enum DeviceStatus {
+  ACTIVE
+  BROKEN
+  IN_REPAIR
+  LOST
+}
+
 model Employee {
   id String @id @default(uuid())
 
@@ -174,6 +226,8 @@ model Employee {
   position     Position
 
   clothing EmployeeClothing[]
+  devices  Device[]
+  skills   Skill[]
 
   workPlace Object? @relation(fields: [objectId], references: [id])
   objectId  String? @map("object_id")
@@ -182,9 +236,23 @@ model Employee {
 }
 
 enum Position {
-  FOREMAN
-  ELECTRICAN
-  LABORER
+  FOREMAN //бригадир
+  ELECTRICAN //электромонтажник
+  LABORER //разнорабочий
+  DESIGNER // проектировщик
+  ENGINEER // инженер
+}
+
+model Skill {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  skill String @unique
+
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String   @map("employee_id")
 }
 
 model EmployeeClothing {

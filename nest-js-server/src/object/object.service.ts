@@ -1,17 +1,16 @@
 import {
-  ConflictException,
+  BadRequestException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
-import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/library';
 import { UpdateDto } from './dto/update.dto';
+import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 
 @Injectable()
 export class ObjectService {
-  public constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   public async create(dto: CreateDto) {
     try {
@@ -21,70 +20,120 @@ export class ObjectService {
           address: dto.address,
           userId: dto.userId ?? null,
         },
+        include: { tools: true, employees: true, clothes: true, devices: true },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      )
-        throw new ConflictException(
-          'Объект с таким названием и адресом уже существует',
-        );
-
-      throw new InternalServerErrorException('Ошибка создания нового объекта');
+      handlePrismaError(error, {
+        conflictMessage: 'Объект с таким названием и адресом уже существует',
+        defaultMessage: 'Ошибка создания нового объекта',
+      });
     }
   }
 
   public async getAll() {
-    return await this.prismaService.object.findMany({
-      include: { tools: true, employees: true, clothes: true },
-    });
+    try {
+      return await this.prismaService.object.findMany({
+        include: { tools: true, employees: true, clothes: true, devices: true },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка получения объектов',
+      });
+    }
   }
 
   public async getById(id: string) {
-    const object = await this.prismaService.object.findUnique({
-      where: { id },
-      include: { tools: true, employees: true, clothes: true },
-    });
+    try {
+      const object = await this.prismaService.object.findUnique({
+        where: { id },
+        include: { tools: true, employees: true, clothes: true, devices: true },
+      });
 
-    if (!object) throw new NotFoundException('Объект не найден');
+      if (!object) throw new NotFoundException('Объект не найден');
 
-    return object;
+      return object;
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка получения объекта по ID',
+      });
+    }
   }
 
   public async getByUserId(userId: string) {
-    const object = await this.prismaService.object.findUnique({
-      where: { userId },
-      include: { tools: true, employees: true, clothes: true },
-    });
+    try {
+      const object = await this.prismaService.object.findUnique({
+        where: { userId },
+        include: { tools: true, employees: true, clothes: true, devices: true },
+      });
 
-    if (!object)
-      throw new NotFoundException('У указанного Юзера, нет объектов');
+      if (!object)
+        throw new NotFoundException('У указанного пользователя нет объектов');
 
-    return object;
+      return object;
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка получения объекта по userId',
+      });
+    }
   }
 
   public async update(id: string, dto: UpdateDto) {
     await this.getById(id);
 
-    const updatedObject = await this.prismaService.object.update({
-      where: { id },
-      data: {
-        name: dto.name,
-        address: dto.address,
-        userId: dto.userId ?? null,
-      },
-      include: { tools: true, employees: true, clothes: true },
-    });
-
-    return updatedObject;
+    try {
+      return await this.prismaService.object.update({
+        where: { id },
+        data: {
+          name: dto.name,
+          address: dto.address,
+          userId: dto.userId ?? null,
+        },
+        include: { tools: true, employees: true, clothes: true, devices: true },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        conflictMessage: 'Обновление нарушает уникальность объекта',
+        defaultMessage: 'Ошибка при обновлении объекта',
+      });
+    }
   }
 
   public async delete(id: string) {
-    await this.getById(id);
+    const object = await this.getById(id);
 
-    await this.prismaService.object.delete({ where: { id } });
+    const errors: string[] = [];
 
-    return true;
+    if (object.employees.length > 0) {
+      errors.push(`Сотрудники (${object.employees.length})`);
+    }
+
+    if (object.tools.length > 0) {
+      errors.push(`Инструмент (${object.tools.length})`);
+    }
+
+    if (object.clothes.length > 0) {
+      errors.push(`Одежда (${object.clothes.length})`);
+    }
+
+    if (object.devices.length > 0) {
+      errors.push(`Техника (${object.clothes.length})`);
+    }
+
+    if (errors.length > 0) {
+      throw new BadRequestException(
+        `Нельзя удалить объект: с ним связаны следующие элементы: ${errors.join(
+          ', ',
+        )}. Пожалуйста, сначала переместите или удалите их.`,
+      );
+    }
+
+    try {
+      await this.prismaService.object.delete({ where: { id } });
+      return true;
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка удаления объекта',
+      });
+    }
   }
 }

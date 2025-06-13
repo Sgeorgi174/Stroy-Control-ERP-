@@ -7,6 +7,7 @@ const tabLabels = {
   footwear: "обувь",
   object: "объект",
   employee: "сотрудника",
+  "my-object": "",
 };
 
 type AddButtonProps = {

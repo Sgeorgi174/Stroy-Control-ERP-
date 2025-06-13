@@ -6,6 +6,13 @@ type PageHeaderProps = {
   location: string;
 };
 
+const pathToTabMap = {
+  "/": "Мой объект",
+  "/storage": "Склад",
+  "/objects": "Объекты",
+  "/employees": "Сотрудники",
+};
+
 export function PageHeader({ location }: PageHeaderProps) {
   return (
     <header className="w-full flex items-center justify-between">
@@ -19,11 +26,8 @@ export function PageHeader({ location }: PageHeaderProps) {
           className="mx-2 data-[orientation=vertical]:h-4"
         />
         <h1 className="text-xl font-medium">
-          {location === "/storage"
-            ? "Склад"
-            : location === "/employees"
-            ? "Сотрудники"
-            : "Объекты"}
+          {pathToTabMap[location as keyof typeof pathToTabMap] ??
+            "Неизвестный раздел"}
         </h1>
         <div className="ml-auto flex items-center gap-2"></div>
       </div>

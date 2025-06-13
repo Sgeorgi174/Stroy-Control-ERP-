@@ -5,6 +5,8 @@ import { Storage } from "@/pages/storage/Storage";
 import { Employees } from "@/pages/employees/Employees";
 import { Objects } from "@/pages/objects/Objects";
 import Auth from "@/pages/auth/Auth";
+import { MyObject } from "@/pages/my-object/MyObject";
+import { NotFound } from "@/pages/not-found/NotFound";
 
 export const router = createBrowserRouter([
   {
@@ -14,12 +16,14 @@ export const router = createBrowserRouter([
         path: "/",
         element: <Dashboard />,
         children: [
+          { path: "/", element: <MyObject /> },
           { path: "/storage", element: <Storage /> },
           { path: "/employees", element: <Employees /> },
           { path: "/objects", element: <Objects /> },
         ],
       },
       { path: "/login", element: <Auth /> },
+      { path: "*", element: <NotFound /> },
     ],
   },
 ]);

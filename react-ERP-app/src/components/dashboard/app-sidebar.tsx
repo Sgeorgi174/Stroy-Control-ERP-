@@ -1,4 +1,4 @@
-import { Building, ChartBarBig, Store, Users } from "lucide-react";
+import { Building, ChartBarBig, HardHat, Store, Users } from "lucide-react";
 
 import {
   Sidebar,
@@ -13,6 +13,12 @@ import {
 import { Link } from "react-router";
 
 const items = [
+  {
+    title: "Мой объект",
+    url: "/",
+    tab: "my-object",
+    icon: HardHat,
+  },
   {
     title: "Склад",
     url: "/storage",

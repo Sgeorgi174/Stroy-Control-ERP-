@@ -1,10 +1,11 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
+import { handlePrismaError } from '../libs/common/utils/prisma-error.util';
 
 @Injectable()
 export class ClothesHistoryService {
-  public constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   public async create(dto: CreateDto) {
     try {
@@ -23,11 +24,10 @@ export class ClothesHistoryService {
         },
       });
     } catch (error) {
-      console.log(error);
-
-      throw new InternalServerErrorException(
-        'Ошибка создания записи перемещения одежды',
-      );
+      console.error(error);
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка создания записи перемещения одежды',
+      });
     }
   }
 
@@ -42,8 +42,7 @@ export class ClothesHistoryService {
         },
       });
     } catch (error) {
-      console.log(error);
-
+      console.error(error);
       throw new InternalServerErrorException(
         'Ошибка получения записей перемещения одежды',
       );
@@ -56,11 +55,11 @@ export class ClothesHistoryService {
         where: { id: historyId },
       });
     } catch (error) {
-      console.log(error);
-
-      throw new InternalServerErrorException(
-        'Ошибка удаления записи перемещения одежды',
-      );
+      console.error(error);
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись перемещения одежды не найдена',
+        defaultMessage: 'Ошибка удаления записи перемещения одежды',
+      });
     }
   }
 }

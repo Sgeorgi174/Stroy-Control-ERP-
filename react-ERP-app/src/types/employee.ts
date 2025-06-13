@@ -10,6 +10,6 @@ export type Employee = {
   phoneNumber: string;
   clothingSize: number;
   footwearSize: number;
-  position: string;
+  position: "FOREMAN" | "ELECTRICAN" | "LABORER";
   workPlace: Object; // Миасс
 };

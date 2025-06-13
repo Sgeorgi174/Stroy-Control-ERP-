@@ -1,6 +1,7 @@
+import type { Employee } from "@/types/employee";
 import { objects } from "./objects";
 
-export const employees = [
+export const employees: Employee[] = [
   {
     id: "1a2b3c4d-5e6f-7890-g1h2-i3j4k5l6m7n8",
     createdAt: "2025-06-01T08:30:00Z",

@@ -1,20 +1,16 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-
-export enum Status {
-  ON_OBJECT = 'ON_OBJECT',
-  IN_TRANSIT = 'IN_TRANSIT',
-}
+import { ToolStatus } from 'generated/prisma';
 
 export class CreateDto {
   @IsString({ message: 'Название инструмента должно быть строкой' })
   @IsNotEmpty({ message: 'Название инструмента обязательно для заполнения.' })
   name: string;
 
-  @IsEnum(Status, {
-    message: `Статус должен быть одним из: ${Object.values(Status).join(', ')}`,
+  @IsEnum(ToolStatus, {
+    message: `Статус должен быть одним из: ${Object.values(ToolStatus).join(', ')}`,
   })
   @IsOptional()
-  status?: Status;
+  status?: ToolStatus;
 
   @IsString({ message: 'Серийный номер должен быть строкой' })
   @IsNotEmpty({ message: 'Серийный номер обязателен для заполнения.' })
