@@ -9,6 +9,7 @@ import { UpdateDto } from './dto/update.dto';
 import { ToolHistoryService } from 'src/tool-history/tool-history.service';
 import { TransferDto } from './dto/transfer.dto';
 import { handlePrismaError } from '../libs/common/utils/prisma-error.util';
+import { UpdateStatusDto } from './dto/update-status.dto';
 
 @Injectable()
 export class ToolService {
@@ -84,6 +85,38 @@ export class ToolService {
         notFoundMessage: 'Инструмент не найден',
         conflictMessage: 'Обновление нарушает уникальность данных',
         defaultMessage: 'Не удалось обновить инструмент',
+      });
+    }
+  }
+
+  public async changeStatus(id: string, userId: string, dto: UpdateStatusDto) {
+    const { tool } = await this.accessObject(id, userId);
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        const updatedTool = await prisma.tool.update({
+          where: { id },
+          data: { status: dto.newStatus },
+          include: { storage: true },
+        });
+
+        await prisma.toolStatusHistory.create({
+          data: {
+            toolId: tool.id,
+            userId,
+            fromStatus: tool.status,
+            toStatus: dto.newStatus,
+            comment: dto.comment,
+          },
+        });
+
+        return updatedTool;
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Инструмент не найден',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось изменить статус инструмента',
       });
     }
   }

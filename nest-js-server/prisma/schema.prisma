@@ -26,10 +26,17 @@ model User {
 
   role Roles
 
-  clothesHistory  ClothesHistory[]
-  toolsHistory    ToolHistory[]
-  actionLogs      ActionLog[]
-  statusHistories ToolStatusHistory[]
+  clothesHistory ClothesHistory[]
+
+  toolsHistory         ToolHistory[]
+  toolsStatusHistories ToolStatusHistory[]
+
+  devicesHistory      DeviceHistory[]
+  deviceStatusHistory DeviceStatusHistory[]
+
+  tabletsHistory TabletHistory[]
+
+  actionLogs ActionLog[]
 }
 
 enum Roles {
@@ -51,16 +58,18 @@ model Object {
   foreman User?   @relation(fields: [userId], references: [id])
   userId  String? @unique @map("user_id")
 
-  tools     Tool[]
-  employees Employee[]
-  clothes   Clothes[]
-  devices   Device[]
-
+  tools                Tool[]
+  employees            Employee[]
+  clothes              Clothes[]
+  devices              Device[]
   fromClothesHistories ClothesHistory[] @relation("clothes_from_object_fk")
   toClothesHistories   ClothesHistory[] @relation("clothes_to_object_fk")
 
   fromToolHistories ToolHistory[] @relation("tool_from_object_fk")
   toToolHistories   ToolHistory[] @relation("tool_to_object_fk")
+
+  fromDeviceHistories DeviceHistory[] @relation("device_from_object_fk")
+  toDeviceHistories   DeviceHistory[] @relation("device_to_object_fk")
 
   @@unique([name, address], name: "object_name_address_unique")
 }
@@ -126,6 +135,67 @@ model ToolStatusHistory {
   comment String?
 }
 
+model Device {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  name         String
+  status       ToolStatus @default(ON_OBJECT)
+  serialNumber String     @unique @map("serial_number")
+
+  storage  Object @relation(fields: [objectId], references: [id])
+  objectId String @map("object_id")
+
+  history         DeviceHistory[]
+  statusHistories DeviceStatusHistory[]
+}
+
+enum DeviceStatus {
+  ON_OBJECT
+  IN_TRANSIT
+  IN_REPAIR
+  LOST
+  WRITTEN_OFF
+}
+
+model DeviceHistory {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  device   Device @relation(fields: [deviceId], references: [id])
+  deviceId String @map("device_id")
+
+  movedBy User   @relation(fields: [userId], references: [id])
+  userId  String @map("user_id")
+
+  fromObject   Object @relation(fields: [fromObjectId], references: [id], name: "device_from_object_fk")
+  fromObjectId String
+
+  toObject   Object @relation(fields: [toObjectId], references: [id], name: "device_to_object_fk")
+  toObjectId String
+}
+
+model DeviceStatusHistory {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  device   Device @relation(fields: [deviceId], references: [id])
+  deviceId String @map("device_id")
+
+  changedBy User   @relation(fields: [userId], references: [id])
+  userId    String @map("user_id")
+
+  fromStatus ToolStatus
+  toStatus   ToolStatus
+
+  comment String?
+}
+
 model Clothes {
   id String @id @default(uuid())
 
@@ -181,33 +251,52 @@ model ClothesHistory {
   toObjectId String
 }
 
-model Device {
+model Tablet {
   id String @id @default(uuid())
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   name         String
-  serialNumber String  @unique @map("serial_number")
-  category     String? // Например: "router", "switch", "tablet", "printer" и т.д.
-  notes        String? // Свободное описание
+  serialNumber String @unique @map("serial_number")
 
-  status DeviceStatus @default(ACTIVE)
+  status TabletStatus @default(ACTIVE)
 
-  // либо принадлежит объекту:
-  object   Object? @relation(fields: [objectId], references: [id])
-  objectId String? @map("object_id")
-
-  // либо сотруднику:
   employee   Employee? @relation(fields: [employeeId], references: [id])
   employeeId String?   @map("employee_id")
+
+  history TabletHistory[]
 }
 
-enum DeviceStatus {
+enum TabletStatus {
   ACTIVE
-  BROKEN
+  INACTIVE
   IN_REPAIR
   LOST
+  WRITTEN_OFF
+}
+
+model TabletHistory {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  tablet   Tablet @relation(fields: [tabletId], references: [id])
+  tabletId String @map("tablet_id")
+
+  changedBy User   @relation(fields: [userId], references: [id])
+  userId    String @map("user_id")
+
+  fromStatus TabletStatus?
+  toStatus   TabletStatus?
+
+  fromEmployee   Employee? @relation(fields: [fromEmployeeId], references: [id], name: "tablet_from_employee_fk")
+  fromEmployeeId String?
+
+  toEmployee   Employee? @relation(fields: [toEmployeeId], references: [id], name: "tablet_to_employee_fk")
+  toEmployeeId String?
+
+  comment String?
 }
 
 model Employee {
@@ -216,21 +305,24 @@ model Employee {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  firstName  String  @map("first_name")
-  lastName   String  @map("last_name")
-  fatherName String? @map("father_name")
+  firstName    String  @map("first_name")
+  lastName     String  @map("last_name")
+  fatherName   String? @map("father_name")
+  phoneNumber  String  @map("phone_number")
+  clothingSize Int?    @map("clothing_size")
+  footwearSize Int?    @map("footwear_size")
 
-  phoneNumber  String   @map("phone_number")
-  clothingSize Int      @map("clothing_size")
-  footwearSize Int      @map("footwear_size")
-  position     Position
+  position Position
 
   clothing EmployeeClothing[]
-  devices  Device[]
+  devices  Tablet[]
   skills   Skill[]
 
   workPlace Object? @relation(fields: [objectId], references: [id])
   objectId  String? @map("object_id")
+
+  fromTabletHistories TabletHistory[] @relation("tablet_from_employee_fk")
+  toTabletHistories   TabletHistory[] @relation("tablet_to_employee_fk")
 
   @@unique([firstName, lastName, phoneNumber], name: "employee_identity_unique")
 }

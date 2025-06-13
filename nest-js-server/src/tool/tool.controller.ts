@@ -17,6 +17,7 @@ import { Authorization } from 'src/auth/decorators/auth.decorator';
 import { Roles } from 'generated/prisma';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { TransferDto } from './dto/transfer.dto';
+import { UpdateStatusDto } from './dto/update-status.dto';
 
 @Controller('tools')
 export class ToolController {
@@ -45,6 +46,16 @@ export class ToolController {
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateDto) {
     return this.toolService.update(id, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Patch('status/:id')
+  async updateStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateStatusDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.toolService.changeStatus(id, userId, dto);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)

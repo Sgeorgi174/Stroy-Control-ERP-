@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { ToolStatus } from 'generated/prisma';
 
 export class UpdateStatusDto {
@@ -7,4 +7,8 @@ export class UpdateStatusDto {
   })
   @IsNotEmpty({ message: 'Новый статус обязателен' })
   newStatus: ToolStatus;
+
+  @IsNotEmpty({ message: 'Коментарий обязателен' })
+  @IsString()
+  comment: string;
 }
