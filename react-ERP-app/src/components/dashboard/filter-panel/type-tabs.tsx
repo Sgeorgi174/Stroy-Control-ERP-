@@ -11,6 +11,14 @@ const TABS: {
     label: "Инструменты",
   },
   {
+    key: "device",
+    label: "Орг. Техника",
+  },
+  {
+    key: "tablet",
+    label: "Планшеты",
+  },
+  {
     key: "clothing",
     label: "Одежда",
   },

@@ -8,6 +8,8 @@ const tabLabels = {
   object: "объект",
   employee: "сотрудника",
   "my-object": "",
+  tablet: "Планшет",
+  device: "Орг. Технику",
 };
 
 type AddButtonProps = {
