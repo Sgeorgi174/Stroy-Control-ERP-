@@ -7,10 +7,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Season } from "@/types/season";
 
 type SeasonSelectProps = {
-  selectedSeason: string | null;
-  onSelectChange: (season: string | null) => void;
+  selectedSeason: Season;
+  onSelectChange: (season: Season) => void;
 };
 
 export function SeasonSelectForForms({
@@ -19,16 +20,16 @@ export function SeasonSelectForForms({
 }: SeasonSelectProps) {
   return (
     <Select
-      value={selectedSeason ?? "null"}
-      onValueChange={(value) => onSelectChange(value === "null" ? null : value)}
+      value={selectedSeason}
+      onValueChange={(value) => onSelectChange(value as Season)}
       defaultValue="SUMMER"
     >
       <SelectTrigger className="w-[200px]">
-        <SelectValue placeholder="Объект" />
+        <SelectValue placeholder="Сезон" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Объекты</SelectLabel>
+          <SelectLabel>Сезон</SelectLabel>
           <SelectItem value="SUMMER">Лето</SelectItem>
           <SelectItem value="WINTER">Зима</SelectItem>
         </SelectGroup>

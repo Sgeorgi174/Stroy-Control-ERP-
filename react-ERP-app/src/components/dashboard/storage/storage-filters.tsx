@@ -8,12 +8,18 @@ import { FilterPanel } from "../filter-panel/filter-panel";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import { SearchInput } from "../filter-panel/search-input";
+import { TabletStatusSelectForFilter } from "../filter-panel/filter-tablet-status-select";
+import { ItemStatusSelectForFilter } from "../filter-panel/filter-items-select";
+import { useDeviceSheetStore } from "@/stores/device-sheet-store";
+import { useTabletSheetStore } from "@/stores/tablet-sheet-store";
 
 export function StorageFilters() {
   const { activeTab, searchQuery, setSearchQuery } = useFilterPanelStore();
 
   const openClothesSheet = useClothesSheetStore((s) => s.openSheet);
   const openToolsSheet = useToolsSheetStore((s) => s.openSheet);
+  const openDevicesSheet = useDeviceSheetStore((s) => s.openSheet);
+  const openTabletsSheet = useTabletSheetStore((s) => s.openSheet);
 
   const handleAdd = () => {
     switch (activeTab) {
@@ -22,7 +28,13 @@ export function StorageFilters() {
         break;
       case "clothing":
       case "footwear":
-        openClothesSheet("add");
+        openClothesSheet("create");
+        break;
+      case "device":
+        openDevicesSheet("add");
+        break;
+      case "tablet":
+        openTabletsSheet("add");
         break;
     }
   };
@@ -31,15 +43,31 @@ export function StorageFilters() {
     <FilterPanel>
       <div className="flex gap-8">
         <TypeTabs />
-        <div className="flex items-center gap-2">
-          <p className="font-medium">Объект:</p>
-          <ObjectSelectForFilter objects={objects} />
-        </div>
+        {activeTab !== "tablet" && (
+          <div className="flex items-center gap-2">
+            <p className="font-medium">Объект:</p>
+            <ObjectSelectForFilter objects={objects} />
+          </div>
+        )}
 
         {(activeTab === "footwear" || activeTab === "clothing") && (
           <div className="flex items-center gap-2">
             <p className="font-medium">Сезон:</p>
             <SeasonSelectForFilter />
+          </div>
+        )}
+
+        {activeTab === "tablet" && (
+          <div className="flex items-center gap-2">
+            <p className="font-medium">Статус:</p>
+            <TabletStatusSelectForFilter />
+          </div>
+        )}
+
+        {(activeTab === "device" || activeTab === "tool") && (
+          <div className="flex items-center gap-2">
+            <p className="font-medium">Статус:</p>
+            <ItemStatusSelectForFilter />
           </div>
         )}
       </div>

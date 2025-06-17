@@ -1,150 +1,115 @@
+import type { Clothes } from "@/types/clothes";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { objects } from "@/constants/objects";
+import toast from "react-hot-toast";
 import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-form";
-import { SeasonSelectForForms } from "@/components/dashboard/select-season-for-form";
-import { SizeSelectForForms } from "@/components/dashboard/select-size-for-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { objects } from "@/constants/objects";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
-import { useFilterPanelStore } from "@/stores/filter-panel-store";
-import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import { Label } from "@/components/ui/label";
 
-type FormData = {
-  name: string;
-  size: number | null;
-  objectId: string | null;
-  price: number | null;
-  quantity: number | null;
-  type: "CLOTHING" | "FOOTWEAR" | null;
-  season: string | null;
-};
+type ClothesAddProps = { clothes: Clothes };
 
-export function ClothesAdd() {
-  const { activeTab } = useFilterPanelStore();
-
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    reset,
-    formState: { errors },
-  } = useForm<FormData>({
-    defaultValues: {
-      name: "",
-      size: activeTab === "clothing" ? 44 : 38,
-      objectId: objects[0].id,
-      price: null,
-      quantity: null,
-      type: activeTab === "clothing" ? "CLOTHING" : "FOOTWEAR",
-      season: "SUMMER",
-    },
-  });
-
+export function ClothesAdd({ clothes }: ClothesAddProps) {
   const { closeSheet } = useClothesSheetStore();
 
-  const selectedObjectId = watch("objectId");
-  const selectedSeason = watch("season");
-  const selectedSize = watch("size");
+  const formSchema = z.object({
+    fromObjectId: z.string(),
+    quantity: z
+      .number({ invalid_type_error: "Введите число" })
+      .min(1, { message: "Количество должно быть больше 0" }),
+  });
+
+  type FormData = z.infer<typeof formSchema>;
+
+  const {
+    handleSubmit,
+    setValue,
+    reset,
+    register,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      fromObjectId: clothes.objectId,
+      quantity: 1,
+    },
+  });
 
   const onSubmit = (data: FormData) => {
     try {
       console.log("Собранные данные:", {
-        name: data.name.trim(),
-        objectId: data.objectId,
-        type: data.type,
+        clotheId: clothes.id,
+        quantity: data.quantity,
       });
       reset();
       closeSheet();
-      toast.success(
-        `Успешно создана одежда Имя: ${data.name.trim()} Объект: ${
-          data.objectId
-        } Тип: ${data.type}`
-      );
+      toast.success("Успешно перемещен комплект одежды");
     } catch (error) {
-      toast.error("Не удалось создать инструмент");
+      toast.error("Не удалось переместить комплект одежды");
       console.error("Ошибка:", error);
     }
   };
 
   return (
-    <div className="p-5">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-6 m-auto w-[600px]"
-      >
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="name">Наименование</Label>
-            <Input
-              className="w-[300px]"
-              id="name"
-              type="text"
-              {...register("name", { required: "Это поле обязательно" })}
-            />
-            {errors.name && (
-              <p className="text-sm text-red-500">{errors.name.message}</p>
-            )}
-          </div>
+    <div className="p-5 flex flex-col gap-1">
+      <p>
+        Наименование: <span className="font-medium">{clothes.name}</span>
+      </p>
+      <p>
+        Размер: <span className="font-medium">{clothes.size}</span>
+      </p>
+      <p>
+        Сезон:{" "}
+        <span className="font-medium">
+          {clothes.season === "SUMMER" ? "Лето" : "Зима"}
+        </span>
+      </p>
+      <p>
+        Количество: <span className="font-medium">{clothes.quantity}</span>
+      </p>
+      <p>
+        В пути: <span className="font-medium">{clothes.inTransit}</span>
+      </p>
+      <p>
+        Место хранения:{" "}
+        <span className="font-medium">{clothes.storage.name}</span>
+      </p>
 
-          <div className="flex flex-col gap-2">
-            <Label>Сезон</Label>
-            <SeasonSelectForForms
-              selectedSeason={selectedSeason}
-              onSelectChange={(season) => setValue("season", season)}
-            />
-          </div>
-        </div>
+      <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
 
-        <div className="flex justify-between">
+      <p className="text-center font-medium text-xl mt-5">Пополнение</p>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex justify-center gap-52 mt-10 px-10">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="quantity">Количество</Label>
+            <Label>Количество *</Label>
             <Input
+              className="w-[150px]"
               id="quantity"
               type="number"
-              {...register("quantity", { required: "Это поле обязательно" })}
+              min="1"
+              max={clothes.quantity}
+              {...register("quantity", { valueAsNumber: true })}
             />
             {errors.quantity && (
               <p className="text-sm text-red-500">{errors.quantity.message}</p>
             )}
           </div>
-
           <div className="flex flex-col gap-2">
-            <Label>Размер</Label>
-            <SizeSelectForForms
-              selectedSize={selectedSize}
-              onSelectChange={(size) => setValue("size", size)}
-            />
-          </div>
-        </div>
-
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-2">
-            <Label>Место хранения</Label>
+            <Label>Пополняемый склад</Label>
             <ObjectSelectForForms
+              disabled
+              selectedObjectId={clothes.objectId}
+              onSelectChange={(id) => setValue("fromObjectId", id)}
               objects={objects}
-              selectedObjectId={selectedObjectId}
-              onSelectChange={(objectId) => setValue("objectId", objectId)}
             />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="price">Цена</Label>
-            <Input
-              id="price"
-              type="number"
-              {...register("price", { required: "Это поле обязательно" })}
-            />
-            {errors.price && (
-              <p className="text-sm text-red-500">{errors.price.message}</p>
-            )}
           </div>
         </div>
-
-        <div className="flex justify-center mt-10">
+        <div className="flex justify-center mt-25">
           <Button type="submit" className="w-[200px]">
-            Добавить
+            Пополнить
           </Button>
         </div>
       </form>

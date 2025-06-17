@@ -8,12 +8,15 @@ import {
 } from "@/components/ui/table";
 import { ClothesDropdown } from "../dropdowns/clothes-dropdown";
 import type { Clothes } from "@/types/clothes";
+import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 
 type ClothesTableProps = {
   clothes: Clothes[];
 };
 
 export function ClothesTable({ clothes }: ClothesTableProps) {
+  const { openSheet } = useClothesSheetStore();
+
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>
@@ -39,7 +42,12 @@ export function ClothesTable({ clothes }: ClothesTableProps) {
           {clothes.map((item) => (
             <TableRow key={item.id}>
               <TableCell></TableCell>
-              <TableCell className="font-medium">{item.name}</TableCell>
+              <TableCell
+                className="font-medium hover:underline cursor-pointer"
+                onClick={() => openSheet("details", item)}
+              >
+                {item.name}
+              </TableCell>
               <TableCell>{item.size}</TableCell>
               <TableCell>
                 {item.season === "SUMMER" ? "Лето" : "Зима"}

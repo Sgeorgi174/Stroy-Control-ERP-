@@ -45,7 +45,7 @@ export const objects = [
     employees: 31,
   },
   {
-    id: "c8bd2273d-3eeb-4e14-a544-96d962ce5382",
+    id: "c8bd455d-3ffb-4e14-a544-96d362ce5581",
     createdAt: "2025-05-29T10:07:01.479Z",
     updatedAt: "2025-06-02T16:45:51.643Z",
     name: "Верхний Уфалей",

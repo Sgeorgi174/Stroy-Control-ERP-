@@ -68,6 +68,12 @@ export class TabletController {
     return this.tabletService.transfer(id, dto, userId);
   }
 
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Patch('release/:id')
+  release(@Param('id') id: string, @Authorized('id') userId: string) {
+    return this.tabletService.release(id, userId);
+  }
+
   @Authorization(Roles.OWNER)
   @Delete('delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)

@@ -16,6 +16,7 @@ export class ClothesHistoryService {
           fromObjectId: dto.fromObjectId,
           toObjectId: dto.toObjectId,
           quantity: dto.quantity,
+          action: dto.action,
         },
         include: {
           fromObject: { select: { name: true } },

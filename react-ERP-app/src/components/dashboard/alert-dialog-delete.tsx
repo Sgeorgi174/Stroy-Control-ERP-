@@ -10,9 +10,12 @@ import {
   AlertDialogAction,
 } from "../ui/alert-dialog";
 import type { Tool } from "@/types/tool";
+import type { Device } from "@/types/device";
+import type { Tablet } from "@/types/tablet";
+import type { Object } from "@/types/object";
 
 type AlertDialogDeleteProps = {
-  item: Clothes | Tool;
+  item: Clothes | Tool | Device | Tablet | Object;
   isDeleteDialogOpen: boolean;
   setIsDeleteDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleDelete: () => Promise<void>;

@@ -1,4 +1,7 @@
-export const tools = [
+import type { Tool } from "@/types/tool";
+import { objects } from "./objects";
+
+export const tools: Tool[] = [
   {
     id: "ccb7b790-e6f7-4c81-a1ac-fddc03c17c50",
     createdAt: "2025-06-02T12:30:00",
@@ -6,8 +9,8 @@ export const tools = [
     name: "Перфоратор",
     status: "ON_OBJECT",
     serialNumber: "513427",
-    objectId: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
-    storage: { id: "c8bd225d-3eeb-4e14-a544-96d962ce5382", name: "Челябинск" },
+    objectId: "21c0e087-c056-4eca-9844-9818c032840b",
+    storage: objects[0],
     user: {
       id: "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
       firstName: "Иван",
@@ -20,10 +23,10 @@ export const tools = [
     createdAt: "2025-06-04T21:36:32",
     updatedAt: "2025-06-08T18:05:44",
     name: "Дрель",
-    status: "ON_OBJECT",
+    status: "IN_TRANSIT",
     serialNumber: "936178",
-    objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
-    storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    objectId: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
+    storage: objects[2],
     user: {
       id: "b2c3d4e5-f6g7-8901-h2i3-j4k5l6m7n8o9",
       firstName: "Алексей",
@@ -36,10 +39,10 @@ export const tools = [
     createdAt: "2025-06-08T03:24:37",
     updatedAt: "2025-06-08T10:42:55",
     name: "Шуруповерт",
-    status: "ON_OBJECT",
+    status: "IN_REPAIR",
     serialNumber: "278117",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
-    storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    storage: objects[1],
     user: {
       id: "c3d4e5f6-g7h8-9012-i3j4-k5l6m7n8o9p0",
       firstName: "Сергей",
@@ -55,7 +58,7 @@ export const tools = [
     status: "ON_OBJECT",
     serialNumber: "621037",
     objectId: "21c0e087-c056-4eca-9844-9818c032840b",
-    storage: { id: "21c0e087-c056-4eca-9844-9818c032840b", name: "Миасс" },
+    storage: objects[0],
     user: {
       id: "d4e5f6g7-h8i9-0123-j4k5-l6m7n8o9p0q1",
       firstName: "Дмитрий",
@@ -70,8 +73,8 @@ export const tools = [
     name: "Пила",
     status: "ON_OBJECT",
     serialNumber: "278371",
-    objectId: "21c0e087-c056-4eca-9844-9818c032840b",
-    storage: { id: "21c0e087-c056-4eca-9844-9818c032840b", name: "Миасс" },
+    objectId: "c8bd455d-3ffb-4e14-a544-96d362ce5581",
+    storage: objects[3],
     user: {
       id: "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
       firstName: "Иван",
@@ -86,8 +89,8 @@ export const tools = [
     name: "Рубанок",
     status: "ON_OBJECT",
     serialNumber: "692215",
-    objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
-    storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    objectId: "c8bd455d-3ffb-4e14-a544-96d362ce5581",
+    storage: objects[3],
     user: {
       id: "b2c3d4e5-f6g7-8901-h2i3-j4k5l6m7n8o9",
       firstName: "Алексей",
@@ -103,7 +106,7 @@ export const tools = [
     status: "ON_OBJECT",
     serialNumber: "604355",
     objectId: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
-    storage: { id: "c8bd225d-3eeb-4e14-a544-96d962ce5382", name: "Челябинск" },
+    storage: objects[2],
     user: {
       id: "c3d4e5f6-g7h8-9012-i3j4-k5l6m7n8o9p0",
       firstName: "Сергей",
@@ -118,8 +121,8 @@ export const tools = [
     name: "Лобзик",
     status: "ON_OBJECT",
     serialNumber: "688904",
-    objectId: "21c0e087-c056-4eca-9844-9818c032840b",
-    storage: { id: "21c0e087-c056-4eca-9844-9818c032840b", name: "Миасс" },
+    objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
+    storage: objects[1],
     user: {
       id: "d4e5f6g7-h8i9-0123-j4k5-l6m7n8o9p0q1",
       firstName: "Дмитрий",
@@ -134,8 +137,8 @@ export const tools = [
     name: "Фрезер",
     status: "ON_OBJECT",
     serialNumber: "856162",
-    objectId: "21c0e087-c056-4eca-9844-9818c032840b",
-    storage: { id: "21c0e087-c056-4eca-9844-9818c032840b", name: "Миасс" },
+    objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
+    storage: objects[1],
     user: {
       id: "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
       firstName: "Иван",
@@ -151,7 +154,7 @@ export const tools = [
     status: "ON_OBJECT",
     serialNumber: "836147",
     objectId: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
-    storage: { id: "c8bd225d-3eeb-4e14-a544-96d962ce5382", name: "Челябинск" },
+    storage: objects[2],
     user: {
       id: "b2c3d4e5-f6g7-8901-h2i3-j4k5l6m7n8o9",
       firstName: "Алексей",
@@ -166,8 +169,8 @@ export const tools = [
     name: "Шлифмашина",
     status: "ON_OBJECT",
     serialNumber: "449404",
-    objectId: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
-    storage: { id: "c8bd225d-3eeb-4e14-a544-96d962ce5382", name: "Челябинск" },
+    objectId: "c8bd455d-3ffb-4e14-a544-96d362ce5581",
+    storage: objects[3],
     user: {
       id: "c3d4e5f6-g7h8-9012-i3j4-k5l6m7n8o9p0",
       firstName: "Сергей",
@@ -183,7 +186,7 @@ export const tools = [
     status: "ON_OBJECT",
     serialNumber: "775927",
     objectId: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
-    storage: { id: "c8bd225d-3eeb-4e14-a544-96d962ce5382", name: "Челябинск" },
+    storage: objects[2],
     user: {
       id: "d4e5f6g7-h8i9-0123-j4k5-l6m7n8o9p0q1",
       firstName: "Дмитрий",
@@ -198,8 +201,8 @@ export const tools = [
     name: "Компрессор",
     status: "ON_OBJECT",
     serialNumber: "293042",
-    objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
-    storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    objectId: "21c0e087-c056-4eca-9844-9818c032840b",
+    storage: objects[0],
     user: {
       id: "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
       firstName: "Иван",
@@ -214,8 +217,8 @@ export const tools = [
     name: "Сварочный аппарат",
     status: "ON_OBJECT",
     serialNumber: "301481",
-    objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
-    storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    objectId: "21c0e087-c056-4eca-9844-9818c032840b",
+    storage: objects[0],
     user: {
       id: "b2c3d4e5-f6g7-8901-h2i3-j4k5l6m7n8o9",
       firstName: "Алексей",
@@ -231,7 +234,7 @@ export const tools = [
     status: "ON_OBJECT",
     serialNumber: "748165",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
-    storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    storage: objects[1],
     user: {
       id: "c3d4e5f6-g7h8-9012-i3j4-k5l6m7n8o9p0",
       firstName: "Сергей",
@@ -247,7 +250,7 @@ export const tools = [
     status: "ON_OBJECT",
     serialNumber: "771341",
     objectId: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
-    storage: { id: "c8bd225d-3eeb-4e14-a544-96d962ce5382", name: "Челябинск" },
+    storage: objects[2],
     user: {
       id: "d4e5f6g7-h8i9-0123-j4k5-l6m7n8o9p0q1",
       firstName: "Дмитрий",
@@ -256,14 +259,14 @@ export const tools = [
     },
   },
   {
-    id: "bf018de5-429b-4d8e-872d-a03b68a78cbb",
+    id: "c8bd455d-3ffb-4e14-a544-96d362ce5581",
     createdAt: "2025-06-02T22:35:00",
     updatedAt: "2025-06-04T07:51:21",
     name: "Манометр",
     status: "ON_OBJECT",
     serialNumber: "887466",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
-    storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    storage: objects[3],
     user: {
       id: "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
       firstName: "Иван",
@@ -272,14 +275,14 @@ export const tools = [
     },
   },
   {
-    id: "7d76f7a5-b285-48b7-8ee1-3f12254bbbef",
+    id: "c8bd225d-3eeb-4e14-a544-96d962ce5382",
     createdAt: "2025-06-05T23:33:14",
     updatedAt: "2025-06-07T20:18:04",
     name: "Пылесос строительный",
     status: "ON_OBJECT",
     serialNumber: "865001",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
-    storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    storage: objects[2],
     user: {
       id: "b2c3d4e5-f6g7-8901-h2i3-j4k5l6m7n8o9",
       firstName: "Алексей",
@@ -288,14 +291,14 @@ export const tools = [
     },
   },
   {
-    id: "42b829a4-d2ce-48de-b5a2-4eecdc7b9c9d",
+    id: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
     createdAt: "2025-06-02T23:16:06",
     updatedAt: "2025-06-08T23:06:28",
     name: "Лестница",
     status: "ON_OBJECT",
     serialNumber: "139478",
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
-    storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    storage: objects[1],
     user: {
       id: "c3d4e5f6-g7h8-9012-i3j4-k5l6m7n8o9p0",
       firstName: "Сергей",
@@ -310,8 +313,8 @@ export const tools = [
     name: "Тележка",
     status: "ON_OBJECT",
     serialNumber: "311434",
-    objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
-    storage: { id: "c49c8f71-02db-4cba-b6a2-9adfb678c978", name: "Коркино" },
+    objectId: "21c0e087-c056-4eca-9844-9818c032840b",
+    storage: objects[0],
     user: {
       id: "d4e5f6g7-h8i9-0123-j4k5-l6m7n8o9p0q1",
       firstName: "Дмитрий",

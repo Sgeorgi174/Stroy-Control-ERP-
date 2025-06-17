@@ -125,6 +125,11 @@ export class DeviceService {
     if (device.objectId === dto.objectId)
       throw new ConflictException('Нельзя перемещать на тот же объект');
 
+    if (device.status !== 'ON_OBJECT')
+      throw new ConflictException(
+        'Нельзя перемещать технику, которая, не на объекте',
+      );
+
     try {
       return await this.prisma.$transaction(async (tx) => {
         const transferred = await tx.device.update({

@@ -3,7 +3,7 @@ import type { Tool } from "@/types/tool";
 
 type ToolsSheetState = {
   isOpen: boolean;
-  mode: "transfer" | "add" | "edit" | "details" | null;
+  mode: "transfer" | "add" | "edit" | "details" | "change status" | null;
   selectedTool: Tool | null;
   openSheet: (mode: ToolsSheetState["mode"], tool?: Tool | null) => void;
   closeSheet: () => void;

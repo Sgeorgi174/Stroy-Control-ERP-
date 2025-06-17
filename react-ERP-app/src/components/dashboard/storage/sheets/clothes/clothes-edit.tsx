@@ -10,21 +10,27 @@ import { useFilterPanelStore } from "@/stores/filter-panel-store";
 import type { Clothes } from "@/types/clothes";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type FormData = {
-  name: string;
-  size: number | null;
-  objectId: string | null;
-  price: number | null;
-  quantity: number | null;
-  type: "CLOTHING" | "FOOTWEAR" | null;
-  season: string | null;
-};
+// Схема валидации
+const clothesSchema = z.object({
+  name: z.string().min(1, "Это поле обязательно"),
+  size: z.number().min(30).max(60, "Размер вне диапазона"),
+  objectId: z.string().min(1, "Это поле обязательно"),
+  price: z.number().min(0, "Цена не может быть отрицательной"),
+  quantity: z.number().int().min(1, "Количество должно быть минимум 1"),
+  type: z.enum(["CLOTHING", "FOOTWEAR"]),
+  season: z.enum(["SUMMER", "WINTER"]),
+});
+
+type FormData = z.infer<typeof clothesSchema>;
 
 type ClothesEditProps = { clothes: Clothes };
 
 export function ClothesEdit({ clothes }: ClothesEditProps) {
   const { activeTab } = useFilterPanelStore();
+  const { closeSheet } = useClothesSheetStore();
 
   const {
     register,
@@ -32,20 +38,21 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
     setValue,
     watch,
     reset,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormData>({
+    resolver: zodResolver(clothesSchema),
+    mode: "onChange",
     defaultValues: {
       name: clothes.name,
-      size: activeTab === "clothing" ? 44 : 38,
-      objectId: clothes.objectId,
-      price: clothes.price,
-      quantity: clothes.quantity,
-      type: clothes.type,
-      season: clothes.season,
+      size: clothes.size ?? (activeTab === "clothing" ? 44 : 38),
+      objectId: clothes.objectId ?? objects[0].id,
+      price: clothes.price ?? 0,
+      quantity: clothes.quantity ?? 1,
+      type:
+        clothes.type ?? (activeTab === "clothing" ? "CLOTHING" : "FOOTWEAR"),
+      season: clothes.season ?? "SUMMER",
     },
   });
-
-  const { closeSheet } = useClothesSheetStore();
 
   const selectedObjectId = watch("objectId");
   const selectedSeason = watch("season");
@@ -53,20 +60,14 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
 
   const onSubmit = (data: FormData) => {
     try {
-      console.log("Собранные данные:", {
-        name: data.name.trim(),
-        objectId: data.objectId,
-        type: data.type,
-      });
-      reset();
+      console.log("Собранные данные:", data);
+      reset(data);
       closeSheet();
       toast.success(
-        `Успешно изменена одежда Имя: ${data.name.trim()} Объект: ${
-          data.objectId
-        } Тип: ${data.type}`
+        `Успешно изменена одежда Имя: ${data.name} Объект: ${data.objectId} Тип: ${data.type}`
       );
     } catch (error) {
-      toast.error("Не удалось создать комплект одежды");
+      toast.error("Не удалось изменить комплект одежды");
       console.error("Ошибка:", error);
     }
   };
@@ -84,7 +85,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
               className="w-[300px]"
               id="name"
               type="text"
-              {...register("name", { required: "Это поле обязательно" })}
+              {...register("name")}
             />
             {errors.name && (
               <p className="text-sm text-red-500">{errors.name.message}</p>
@@ -97,6 +98,9 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
               selectedSeason={selectedSeason}
               onSelectChange={(season) => setValue("season", season)}
             />
+            {errors.season && (
+              <p className="text-sm text-red-500">{errors.season.message}</p>
+            )}
           </div>
         </div>
 
@@ -106,7 +110,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
             <Input
               id="quantity"
               type="number"
-              {...register("quantity", { required: "Это поле обязательно" })}
+              {...register("quantity", { valueAsNumber: true })}
             />
             {errors.quantity && (
               <p className="text-sm text-red-500">{errors.quantity.message}</p>
@@ -119,6 +123,9 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
               selectedSize={selectedSize}
               onSelectChange={(size) => setValue("size", size)}
             />
+            {errors.size && (
+              <p className="text-sm text-red-500">{errors.size.message}</p>
+            )}
           </div>
         </div>
 
@@ -130,6 +137,9 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
               selectedObjectId={selectedObjectId}
               onSelectChange={(objectId) => setValue("objectId", objectId)}
             />
+            {errors.objectId && (
+              <p className="text-sm text-red-500">{errors.objectId.message}</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-2">
@@ -137,7 +147,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
             <Input
               id="price"
               type="number"
-              {...register("price", { required: "Это поле обязательно" })}
+              {...register("price", { valueAsNumber: true })}
             />
             {errors.price && (
               <p className="text-sm text-red-500">{errors.price.message}</p>
@@ -146,7 +156,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
         </div>
 
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]">
+          <Button type="submit" className="w-[200px]" disabled={!isValid}>
             Сохранить
           </Button>
         </div>

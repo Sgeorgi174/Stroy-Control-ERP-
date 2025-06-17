@@ -11,8 +11,8 @@ import { clothisngSizes, shoesSizes } from "@/constants/sizes";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
 
 type SizeSelectProps = {
-  selectedSize: number | null;
-  onSelectChange: (size: number | null) => void;
+  selectedSize: number;
+  onSelectChange: (size: number) => void;
 };
 
 export function SizeSelectForForms({
@@ -26,12 +26,15 @@ export function SizeSelectForForms({
   const currentSizesList =
     activeTab === "clothing" ? clothisngSizes : shoesSizes;
 
+  // Выбираем первый размер из списка, если вдруг selectedSize не совпадает
+  const validSelectedSize = currentSizesList.includes(selectedSize.toString())
+    ? selectedSize
+    : Number(currentSizesList[0]);
+
   return (
     <Select
-      value={selectedSize !== null ? selectedSize.toString() : "null"}
-      onValueChange={(value) =>
-        onSelectChange(value === "null" ? null : Number(value))
-      }
+      value={validSelectedSize.toString()}
+      onValueChange={(value) => onSelectChange(Number(value))}
     >
       <SelectTrigger className="w-[200px]">
         <SelectValue placeholder="Размер" />

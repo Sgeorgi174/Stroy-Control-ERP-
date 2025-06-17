@@ -7,13 +7,20 @@ import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import type { Tool } from "@/types/tool";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
-type ToolsEditProps = { tool: Tool };
+// Схема валидации
+const formSchema = z.object({
+  name: z.string().min(1, "Наименование обязательно"),
+  serialNumber: z.string().min(1, "Серийный номер обязателен"),
+  objectId: z.string().min(1, "Место хранения обязательно"),
+});
 
-type FormData = {
-  name: string;
-  serialNumber: string;
-  objectId: string | null;
+type FormData = z.infer<typeof formSchema>;
+
+type ToolsEditProps = {
+  tool: Tool;
 };
 
 export function ToolsEdit({ tool }: ToolsEditProps) {
@@ -28,12 +35,12 @@ export function ToolsEdit({ tool }: ToolsEditProps) {
     defaultValues: {
       name: tool.name,
       serialNumber: tool.serialNumber,
-      objectId: tool.objectId,
+      objectId: tool.objectId || objects[0].id,
     },
+    resolver: zodResolver(formSchema),
   });
 
   const { closeSheet } = useToolsSheetStore();
-
   const selectedObjectId = watch("objectId");
 
   const onSubmit = (data: FormData) => {
@@ -43,16 +50,16 @@ export function ToolsEdit({ tool }: ToolsEditProps) {
         serialNumber: data.serialNumber.trim(),
         objectId: data.objectId,
       });
+
       reset();
       closeSheet();
+
       toast.success(
-        `Успешно изменен инструмент Имя: ${data.name.trim()} Серийник: ${data.serialNumber.trim()} Объект: ${
-          data.objectId
-        }`
+        `Инструмент обновлён: ${data.name.trim()} (Серийник: ${data.serialNumber.trim()})`
       );
     } catch (error) {
-      toast.error("Не удалось редактировать инструмент");
-      console.error("Ошибка:", error);
+      console.error("Ошибка редактирования:", error);
+      toast.error("Не удалось отредактировать инструмент");
     }
   };
 
@@ -61,25 +68,15 @@ export function ToolsEdit({ tool }: ToolsEditProps) {
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="flex flex-col gap-2 w-[400px]">
           <Label htmlFor="name">Наименование *</Label>
-          <Input
-            autoFocus={false}
-            id="name"
-            type="text"
-            {...register("name", { required: "Это поле обязательно" })}
-          />
+          <Input id="name" type="text" {...register("name")} />
           {errors.name && (
             <p className="text-sm text-red-500">{errors.name.message}</p>
           )}
         </div>
 
         <div className="flex flex-col gap-2 w-[400px]">
-          <Label htmlFor="name">Серийный № *</Label>
-          <Input
-            autoFocus={false}
-            id="serialNumber"
-            type="text"
-            {...register("serialNumber", { required: "Это поле обязательно" })}
-          />
+          <Label htmlFor="serialNumber">Серийный № *</Label>
+          <Input id="serialNumber" type="text" {...register("serialNumber")} />
           {errors.serialNumber && (
             <p className="text-sm text-red-500">
               {errors.serialNumber.message}
@@ -91,9 +88,14 @@ export function ToolsEdit({ tool }: ToolsEditProps) {
           <Label>Место хранения *</Label>
           <ObjectSelectForForms
             selectedObjectId={selectedObjectId}
-            onSelectChange={(id) => setValue("objectId", id)}
+            onSelectChange={(id) => {
+              if (id) setValue("objectId", id);
+            }}
             objects={objects}
           />
+          {errors.objectId && (
+            <p className="text-sm text-red-500">{errors.objectId.message}</p>
+          )}
         </div>
 
         <div className="flex justify-center mt-10">

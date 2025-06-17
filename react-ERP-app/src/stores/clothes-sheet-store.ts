@@ -3,7 +3,15 @@ import type { Clothes } from "@/types/clothes";
 
 type ClothesSheetState = {
   isOpen: boolean;
-  mode: "transfer" | "add" | "edit" | "details" | null;
+  mode:
+    | "transfer"
+    | "add"
+    | "edit"
+    | "details"
+    | "create"
+    | "written_off"
+    | "give"
+    | null;
   selectedClothes: Clothes | null;
   openSheet: (
     mode: ClothesSheetState["mode"],

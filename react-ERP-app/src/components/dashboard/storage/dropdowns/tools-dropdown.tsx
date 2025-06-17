@@ -2,6 +2,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EllipsisVertical } from "lucide-react";
@@ -11,7 +12,9 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { AlertDialogDelete } from "../../alert-dialog-delete";
 
-export function ToolsDropDown({ tool }: { tool: Tool }) {
+type ToolDropDownProps = { tool: Tool };
+
+export function ToolsDropDown({ tool }: ToolDropDownProps) {
   const { openSheet } = useToolsSheetStore();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -38,13 +41,27 @@ export function ToolsDropDown({ tool }: { tool: Tool }) {
           <DropdownMenuItem onClick={() => openSheet("details", tool)}>
             Подробнее
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => openSheet("edit", tool)}>
             Редактировать
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openSheet("transfer", tool)}>
+          <DropdownMenuItem
+            disabled={tool.status !== "ON_OBJECT"}
+            onClick={() => openSheet("transfer", tool)}
+          >
             Переместить
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
+          <DropdownMenuItem
+            disabled={tool.status === "IN_TRANSIT"}
+            onClick={() => openSheet("change status", tool)}
+          >
+            Сменить статус
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={() => setIsDeleteDialogOpen(true)}
+          >
             Удалить
           </DropdownMenuItem>
         </DropdownMenuContent>

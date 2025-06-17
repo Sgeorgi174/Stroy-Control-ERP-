@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -124,6 +125,14 @@ export class ToolService {
   public async transfer(id: string, dto: TransferDto, userId: string) {
     await this.accessObject(id, userId);
     const tool = await this.getById(id);
+
+    if (tool.objectId === dto.objectId)
+      throw new ConflictException('Нельзя перемещать на тот же объект');
+
+    if (tool.status !== 'ON_OBJECT')
+      throw new ConflictException(
+        'Нельзя перемещать технику, которая, не на объекте',
+      );
 
     try {
       return await this.prismaService.$transaction(async (prisma) => {

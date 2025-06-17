@@ -23,7 +23,7 @@ export function ToolsDetails({ tool }: { tool: Tool }) {
           <span className="font-medium">{tool.storage.name}</span>
         </p>
         <p>
-          Бригадир:{" "}
+          Бригадир:
           <span className="font-medium">{`${tool.user.lastName} ${tool.user.firstName}`}</span>
         </p>
         <p>

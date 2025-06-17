@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
@@ -6,6 +11,10 @@ import { TransferDto } from './dto/transfer.dto';
 import { ConfirmDto } from './dto/confirm.dto';
 import { ClothesHistoryService } from 'src/clothes-history/clothes-history.service';
 import { handlePrismaError } from '../libs/common/utils/prisma-error.util';
+import { AddDto } from './dto/add.dto';
+import { WriteOffDto } from './dto/write-off.dto';
+import { ClothesActions } from 'generated/prisma';
+import { GiveClothingDto } from './dto/give-clothing.dto';
 
 @Injectable()
 export class ClothesService {
@@ -137,6 +146,7 @@ export class ClothesService {
           fromObjectId: clothes.objectId,
           toObjectId: dto.toObjectId,
           quantity: dto.quantity,
+          action: 'TRANSFER',
         });
 
         return {
@@ -179,6 +189,128 @@ export class ClothesService {
       handlePrismaError(error, {
         conflictMessage: 'Обновление нарушает уникальность данных',
         defaultMessage: 'Не удалось подтвердить перемещение одежды',
+      });
+    }
+  }
+
+  async addClothes(id: string, dto: AddDto, userId: string) {
+    const clothes = await this.getById(id); // если id не найден — вылетит ошибка внутри getById с этим же хелпером
+
+    try {
+      const updated = await this.prismaService.clothes.update({
+        where: { id },
+        data: {
+          quantity: { increment: dto.quantity },
+        },
+      });
+
+      await this.clothesHistoryService.create({
+        userId: userId,
+        clothesId: id,
+        fromObjectId: clothes.objectId,
+        toObjectId: clothes.objectId,
+        quantity: dto.quantity,
+        action: ClothesActions.ADD,
+      });
+
+      return updated;
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Не удалось пополнить одежду',
+      });
+    }
+  }
+
+  async writeOffClothes(id: string, dto: WriteOffDto, userId: string) {
+    const clothes = await this.getById(id);
+
+    if (clothes.quantity < dto.quantity) {
+      throw new BadRequestException(
+        'Недостаточное количество одежды для списания',
+      );
+    }
+
+    try {
+      const updated = await this.prismaService.clothes.update({
+        where: { id },
+        data: {
+          quantity: { decrement: dto.quantity },
+        },
+      });
+
+      await this.clothesHistoryService.create({
+        userId: userId,
+        clothesId: id,
+        fromObjectId: clothes.objectId,
+        toObjectId: clothes.objectId,
+        quantity: dto.quantity,
+        action: ClothesActions.WRITTEN_OFF,
+      });
+
+      return updated;
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Не удалось списать одежду',
+      });
+    }
+  }
+
+  async giveToEmployee(
+    clothingId: string,
+    dto: GiveClothingDto,
+    userId: string,
+  ) {
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        const clothing = await prisma.clothes.findUnique({
+          where: { id: clothingId },
+        });
+
+        if (!clothing) {
+          throw new NotFoundException('Одежда не найдена');
+        }
+
+        if (clothing.quantity < 1) {
+          throw new ConflictException('Недостаточно одежды на складе');
+        }
+
+        // Уменьшаем количество на складе
+        await prisma.clothes.update({
+          where: { id: clothingId },
+          data: {
+            quantity: { decrement: 1 },
+          },
+        });
+
+        // Создаём запись выдачи сотруднику
+        await prisma.employeeClothing.create({
+          data: {
+            clothingId,
+            employeeId: dto.employeeId,
+            priceWhenIssued: clothing.price,
+            debtAmount: clothing.price,
+          },
+        });
+
+        // Логируем в историю
+        await prisma.clothesHistory.create({
+          data: {
+            clothesId: clothingId,
+            userId: userId,
+            quantity: 1,
+            action: 'TRANSFER',
+            fromObjectId: clothing.objectId,
+            toObjectId: clothing.objectId, // остаётся на том же объекте
+          },
+        });
+
+        return { message: 'Одежда успешно выдана сотруднику' };
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Одежда не найдена',
+        conflictMessage: 'Ошибка при выдаче одежды',
+        defaultMessage: 'Не удалось выдать одежду сотруднику',
       });
     }
   }

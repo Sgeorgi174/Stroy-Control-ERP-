@@ -18,6 +18,9 @@ import { UpdateDto } from './dto/update.dto';
 import { TransferDto } from './dto/transfer.dto';
 import { ConfirmDto } from './dto/confirm.dto';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
+import { AddDto } from './dto/add.dto';
+import { WriteOffDto } from './dto/write-off.dto';
+import { GiveClothingDto } from './dto/give-clothing.dto';
 
 @Controller('clothes')
 export class ClothesController {
@@ -62,6 +65,36 @@ export class ClothesController {
   @Patch('confirm/:id')
   async confirmTransfer(@Param('id') id: string, @Body() dto: ConfirmDto) {
     return this.clothesService.confirmTransfer(id, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
+  @Patch('add/:id')
+  async addClothes(
+    @Param('id') id: string,
+    @Body() dto: AddDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.clothesService.addClothes(id, dto, userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
+  @Patch('write-off/:id')
+  async writeOffClothes(
+    @Param('id') id: string,
+    @Body() dto: WriteOffDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.clothesService.writeOffClothes(id, dto, userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
+  @Patch('give/:id')
+  async giveToEmployee(
+    @Param('id') id: string,
+    @Body() dto: GiveClothingDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.clothesService.giveToEmployee(id, dto, userId);
   }
 
   @Authorization(Roles.OWNER)

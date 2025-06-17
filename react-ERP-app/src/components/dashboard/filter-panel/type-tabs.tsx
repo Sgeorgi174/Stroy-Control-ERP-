@@ -37,7 +37,7 @@ export function TypeTabs() {
     >
       <TabsList>
         {TABS.map((tab) => (
-          <TabsTrigger className="w-[108px]" key={tab.key} value={tab.key}>
+          <TabsTrigger className="" key={tab.key} value={tab.key}>
             {tab.label}
           </TabsTrigger>
         ))}

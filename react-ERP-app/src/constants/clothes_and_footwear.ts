@@ -10,7 +10,7 @@ export const clothes_and_footwear: Clothes[] = [
     name: "Рабочая одежда",
     size: 48,
     price: 2831,
-    quantity: 7,
+    quantity: 0,
     inTransit: 0,
     objectId: "21c0e087-c056-4eca-9844-9818c032840b",
     storage: {
@@ -27,7 +27,7 @@ export const clothes_and_footwear: Clothes[] = [
     name: "Рабочая обувь",
     size: 40,
     price: 4238,
-    quantity: 21,
+    quantity: 0,
     inTransit: 0,
     objectId: "c49c8f71-02db-4cba-b6a2-9adfb678c978",
     storage: {

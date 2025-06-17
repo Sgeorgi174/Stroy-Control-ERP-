@@ -110,6 +110,39 @@ export class TabletService {
     }
   }
 
+  async release(id: string, userId: string) {
+    const tablet = await this.getById(id);
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        const released = await prisma.tablet.update({
+          where: { id },
+          data: {
+            employeeId: null,
+            status: 'INACTIVE',
+          },
+          include: { employee: true },
+        });
+
+        await this.tabletHistoryService.create(
+          {
+            tabletId: id,
+            fromEmployeeId: tablet.employeeId || undefined,
+            toEmployeeId: undefined,
+            fromStatus: tablet.status,
+            toStatus: 'INACTIVE',
+            comment: 'Освобождение планшета',
+          },
+          userId,
+        );
+
+        return released;
+      });
+    } catch (err) {
+      handlePrismaError(err);
+    }
+  }
+
   async delete(id: string) {
     await this.getById(id);
     try {

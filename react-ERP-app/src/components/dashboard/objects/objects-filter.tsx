@@ -2,12 +2,14 @@ import { useFilterPanelStore } from "@/stores/filter-panel-store";
 import { AddButton } from "../filter-panel/add-button";
 import { FilterPanel } from "../filter-panel/filter-panel";
 import { SearchInput } from "../filter-panel/search-input";
+import { useObjectSheetStore } from "@/stores/objects-sheet-store";
 
 export function ObjectsFilter() {
   const { searchQuery, setSearchQuery } = useFilterPanelStore();
+  const openObjectsSheet = useObjectSheetStore((s) => s.openSheet);
 
   const handleAdd = () => {
-    console.log("click");
+    openObjectsSheet("add");
   };
 
   return (

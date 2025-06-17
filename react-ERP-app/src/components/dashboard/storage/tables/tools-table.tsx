@@ -8,12 +8,23 @@ import {
 } from "@/components/ui/table";
 import { ToolsDropDown } from "../dropdowns/tools-dropdown";
 import type { Tool } from "@/types/tool";
+import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 
 type ToolsTableProps = {
   tools: Tool[];
 };
 
+const toolStatusMap = {
+  ON_OBJECT: "На объекте",
+  IN_TRANSIT: "В пути",
+  IN_REPAIR: "На ремонте",
+  LOST: "Утерян",
+  WRITTEN_OFF: "Списан",
+};
+
 export function ToolsTable({ tools }: ToolsTableProps) {
+  const { openSheet } = useToolsSheetStore();
+
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>
@@ -41,10 +52,13 @@ export function ToolsTable({ tools }: ToolsTableProps) {
             <TableRow key={tool.id}>
               <TableCell></TableCell>
               <TableCell className="font-medium">{tool.serialNumber}</TableCell>
-              <TableCell>{tool.name}</TableCell>
-              <TableCell>
-                {tool.status === "ON_OBJECT" ? "На объекте" : "В пути"}
+              <TableCell
+                onClick={() => openSheet("details", tool)}
+                className=" cursor-pointer hover:underline"
+              >
+                {tool.name}
               </TableCell>
+              <TableCell>{toolStatusMap[tool.status]}</TableCell>
               <TableCell>{`${tool.user.lastName} ${tool.user.firstName}`}</TableCell>
               <TableCell>{tool.user.phoneNumber}</TableCell>
               <TableCell>{tool.storage.name}</TableCell>

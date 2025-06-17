@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Object } from "@/types/object";
-import { EllipsisVertical } from "lucide-react";
+import { ObjectDropDown } from "../dropdowns/object-dropdown";
 
 type ObjectsTableProps = {
   objects: Object[];
@@ -43,7 +43,7 @@ export function ObjectsTable({ objects }: ObjectsTableProps) {
               <TableCell>{object.user.phoneNumber}</TableCell>
               <TableCell>{object.employees}</TableCell>
               <TableCell>
-                <EllipsisVertical />
+                <ObjectDropDown object={object} />
               </TableCell>
             </TableRow>
           ))}

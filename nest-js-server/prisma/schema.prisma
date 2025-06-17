@@ -236,6 +236,8 @@ model ClothesHistory {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  action ClothesActions
+
   clothes   Clothes @relation(fields: [clothesId], references: [id])
   clothesId String  @map("clothes_Id")
 
@@ -249,6 +251,12 @@ model ClothesHistory {
 
   toObject   Object @relation(fields: [toObjectId], references: [id], name: "clothes_to_object_fk")
   toObjectId String
+}
+
+enum ClothesActions {
+  ADD
+  TRANSFER
+  WRITTEN_OFF
 }
 
 model Tablet {

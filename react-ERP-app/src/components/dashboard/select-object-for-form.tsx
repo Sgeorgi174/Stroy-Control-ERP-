@@ -11,8 +11,8 @@ import type { Object } from "@/types/object";
 
 type ObjectSelectProps = {
   objects: Object[];
-  selectedObjectId: string | null;
-  onSelectChange: (id: string | null) => void;
+  selectedObjectId: string;
+  onSelectChange: (id: string) => void;
   disabled?: boolean;
 };
 
@@ -25,8 +25,8 @@ export function ObjectSelectForForms({
   return (
     <Select
       disabled={disabled}
-      value={selectedObjectId ?? "null"}
-      onValueChange={(value) => onSelectChange(value === "null" ? null : value)}
+      value={selectedObjectId}
+      onValueChange={(value) => onSelectChange(value)}
       defaultValue={objects[0].id}
     >
       <SelectTrigger className="w-[200px]">
