@@ -67,7 +67,12 @@ export function ToolsAdd() {
         {/* Имя */}
         <div className="flex flex-col gap-2 w-[400px]">
           <Label htmlFor="name">Наименование *</Label>
-          <Input id="name" type="text" {...register("name")} />
+          <Input
+            id="name"
+            type="text"
+            placeholder="Введите наименование"
+            {...register("name")}
+          />
           {errors.name && (
             <p className="text-sm text-red-500">{errors.name.message}</p>
           )}
@@ -76,7 +81,12 @@ export function ToolsAdd() {
         {/* Серийник */}
         <div className="flex flex-col gap-2 w-[400px]">
           <Label htmlFor="serialNumber">Серийный № *</Label>
-          <Input id="serialNumber" type="text" {...register("serialNumber")} />
+          <Input
+            id="serialNumber"
+            placeholder="Введите серийный номер"
+            type="text"
+            {...register("serialNumber")}
+          />
           {errors.serialNumber && (
             <p className="text-sm text-red-500">
               {errors.serialNumber.message}

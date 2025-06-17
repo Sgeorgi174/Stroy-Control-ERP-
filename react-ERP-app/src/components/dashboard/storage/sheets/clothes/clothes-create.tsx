@@ -81,6 +81,7 @@ export function ClothesCreate() {
             <Label htmlFor="name">Наименование</Label>
             <Input
               className="w-[300px]"
+              placeholder="Введите наименование"
               id="name"
               type="text"
               {...register("name", { required: "Это поле обязательно" })}
