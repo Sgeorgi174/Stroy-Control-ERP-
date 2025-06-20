@@ -19,6 +19,7 @@ type AlertDialogDeleteProps = {
   isDeleteDialogOpen: boolean;
   setIsDeleteDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleDelete: () => Promise<void>;
+  isLoading: boolean;
 };
 
 export function AlertDialogDelete({
@@ -26,6 +27,7 @@ export function AlertDialogDelete({
   setIsDeleteDialogOpen,
   item,
   handleDelete,
+  isLoading,
 }: AlertDialogDeleteProps) {
   return (
     <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
@@ -41,10 +43,11 @@ export function AlertDialogDelete({
         <AlertDialogFooter>
           <AlertDialogCancel>Отмена</AlertDialogCancel>
           <AlertDialogAction
+            disabled={isLoading}
             onClick={handleDelete}
             className="bg-destructive hover:bg-destructive/70"
           >
-            Удалить
+            {isLoading ? "Удаляем..." : "Удалить"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

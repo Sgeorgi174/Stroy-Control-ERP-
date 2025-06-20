@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { ToolService } from './tool.service';
 import { CreateDto } from './dto/create.dto';
@@ -18,6 +19,7 @@ import { Roles } from 'generated/prisma';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { TransferDto } from './dto/transfer.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { GetToolsQueryDto } from './dto/get-tools-query.dto';
 
 @Controller('tools')
 export class ToolController {
@@ -30,16 +32,22 @@ export class ToolController {
     return this.toolService.create(dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
-  @Get('all')
-  async getAll() {
-    return this.toolService.getAll();
-  }
+  // @Authorization(Roles.OWNER, Roles.FOREMAN)
+  // @Get()
+  // async getAll() {
+  //   return this.toolService.getAll();
+  // }
 
-  @Authorization(Roles.OWNER)
-  @Get('by-id/:id')
-  async getById(@Param('id') id: string) {
-    return this.toolService.getById(id);
+  // @Authorization(Roles.OWNER)
+  // @Get(':id')
+  // async getById(@Param('id') id: string) {
+  //   return this.toolService.getById(id);
+  // }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Get('filter')
+  async getFiltered(@Query() query: GetToolsQueryDto) {
+    return this.toolService.getFiltered(query);
   }
 
   @Authorization(Roles.OWNER)

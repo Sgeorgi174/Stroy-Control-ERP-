@@ -24,10 +24,18 @@ export function ToolsDetails({ tool }: { tool: Tool }) {
         </p>
         <p>
           Бригадир:
-          <span className="font-medium">{`${tool.user.lastName} ${tool.user.firstName}`}</span>
+          <span className="font-medium">
+            {" "}
+            {tool.storage.foreman
+              ? `${tool.storage.foreman.lastName} ${tool.storage.foreman.firstName}`
+              : "Не назначен"}
+          </span>
         </p>
         <p>
-          Телефон: <span className="font-medium">{tool.user.phoneNumber}</span>
+          Телефон:{" "}
+          <span className="font-medium">
+            {tool.storage.foreman ? tool.storage.foreman.phone : "-"}
+          </span>
         </p>
         <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
         <p className="text-center font-medium text-xl mt-5">

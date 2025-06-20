@@ -9,9 +9,12 @@ import {
 import type { Device } from "@/types/device";
 import { DeviceDropDown } from "../dropdowns/device-dropdown";
 import { useDeviceSheetStore } from "@/stores/device-sheet-store";
+import { TabletSkeleton } from "../../tablet-skeleton";
 
 type DeviceTableProps = {
   devices: Device[];
+  isLoading: boolean;
+  isError: boolean;
 };
 
 const deviceStatusMap = {
@@ -22,7 +25,11 @@ const deviceStatusMap = {
   WRITTEN_OFF: "Списан",
 };
 
-export function DevicesTable({ devices }: DeviceTableProps) {
+export function DevicesTable({
+  devices,
+  isLoading,
+  isError,
+}: DeviceTableProps) {
   const { openSheet } = useDeviceSheetStore();
 
   return (
@@ -48,6 +55,8 @@ export function DevicesTable({ devices }: DeviceTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
+          {isError && <TableRow></TableRow>}
+          {isLoading && <TabletSkeleton />}
           {devices.map((device) => (
             <TableRow key={device.id}>
               <TableCell></TableCell>
@@ -61,8 +70,15 @@ export function DevicesTable({ devices }: DeviceTableProps) {
                 {device.name}
               </TableCell>
               <TableCell>{deviceStatusMap[device.status]}</TableCell>
-              <TableCell>{`${device.storage.user.lastName} ${device.storage.user.firstName}`}</TableCell>
-              <TableCell>{device.storage.user.phoneNumber}</TableCell>
+              <TableCell>
+                {" "}
+                {device.storage.foreman
+                  ? `${device.storage.foreman.lastName} ${device.storage.foreman.firstName}`
+                  : "Не назначен"}
+              </TableCell>
+              <TableCell>
+                {device.storage.foreman ? device.storage.foreman.phone : "-"}
+              </TableCell>
               <TableCell>{device.storage.name}</TableCell>
               <TableCell>
                 <DeviceDropDown device={device} />

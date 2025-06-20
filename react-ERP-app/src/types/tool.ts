@@ -16,10 +16,4 @@ export type Tool = {
   serialNumber: string;
   objectId: string;
   storage: Object;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
-  };
 };

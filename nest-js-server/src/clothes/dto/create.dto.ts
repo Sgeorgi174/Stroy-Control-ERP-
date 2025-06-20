@@ -4,7 +4,6 @@ import {
   IsNotEmpty,
   IsPositive,
   IsString,
-  Min,
 } from 'class-validator';
 import { ClothesType, Season } from 'generated/prisma';
 
@@ -29,11 +28,6 @@ export class CreateDto {
   @IsPositive({ message: 'Количество не может быть отрицательным' })
   @IsNotEmpty({ message: 'Количество обязательно для заполнения' })
   quantity: number;
-
-  @IsInt({ message: 'Количество в пути должно быть целым числом' })
-  @Min(0)
-  @IsNotEmpty({ message: 'Количество в пути обязательно для заполнения' })
-  inTransit: number;
 
   @IsEnum(ClothesType, {
     message: `Тип должен быть одним из: ${Object.values(ClothesType).join(', ')}`,

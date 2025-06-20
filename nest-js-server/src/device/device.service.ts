@@ -11,22 +11,25 @@ import { TransferDto } from './dto/transfer.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { DeviceHistoryService } from 'src/device-history/device-history.service';
+import { GetDeviceQueryDto } from './dto/get-device-query.dto';
 
 @Injectable()
 export class DeviceService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly prismaService: PrismaService,
     private readonly historyService: DeviceHistoryService,
   ) {}
 
   private async accessObject(id: string, userId: string) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prismaService.user.findUnique({
       where: { id: userId },
       include: { object: true },
     });
     if (!user) throw new NotFoundException('Пользователь не найден');
 
-    const device = await this.prisma.device.findUnique({ where: { id } });
+    const device = await this.prismaService.device.findUnique({
+      where: { id },
+    });
     if (!device) throw new NotFoundException('Устройство не найдено');
 
     if (user.role === 'FOREMAN' && user.object?.id !== device?.objectId)
@@ -37,7 +40,7 @@ export class DeviceService {
 
   async create(dto: CreateDto) {
     try {
-      return await this.prisma.device.create({
+      return await this.prismaService.device.create({
         data: {
           name: dto.name,
           serialNumber: dto.serialNumber,
@@ -55,11 +58,11 @@ export class DeviceService {
   }
 
   async getAll() {
-    return this.prisma.device.findMany({ include: { storage: true } });
+    return this.prismaService.device.findMany({ include: { storage: true } });
   }
 
   async getById(id: string) {
-    const device = await this.prisma.device.findUnique({
+    const device = await this.prismaService.device.findUnique({
       where: { id },
       include: { storage: true },
     });
@@ -67,9 +70,38 @@ export class DeviceService {
     return device;
   }
 
+  public async getFiltered(query: GetDeviceQueryDto) {
+    const devices = await this.prismaService.device.findMany({
+      where: {
+        ...(query.objectId ? { objectId: query.objectId } : {}),
+        ...(query.status ? { status: query.status } : {}),
+        ...(query.serialNumber
+          ? { serialNumber: { contains: query.serialNumber } }
+          : {}),
+        ...(query.name
+          ? { name: { contains: query.name, mode: 'insensitive' } }
+          : {}),
+      },
+      include: {
+        storage: {
+          select: {
+            foreman: {
+              select: { firstName: true, lastName: true, phone: true },
+            },
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!devices.length) throw new NotFoundException('Инструменты не найдены');
+
+    return devices;
+  }
+
   async update(id: string, dto: UpdateDto) {
     try {
-      return await this.prisma.device.update({
+      return await this.prismaService.device.update({
         where: { id },
         data: {
           name: dto.name,
@@ -92,19 +124,19 @@ export class DeviceService {
     const { device } = await this.accessObject(id, userId);
 
     try {
-      return await this.prisma.$transaction(async (tx) => {
-        const updated = await tx.device.update({
+      return await this.prismaService.$transaction(async (prisma) => {
+        const updated = await prisma.device.update({
           where: { id },
-          data: { status: dto.newStatus },
+          data: { status: dto.status },
           include: { storage: true },
         });
 
-        await tx.deviceStatusHistory.create({
+        await prisma.deviceStatusHistory.create({
           data: {
             deviceId: id,
             userId,
             fromStatus: device.status,
-            toStatus: dto.newStatus,
+            toStatus: dto.status,
             comment: dto.comment,
           },
         });
@@ -131,8 +163,8 @@ export class DeviceService {
       );
 
     try {
-      return await this.prisma.$transaction(async (tx) => {
-        const transferred = await tx.device.update({
+      return await this.prismaService.$transaction(async (prisma) => {
+        const transferred = await prisma.device.update({
           where: { id },
           data: {
             objectId: dto.objectId,
@@ -159,7 +191,7 @@ export class DeviceService {
 
   async confirmTransfer(id: string) {
     try {
-      return await this.prisma.device.update({
+      return await this.prismaService.device.update({
         where: { id },
         data: { status: 'ON_OBJECT' },
         include: { storage: true },
@@ -174,7 +206,7 @@ export class DeviceService {
   async delete(id: string) {
     await this.getById(id);
     try {
-      await this.prisma.device.delete({ where: { id } });
+      await this.prismaService.device.delete({ where: { id } });
       return true;
     } catch (error) {
       handlePrismaError(error, {

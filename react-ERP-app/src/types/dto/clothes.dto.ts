@@ -1,33 +1,37 @@
-// shared/dto/clothes.dto.ts
+import type { ClothesType, Seasons } from "../clothes";
 
-export type CreateClothesDto = {
+export interface CreateClothesDto {
   name: string;
-  size: string;
+  season: Seasons;
   quantity: number;
+  size: number;
+  type: ClothesType;
   objectId: string;
-};
+  price: number;
+}
 
-export type UpdateClothesDto = Partial<CreateClothesDto>;
-
-export type TransferClothesDto = {
-  toObjectId: string;
+export interface UpdateClothesDto {
+  name: string;
+  season: Seasons;
   quantity: number;
-};
+  size: number;
+  type: ClothesType;
+  objectId: string;
+  price: number;
+}
 
-export type ConfirmClothesTransferDto = {
-  isConfirmed: boolean;
-};
+export interface TransferClothesDto {
+  objectId: string;
+}
 
-export type AddClothesDto = {
+export interface WriteOffClothesDto {
   quantity: number;
-};
+}
 
-export type WriteOffClothesDto = {
+export interface AddClothesDto {
   quantity: number;
-  reason: string;
-};
+}
 
-export type GiveClothingDto = {
+export interface GiveClothingDto {
   employeeId: string;
-  quantity: number;
-};
+}

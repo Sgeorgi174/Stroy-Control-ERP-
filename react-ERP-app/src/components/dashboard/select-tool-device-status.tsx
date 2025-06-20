@@ -13,17 +13,20 @@ import type { ToolStatus } from "@/types/tool";
 type SelectStatusToolOrDeviceForFormsProps = {
   selectedStatus: ToolStatus | DeviceStatus | null;
   onSelectChange: (season: string | null) => void;
+  disabled?: boolean;
 };
 
 export function SelectStatusToolOrDeviceForForms({
   selectedStatus,
   onSelectChange,
+  disabled,
 }: SelectStatusToolOrDeviceForFormsProps) {
   return (
     <Select
       value={selectedStatus ?? "null"}
       onValueChange={(value) => onSelectChange(value === "null" ? null : value)}
       defaultValue="ON_OBJECT"
+      disabled={disabled}
     >
       <SelectTrigger className="w-[200px]">
         <SelectValue placeholder="Статус" />

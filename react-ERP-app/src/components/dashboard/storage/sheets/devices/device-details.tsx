@@ -32,11 +32,18 @@ export function DeviceDetails({ device }: DeviceDetailsProps) {
         </p>
         <p>
           Бригадир:{" "}
-          <span className="font-medium">{`${device.storage.user.lastName} ${device.storage.user.firstName}`}</span>
+          <span className="font-medium">
+            {" "}
+            {device.storage.foreman
+              ? `${device.storage.foreman.lastName} ${device.storage.foreman.firstName}`
+              : "Не назначен"}
+          </span>
         </p>
         <p>
           Телефон:{" "}
-          <span className="font-medium">{device.storage.user.phoneNumber}</span>
+          <span className="font-medium">
+            {device.storage.foreman ? device.storage.foreman.phone : "-"}
+          </span>
         </p>
         <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
         <p className="text-center font-medium text-xl mt-5">

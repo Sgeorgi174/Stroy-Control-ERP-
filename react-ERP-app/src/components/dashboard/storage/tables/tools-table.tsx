@@ -9,9 +9,12 @@ import {
 import { ToolsDropDown } from "../dropdowns/tools-dropdown";
 import type { Tool } from "@/types/tool";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
+import { TabletSkeleton } from "../../tablet-skeleton";
 
 type ToolsTableProps = {
   tools: Tool[];
+  isLoading: boolean;
+  isError: boolean;
 };
 
 const toolStatusMap = {
@@ -22,7 +25,7 @@ const toolStatusMap = {
   WRITTEN_OFF: "Списан",
 };
 
-export function ToolsTable({ tools }: ToolsTableProps) {
+export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
   const { openSheet } = useToolsSheetStore();
 
   return (
@@ -48,6 +51,8 @@ export function ToolsTable({ tools }: ToolsTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
+          {isError && <TableRow></TableRow>}
+          {isLoading && <TabletSkeleton />}
           {tools.map((tool) => (
             <TableRow key={tool.id}>
               <TableCell></TableCell>
@@ -59,8 +64,14 @@ export function ToolsTable({ tools }: ToolsTableProps) {
                 {tool.name}
               </TableCell>
               <TableCell>{toolStatusMap[tool.status]}</TableCell>
-              <TableCell>{`${tool.user.lastName} ${tool.user.firstName}`}</TableCell>
-              <TableCell>{tool.user.phoneNumber}</TableCell>
+              <TableCell>
+                {tool.storage.foreman
+                  ? `${tool.storage.foreman.lastName} ${tool.storage.foreman.firstName}`
+                  : "Не назначен"}
+              </TableCell>
+              <TableCell>
+                {tool.storage.foreman ? tool.storage.foreman.phone : "-"}
+              </TableCell>
               <TableCell>{tool.storage.name}</TableCell>
               <TableCell>
                 <ToolsDropDown tool={tool} /> {/* 💡 ВАЖНО */}

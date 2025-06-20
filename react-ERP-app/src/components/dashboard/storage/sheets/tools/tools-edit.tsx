@@ -2,15 +2,14 @@ import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { objects } from "@/constants/objects&Users";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import type { Tool } from "@/types/tool";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useObjects } from "@/hooks/object/useObject";
+import { useUpdateTool } from "@/hooks/tool/useUpdateTool";
 
-// Схема валидации
 const formSchema = z.object({
   name: z.string().min(1, "Наименование обязательно"),
   serialNumber: z.string().min(1, "Серийный номер обязателен"),
@@ -24,6 +23,8 @@ type ToolsEditProps = {
 };
 
 export function ToolsEdit({ tool }: ToolsEditProps) {
+  const { data: objects = [] } = useObjects();
+
   const {
     register,
     handleSubmit,
@@ -35,32 +36,32 @@ export function ToolsEdit({ tool }: ToolsEditProps) {
     defaultValues: {
       name: tool.name,
       serialNumber: tool.serialNumber,
-      objectId: tool.objectId || objects[0].id,
+      objectId: tool.objectId || objects[0]?.id || "",
     },
     resolver: zodResolver(formSchema),
   });
 
   const { closeSheet } = useToolsSheetStore();
+
   const selectedObjectId = watch("objectId");
 
+  // Используем хук мутации
+  const updateToolMutation = useUpdateTool(tool.id);
+
   const onSubmit = (data: FormData) => {
-    try {
-      console.log("Собранные данные:", {
+    updateToolMutation.mutate(
+      {
         name: data.name.trim(),
         serialNumber: data.serialNumber.trim(),
         objectId: data.objectId,
-      });
-
-      reset();
-      closeSheet();
-
-      toast.success(
-        `Инструмент обновлён: ${data.name.trim()} (Серийник: ${data.serialNumber.trim()})`
-      );
-    } catch (error) {
-      console.error("Ошибка редактирования:", error);
-      toast.error("Не удалось отредактировать инструмент");
-    }
+      },
+      {
+        onSuccess: () => {
+          reset();
+          closeSheet();
+        },
+      }
+    );
   };
 
   return (
@@ -99,8 +100,12 @@ export function ToolsEdit({ tool }: ToolsEditProps) {
         </div>
 
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]">
-            Сохранить
+          <Button
+            type="submit"
+            className="w-[200px]"
+            disabled={updateToolMutation.isPending}
+          >
+            {updateToolMutation.isPending ? "Сохраняем..." : "Сохранить"}
           </Button>
         </div>
       </form>

@@ -8,9 +8,9 @@ import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import type { DeviceStatus } from "@/types/device";
 import type { Tool } from "@/types/tool";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useChangeToolStatus } from "@/hooks/tool/useCahngeStatus";
 
 type ToolsEditProps = { tool: Tool };
 
@@ -55,16 +55,18 @@ export function ToolsChangeStatus({ tool }: ToolsEditProps) {
 
   const selectedStatus = watch("status");
 
+  const mutation = useChangeToolStatus(tool.id);
+
   const onSubmit = (data: FormData) => {
-    try {
-      console.log("Собранные данные:", data);
-      reset();
-      closeSheet();
-      toast.success("Статус успешно изменён");
-    } catch (error) {
-      toast.error("Не удалось изменить статус");
-      console.error("Ошибка:", error);
-    }
+    mutation.mutate(
+      { status: data.status, comment: data.comment },
+      {
+        onSuccess: () => {
+          reset();
+          closeSheet();
+        },
+      }
+    );
   };
 
   return (
@@ -80,10 +82,17 @@ export function ToolsChangeStatus({ tool }: ToolsEditProps) {
       </p>
       <p>
         Бригадир:{" "}
-        <span className="font-medium">{`${tool.user.lastName} ${tool.user.firstName}`}</span>
+        <span className="font-medium">
+          {tool.storage.foreman
+            ? `${tool.storage.foreman.lastName} ${tool.storage.foreman.firstName}`
+            : "Не назначен"}
+        </span>
       </p>
       <p>
-        Телефон: <span className="font-medium">{tool.user.phoneNumber}</span>
+        Телефон:{" "}
+        <span className="font-medium">
+          {tool.storage.foreman ? tool.storage.foreman.phone : "-"}
+        </span>
       </p>
       <p>
         Место хранения: <span className="font-medium">{tool.storage.name}</span>
@@ -101,6 +110,7 @@ export function ToolsChangeStatus({ tool }: ToolsEditProps) {
               onSelectChange={(status) =>
                 setValue("status", status as DeviceStatus)
               }
+              disabled={mutation.isPending}
             />
             {errors.status && (
               <p className="text-sm text-red-500">{errors.status.message}</p>
@@ -113,6 +123,7 @@ export function ToolsChangeStatus({ tool }: ToolsEditProps) {
               {...register("comment")}
               placeholder="Укажите причину смены статуса"
               className="resize-none"
+              disabled={mutation.isPending}
             />
             {errors.comment && (
               <p className="text-sm text-red-500">{errors.comment.message}</p>
@@ -121,8 +132,12 @@ export function ToolsChangeStatus({ tool }: ToolsEditProps) {
         </div>
 
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]">
-            Сменить статус
+          <Button
+            type="submit"
+            className="w-[200px]"
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending ? "Сохраняем..." : "Сменить статус"}
           </Button>
         </div>
       </form>

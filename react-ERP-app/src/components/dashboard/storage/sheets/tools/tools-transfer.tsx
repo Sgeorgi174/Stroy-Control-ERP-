@@ -1,17 +1,16 @@
 import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-form";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { objects } from "@/constants/objects&Users";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import type { Tool } from "@/types/tool";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import toast from "react-hot-toast";
+import { useObjects } from "@/hooks/object/useObject";
+import { useTransferTool } from "@/hooks/tool/useTransferTool";
 
 type ToolsTransferProps = { tool: Tool };
 
-// Схема валидации
 const transferSchema = z
   .object({
     fromObjectId: z.string().min(1, "Исходный объект обязателен"),
@@ -30,6 +29,7 @@ type FormData = z.infer<typeof transferSchema>;
 
 export function ToolsTransfer({ tool }: ToolsTransferProps) {
   const { closeSheet } = useToolsSheetStore();
+  const { data: objects = [] } = useObjects();
 
   const {
     handleSubmit,
@@ -47,19 +47,19 @@ export function ToolsTransfer({ tool }: ToolsTransferProps) {
 
   const selectedToObjectId = watch("toObjectId");
 
+  // Используем хук мутации
+  const transferToolMutation = useTransferTool(tool.id);
+
   const onSubmit = (data: FormData) => {
-    try {
-      console.log("Собранные данные:", {
-        objectId: data.toObjectId,
-        toolId: tool.id,
-      });
-      reset();
-      closeSheet();
-      toast.success("Инструмент успешно перемещён");
-    } catch (error) {
-      toast.error("Не удалось переместить инструмент");
-      console.error("Ошибка:", error);
-    }
+    transferToolMutation.mutate(
+      { objectId: data.toObjectId },
+      {
+        onSuccess: () => {
+          reset();
+          closeSheet();
+        },
+      }
+    );
   };
 
   return (
@@ -110,8 +110,12 @@ export function ToolsTransfer({ tool }: ToolsTransferProps) {
         </div>
 
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]">
-            Переместить
+          <Button
+            type="submit"
+            className="w-[200px]"
+            disabled={transferToolMutation.isPending}
+          >
+            {transferToolMutation.isPending ? "Перемещаем..." : "Переместить"}
           </Button>
         </div>
       </form>

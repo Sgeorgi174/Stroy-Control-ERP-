@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { DeviceService } from './device.service';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
@@ -16,6 +17,7 @@ import { UpdateDto } from './dto/update.dto';
 import { TransferDto } from './dto/transfer.dto';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { GetToolsQueryDto } from 'src/tool/dto/get-tools-query.dto';
 
 @Controller('devices')
 export class DeviceController {
@@ -31,6 +33,12 @@ export class DeviceController {
   @Get('all')
   getAll() {
     return this.deviceService.getAll();
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Get('filter')
+  async getFiltered(@Query() query: GetToolsQueryDto) {
+    return this.deviceService.getFiltered(query);
   }
 
   @Authorization(Roles.OWNER)

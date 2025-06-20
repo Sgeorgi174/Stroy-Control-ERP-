@@ -9,8 +9,8 @@ import { EllipsisVertical } from "lucide-react";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import type { Tool } from "@/types/tool";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { AlertDialogDelete } from "../../alert-dialog-delete";
+import { useDeleteTool } from "@/hooks/tool/useDeleteTool";
 
 type ToolDropDownProps = { tool: Tool };
 
@@ -18,17 +18,17 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
   const { openSheet } = useToolsSheetStore();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
+  const deleteMutation = useDeleteTool();
+
   const handleDelete = async () => {
-    try {
-      // Здесь будет логика удаления
-      // Например: await api.delete(`/tools/${tool.id}`);
-      toast.success(`Инструмент "${tool.name}" успешно удален`);
-    } catch (error) {
-      toast.error("Не удалось удалить инструмент");
-      console.error("Ошибка при удалении:", error);
-    } finally {
-      setIsDeleteDialogOpen(false);
-    }
+    deleteMutation.mutate(tool.id, {
+      onSuccess: () => {
+        setIsDeleteDialogOpen(false);
+      },
+      onError: () => {
+        setIsDeleteDialogOpen(false); // Закрываем даже при ошибке
+      },
+    });
   };
 
   return (
@@ -72,6 +72,7 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
         handleDelete={handleDelete}
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
         item={tool}
+        isLoading={deleteMutation.isPending}
       />
     </>
   );

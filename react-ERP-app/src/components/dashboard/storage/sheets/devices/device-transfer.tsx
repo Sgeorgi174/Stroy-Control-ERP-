@@ -1,17 +1,16 @@
 import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-form";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { objects } from "@/constants/objects&Users";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import toast from "react-hot-toast";
 import type { Device } from "@/types/device";
 import { useDeviceSheetStore } from "@/stores/device-sheet-store";
+import { useTransferDevice } from "@/hooks/device/useTransferDevice";
+import { useObjects } from "@/hooks/object/useObject";
 
-type DeiceTransferProps = { device: Device };
+type DeviceTransferProps = { device: Device };
 
-// Схема валидации
 const transferSchema = z
   .object({
     fromObjectId: z.string().min(1, "Исходный объект обязателен"),
@@ -26,6 +25,7 @@ const transferSchema = z
       });
     }
   });
+
 type FormData = z.infer<typeof transferSchema>;
 
 const statusMap = {
@@ -36,7 +36,8 @@ const statusMap = {
   WRITTEN_OFF: "Списан",
 };
 
-export function DeviceTransfer({ device }: DeiceTransferProps) {
+export function DeviceTransfer({ device }: DeviceTransferProps) {
+  const { data: objects = [] } = useObjects();
   const { closeSheet } = useDeviceSheetStore();
 
   const {
@@ -47,27 +48,25 @@ export function DeviceTransfer({ device }: DeiceTransferProps) {
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      fromObjectId: device.storage.id,
+      fromObjectId: device.objectId,
       toObjectId: objects.find((o) => o.id !== device.storage.id)?.id ?? "",
     },
     resolver: zodResolver(transferSchema),
   });
 
   const selectedToObjectId = watch("toObjectId");
+  const { mutate: transferDevice, isPending } = useTransferDevice(device.id);
 
   const onSubmit = (data: FormData) => {
-    try {
-      console.log("Собранные данные:", {
-        objectId: data.toObjectId,
-        toolId: device.id,
-      });
-      reset();
-      closeSheet();
-      toast.success("Техника успешно перемещёна");
-    } catch (error) {
-      toast.error("Не удалось переместить технику");
-      console.error("Ошибка:", error);
-    }
+    transferDevice(
+      { objectId: data.toObjectId },
+      {
+        onSuccess: () => {
+          reset();
+          closeSheet();
+        },
+      }
+    );
   };
 
   return (
@@ -106,9 +105,8 @@ export function DeviceTransfer({ device }: DeiceTransferProps) {
             <ObjectSelectForForms
               selectedObjectId={selectedToObjectId}
               onSelectChange={(id) => id && setValue("toObjectId", id)}
-              objects={objects.filter(
-                (object) => object.id !== device.storage.id
-              )}
+              objects={objects.filter((o) => o.id !== device.storage.id)}
+              disabled={isPending}
             />
             {errors.toObjectId && (
               <p className="text-sm text-red-500">
@@ -119,8 +117,8 @@ export function DeviceTransfer({ device }: DeiceTransferProps) {
         </div>
 
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]">
-            Переместить
+          <Button type="submit" className="w-[200px]" disabled={isPending}>
+            {isPending ? "Перемещаем..." : "Переместить"}
           </Button>
         </div>
       </form>

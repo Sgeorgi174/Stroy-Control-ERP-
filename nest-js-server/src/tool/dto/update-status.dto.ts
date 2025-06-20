@@ -6,7 +6,7 @@ export class UpdateStatusDto {
     message: `Статус должен быть одним из: ${Object.values(ToolStatus).join(', ')}`,
   })
   @IsNotEmpty({ message: 'Новый статус обязателен' })
-  newStatus: ToolStatus;
+  status: ToolStatus;
 
   @IsNotEmpty({ message: 'Коментарий обязателен' })
   @IsString()

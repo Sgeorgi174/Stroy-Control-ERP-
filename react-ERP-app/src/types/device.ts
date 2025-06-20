@@ -9,10 +9,11 @@ export type DeviceStatus =
 
 export type Device = {
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
   name: string;
-  status: DeviceStatus;
   serialNumber: string;
+  status: DeviceStatus;
+  objectId: string;
+  createdAt: string;
+  updatedAt: string;
   storage: Object;
 };

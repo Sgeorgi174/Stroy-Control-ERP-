@@ -7,6 +7,6 @@ export type Object = {
   name: string;
   address: string;
   userId: string | null;
-  user: User | null;
+  foreman: User | null;
   employees: number;
 };

@@ -3,7 +3,6 @@ import { TypeTabs } from "../filter-panel/type-tabs";
 import { ObjectSelectForFilter } from "../filter-panel/filter-object-select";
 import { SeasonSelectForFilter } from "../filter-panel/filter-season-select";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
-import { objects } from "@/constants/objects&Users";
 import { FilterPanel } from "../filter-panel/filter-panel";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
@@ -12,6 +11,7 @@ import { TabletStatusSelectForFilter } from "../filter-panel/filter-tablet-statu
 import { ItemStatusSelectForFilter } from "../filter-panel/filter-items-select";
 import { useDeviceSheetStore } from "@/stores/device-sheet-store";
 import { useTabletSheetStore } from "@/stores/tablet-sheet-store";
+import { useObjects } from "@/hooks/object/useObject";
 
 export function StorageFilters() {
   const { activeTab, searchQuery, setSearchQuery } = useFilterPanelStore();
@@ -20,6 +20,8 @@ export function StorageFilters() {
   const openToolsSheet = useToolsSheetStore((s) => s.openSheet);
   const openDevicesSheet = useDeviceSheetStore((s) => s.openSheet);
   const openTabletsSheet = useTabletSheetStore((s) => s.openSheet);
+
+  const { data: objects = [] } = useObjects();
 
   const handleAdd = () => {
     switch (activeTab) {

@@ -15,6 +15,7 @@ import { AddDto } from './dto/add.dto';
 import { WriteOffDto } from './dto/write-off.dto';
 import { ClothesActions } from 'generated/prisma';
 import { GiveClothingDto } from './dto/give-clothing.dto';
+import { GetClothesQueryDto } from './dto/get-clothes-query.dto';
 
 @Injectable()
 export class ClothesService {
@@ -31,7 +32,6 @@ export class ClothesService {
           size: dto.size,
           price: dto.price,
           quantity: dto.quantity,
-          inTransit: dto.inTransit,
           objectId: dto.objectId,
           type: dto.type,
           season: dto.season,
@@ -63,6 +63,31 @@ export class ClothesService {
     });
   }
 
+  public async getFiltered(query: GetClothesQueryDto) {
+    const clothes = await this.prismaService.clothes.findMany({
+      where: {
+        ...(query.type ? { type: query.type } : {}),
+        ...(query.objectId ? { objectId: query.objectId } : {}),
+        ...(query.season ? { season: query.season } : {}),
+        ...(query.size ? { size: Number(query.size) } : {}),
+      },
+      include: {
+        storage: {
+          select: {
+            foreman: {
+              select: { firstName: true, lastName: true, phone: true },
+            },
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!clothes.length) throw new NotFoundException('Одежда не найдена');
+
+    return clothes;
+  }
+
   async update(id: string, dto: UpdateDto) {
     try {
       await this.getById(id); // чтобы вызвать NotFound заранее
@@ -74,7 +99,6 @@ export class ClothesService {
           size: dto.size,
           price: dto.price,
           quantity: dto.quantity,
-          inTransit: dto.inTransit,
           objectId: dto.objectId,
           type: dto.type,
           season: dto.season,

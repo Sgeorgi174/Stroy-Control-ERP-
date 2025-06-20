@@ -9,12 +9,19 @@ import {
 import { ClothesDropdown } from "../dropdowns/clothes-dropdown";
 import type { Clothes } from "@/types/clothes";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
+import { TabletSkeleton } from "../../tablet-skeleton";
 
 type ClothesTableProps = {
   clothes: Clothes[];
+  isLoading: boolean;
+  isError: boolean;
 };
 
-export function ClothesTable({ clothes }: ClothesTableProps) {
+export function ClothesTable({
+  clothes,
+  isLoading,
+  isError,
+}: ClothesTableProps) {
   const { openSheet } = useClothesSheetStore();
 
   return (
@@ -39,6 +46,8 @@ export function ClothesTable({ clothes }: ClothesTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
+          {isError && <TableRow></TableRow>}
+          {isLoading && <TabletSkeleton />}
           {clothes.map((item) => (
             <TableRow key={item.id}>
               <TableCell></TableCell>

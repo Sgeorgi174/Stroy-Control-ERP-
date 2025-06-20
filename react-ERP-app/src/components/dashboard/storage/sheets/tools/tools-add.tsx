@@ -1,14 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
 import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { objects } from "@/constants/objects&Users";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import { useObjects } from "@/hooks/object/useObject";
+import { useCreateTool } from "@/hooks/tool/useCreateTool";
 
 // 1. Схема валидации Zod
 const toolSchema = z.object({
@@ -20,6 +19,8 @@ const toolSchema = z.object({
 type FormData = z.infer<typeof toolSchema>;
 
 export function ToolsAdd() {
+  const { data: objects = [] } = useObjects();
+  const createTool = useCreateTool();
   const {
     register,
     handleSubmit,
@@ -40,25 +41,18 @@ export function ToolsAdd() {
   const selectedObjectId = watch("objectId");
 
   const onSubmit = (data: FormData) => {
-    try {
-      const trimmedName = data.name.trim();
-      const trimmedSerial = data.serialNumber.trim();
+    const payload = {
+      name: data.name.trim(),
+      serialNumber: data.serialNumber.trim(),
+      objectId: data.objectId,
+    };
 
-      console.log("Собранные данные:", {
-        name: trimmedName,
-        serialNumber: trimmedSerial,
-        objectId: data.objectId,
-      });
-
-      reset();
-      closeSheet();
-      toast.success(
-        `Успешно создан инструмент\nИмя: ${trimmedName}\nСерийник: ${trimmedSerial}\nОбъект: ${data.objectId}`
-      );
-    } catch (error) {
-      toast.error("Не удалось создать инструмент");
-      console.error("Ошибка:", error);
-    }
+    createTool.mutate(payload, {
+      onSuccess: () => {
+        reset();
+        closeSheet();
+      },
+    });
   };
 
   return (

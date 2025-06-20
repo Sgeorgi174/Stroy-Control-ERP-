@@ -105,7 +105,7 @@ model ToolHistory {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  tool   Tool   @relation(fields: [toolId], references: [id])
+  tool   Tool   @relation(fields: [toolId], references: [id], onDelete: Cascade)
   toolId String @map("tool_id")
 
   movedBy User   @relation(fields: [userId], references: [id])
@@ -123,7 +123,7 @@ model ToolStatusHistory {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  tool   Tool   @relation(fields: [toolId], references: [id])
+  tool   Tool   @relation(fields: [toolId], references: [id], onDelete: Cascade)
   toolId String @map("tool_id")
 
   changedBy User   @relation(fields: [userId], references: [id])
@@ -166,7 +166,7 @@ model DeviceHistory {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  device   Device @relation(fields: [deviceId], references: [id])
+  device   Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   deviceId String @map("device_id")
 
   movedBy User   @relation(fields: [userId], references: [id])
@@ -184,7 +184,7 @@ model DeviceStatusHistory {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  device   Device @relation(fields: [deviceId], references: [id])
+  device   Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   deviceId String @map("device_id")
 
   changedBy User   @relation(fields: [userId], references: [id])
@@ -289,7 +289,7 @@ model TabletHistory {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  tablet   Tablet @relation(fields: [tabletId], references: [id])
+  tablet   Tablet @relation(fields: [tabletId], references: [id], onDelete: Cascade)
   tabletId String @map("tablet_id")
 
   changedBy User   @relation(fields: [userId], references: [id])

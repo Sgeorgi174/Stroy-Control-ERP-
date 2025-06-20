@@ -11,6 +11,7 @@ import { ToolHistoryService } from 'src/tool-history/tool-history.service';
 import { TransferDto } from './dto/transfer.dto';
 import { handlePrismaError } from '../libs/common/utils/prisma-error.util';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { GetToolsQueryDto } from './dto/get-tools-query.dto';
 
 @Injectable()
 export class ToolService {
@@ -65,6 +66,35 @@ export class ToolService {
     return tool;
   }
 
+  public async getFiltered(query: GetToolsQueryDto) {
+    const tools = await this.prismaService.tool.findMany({
+      where: {
+        ...(query.objectId ? { objectId: query.objectId } : {}),
+        ...(query.status ? { status: query.status } : {}),
+        ...(query.serialNumber
+          ? { serialNumber: { contains: query.serialNumber } }
+          : {}),
+        ...(query.name
+          ? { name: { contains: query.name, mode: 'insensitive' } }
+          : {}),
+      },
+      include: {
+        storage: {
+          select: {
+            foreman: {
+              select: { firstName: true, lastName: true, phone: true },
+            },
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!tools.length) throw new NotFoundException('Инструменты не найдены');
+
+    return tools;
+  }
+
   public async getAll() {
     return this.prismaService.tool.findMany({ include: { storage: true } });
   }
@@ -97,7 +127,7 @@ export class ToolService {
       return await this.prismaService.$transaction(async (prisma) => {
         const updatedTool = await prisma.tool.update({
           where: { id },
-          data: { status: dto.newStatus },
+          data: { status: dto.status },
           include: { storage: true },
         });
 
@@ -106,7 +136,7 @@ export class ToolService {
             toolId: tool.id,
             userId,
             fromStatus: tool.status,
-            toStatus: dto.newStatus,
+            toStatus: dto.status,
             comment: dto.comment,
           },
         });

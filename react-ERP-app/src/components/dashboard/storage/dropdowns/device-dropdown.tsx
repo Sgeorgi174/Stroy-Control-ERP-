@@ -7,28 +7,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { EllipsisVertical } from "lucide-react";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { AlertDialogDelete } from "../../alert-dialog-delete";
 import type { Device } from "@/types/device";
 import { useDeviceSheetStore } from "@/stores/device-sheet-store";
+import { useDeleteDevice } from "@/hooks/device/useDeleteDevice";
 
 type DeviceDropDownProps = { device: Device };
 
 export function DeviceDropDown({ device }: DeviceDropDownProps) {
   const { openSheet } = useDeviceSheetStore();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const deleteMutation = useDeleteDevice();
 
   const handleDelete = async () => {
-    try {
-      // Здесь будет логика удаления
-      // Например: await api.delete(`/tools/${tool.id}`);
-      toast.success(`Техника "${device.name}" успешно удалена`);
-    } catch (error) {
-      toast.error("Не удалось удалить технику");
-      console.error("Ошибка при удалении:", error);
-    } finally {
-      setIsDeleteDialogOpen(false);
-    }
+    deleteMutation.mutate(device.id, {
+      onSettled: () => setIsDeleteDialogOpen(false),
+    });
   };
 
   return (
@@ -68,6 +62,7 @@ export function DeviceDropDown({ device }: DeviceDropDownProps) {
       </DropdownMenu>
 
       <AlertDialogDelete
+        isLoading={deleteMutation.isPending}
         isDeleteDialogOpen={isDeleteDialogOpen}
         handleDelete={handleDelete}
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}

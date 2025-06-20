@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ClothesService } from './clothes.service';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
@@ -21,6 +22,7 @@ import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { AddDto } from './dto/add.dto';
 import { WriteOffDto } from './dto/write-off.dto';
 import { GiveClothingDto } from './dto/give-clothing.dto';
+import { GetClothesQueryDto } from './dto/get-clothes-query.dto';
 
 @Controller('clothes')
 export class ClothesController {
@@ -37,6 +39,12 @@ export class ClothesController {
   @Get('all')
   async getAll() {
     return this.clothesService.getAll();
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Get('filter')
+  async getFiltered(@Query() query: GetClothesQueryDto) {
+    return this.clothesService.getFiltered(query);
   }
 
   @Authorization(Roles.OWNER)

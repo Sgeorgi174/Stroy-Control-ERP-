@@ -2,12 +2,12 @@ import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { objects } from "@/constants/objects&Users";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useDeviceSheetStore } from "@/stores/device-sheet-store";
+import { useCreateDevice } from "@/hooks/device/useCreateDevice";
+import { useObjects } from "@/hooks/object/useObject";
 
 // 1. Схема валидации Zod
 const deviceSchema = z.object({
@@ -19,6 +19,7 @@ const deviceSchema = z.object({
 type FormData = z.infer<typeof deviceSchema>;
 
 export function DeviceAdd() {
+  const { data: objects = [] } = useObjects();
   const {
     register,
     handleSubmit,
@@ -38,26 +39,25 @@ export function DeviceAdd() {
   const { closeSheet } = useDeviceSheetStore();
   const selectedObjectId = watch("objectId");
 
-  const onSubmit = (data: FormData) => {
-    try {
-      const trimmedName = data.name.trim();
-      const trimmedSerial = data.serialNumber.trim();
+  const { mutate: createDevice, isPending } = useCreateDevice();
 
-      console.log("Собранные данные:", {
+  const onSubmit = (data: FormData) => {
+    const trimmedName = data.name.trim();
+    const trimmedSerial = data.serialNumber.trim();
+
+    createDevice(
+      {
         name: trimmedName,
         serialNumber: trimmedSerial,
         objectId: data.objectId,
-      });
-
-      reset();
-      closeSheet();
-      toast.success(
-        `Успешно создана техника\nИмя: ${trimmedName}\nСерийник: ${trimmedSerial}\nОбъект: ${data.objectId}`
-      );
-    } catch (error) {
-      toast.error("Не удалось создать технику");
-      console.error("Ошибка:", error);
-    }
+      },
+      {
+        onSuccess: () => {
+          reset();
+          closeSheet();
+        },
+      }
+    );
   };
 
   return (
@@ -71,6 +71,7 @@ export function DeviceAdd() {
             placeholder="Введите наименование"
             type="text"
             {...register("name")}
+            disabled={isPending}
           />
           {errors.name && (
             <p className="text-sm text-red-500">{errors.name.message}</p>
@@ -85,6 +86,7 @@ export function DeviceAdd() {
             placeholder="Введите серийный номер"
             type="text"
             {...register("serialNumber")}
+            disabled={isPending}
           />
           {errors.serialNumber && (
             <p className="text-sm text-red-500">
@@ -102,6 +104,7 @@ export function DeviceAdd() {
               if (id) setValue("objectId", id);
             }}
             objects={objects}
+            disabled={isPending}
           />
           {errors.objectId && (
             <p className="text-sm text-red-500">{errors.objectId.message}</p>
@@ -110,8 +113,8 @@ export function DeviceAdd() {
 
         {/* Кнопка */}
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]">
-            Добавить
+          <Button type="submit" className="w-[200px]" disabled={isPending}>
+            {isPending ? "Добавление..." : "Добавить"}
           </Button>
         </div>
       </form>
