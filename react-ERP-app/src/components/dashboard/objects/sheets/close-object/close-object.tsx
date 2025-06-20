@@ -4,6 +4,6 @@ type CloseObjectProps = {
   object: Object;
 };
 
-export default function CloseObject({ object }: CloseObjectProps) {
+export function CloseObject({ object }: CloseObjectProps) {
   return <div>close-object</div>;
 }

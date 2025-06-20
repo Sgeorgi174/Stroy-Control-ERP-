@@ -1,4 +1,4 @@
-import Calendar01 from "@/components/calendar-01";
+import { Calendar01 } from "@/components/calendar-01";
 import { Card } from "@/components/ui/card";
 import { Clock } from "@/components/ui/clock";
 

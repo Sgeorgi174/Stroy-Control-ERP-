@@ -6,11 +6,11 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useObjectSheetStore } from "@/stores/objects-sheet-store";
-import ObjectAdd from "./object-add";
-import ObjectEdit from "./object-edit";
-import ObjectDetails from "./object-details";
-import ObjectAddEmployee from "./object-add-employee";
-import CloseObject from "./close-object/close-object";
+import { ObjectAdd } from "./object-add";
+import { ObjectEdit } from "./object-edit";
+import { ObjectDetails } from "./object-details";
+import { ObjectAddEmployee } from "./object-add-employee";
+import { CloseObject } from "./close-object/close-object";
 
 export function ObjectsSheet() {
   const { isOpen, mode, selectedObject, closeSheet } = useObjectSheetStore();

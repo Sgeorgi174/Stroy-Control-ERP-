@@ -3,7 +3,7 @@ import { AddButton } from "../filter-panel/add-button";
 import { FilterPanel } from "../filter-panel/filter-panel";
 import { SearchInput } from "../filter-panel/search-input";
 import { ObjectSelectForFilter } from "../filter-panel/filter-object-select";
-import { objects } from "@/constants/objects";
+import { objects } from "@/constants/objects&Users";
 
 export function EmployeesFilter() {
   const { searchQuery, setSearchQuery } = useFilterPanelStore();

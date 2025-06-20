@@ -4,6 +4,6 @@ type ObjectAddEmployeeProps = {
   object: Object;
 };
 
-export default function ObjectAddEmployee({ object }: ObjectAddEmployeeProps) {
+export function ObjectAddEmployee({ object }: ObjectAddEmployeeProps) {
   return <div>object-add-employee</div>;
 }

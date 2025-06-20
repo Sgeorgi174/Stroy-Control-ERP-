@@ -40,7 +40,7 @@ export function ObjectsTable({ objects }: ObjectsTableProps) {
               <TableCell className="font-medium">{object.name}</TableCell>
               <TableCell>{object.address}</TableCell>
               <TableCell>{`${object.user.lastName} ${object.user.firstName}`}</TableCell>
-              <TableCell>{object.user.phoneNumber}</TableCell>
+              <TableCell>{object.user.phone}</TableCell>
               <TableCell>{object.employees}</TableCell>
               <TableCell>
                 <ObjectDropDown object={object} />

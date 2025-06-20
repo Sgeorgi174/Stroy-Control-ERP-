@@ -44,7 +44,9 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
               <TableCell className="font-medium">{`${employee.lastName} ${employee.firstName} ${employee.fatherName}`}</TableCell>
               <TableCell>{positionMap[employee.position]}</TableCell>
               <TableCell>{employee.phoneNumber}</TableCell>
-              <TableCell>{employee.workPlace.name}</TableCell>
+              <TableCell>
+                {employee.workPlace ? employee.workPlace.name : "На назначен"}
+              </TableCell>
               <TableCell>Работает</TableCell>
               <TableCell>
                 <EllipsisVertical />

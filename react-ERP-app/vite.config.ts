@@ -9,7 +9,7 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
-    allowedHosts: ["soxc3o-185-247-185-62.ru.tuna.am"],
+    allowedHosts: ["pyk8l9-77-222-104-191.ru.tuna.am"],
   },
   resolve: {
     alias: {

@@ -1,5 +1,5 @@
 import type { Employee } from "@/types/employee";
-import { objects } from "./objects";
+import { objects } from "./objects&Users";
 
 export const employees: Employee[] = [
   {
@@ -247,7 +247,7 @@ export const employees: Employee[] = [
     clothingSize: 54,
     footwearSize: 45,
     position: "FOREMAN",
-    workPlace: objects[2], // Челябинск
+    workPlace: null, // Челябинск
   },
   {
     id: "j0k1l2m3-n4o5-6789-p0q1-r2s3t4u5v6w7",

@@ -2,7 +2,7 @@ import type { Clothes } from "@/types/clothes";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { objects } from "@/constants/objects";
+import { objects } from "@/constants/objects&Users";
 import toast from "react-hot-toast";
 import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-form";
 import { Button } from "@/components/ui/button";

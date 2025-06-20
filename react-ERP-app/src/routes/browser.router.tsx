@@ -4,7 +4,7 @@ import { Dashboard } from "@/pages/dashboard/Dashboard";
 import { Storage } from "@/pages/storage/Storage";
 import { Employees } from "@/pages/employees/Employees";
 import { Objects } from "@/pages/objects/Objects";
-import Auth from "@/pages/auth/Auth";
+import { Auth } from "@/pages/auth/Auth";
 import { MyObject } from "@/pages/my-object/MyObject";
 import { NotFound } from "@/pages/not-found/NotFound";
 

@@ -11,5 +11,5 @@ export type Employee = {
   clothingSize: number;
   footwearSize: number;
   position: "FOREMAN" | "ELECTRICAN" | "LABORER";
-  workPlace: Object; // Миасс
+  workPlace: Object | null; // Миасс
 };

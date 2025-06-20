@@ -4,7 +4,7 @@ import { SizeSelectForForms } from "@/components/dashboard/select-size-for-form"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { objects } from "@/constants/objects";
+import { objects } from "@/constants/objects&Users";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
 import type { Season } from "@/types/season";

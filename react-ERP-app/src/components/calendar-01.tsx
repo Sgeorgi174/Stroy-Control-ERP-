@@ -1,7 +1,7 @@
 import { Calendar } from "@/components/ui/calendar";
 import { ru } from "date-fns/locale";
 
-export default function Calendar01() {
+export function Calendar01() {
   const today = new Date();
 
   return (

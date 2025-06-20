@@ -3,7 +3,7 @@ import { TypeTabs } from "../filter-panel/type-tabs";
 import { ObjectSelectForFilter } from "../filter-panel/filter-object-select";
 import { SeasonSelectForFilter } from "../filter-panel/filter-season-select";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
-import { objects } from "@/constants/objects";
+import { objects } from "@/constants/objects&Users";
 import { FilterPanel } from "../filter-panel/filter-panel";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";

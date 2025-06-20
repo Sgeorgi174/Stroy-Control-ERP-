@@ -1,5 +1,5 @@
 import type { Device } from "@/types/device";
-import { objects } from "./objects";
+import { objects } from "./objects&Users";
 
 export const devices: Device[] = [
   {
