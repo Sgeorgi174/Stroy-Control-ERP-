@@ -104,15 +104,16 @@ export const useTransferClothes = (clothesId: string) => {
 };
 
 // Подтверждение передачи одежды
-export const useConfirmClothesTransfer = (clothesId: string) => {
+export const useConfirmClothesTransfer = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => confirmClothesTransfer(clothesId),
-    onSuccess: () => {
+    mutationFn: ({ id, quantity }: { id: string; quantity: number }) =>
+      confirmClothesTransfer(id, quantity),
+    onSuccess: (_, { id }) => {
       toast.success("Передача одежды подтверждена");
       queryClient.invalidateQueries({ queryKey: ["clothes"] });
-      queryClient.invalidateQueries({ queryKey: ["clothes", clothesId] });
+      queryClient.invalidateQueries({ queryKey: ["clothes", id] });
     },
     onError: (error: any) => {
       const message =

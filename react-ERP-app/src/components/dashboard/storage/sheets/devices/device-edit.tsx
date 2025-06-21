@@ -2,7 +2,6 @@ import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { objects } from "@/constants/objects&Users";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +9,7 @@ import { z } from "zod";
 import type { Device } from "@/types/device";
 import { useDeviceSheetStore } from "@/stores/device-sheet-store";
 import { useUpdateDevice } from "@/hooks/device/useUpdateDevice";
+import { useObjects } from "@/hooks/object/useObject";
 
 const formSchema = z.object({
   name: z.string().min(1, "Наименование обязательно"),
@@ -24,6 +24,8 @@ type DeviceEditProps = {
 };
 
 export function DeviceEdit({ device }: DeviceEditProps) {
+  const { data: objects = [] } = useObjects();
+
   const {
     register,
     handleSubmit,
@@ -41,6 +43,7 @@ export function DeviceEdit({ device }: DeviceEditProps) {
   });
 
   const { closeSheet } = useDeviceSheetStore();
+
   const selectedObjectId = watch("objectId");
 
   const { mutate: updateDevice, isPending } = useUpdateDevice(device.id);

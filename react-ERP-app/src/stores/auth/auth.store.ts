@@ -2,7 +2,13 @@ import { login, logout, checkAuth } from "@/features/auth/auth.api";
 import { create } from "zustand";
 
 type AuthStore = {
-  user: { id: string; login: string; role: string } | null;
+  user: {
+    id: string;
+    login: string;
+    role: string;
+    firstName: string;
+    lastName: string;
+  } | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   initAuth: () => Promise<void>;

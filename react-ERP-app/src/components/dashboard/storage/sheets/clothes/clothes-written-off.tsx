@@ -2,18 +2,20 @@ import type { Clothes } from "@/types/clothes";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { objects } from "@/constants/objects&Users";
-import toast from "react-hot-toast";
 import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { Label } from "@/components/ui/label";
+import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
+import { useWriteOffClothes } from "@/hooks/clothes/useClothes";
+import { useObjects } from "@/hooks/object/useObject";
 
 type ClothesWrittenOffProps = { clothes: Clothes };
 
 export function ClothesWrittenOff({ clothes }: ClothesWrittenOffProps) {
   const { closeSheet } = useClothesSheetStore();
+  const writeOffClothesMutation = useWriteOffClothes(clothes.id);
+  const { data: objects = [] } = useObjects();
 
   const formSchema = z.object({
     fromObjectId: z.string(),
@@ -41,18 +43,16 @@ export function ClothesWrittenOff({ clothes }: ClothesWrittenOffProps) {
     },
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     try {
-      console.log("Собранные данные:", {
-        clotheId: clothes.id,
+      await writeOffClothesMutation.mutateAsync({
         quantity: data.quantity,
       });
+
       reset();
       closeSheet();
-      toast.success("Успешно перемещен комплект одежды");
     } catch (error) {
-      toast.error("Не удалось переместить комплект одежды");
-      console.error("Ошибка:", error);
+      console.error("Ошибка при списании одежды:", error);
     }
   };
 
@@ -110,9 +110,13 @@ export function ClothesWrittenOff({ clothes }: ClothesWrittenOffProps) {
             />
           </div>
         </div>
-        <div className="flex justify-center mt-25">
-          <Button type="submit" className="w-[200px]">
-            Списать
+        <div className="flex justify-center mt-10">
+          <Button
+            type="submit"
+            className="w-[200px]"
+            disabled={writeOffClothesMutation.isPending}
+          >
+            {writeOffClothesMutation.isPending ? "Списание..." : "Списать"}
           </Button>
         </div>
       </form>

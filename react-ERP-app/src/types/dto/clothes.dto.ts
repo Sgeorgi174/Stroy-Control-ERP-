@@ -21,7 +21,12 @@ export interface UpdateClothesDto {
 }
 
 export interface TransferClothesDto {
-  objectId: string;
+  toObjectId: string;
+  quantity: number;
+}
+
+export interface ConfirmTransferClothesDto {
+  quantity: number;
 }
 
 export interface WriteOffClothesDto {

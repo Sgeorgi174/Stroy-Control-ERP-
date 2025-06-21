@@ -2,18 +2,20 @@ import type { Clothes } from "@/types/clothes";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { objects } from "@/constants/objects&Users";
-import toast from "react-hot-toast";
 import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { Label } from "@/components/ui/label";
+import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
+import { useAddClothes } from "@/hooks/clothes/useClothes";
+import { useObjects } from "@/hooks/object/useObject";
 
 type ClothesAddProps = { clothes: Clothes };
 
 export function ClothesAdd({ clothes }: ClothesAddProps) {
   const { closeSheet } = useClothesSheetStore();
+  const addClothesMutation = useAddClothes(clothes.id);
+  const { data: objects = [] } = useObjects();
 
   const formSchema = z.object({
     fromObjectId: z.string(),
@@ -38,18 +40,16 @@ export function ClothesAdd({ clothes }: ClothesAddProps) {
     },
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     try {
-      console.log("Собранные данные:", {
-        clotheId: clothes.id,
+      await addClothesMutation.mutateAsync({
         quantity: data.quantity,
       });
+
       reset();
       closeSheet();
-      toast.success("Успешно перемещен комплект одежды");
     } catch (error) {
-      toast.error("Не удалось переместить комплект одежды");
-      console.error("Ошибка:", error);
+      console.error("Ошибка при добавлении одежды:", error);
     }
   };
 
@@ -90,7 +90,6 @@ export function ClothesAdd({ clothes }: ClothesAddProps) {
               id="quantity"
               type="number"
               min="1"
-              max={clothes.quantity}
               {...register("quantity", { valueAsNumber: true })}
             />
             {errors.quantity && (
@@ -107,9 +106,13 @@ export function ClothesAdd({ clothes }: ClothesAddProps) {
             />
           </div>
         </div>
-        <div className="flex justify-center mt-25">
-          <Button type="submit" className="w-[200px]">
-            Пополнить
+        <div className="flex justify-center mt-10">
+          <Button
+            type="submit"
+            className="w-[200px]"
+            disabled={addClothesMutation.isPending}
+          >
+            {addClothesMutation.isPending ? "Пополнение..." : "Пополнить"}
           </Button>
         </div>
       </form>

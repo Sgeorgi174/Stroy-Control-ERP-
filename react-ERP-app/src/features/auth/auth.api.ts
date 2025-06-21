@@ -1,27 +1,11 @@
-export const api = async (url: string, options: RequestInit = {}) => {
-  const response = await fetch(`http://localhost:4000${url}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-    credentials: "include", // Для кук сессии
-  });
+import { api } from "@/lib/api";
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "Request failed");
-  }
-
-  return response.json();
-};
-
+// login
 export const login = (data: { login: string; password: string }) =>
-  api("/auth/login", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
+  api.post("/auth/login", data).then((res) => res.data);
 
-export const logout = () => api("/auth/logout", { method: "POST" });
+// logout
+export const logout = () => api.post("/auth/logout").then((res) => res.data);
 
-export const checkAuth = () => api("/auth/me");
+// checkAuth
+export const checkAuth = () => api.get("/auth/me").then((res) => res.data);

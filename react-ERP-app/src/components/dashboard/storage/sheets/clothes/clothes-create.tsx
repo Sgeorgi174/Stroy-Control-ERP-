@@ -4,12 +4,12 @@ import { SizeSelectForForms } from "@/components/dashboard/select-size-for-form"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { objects } from "@/constants/objects&Users";
+import { useCreateClothes } from "@/hooks/clothes/useClothes";
+import { useObjects } from "@/hooks/object/useObject";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
 import type { Season } from "@/types/season";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 
 type FormData = {
   name: string;
@@ -23,6 +23,8 @@ type FormData = {
 
 export function ClothesCreate() {
   const { activeTab } = useFilterPanelStore();
+  const createClothesMutation = useCreateClothes();
+  const { data: objects = [] } = useObjects();
 
   const {
     register,
@@ -30,7 +32,7 @@ export function ClothesCreate() {
     setValue,
     watch,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
       name: "",
@@ -49,24 +51,22 @@ export function ClothesCreate() {
   const selectedSeason = watch("season");
   const selectedSize = watch("size");
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     try {
-      console.log("Собранные данные:", {
+      await createClothesMutation.mutateAsync({
         name: data.name.trim(),
         objectId: data.objectId,
+        size: data.size,
+        price: data.price,
+        quantity: data.quantity,
         type: data.type,
         season: data.season,
       });
+
       reset();
       closeSheet();
-      toast.success(
-        `Успешно создана одежда Имя: ${data.name.trim()} Объект: ${
-          data.objectId
-        } Тип: ${data.type} Сезон: ${data.season}`
-      );
     } catch (error) {
-      toast.error("Не удалось создать одежду");
-      console.error("Ошибка:", error);
+      console.error("Ошибка при создании одежды:", error);
     }
   };
 
@@ -154,8 +154,14 @@ export function ClothesCreate() {
         </div>
 
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]" disabled={isSubmitting}>
-            Добавить
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={createClothesMutation.isPending}
+          >
+            {createClothesMutation.isPending
+              ? "Добавление..."
+              : "Добавить одежду"}
           </Button>
         </div>
       </form>

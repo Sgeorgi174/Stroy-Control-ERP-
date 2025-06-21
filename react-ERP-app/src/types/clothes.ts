@@ -1,5 +1,3 @@
-import type { Object } from "./object";
-
 export type ClothesType = "CLOTHING" | "FOOTWEAR";
 export type Seasons = "SUMMER" | "WINTER";
 
@@ -15,5 +13,12 @@ export type Clothes = {
   quantity: number;
   inTransit: number;
   objectId: string;
-  storage: Object;
+  storage: {
+    foreman: {
+      firstName: string;
+      lastName: string;
+      phone: string;
+    } | null;
+    name: string;
+  };
 };

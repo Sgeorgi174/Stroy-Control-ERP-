@@ -60,8 +60,11 @@ export const transferClothes = async (
 };
 
 // Подтвердить передачу одежды
-export const confirmClothesTransfer = async (id: string): Promise<Clothes> => {
-  const res = await api.patch(`/clothes/confirm/${id}`);
+export const confirmClothesTransfer = async (
+  id: string,
+  quantity: number
+): Promise<Clothes> => {
+  const res = await api.patch(`/clothes/confirm/${id}`, { quantity });
   return res.data;
 };
 

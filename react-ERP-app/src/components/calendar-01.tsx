@@ -12,7 +12,7 @@ export function Calendar01() {
       locale={ru}
       weekStartsOn={1}
       showOutsideDays={false}
-      className="w-full bg-transparent pointer-events-none"
+      className="bg-transparent pointer-events-none"
       hideNavigation
     />
   );

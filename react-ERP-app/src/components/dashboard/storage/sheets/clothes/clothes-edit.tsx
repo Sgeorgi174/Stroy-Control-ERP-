@@ -4,16 +4,15 @@ import { SizeSelectForForms } from "@/components/dashboard/select-size-for-form"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { objects } from "@/constants/objects&Users";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
 import type { Clothes } from "@/types/clothes";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useUpdateClothes } from "@/hooks/clothes/useClothes";
+import { useObjects } from "@/hooks/object/useObject";
 
-// Схема валидации
 const clothesSchema = z.object({
   name: z.string().min(1, "Это поле обязательно"),
   size: z.number().min(30).max(60, "Размер вне диапазона"),
@@ -31,6 +30,8 @@ type ClothesEditProps = { clothes: Clothes };
 export function ClothesEdit({ clothes }: ClothesEditProps) {
   const { activeTab } = useFilterPanelStore();
   const { closeSheet } = useClothesSheetStore();
+  const updateClothesMutation = useUpdateClothes(clothes.id);
+  const { data: objects = [] } = useObjects();
 
   const {
     register,
@@ -58,17 +59,13 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
   const selectedSeason = watch("season");
   const selectedSize = watch("size");
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     try {
-      console.log("Собранные данные:", data);
+      await updateClothesMutation.mutateAsync(data);
       reset(data);
       closeSheet();
-      toast.success(
-        `Успешно изменена одежда Имя: ${data.name} Объект: ${data.objectId} Тип: ${data.type}`
-      );
     } catch (error) {
-      toast.error("Не удалось изменить комплект одежды");
-      console.error("Ошибка:", error);
+      console.error("Ошибка при обновлении одежды:", error);
     }
   };
 
@@ -156,8 +153,12 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
         </div>
 
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]" disabled={!isValid}>
-            Сохранить
+          <Button
+            type="submit"
+            className="w-[200px]"
+            disabled={!isValid || updateClothesMutation.isPending}
+          >
+            {updateClothesMutation.isPending ? "Сохранение..." : "Сохранить"}
           </Button>
         </div>
       </form>
