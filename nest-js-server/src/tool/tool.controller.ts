@@ -32,17 +32,11 @@ export class ToolController {
     return this.toolService.create(dto);
   }
 
-  // @Authorization(Roles.OWNER, Roles.FOREMAN)
-  // @Get()
-  // async getAll() {
-  //   return this.toolService.getAll();
-  // }
-
-  // @Authorization(Roles.OWNER)
-  // @Get(':id')
-  // async getById(@Param('id') id: string) {
-  //   return this.toolService.getById(id);
-  // }
+  @Authorization(Roles.OWNER)
+  @Get('by-id/:id')
+  async getById(@Param('id') id: string) {
+    return this.toolService.getById(id);
+  }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('filter')

@@ -6,6 +6,8 @@ import { TransferTabletDto } from './dto/transfer.dto';
 import { UpdateTabletStatusDto } from './dto/update-status.dto';
 import { TabletHistoryService } from 'src/tablet-history/tablet-history.service';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
+import { GetTabletsQueryDto } from './dto/get-tablet-query.dto';
+import { buildStatusFilter } from 'src/libs/common/utils/buildStatusFilter';
 
 @Injectable()
 export class TabletService {
@@ -25,8 +27,38 @@ export class TabletService {
     }
   }
 
-  async getAll() {
-    return this.prismaService.tablet.findMany({ include: { employee: true } });
+  public async getFiltered(query: GetTabletsQueryDto) {
+    const statusFilter = buildStatusFilter(query.status);
+    const tablets = await this.prismaService.tablet.findMany({
+      where: {
+        ...statusFilter,
+        ...(query.searchQuery
+          ? {
+              OR: [
+                {
+                  serialNumber: {
+                    contains: query.searchQuery,
+                    mode: 'insensitive',
+                  },
+                },
+                { name: { contains: query.searchQuery, mode: 'insensitive' } },
+              ],
+            }
+          : {}),
+      },
+      include: {
+        employee: {
+          select: {
+            firstName: true,
+            lastName: true,
+            phoneNumber: true,
+            id: true,
+          },
+        },
+      },
+    });
+
+    return tablets;
   }
 
   async getById(id: string) {
@@ -59,7 +91,13 @@ export class TabletService {
       return await this.prismaService.$transaction(async (prisma) => {
         const updated = await prisma.tablet.update({
           where: { id },
-          data: { status: dto.newStatus },
+          data: {
+            status: dto.status,
+            employeeId:
+              dto.status === 'LOST' || dto.status === 'WRITTEN_OFF'
+                ? null
+                : tablet.employeeId,
+          },
           include: { employee: true },
         });
 
@@ -67,7 +105,7 @@ export class TabletService {
           {
             tabletId: tablet.id,
             fromStatus: tablet.status,
-            toStatus: dto.newStatus,
+            toStatus: dto.status,
           },
           userId,
         );

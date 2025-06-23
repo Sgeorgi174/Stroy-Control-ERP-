@@ -7,11 +7,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { EllipsisVertical } from "lucide-react";
 import { useState } from "react";
-import toast from "react-hot-toast";
-import { AlertDialogDelete } from "../../alert-dialog-delete";
 import type { Tablet } from "@/types/tablet";
 import { useTabletSheetStore } from "@/stores/tablet-sheet-store";
+import { AlertDialogDelete } from "../../alert-dialog-delete";
 import { AlertDialogRelease } from "../alert-dialog-release";
+import { useDeleteTablet } from "@/hooks/tablet/useDeleteTablet";
+import { useReleaseTablet } from "@/hooks/tablet/useReleaseTablet";
 
 type TabletDropDownProps = { tablet: Tablet };
 
@@ -20,30 +21,21 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isReleaseDialogOpen, setIsReleaseDialogOpen] = useState(false);
 
-  const handleDelete = async () => {
-    try {
-      // Здесь будет логика удаления
-      // Например: await api.delete(`/tools/${tool.id}`);
-      toast.success(`Инструмент "${tablet.name}" успешно удален`);
-    } catch (error) {
-      toast.error("Не удалось удалить инструмент");
-      console.error("Ошибка при удалении:", error);
-    } finally {
-      setIsDeleteDialogOpen(false);
-    }
+  const deleteMutation = useDeleteTablet();
+  const releaseMutation = useReleaseTablet();
+
+  const handleDelete = () => {
+    deleteMutation.mutate(tablet.id, {
+      onSuccess: () => setIsDeleteDialogOpen(false),
+      onError: () => setIsDeleteDialogOpen(false),
+    });
   };
 
-  const handleRelease = async () => {
-    try {
-      // Здесь будет логика возврата
-      // Пример: await api.post(`/tablets/${tablet.id}/release`);
-      toast.success(`Планшет "${tablet.name}" успешно возвращен`);
-    } catch (error) {
-      toast.error("Не удалось вернуть планшет");
-      console.error("Ошибка при возврате:", error);
-    } finally {
-      setIsReleaseDialogOpen(false);
-    }
+  const handleRelease = () => {
+    releaseMutation.mutate(tablet.id, {
+      onSuccess: () => setIsReleaseDialogOpen(false),
+      onError: () => setIsReleaseDialogOpen(false),
+    });
   };
 
   return (
@@ -86,6 +78,7 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
         handleDelete={handleDelete}
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
         item={tablet}
+        isLoading={deleteMutation.isPending}
       />
 
       <AlertDialogRelease
@@ -93,6 +86,7 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
         isReleaseDialogOpen={isReleaseDialogOpen}
         setIsReleaseDialogOpen={setIsReleaseDialogOpen}
         handleRelease={handleRelease}
+        isLoading={releaseMutation.isPending}
       />
     </>
   );

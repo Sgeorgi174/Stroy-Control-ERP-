@@ -12,6 +12,7 @@ import { TransferDto } from './dto/transfer.dto';
 import { handlePrismaError } from '../libs/common/utils/prisma-error.util';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { GetToolsQueryDto } from './dto/get-tools-query.dto';
+import { buildStatusFilter } from 'src/libs/common/utils/buildStatusFilter';
 
 @Injectable()
 export class ToolService {
@@ -67,15 +68,23 @@ export class ToolService {
   }
 
   public async getFiltered(query: GetToolsQueryDto) {
+    const statusFilter = buildStatusFilter(query.status);
     const tools = await this.prismaService.tool.findMany({
       where: {
         ...(query.objectId ? { objectId: query.objectId } : {}),
-        ...(query.status ? { status: query.status } : {}),
-        ...(query.serialNumber
-          ? { serialNumber: { contains: query.serialNumber } }
-          : {}),
-        ...(query.name
-          ? { name: { contains: query.name, mode: 'insensitive' } }
+        ...statusFilter,
+        ...(query.searchQuery
+          ? {
+              OR: [
+                {
+                  serialNumber: {
+                    contains: query.searchQuery,
+                    mode: 'insensitive',
+                  },
+                },
+                { name: { contains: query.searchQuery, mode: 'insensitive' } },
+              ],
+            }
           : {}),
       },
       include: {
@@ -89,8 +98,6 @@ export class ToolService {
         },
       },
     });
-
-    if (!tools.length) throw new NotFoundException('Инструменты не найдены');
 
     return tools;
   }
@@ -127,7 +134,13 @@ export class ToolService {
       return await this.prismaService.$transaction(async (prisma) => {
         const updatedTool = await prisma.tool.update({
           where: { id },
-          data: { status: dto.status },
+          data: {
+            status: dto.status,
+            objectId:
+              dto.status === 'LOST' || dto.status === 'WRITTEN_OFF'
+                ? null
+                : tool.objectId,
+          },
           include: { storage: true },
         });
 
@@ -178,7 +191,7 @@ export class ToolService {
         const recordHistory = await this.toolHistoryService.create({
           userId,
           toolId: id,
-          fromObjectId: tool.objectId,
+          fromObjectId: tool.objectId ? tool.objectId : undefined,
           toObjectId: dto.objectId,
         });
 

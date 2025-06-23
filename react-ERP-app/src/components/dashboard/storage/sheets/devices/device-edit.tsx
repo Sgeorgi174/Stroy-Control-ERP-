@@ -37,7 +37,7 @@ export function DeviceEdit({ device }: DeviceEditProps) {
     defaultValues: {
       name: device.name,
       serialNumber: device.serialNumber,
-      objectId: device.storage.id || objects[0].id,
+      objectId: device.objectId || "",
     },
     resolver: zodResolver(formSchema),
   });

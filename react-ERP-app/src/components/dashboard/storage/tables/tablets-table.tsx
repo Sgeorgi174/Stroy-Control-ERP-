@@ -9,9 +9,12 @@ import {
 import type { Tablet } from "@/types/tablet";
 import { TabletsDropDown } from "../dropdowns/tablets-dropdown";
 import { useTabletSheetStore } from "@/stores/tablet-sheet-store";
+import { TabletSkeleton } from "../../tablet-skeleton";
 
 type TabletsTableProps = {
   tablets: Tablet[];
+  isLoading: boolean;
+  isError: boolean;
 };
 
 const tabletStatusMap = {
@@ -22,7 +25,11 @@ const tabletStatusMap = {
   WRITTEN_OFF: "Списан",
 };
 
-export function TabletsTable({ tablets }: TabletsTableProps) {
+export function TabletsTable({
+  tablets,
+  isLoading,
+  isError,
+}: TabletsTableProps) {
   const { openSheet } = useTabletSheetStore();
 
   return (
@@ -39,7 +46,7 @@ export function TabletsTable({ tablets }: TabletsTableProps) {
             </TableHead>
             <TableHead className="text-secondary font-bold">Статус</TableHead>
             <TableHead className="text-secondary font-bold">
-              Кому выдан
+              Сотрудник
             </TableHead>
             <TableHead className="text-secondary font-bold">Телефон</TableHead>
 
@@ -47,6 +54,21 @@ export function TabletsTable({ tablets }: TabletsTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
+          {isError && (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center text-red-500">
+                Ошибка при загрузке, попробуйте позже
+              </TableCell>
+            </TableRow>
+          )}
+          {tablets.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center text-gray-400">
+                Ничего не найдено
+              </TableCell>
+            </TableRow>
+          )}
+          {isLoading && <TabletSkeleton />}
           {tablets.map((tablet) => (
             <TableRow key={tablet.id}>
               <TableCell></TableCell>

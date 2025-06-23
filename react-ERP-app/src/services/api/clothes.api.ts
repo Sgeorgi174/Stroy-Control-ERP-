@@ -97,3 +97,8 @@ export const giveClothes = async (
 export const deleteClothes = async (id: string): Promise<void> => {
   await api.delete(`/clothes/delete/${id}`);
 };
+
+export const getClothesHistory = async (id: string): Promise<void> => {
+  const res = await api.get(`/clothes-history/transfers/${id}`);
+  return res.data;
+};

@@ -55,7 +55,20 @@ export function DevicesTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isError && <TableRow></TableRow>}
+          {isError && (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center text-red-500">
+                Ошибка при загрузке, попробуйте позже
+              </TableCell>
+            </TableRow>
+          )}
+          {devices.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center text-gray-400">
+                Ничего не найдено
+              </TableCell>
+            </TableRow>
+          )}
           {isLoading && <TabletSkeleton />}
           {devices.map((device) => (
             <TableRow key={device.id}>
@@ -71,15 +84,18 @@ export function DevicesTable({
               </TableCell>
               <TableCell>{deviceStatusMap[device.status]}</TableCell>
               <TableCell>
-                {" "}
-                {device.storage.foreman
+                {device.storage && device.storage.foreman
                   ? `${device.storage.foreman.lastName} ${device.storage.foreman.firstName}`
                   : "Не назначен"}
               </TableCell>
               <TableCell>
-                {device.storage.foreman ? device.storage.foreman.phone : "-"}
+                {device.storage && device.storage.foreman
+                  ? device.storage.foreman.phone
+                  : "-"}
               </TableCell>
-              <TableCell>{device.storage.name}</TableCell>
+              <TableCell>
+                {device.storage ? device.storage.name : "-"}
+              </TableCell>
               <TableCell>
                 <DeviceDropDown device={device} />
               </TableCell>

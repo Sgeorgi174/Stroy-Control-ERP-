@@ -5,14 +5,14 @@ import { ClothesTable } from "@/components/dashboard/storage/tables/clothes-tabl
 import { ToolsTable } from "@/components/dashboard/storage/tables/tools-table";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
 import { TabletsTable } from "@/components/dashboard/storage/tables/tablets-table";
-import { tablets } from "@/constants/tablets";
 import { DevicesTable } from "@/components/dashboard/storage/tables/devices-table";
-import { filterTablets } from "@/lib/utils/filterTablets";
 import { DeviceSheet } from "@/components/dashboard/storage/sheets/devices/device-sheet";
 import { TabletSheet } from "@/components/dashboard/storage/sheets/tablet/tablet-sheet";
 import { useTools } from "@/hooks/tool/useTools";
 import { useDevices } from "@/hooks/device/useDevices";
 import { useClothes } from "@/hooks/clothes/useClothes";
+import { useTablets } from "@/hooks/tablet/useTablet";
+import { useMemo } from "react";
 
 export function Storage() {
   const {
@@ -23,6 +23,14 @@ export function Storage() {
     selectedTabletStatus,
     selectedItemStatus,
   } = useFilterPanelStore();
+
+  const tabletParams = useMemo(
+    () => ({
+      searchQuery,
+      status: selectedTabletStatus,
+    }),
+    [searchQuery, selectedTabletStatus]
+  );
 
   const {
     data: tools = [],
@@ -64,11 +72,11 @@ export function Storage() {
     activeTab === "device"
   );
 
-  const filteredTablets = filterTablets({
-    data: tablets,
-    searchQuery,
-    selectedStatus: selectedTabletStatus,
-  });
+  const {
+    data: tablets = [],
+    isLoading: tabletsLoading,
+    isError: tabletsError,
+  } = useTablets(tabletParams, activeTab === "tablet");
 
   return (
     <div>
@@ -76,7 +84,12 @@ export function Storage() {
 
       {activeTab === "tablet" && (
         <div>
-          <TabletsTable tablets={filteredTablets} />
+          <TabletsTable
+            tablets={tablets}
+            isLoading={tabletsLoading}
+            isError={tabletsError}
+          />
+
           <TabletSheet />
         </div>
       )}

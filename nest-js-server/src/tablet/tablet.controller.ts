@@ -9,6 +9,7 @@ import {
   Put,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { TabletService } from './tablet.service';
 import { CreateTabletDto } from './dto/create.dto';
@@ -18,6 +19,7 @@ import { UpdateTabletStatusDto } from './dto/update-status.dto';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { Roles } from 'generated/prisma';
+import { GetTabletsQueryDto } from './dto/get-tablet-query.dto';
 
 @Controller('tablets')
 export class TabletController {
@@ -31,9 +33,9 @@ export class TabletController {
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
-  @Get('all')
-  getAll() {
-    return this.tabletService.getAll();
+  @Get('filter')
+  async getFiltered(@Query() query: GetTabletsQueryDto) {
+    return this.tabletService.getFiltered(query);
   }
 
   @Authorization(Roles.OWNER)

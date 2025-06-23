@@ -2,15 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { Tablet } from "@/types/tablet";
 import { useTabletSheetStore } from "@/stores/tablet-sheet-store";
 import { EmployeeAutocomplete } from "@/components/dashboard/select-employee-for-form";
-import { employees } from "@/constants/employees";
+import { useUpdateTablet } from "@/hooks/tablet/useUpdateTablet";
+import { useEmployees } from "@/hooks/employee/useEmployees";
 
-// Схема валидации
 const formSchema = z.object({
   name: z.string().min(1, "Наименование обязательно"),
   serialNumber: z.string().min(1, "Серийный номер обязателен"),
@@ -35,37 +34,37 @@ export function TabletEdit({ tablet }: TabletEditProps) {
     defaultValues: {
       name: tablet.name,
       serialNumber: tablet.serialNumber,
-      employeeId: tablet.employee?.id || undefined,
+      employeeId: tablet.employee?.id,
     },
     resolver: zodResolver(formSchema),
   });
 
-  const { closeSheet } = useTabletSheetStore();
   const selectedEmployeeId = watch("employeeId");
 
+  const { closeSheet } = useTabletSheetStore();
+  const updateTabletMutation = useUpdateTablet(tablet.id);
+  const { data: employees = [] } = useEmployees({ searchQuery: "" });
+
   const onSubmit = (data: FormData) => {
-    try {
-      console.log("Собранные данные:", {
+    updateTabletMutation.mutate(
+      {
         name: data.name.trim(),
         serialNumber: data.serialNumber.trim(),
         employeeId: data.employeeId,
-      });
-
-      reset();
-      closeSheet();
-
-      toast.success(
-        `Техника обновлёна: ${data.name.trim()} (Серийник: ${data.serialNumber.trim()})`
-      );
-    } catch (error) {
-      console.error("Ошибка редактирования:", error);
-      toast.error("Не удалось отредактировать технику");
-    }
+      },
+      {
+        onSuccess: () => {
+          reset();
+          closeSheet();
+        },
+      }
+    );
   };
 
   return (
     <div className="p-5">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+        {/* Имя */}
         <div className="flex flex-col gap-2 w-[400px]">
           <Label htmlFor="name">Наименование *</Label>
           <Input id="name" type="text" {...register("name")} />
@@ -74,6 +73,7 @@ export function TabletEdit({ tablet }: TabletEditProps) {
           )}
         </div>
 
+        {/* Серийный номер */}
         <div className="flex flex-col gap-2 w-[400px]">
           <Label htmlFor="serialNumber">Серийный № *</Label>
           <Input id="serialNumber" type="text" {...register("serialNumber")} />
@@ -84,6 +84,7 @@ export function TabletEdit({ tablet }: TabletEditProps) {
           )}
         </div>
 
+        {/* Сотрудник */}
         <div className="flex flex-col gap-2">
           <Label>Сотрудник *</Label>
           <EmployeeAutocomplete
@@ -98,9 +99,14 @@ export function TabletEdit({ tablet }: TabletEditProps) {
           )}
         </div>
 
+        {/* Кнопка */}
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]">
-            Сохранить
+          <Button
+            type="submit"
+            className="w-[200px]"
+            disabled={updateTabletMutation.isPending}
+          >
+            {updateTabletMutation.isPending ? "Сохранение..." : "Сохранить"}
           </Button>
         </div>
       </form>

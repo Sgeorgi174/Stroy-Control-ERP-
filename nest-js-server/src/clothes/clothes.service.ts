@@ -69,7 +69,7 @@ export class ClothesService {
         ...(query.type ? { type: query.type } : {}),
         ...(query.objectId ? { objectId: query.objectId } : {}),
         ...(query.season ? { season: query.season } : {}),
-        ...(query.size ? { size: Number(query.size) } : {}),
+        ...(Number(query.size) ? { size: Number(query.size) } : {}),
       },
       include: {
         storage: {
@@ -81,9 +81,8 @@ export class ClothesService {
           },
         },
       },
+      orderBy: { size: 'asc' },
     });
-
-    if (!clothes.length) throw new NotFoundException('Одежда не найдена');
 
     return clothes;
   }

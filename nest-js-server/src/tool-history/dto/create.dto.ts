@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 
 export class CreateDto {
   @IsUUID()
@@ -10,8 +10,8 @@ export class CreateDto {
   toolId: string;
 
   @IsUUID()
-  @IsNotEmpty()
-  fromObjectId: string;
+  @IsOptional()
+  fromObjectId?: string;
 
   @IsUUID()
   @IsNotEmpty()

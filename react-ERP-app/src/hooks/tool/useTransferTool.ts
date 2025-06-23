@@ -11,7 +11,6 @@ export const useTransferTool = (toolId: string) => {
     onSuccess: () => {
       toast.success("Инструмент успешно перемещён");
       queryClient.invalidateQueries({ queryKey: ["tools"] });
-      queryClient.invalidateQueries({ queryKey: ["tool", toolId] });
     },
     onError: (error: any) => {
       const message =

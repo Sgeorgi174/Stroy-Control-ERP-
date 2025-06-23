@@ -13,7 +13,7 @@ export class ToolHistoryService {
         data: {
           userId: dto.userId,
           toolId: dto.toolId,
-          fromObjectId: dto.fromObjectId,
+          fromObjectId: dto.fromObjectId ? dto.fromObjectId : undefined,
           toObjectId: dto.toObjectId,
         },
         include: {
@@ -29,7 +29,7 @@ export class ToolHistoryService {
     }
   }
 
-  public async getByToolId(toolId: string) {
+  public async getTransfersByToolId(toolId: string) {
     try {
       return await this.prismaService.toolHistory.findMany({
         where: { toolId },
@@ -42,6 +42,21 @@ export class ToolHistoryService {
     } catch (error) {
       handlePrismaError(error, {
         defaultMessage: 'Ошибка получения записей перемещения инструмента',
+      });
+    }
+  }
+
+  public async getStatusChangesByToolId(toolId: string) {
+    try {
+      return await this.prismaService.toolStatusHistory.findMany({
+        where: { toolId },
+        include: {
+          changedBy: { select: { firstName: true, lastName: true } },
+        },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка получения записей смены статусов у инструмента',
       });
     }
   }

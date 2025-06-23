@@ -17,6 +17,6 @@ export class CreateDto {
   serialNumber: string;
 
   @IsString({ message: 'object_id должен быть строкой' })
-  @IsNotEmpty({ message: 'object_id обязателен для заполнения.' })
-  objectId: string;
+  @IsOptional()
+  objectId?: string;
 }

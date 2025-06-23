@@ -3,12 +3,13 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTabletSheetStore } from "@/stores/tablet-sheet-store";
-import toast from "react-hot-toast";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { EmployeeAutocomplete } from "@/components/dashboard/select-employee-for-form";
-import { employees } from "@/constants/employees";
 import { Button } from "@/components/ui/button";
+import { useChangeEmployee } from "@/hooks/tablet/useChangeEmployee";
+import { useEmployees } from "@/hooks/employee/useEmployees";
+import { TabletDetailsBox } from "./tablet-details-box";
 
 type TabletDetailsProps = { tablet: Tablet };
 
@@ -17,14 +18,6 @@ const formSchema = z.object({
 });
 
 type FormData = z.infer<typeof formSchema>;
-
-const statusMap = {
-  ACTIVE: "Активен",
-  INACTIVE: "Свободен",
-  IN_REPAIR: "На ремонте",
-  LOST: "Утерян",
-  WRITTEN_OFF: "Списан",
-};
 
 export function TabletChangeUser({ tablet }: TabletDetailsProps) {
   const {
@@ -41,50 +34,25 @@ export function TabletChangeUser({ tablet }: TabletDetailsProps) {
   });
 
   const { closeSheet } = useTabletSheetStore();
-
   const selectedEmployeeId = watch("employeeId");
+  const changeEmployeeMutation = useChangeEmployee(tablet.id);
+  const { data: employees = [] } = useEmployees({ searchQuery: "" });
 
   const onSubmit = (data: FormData) => {
-    try {
-      console.log("Собранные данные:", {
-        employeeId: data.employeeId,
-      });
-
-      reset();
-      closeSheet();
-      toast.success(`Успешно Сотрудник: ${data.employeeId}`);
-    } catch (error) {
-      toast.error("Не удалось создать технику");
-      console.error("Ошибка:", error);
-    }
+    changeEmployeeMutation.mutate(
+      { employeeId: data.employeeId },
+      {
+        onSuccess: () => {
+          reset();
+          closeSheet();
+        },
+      }
+    );
   };
 
   return (
     <div className="p-5 flex flex-col gap-1">
-      <p>
-        Серийный номер:{" "}
-        <span className="font-medium">{tablet.serialNumber}</span>
-      </p>
-      <p>
-        Наименование: <span className="font-medium">{tablet.name}</span>
-      </p>
-      <p>
-        Статус: <span className="font-medium">{statusMap[tablet.status]}</span>
-      </p>
-      <p>
-        Кому выдан:{" "}
-        <span className="font-medium">
-          {tablet.employee
-            ? `${tablet.employee.lastName} ${tablet.employee.firstName}`
-            : "Не назначен"}
-        </span>
-      </p>
-      <p>
-        Телефон:{" "}
-        <span className="font-medium">
-          {tablet.employee?.phoneNumber || "-"}
-        </span>
-      </p>
+      <TabletDetailsBox tablet={tablet} />
 
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
 
@@ -126,8 +94,12 @@ export function TabletChangeUser({ tablet }: TabletDetailsProps) {
         </div>
 
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]">
-            Передать
+          <Button
+            type="submit"
+            className="w-[200px]"
+            disabled={changeEmployeeMutation.isPending}
+          >
+            {changeEmployeeMutation.isPending ? "Передача..." : "Передать"}
           </Button>
         </div>
       </form>

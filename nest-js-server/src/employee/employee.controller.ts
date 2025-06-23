@@ -9,12 +9,15 @@ import {
   HttpCode,
   HttpStatus,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
 import { Roles } from 'generated/prisma';
+import { GetEmployeeQueryDto } from './dto/employee-query.dto';
+import { TransferEmployeeDto } from './dto/transfer.dto';
 
 @Controller('employees')
 export class EmployeeController {
@@ -27,10 +30,10 @@ export class EmployeeController {
     return this.employeeService.create(dto);
   }
 
-  @Authorization(Roles.OWNER)
-  @Get('all')
-  async getAll() {
-    return this.employeeService.getAll();
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Get('filter')
+  async getFiltered(@Query() query: GetEmployeeQueryDto) {
+    return this.employeeService.getFiltered(query);
   }
 
   @Authorization(Roles.OWNER)
@@ -47,11 +50,8 @@ export class EmployeeController {
 
   @Authorization(Roles.OWNER)
   @Patch('transfer/:id')
-  async transfer(
-    @Param('id') id: string,
-    @Body() object: { objectId: string },
-  ) {
-    return this.employeeService.transfer(id, object.objectId);
+  async transfer(@Param('id') id: string, @Body() dto: TransferEmployeeDto) {
+    return this.employeeService.transfer(id, dto);
   }
 
   @Authorization(Roles.OWNER)

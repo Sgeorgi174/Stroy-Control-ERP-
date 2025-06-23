@@ -8,9 +8,15 @@ export class DeviceHistoryController {
   constructor(private readonly deviceHistoryService: DeviceHistoryService) {}
 
   @Authorization(Roles.OWNER)
-  @Get('by-id/:id')
-  async getByDeviceId(@Param('id') id: string) {
-    return this.deviceHistoryService.getByToolId(id);
+  @Get('transfers/:id')
+  async getTransfersByDeviceId(@Param('id') id: string) {
+    return this.deviceHistoryService.getTransfersByDeviceId(id);
+  }
+
+  @Authorization(Roles.OWNER)
+  @Get('statuses/:id')
+  async getStatusChangesByDeviceId(@Param('id') id: string) {
+    return this.deviceHistoryService.getStatusChangesByDeviceId(id);
   }
 
   @Authorization(Roles.OWNER)

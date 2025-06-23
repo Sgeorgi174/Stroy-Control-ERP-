@@ -2,14 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { EmployeeAutocomplete } from "@/components/dashboard/select-employee-for-form";
-import { employees } from "@/constants/employees";
 import { useTabletSheetStore } from "@/stores/tablet-sheet-store";
+import { useCreateTablet } from "@/hooks/tablet/useCreateTablet";
+import { useEmployees } from "@/hooks/employee/useEmployees";
 
-// 1. Схема валидации Zod
 const tabletSchema = z.object({
   name: z.string().min(1, "Это поле обязательно"),
   serialNumber: z.string().min(1, "Это поле обязательно"),
@@ -35,29 +34,25 @@ export function TabletAdd() {
     },
   });
 
-  const { closeSheet } = useTabletSheetStore();
   const selectedEmployeeId = watch("employeeId");
+  const { closeSheet } = useTabletSheetStore();
+  const createTabletMutation = useCreateTablet();
+  const { data: employees = [] } = useEmployees({ searchQuery: "" });
 
   const onSubmit = (data: FormData) => {
-    try {
-      const trimmedName = data.name.trim();
-      const trimmedSerial = data.serialNumber.trim();
-
-      console.log("Собранные данные:", {
-        name: trimmedName,
-        serialNumber: trimmedSerial,
+    createTabletMutation.mutate(
+      {
+        name: data.name.trim(),
+        serialNumber: data.serialNumber.trim(),
         employeeId: data.employeeId,
-      });
-
-      reset();
-      closeSheet();
-      toast.success(
-        `Успешно создана техника\nИмя: ${trimmedName}\nСерийник: ${trimmedSerial}\nСотрудника: ${data.employeeId}`
-      );
-    } catch (error) {
-      toast.error("Не удалось создать технику");
-      console.error("Ошибка:", error);
-    }
+      },
+      {
+        onSuccess: () => {
+          reset();
+          closeSheet();
+        },
+      }
+    );
   };
 
   return (
@@ -110,8 +105,12 @@ export function TabletAdd() {
 
         {/* Кнопка */}
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]">
-            Добавить
+          <Button
+            type="submit"
+            className="w-[200px]"
+            disabled={createTabletMutation.isPending}
+          >
+            {createTabletMutation.isPending ? "Создание..." : "Добавить"}
           </Button>
         </div>
       </form>

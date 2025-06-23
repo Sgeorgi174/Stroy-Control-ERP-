@@ -1,10 +1,24 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import type { Employee } from "@/types/employee";
-import { Input } from "../ui/input";
 
-type EmployeeAutocompleteProps = {
+type ForemanAutocompleteProps = {
   employees: Employee[];
-  selectedEmployeeId: string;
+  selectedEmployeeId: string | null;
   onSelectChange: (id: string) => void;
   disabled?: boolean;
 };
@@ -14,119 +28,72 @@ export function EmployeeAutocomplete({
   selectedEmployeeId,
   onSelectChange,
   disabled,
-}: EmployeeAutocompleteProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Фильтрация по имени
-  const filteredEmployees = employees.filter((employee) => {
-    const fullName = `${employee.lastName} ${employee.firstName} ${
-      employee.fatherName ?? ""
-    }`.toLowerCase();
-    return fullName.includes(searchTerm.toLowerCase());
-  });
-
-  // Закрыть список при клике вне компонента
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+}: ForemanAutocompleteProps) {
+  const [open, setOpen] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState("");
 
   useEffect(() => {
-    const employee = employees.find((e) => e.id === selectedEmployeeId);
-    if (employee) {
-      setSearchTerm(
-        `${employee.lastName} ${employee.firstName} ${
-          employee.fatherName ?? ""
-        }`
-      );
+    const selected = employees.find((e) => e.id === selectedEmployeeId);
+    // console.log(selectedEmployeeId);
+
+    if (selected) {
+      setSelectedLabel(`${selected.lastName} ${selected.firstName}`);
     } else {
-      setSearchTerm("");
+      setSelectedLabel("");
     }
   }, [selectedEmployeeId, employees]);
 
-  // При выборе сотрудника
-  const handleSelect = (id: string) => {
-    const employee = employees.find((e) => e.id === id);
+  const handleSelect = (employeeId: string) => {
+    const employee = employees.find((u) => u.id === employeeId);
     if (employee) {
-      setSearchTerm(
-        `${employee.lastName} ${employee.firstName} ${
-          employee.fatherName ?? ""
-        }`
-      );
-      onSelectChange(id);
-      setIsOpen(false);
+      onSelectChange(employeeId);
+      setSelectedLabel(`${employee.lastName} ${employee.firstName}`);
+      setOpen(false);
     }
   };
 
-  // При фокусе показывать список
-  const handleFocus = () => {
-    setIsOpen(true);
-  };
-
   return (
-    <div ref={containerRef} className="relative w-[250px]">
-      <Input
-        value={searchTerm}
-        disabled={disabled}
-        onChange={(e) => {
-          const value = e.target.value;
-          setSearchTerm(value);
-          setIsOpen(true);
-
-          // Сброс выбранного employeeId, если пользователь вводит произвольный текст
-          if (selectedEmployeeId) {
-            const selectedEmployee = employees.find(
-              (e) => e.id === selectedEmployeeId
-            );
-            const selectedFullName = selectedEmployee
-              ? `${selectedEmployee.lastName} ${selectedEmployee.firstName} ${
-                  selectedEmployee.fatherName ?? ""
-                }`.trim()
-              : "";
-
-            if (
-              !value.trim() ||
-              !selectedFullName.toLowerCase().includes(value.toLowerCase())
-            ) {
-              onSelectChange(""); // сбрасываем, если не совпадает
-            }
-          }
-        }}
-        onFocus={handleFocus}
-        placeholder="Выберите сотрудника"
-        autoComplete="off"
-      />
-      {isOpen && (
-        <ul className="absolute z-20 mt-1 max-h-60 w-full overflow-auto bg-secondary rounded border shadow-md">
-          {filteredEmployees.length > 0 ? (
-            filteredEmployees.map((employee) => (
-              <li
-                key={employee.id}
-                onClick={() => handleSelect(employee.id)}
-                className="cursor-pointer text-primary px-3 py-2 hover:bg-primary hover:text-accent"
-              >
-                {`${employee.lastName} ${employee.firstName} ${
-                  employee.fatherName ?? ""
-                }`}
-              </li>
-            ))
-          ) : (
-            <li className="px-3 py-2 text-gray-500 select-none">
-              Совпадений нет
-            </li>
-          )}
-        </ul>
-      )}
-    </div>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="justify-between w-[250px]"
+          disabled={disabled}
+        >
+          {selectedLabel || "Выберите сотрудника"}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[250px] p-0 max-h-60 overflow-auto">
+        <Command>
+          <CommandInput placeholder="Поиск..." />
+          <CommandEmpty>Совпадений не найдено</CommandEmpty>
+          <CommandGroup>
+            {employees.map((employee) => {
+              const fullName = `${employee.lastName} ${employee.firstName}`;
+              return (
+                <CommandItem
+                  key={employee.id}
+                  value={employee.id}
+                  onSelect={() => handleSelect(employee.id)}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      selectedEmployeeId === employee.id
+                        ? "opacity-100"
+                        : "opacity-0"
+                    )}
+                  />
+                  {fullName}
+                </CommandItem>
+              );
+            })}
+          </CommandGroup>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }

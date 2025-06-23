@@ -13,7 +13,7 @@ export class DeviceHistoryService {
         data: {
           userId: dto.userId,
           deviceId: dto.deviceId,
-          fromObjectId: dto.fromObjectId,
+          fromObjectId: dto.fromObjectId ? dto.fromObjectId : undefined,
           toObjectId: dto.toObjectId,
         },
         include: {
@@ -29,7 +29,7 @@ export class DeviceHistoryService {
     }
   }
 
-  public async getByToolId(deviceId: string) {
+  public async getTransfersByDeviceId(deviceId: string) {
     try {
       return await this.prismaService.deviceHistory.findMany({
         where: { deviceId },
@@ -41,7 +41,22 @@ export class DeviceHistoryService {
       });
     } catch (error) {
       handlePrismaError(error, {
-        defaultMessage: 'Ошибка получения записей перемещения техники',
+        defaultMessage: 'Ошибка получения записей перемещения оргтехники',
+      });
+    }
+  }
+
+  public async getStatusChangesByDeviceId(deviceId: string) {
+    try {
+      return await this.prismaService.deviceStatusHistory.findMany({
+        where: { deviceId },
+        include: {
+          changedBy: { select: { firstName: true, lastName: true } },
+        },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка получения записей смены статусов у оргтехники',
       });
     }
   }

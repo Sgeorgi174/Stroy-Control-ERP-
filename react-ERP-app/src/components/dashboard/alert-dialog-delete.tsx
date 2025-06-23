@@ -18,7 +18,7 @@ type AlertDialogDeleteProps = {
   item: Clothes | Tool | Device | Tablet | Object;
   isDeleteDialogOpen: boolean;
   setIsDeleteDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handleDelete: () => Promise<void>;
+  handleDelete: () => void;
   isLoading: boolean;
 };
 

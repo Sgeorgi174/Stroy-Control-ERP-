@@ -1,8 +1,10 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
+import { GetEmployeeQueryDto } from './dto/employee-query.dto';
+import { TransferEmployeeDto } from './dto/transfer.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -50,21 +52,29 @@ export class EmployeeService {
     }
   }
 
-  public async getAll() {
-    try {
-      return await this.prismaService.employee.findMany({
-        include: {
-          workPlace: true,
-          clothing: true,
-        },
-        orderBy: { lastName: 'asc' },
-      });
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException(
-        'Не удалось получить список сотрудников',
-      );
-    }
+  public async getFiltered(query: GetEmployeeQueryDto) {
+    const employees = await this.prismaService.employee.findMany({
+      where: {
+        ...(query.objectId ? { objectId: query.objectId } : {}),
+        ...(query.status ? { status: query.status } : {}),
+        ...(query.position ? { position: query.position } : {}),
+        ...(query.firstName
+          ? { name: { contains: query.firstName, mode: 'insensitive' } }
+          : {}),
+        ...(query.lastName
+          ? { name: { contains: query.lastName, mode: 'insensitive' } }
+          : {}),
+      },
+      include: {
+        skills: true,
+        workPlace: { select: { name: true, address: true } },
+        clothing: true,
+      },
+    });
+
+    if (!employees.length) throw new NotFoundException('Сотрудники не найдены');
+
+    return employees;
   }
 
   public async update(id: string, dto: UpdateDto) {
@@ -92,12 +102,12 @@ export class EmployeeService {
     }
   }
 
-  public async transfer(id: string, objectId: string) {
+  public async transfer(id: string, dto: TransferEmployeeDto) {
     try {
       return await this.prismaService.employee.update({
         where: { id },
         data: {
-          objectId: objectId,
+          objectId: dto.objectId,
         },
       });
     } catch (error) {

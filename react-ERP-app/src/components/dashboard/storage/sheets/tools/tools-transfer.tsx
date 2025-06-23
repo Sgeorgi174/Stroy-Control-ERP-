@@ -8,16 +8,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useObjects } from "@/hooks/object/useObject";
 import { useTransferTool } from "@/hooks/tool/useTransferTool";
+import { ToolsDetailsBox } from "./tool-details-box";
 
 type ToolsTransferProps = { tool: Tool };
-
 const transferSchema = z
   .object({
-    fromObjectId: z.string().min(1, "Исходный объект обязателен"),
+    fromObjectId: z.string().nullable().optional(), // ✅ исправлено
     toObjectId: z.string().min(1, "Выберите склад для перемещения"),
   })
   .superRefine(({ fromObjectId, toObjectId }, ctx) => {
-    if (fromObjectId === toObjectId) {
+    if (fromObjectId && fromObjectId === toObjectId) {
       ctx.addIssue({
         code: "custom",
         path: ["toObjectId"],
@@ -25,6 +25,7 @@ const transferSchema = z
       });
     }
   });
+
 type FormData = z.infer<typeof transferSchema>;
 
 export function ToolsTransfer({ tool }: ToolsTransferProps) {
@@ -38,16 +39,15 @@ export function ToolsTransfer({ tool }: ToolsTransferProps) {
     reset,
     formState: { errors },
   } = useForm<FormData>({
-    defaultValues: {
-      fromObjectId: tool.objectId,
-      toObjectId: objects.find((o) => o.id !== tool.objectId)?.id ?? "",
-    },
     resolver: zodResolver(transferSchema),
+    defaultValues: {
+      fromObjectId: null,
+      toObjectId: "",
+    },
   });
 
   const selectedToObjectId = watch("toObjectId");
 
-  // Используем хук мутации
   const transferToolMutation = useTransferTool(tool.id);
 
   const onSubmit = (data: FormData) => {
@@ -64,21 +64,7 @@ export function ToolsTransfer({ tool }: ToolsTransferProps) {
 
   return (
     <div className="p-5 flex flex-col gap-1">
-      <p>
-        Серийный номер: <span className="font-medium">{tool.serialNumber}</span>
-      </p>
-      <p>
-        Наименование: <span className="font-medium">{tool.name}</span>
-      </p>
-      <p>
-        Статус:{" "}
-        <span className="font-medium">
-          {tool.status === "ON_OBJECT" ? "На объекте" : "В пути"}
-        </span>
-      </p>
-      <p>
-        Место хранения: <span className="font-medium">{tool.storage.name}</span>
-      </p>
+      <ToolsDetailsBox tool={tool} />
 
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
       <p className="text-center font-medium text-xl mt-5">Перемещение</p>
@@ -89,7 +75,7 @@ export function ToolsTransfer({ tool }: ToolsTransferProps) {
             <Label>С какого склада</Label>
             <ObjectSelectForForms
               disabled
-              selectedObjectId={tool.objectId}
+              selectedObjectId={tool.objectId ?? ""}
               onSelectChange={(id) => setValue("fromObjectId", id)}
               objects={objects}
             />

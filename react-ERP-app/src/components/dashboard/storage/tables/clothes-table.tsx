@@ -46,7 +46,20 @@ export function ClothesTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isError && <TableRow></TableRow>}
+          {isError && (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center text-red-500">
+                Ошибка при загрузке, попробуйте позже
+              </TableCell>
+            </TableRow>
+          )}
+          {clothes.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center text-gray-400">
+                Ничего не найдено
+              </TableCell>
+            </TableRow>
+          )}
           {isLoading && <TabletSkeleton />}
           {clothes.map((item) => (
             <TableRow key={item.id}>

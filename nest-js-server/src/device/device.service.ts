@@ -12,6 +12,7 @@ import { UpdateStatusDto } from './dto/update-status.dto';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { DeviceHistoryService } from 'src/device-history/device-history.service';
 import { GetDeviceQueryDto } from './dto/get-device-query.dto';
+import { buildStatusFilter } from 'src/libs/common/utils/buildStatusFilter';
 
 @Injectable()
 export class DeviceService {
@@ -71,15 +72,23 @@ export class DeviceService {
   }
 
   public async getFiltered(query: GetDeviceQueryDto) {
+    const statusFilter = buildStatusFilter(query.status);
     const devices = await this.prismaService.device.findMany({
       where: {
         ...(query.objectId ? { objectId: query.objectId } : {}),
-        ...(query.status ? { status: query.status } : {}),
-        ...(query.serialNumber
-          ? { serialNumber: { contains: query.serialNumber } }
-          : {}),
-        ...(query.name
-          ? { name: { contains: query.name, mode: 'insensitive' } }
+        ...statusFilter,
+        ...(query.searchQuery
+          ? {
+              OR: [
+                {
+                  serialNumber: {
+                    contains: query.searchQuery,
+                    mode: 'insensitive',
+                  },
+                },
+                { name: { contains: query.searchQuery, mode: 'insensitive' } },
+              ],
+            }
           : {}),
       },
       include: {
@@ -93,8 +102,6 @@ export class DeviceService {
         },
       },
     });
-
-    if (!devices.length) throw new NotFoundException('Инструменты не найдены');
 
     return devices;
   }
@@ -127,7 +134,13 @@ export class DeviceService {
       return await this.prismaService.$transaction(async (prisma) => {
         const updated = await prisma.device.update({
           where: { id },
-          data: { status: dto.status },
+          data: {
+            status: dto.status,
+            objectId:
+              dto.status === 'LOST' || dto.status === 'WRITTEN_OFF'
+                ? null
+                : device.objectId,
+          },
           include: { storage: true },
         });
 
@@ -176,7 +189,7 @@ export class DeviceService {
         const history = await this.historyService.create({
           userId,
           deviceId: id,
-          fromObjectId: device.objectId,
+          fromObjectId: device.objectId ? device.objectId : undefined,
           toObjectId: dto.objectId,
         });
 

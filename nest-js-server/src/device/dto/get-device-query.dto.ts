@@ -12,9 +12,5 @@ export class GetDeviceQueryDto {
 
   @IsOptional()
   @IsString()
-  serialNumber?: string;
-
-  @IsOptional()
-  @IsString()
-  name?: string;
+  searchQuery?: string;
 }

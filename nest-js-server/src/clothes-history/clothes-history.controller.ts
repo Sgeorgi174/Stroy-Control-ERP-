@@ -8,7 +8,7 @@ export class ClothesHistoryController {
   constructor(private readonly clothesHistoryService: ClothesHistoryService) {}
 
   @Authorization(Roles.OWNER)
-  @Get('by-id/:id')
+  @Get('transfers/:id')
   async getByClothesId(@Param('id') id: string) {
     return this.clothesHistoryService.getByClothesId(id);
   }

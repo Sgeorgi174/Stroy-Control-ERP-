@@ -18,7 +18,7 @@ export function ToolsSheet() {
   return (
     <Sheet open={isOpen} onOpenChange={closeSheet}>
       <SheetContent
-        className="w-[750px] sm:max-w-[1000px]"
+        className="w-[850px] sm:max-w-[1000px] overflow-auto"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
         onOpenAutoFocus={(event) => event.preventDefault()}

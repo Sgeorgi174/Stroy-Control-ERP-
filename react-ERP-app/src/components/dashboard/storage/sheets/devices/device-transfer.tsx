@@ -8,6 +8,7 @@ import type { Device } from "@/types/device";
 import { useDeviceSheetStore } from "@/stores/device-sheet-store";
 import { useTransferDevice } from "@/hooks/device/useTransferDevice";
 import { useObjects } from "@/hooks/object/useObject";
+import { DeviceDetailsBox } from "./device-details-box";
 
 type DeviceTransferProps = { device: Device };
 
@@ -28,14 +29,6 @@ const transferSchema = z
 
 type FormData = z.infer<typeof transferSchema>;
 
-const statusMap = {
-  ON_OBJECT: "На объекте",
-  IN_TRANSIT: "В пути",
-  IN_REPAIR: "На ремонте",
-  LOST: "Утерян",
-  WRITTEN_OFF: "Списан",
-};
-
 export function DeviceTransfer({ device }: DeviceTransferProps) {
   const { data: objects = [] } = useObjects();
   const { closeSheet } = useDeviceSheetStore();
@@ -49,7 +42,7 @@ export function DeviceTransfer({ device }: DeviceTransferProps) {
   } = useForm<FormData>({
     defaultValues: {
       fromObjectId: device.objectId,
-      toObjectId: objects.find((o) => o.id !== device.storage.id)?.id ?? "",
+      toObjectId: objects.find((o) => o.id !== device.objectId)?.id ?? "",
     },
     resolver: zodResolver(transferSchema),
   });
@@ -71,21 +64,7 @@ export function DeviceTransfer({ device }: DeviceTransferProps) {
 
   return (
     <div className="p-5 flex flex-col gap-1">
-      <p>
-        Серийный номер:{" "}
-        <span className="font-medium">{device.serialNumber}</span>
-      </p>
-      <p>
-        Наименование: <span className="font-medium">{device.name}</span>
-      </p>
-      <p>
-        Статус: <span className="font-medium">{statusMap[device.status]}</span>
-      </p>
-      <p>
-        Место хранения:{" "}
-        <span className="font-medium">{device.storage.name}</span>
-      </p>
-
+      <DeviceDetailsBox device={device} />
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
       <p className="text-center font-medium text-xl mt-5">Перемещение</p>
 
@@ -95,7 +74,7 @@ export function DeviceTransfer({ device }: DeviceTransferProps) {
             <Label>С какого склада</Label>
             <ObjectSelectForForms
               disabled
-              selectedObjectId={device.storage.id}
+              selectedObjectId={device.objectId}
               onSelectChange={(id) => setValue("fromObjectId", id)}
               objects={objects}
             />
@@ -105,7 +84,7 @@ export function DeviceTransfer({ device }: DeviceTransferProps) {
             <ObjectSelectForForms
               selectedObjectId={selectedToObjectId}
               onSelectChange={(id) => id && setValue("toObjectId", id)}
-              objects={objects.filter((o) => o.id !== device.storage.id)}
+              objects={objects.filter((o) => o.id !== device.objectId)}
               disabled={isPending}
             />
             {errors.toObjectId && (

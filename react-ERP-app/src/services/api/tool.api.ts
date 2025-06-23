@@ -15,7 +15,7 @@ export const getFilteredTools = async (params: {
 }) => {
   const res = await api.get("/tools/filter", {
     params: {
-      serialNumber: params.searchQuery || undefined,
+      searchQuery: params.searchQuery || undefined,
       objectId: params.objectId || undefined,
       status: params.status || undefined,
     },
@@ -71,4 +71,16 @@ export const confirmToolTransfer = async (id: string): Promise<Tool> => {
 // Удалить инструмент
 export const deleteTool = async (id: string): Promise<void> => {
   await api.delete(`/tools/delete/${id}`);
+};
+
+export const getToolHistory = async (id: string): Promise<void> => {
+  const res = await api.get(`/tool-history/transfers/${id}`);
+  return res.data;
+};
+
+export const getToolStatusChangesHistory = async (
+  id: string
+): Promise<void> => {
+  const res = await api.get(`/tool-history/statuses/${id}`);
+  return res.data;
 };

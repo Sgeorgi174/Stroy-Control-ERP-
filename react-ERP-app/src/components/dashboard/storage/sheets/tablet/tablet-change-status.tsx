@@ -2,22 +2,15 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Tablet, TabletStatus } from "@/types/tablet";
 import { SelectTabletStatusForForms } from "@/components/dashboard/select-tablet-status-for-form";
 import { useTabletSheetStore } from "@/stores/tablet-sheet-store";
+import { useChangeTabletStatus } from "@/hooks/tablet/useChangeTabletStatus"; // ✅ импорт hook'а
+import { TabletDetailsBox } from "./tablet-details-box";
 
 type TabletChangeStatusProps = { tablet: Tablet };
-
-const statusMap = {
-  ACTIVE: "Активен",
-  INACTIVE: "Свободен",
-  IN_REPAIR: "На ремонте",
-  LOST: "Утерян",
-  WRITTEN_OFF: "Списан",
-};
 
 const schema = z.object({
   status: z.enum(["ACTIVE", "INACTIVE", "IN_REPAIR", "LOST", "WRITTEN_OFF"]),
@@ -28,7 +21,6 @@ type FormData = z.infer<typeof schema>;
 
 export function TabletChangeStatus({ tablet }: TabletChangeStatusProps) {
   const { closeSheet } = useTabletSheetStore();
-
   const {
     handleSubmit,
     setValue,
@@ -46,44 +38,20 @@ export function TabletChangeStatus({ tablet }: TabletChangeStatusProps) {
 
   const selectedStatus = watch("status");
 
+  const mutation = useChangeTabletStatus(tablet.id); // ✅ получаем хук с id
+
   const onSubmit = (data: FormData) => {
-    try {
-      console.log("Собранные данные:", data);
-      reset();
-      closeSheet();
-      toast.success("Статус успешно изменён");
-    } catch (error) {
-      toast.error("Не удалось изменить статус");
-      console.error("Ошибка:", error);
-    }
+    mutation.mutate(data, {
+      onSuccess: () => {
+        reset();
+        closeSheet();
+      },
+    });
   };
 
   return (
     <div className="p-5 flex flex-col gap-1">
-      <p>
-        Серийный номер:{" "}
-        <span className="font-medium">{tablet.serialNumber}</span>
-      </p>
-      <p>
-        Наименование: <span className="font-medium">{tablet.name}</span>
-      </p>
-      <p>
-        Статус: <span className="font-medium">{statusMap[tablet.status]}</span>
-      </p>
-      <p>
-        Кому выдан:{" "}
-        <span className="font-medium">
-          {tablet.employee
-            ? `${tablet.employee.lastName} ${tablet.employee.firstName}`
-            : "Не назначен"}
-        </span>
-      </p>
-      <p>
-        Телефон:{" "}
-        <span className="font-medium">
-          {tablet.employee?.phoneNumber || "-"}
-        </span>
-      </p>
+      <TabletDetailsBox tablet={tablet} />
 
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
       <p className="text-center font-medium text-xl mt-5">Смена статуса</p>
@@ -117,8 +85,12 @@ export function TabletChangeStatus({ tablet }: TabletChangeStatusProps) {
         </div>
 
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]">
-            Сменить статус
+          <Button
+            type="submit"
+            className="w-[200px]"
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending ? "Сохранение..." : "Сменить статус"}
           </Button>
         </div>
       </form>

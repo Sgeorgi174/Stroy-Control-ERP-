@@ -1,9 +1,9 @@
-import { IsOptional, IsEnum, IsUUID, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { ToolStatus } from 'generated/prisma';
 
 export class GetToolsQueryDto {
   @IsOptional()
-  @IsUUID()
+  @IsString()
   objectId?: string;
 
   @IsOptional()
@@ -12,9 +12,5 @@ export class GetToolsQueryDto {
 
   @IsOptional()
   @IsString()
-  serialNumber?: string;
-
-  @IsOptional()
-  @IsString()
-  name?: string;
+  searchQuery?: string;
 }

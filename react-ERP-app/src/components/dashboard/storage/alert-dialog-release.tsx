@@ -16,7 +16,8 @@ type AlertDialogReleaseProps = {
   tablet: Tablet;
   isReleaseDialogOpen: boolean;
   setIsReleaseDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handleRelease: () => Promise<void>;
+  handleRelease: () => void;
+  isLoading: boolean;
 };
 
 export function AlertDialogRelease({
@@ -24,6 +25,7 @@ export function AlertDialogRelease({
   isReleaseDialogOpen,
   setIsReleaseDialogOpen,
   handleRelease,
+  isLoading,
 }: AlertDialogReleaseProps) {
   return (
     <AlertDialog
@@ -43,7 +45,9 @@ export function AlertDialogRelease({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Отмена</AlertDialogCancel>
-          <AlertDialogAction onClick={handleRelease}>Вернуть</AlertDialogAction>
+          <AlertDialogAction disabled={isLoading} onClick={handleRelease}>
+            {isLoading ? "Возвращаем..." : "Вернуть"}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

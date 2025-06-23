@@ -12,9 +12,19 @@ import { ItemStatusSelectForFilter } from "../filter-panel/filter-items-select";
 import { useDeviceSheetStore } from "@/stores/device-sheet-store";
 import { useTabletSheetStore } from "@/stores/tablet-sheet-store";
 import { useObjects } from "@/hooks/object/useObject";
+import { useEffect } from "react";
+import { useDebouncedState } from "@/hooks/useDebounceState";
 
 export function StorageFilters() {
   const { activeTab, searchQuery, setSearchQuery } = useFilterPanelStore();
+  const [localSearch, setLocalSearch, debouncedSearch] = useDebouncedState(
+    searchQuery,
+    700
+  );
+
+  useEffect(() => {
+    setSearchQuery(debouncedSearch);
+  }, [debouncedSearch, setSearchQuery]);
 
   const openClothesSheet = useClothesSheetStore((s) => s.openSheet);
   const openToolsSheet = useToolsSheetStore((s) => s.openSheet);
@@ -76,8 +86,8 @@ export function StorageFilters() {
       <div className="flex  gap-8">
         <AddButton handleAdd={handleAdd} />
         <SearchInput
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
+          searchQuery={localSearch}
+          setSearchQuery={setLocalSearch}
         />
       </div>
     </FilterPanel>

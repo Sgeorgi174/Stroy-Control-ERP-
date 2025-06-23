@@ -8,9 +8,15 @@ export class ToolHistoryController {
   constructor(private readonly toolHistoryService: ToolHistoryService) {}
 
   @Authorization(Roles.OWNER)
-  @Get('by-id/:id')
-  async getByClothesId(@Param('id') id: string) {
-    return this.toolHistoryService.getByToolId(id);
+  @Get('transfers/:id')
+  async getTransferByToolId(@Param('id') id: string) {
+    return this.toolHistoryService.getTransfersByToolId(id);
+  }
+
+  @Authorization(Roles.OWNER)
+  @Get('statuses/:id')
+  async getStatusChangesByToolId(@Param('id') id: string) {
+    return this.toolHistoryService.getStatusChangesByToolId(id);
   }
 
   @Authorization(Roles.OWNER)

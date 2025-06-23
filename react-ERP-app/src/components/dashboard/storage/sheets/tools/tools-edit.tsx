@@ -36,7 +36,7 @@ export function ToolsEdit({ tool }: ToolsEditProps) {
     defaultValues: {
       name: tool.name,
       serialNumber: tool.serialNumber,
-      objectId: tool.objectId || objects[0]?.id || "",
+      objectId: tool.objectId || "",
     },
     resolver: zodResolver(formSchema),
   });

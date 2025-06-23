@@ -1,7 +1,11 @@
 import type { Clothes } from "@/types/clothes";
 import { TransferHistoryTable } from "../../tables/transfer-history-table";
+import { useGetClothesHistory } from "@/hooks/clothes/useClothes";
 
 export function ClothesDetails({ clothes }: { clothes: Clothes }) {
+  const { data: clothesHistoryData = [], isError: clothesHistoryError } =
+    useGetClothesHistory(clothes.id);
+
   return (
     <>
       <div className="p-5 flex flex-col gap-1">
@@ -31,7 +35,10 @@ export function ClothesDetails({ clothes }: { clothes: Clothes }) {
         <p className="text-center font-medium text-xl mt-5">
           Последние перемещения
         </p>
-        <TransferHistoryTable />
+        <TransferHistoryTable
+          transferRecords={clothesHistoryData}
+          isError={clothesHistoryError}
+        />
       </div>
     </>
   );

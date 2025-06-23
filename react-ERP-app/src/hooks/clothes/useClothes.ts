@@ -11,6 +11,7 @@ import {
   deleteClothes,
   addClothes,
   giveClothes,
+  getClothesHistory,
 } from "@/services/api/clothes.api";
 import type {
   CreateClothesDto,
@@ -196,3 +197,10 @@ export function useDeleteClothes() {
     },
   });
 }
+
+export const useGetClothesHistory = (clothesId: string) => {
+  return useQuery({
+    queryKey: ["clothes-history"],
+    queryFn: () => getClothesHistory(clothesId),
+  });
+};

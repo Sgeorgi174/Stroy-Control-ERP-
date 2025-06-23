@@ -14,7 +14,7 @@ export const getFilteredDevice = async (params: {
 }) => {
   const res = await api.get("/devices/filter", {
     params: {
-      serialNumber: params.searchQuery || undefined,
+      searchQuery: params.searchQuery || undefined,
       objectId: params.objectId || undefined,
       status: params.status || undefined,
     },
@@ -70,4 +70,16 @@ export const confirmDeviceTransfer = async (id: string): Promise<Device> => {
 // Удалить инструмент
 export const deleteDevice = async (id: string): Promise<void> => {
   await api.delete(`/devices/delete/${id}`);
+};
+
+export const getDeviceHistory = async (id: string): Promise<void> => {
+  const res = await api.get(`/device-history/transfers/${id}`);
+  return res.data;
+};
+
+export const getDeviceStatusChangesHistory = async (
+  id: string
+): Promise<void> => {
+  const res = await api.get(`/device-history/statuses/${id}`);
+  return res.data;
 };

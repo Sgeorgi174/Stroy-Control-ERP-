@@ -1,5 +1,13 @@
 import type { Object } from "./object";
 
+export type Statuses = "OK" | "WARNING" | "OVERDUE";
+export type Positions =
+  | "FOREMAN"
+  | "ELECTRICAN"
+  | "LABORER"
+  | "DESIGNER"
+  | "ENGINEER";
+
 export type Employee = {
   id: string;
   createdAt: string;
@@ -10,6 +18,7 @@ export type Employee = {
   phoneNumber: string;
   clothingSize: number;
   footwearSize: number;
-  position: "FOREMAN" | "ELECTRICAN" | "LABORER";
-  workPlace: Object | null; // Миасс
+  position: Positions;
+  workPlace: Object | null;
+  status: Statuses;
 };
