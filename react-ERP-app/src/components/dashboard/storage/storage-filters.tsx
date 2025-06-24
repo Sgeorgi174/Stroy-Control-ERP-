@@ -31,7 +31,10 @@ export function StorageFilters() {
   const openDevicesSheet = useDeviceSheetStore((s) => s.openSheet);
   const openTabletsSheet = useTabletSheetStore((s) => s.openSheet);
 
-  const { data: objects = [] } = useObjects();
+  const { data: objects = [] } = useObjects({
+    searchQuery: "",
+    status: "OPEN",
+  });
 
   const handleAdd = () => {
     switch (activeTab) {

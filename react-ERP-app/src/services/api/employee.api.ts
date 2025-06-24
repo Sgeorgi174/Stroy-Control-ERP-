@@ -1,5 +1,6 @@
 import { api } from "@/lib/api";
 import type {
+  AssignEmployeesDto,
   CreateEmployeeDto,
   TransferEmployeeDto,
   UpdateEmployeeDto,
@@ -24,8 +25,13 @@ export const getFilteredEmployees = async (params: {
 };
 
 // Получить инструмент по id
-export const getDeviceById = async (id: string): Promise<Employee> => {
+export const getEmployeeById = async (id: string): Promise<Employee> => {
   const res = await api.get(`/employees/by-id/${id}`);
+  return res.data;
+};
+
+export const getFreeEmployees = async (): Promise<Employee[]> => {
+  const res = await api.get(`/employees/free-employees/`);
   return res.data;
 };
 
@@ -52,6 +58,11 @@ export const transferEmployee = async (
   data: TransferEmployeeDto
 ): Promise<{ transferredEmployee: Employee }> => {
   const res = await api.patch(`/employees/transfer/${id}`, data);
+  return res.data;
+};
+
+export const assignToObject = async (data: AssignEmployeesDto) => {
+  const res = await api.post(`/employees/assign/`, data);
   return res.data;
 };
 

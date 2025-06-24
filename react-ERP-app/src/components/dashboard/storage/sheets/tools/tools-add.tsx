@@ -19,7 +19,10 @@ const toolSchema = z.object({
 type FormData = z.infer<typeof toolSchema>;
 
 export function ToolsAdd() {
-  const { data: objects = [] } = useObjects();
+  const { data: objects = [] } = useObjects({
+    searchQuery: "",
+    status: "OPEN",
+  });
   const createTool = useCreateTool();
   const {
     register,

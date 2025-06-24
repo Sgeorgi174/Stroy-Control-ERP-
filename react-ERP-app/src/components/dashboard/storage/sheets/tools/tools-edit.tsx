@@ -23,7 +23,10 @@ type ToolsEditProps = {
 };
 
 export function ToolsEdit({ tool }: ToolsEditProps) {
-  const { data: objects = [] } = useObjects();
+  const { data: objects = [] } = useObjects({
+    searchQuery: "",
+    status: "OPEN",
+  });
 
   const {
     register,

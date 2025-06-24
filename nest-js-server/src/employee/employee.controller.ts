@@ -18,6 +18,7 @@ import { Authorization } from 'src/auth/decorators/auth.decorator';
 import { Roles } from 'generated/prisma';
 import { GetEmployeeQueryDto } from './dto/employee-query.dto';
 import { TransferEmployeeDto } from './dto/transfer.dto';
+import { AssignEmployeesDto } from './dto/assign-employees.dto';
 
 @Controller('employees')
 export class EmployeeController {
@@ -40,6 +41,18 @@ export class EmployeeController {
   @Get('by-id/:id')
   async getById(@Param('id') id: string) {
     return this.employeeService.getById(id);
+  }
+
+  @Authorization(Roles.OWNER)
+  @Get('free-employees')
+  async getFreeEmployees() {
+    return this.employeeService.getFreeEmployees();
+  }
+
+  @Authorization(Roles.OWNER)
+  @Post('assign')
+  async assignEmployeesToObject(@Body() dto: AssignEmployeesDto) {
+    return this.employeeService.assignToObject(dto);
   }
 
   @Authorization(Roles.OWNER)

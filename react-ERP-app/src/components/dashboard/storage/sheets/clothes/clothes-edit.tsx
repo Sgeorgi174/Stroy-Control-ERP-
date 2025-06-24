@@ -31,7 +31,10 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
   const { activeTab } = useFilterPanelStore();
   const { closeSheet } = useClothesSheetStore();
   const updateClothesMutation = useUpdateClothes(clothes.id);
-  const { data: objects = [] } = useObjects();
+  const { data: objects = [] } = useObjects({
+    searchQuery: "",
+    status: "OPEN",
+  });
 
   const {
     register,

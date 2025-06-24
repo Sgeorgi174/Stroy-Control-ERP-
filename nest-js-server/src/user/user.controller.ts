@@ -13,4 +13,10 @@ export class UserController {
   async getFiltered(@Authorized('id') userId: string) {
     return this.userService.getNotifications(userId);
   }
+
+  @Authorization(Roles.OWNER)
+  @Get('foremen')
+  async getFreeForemen() {
+    return this.userService.getFreeForemen();
+  }
 }

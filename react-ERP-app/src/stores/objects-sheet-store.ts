@@ -3,7 +3,15 @@ import { create } from "zustand";
 
 type ObjectSheetState = {
   isOpen: boolean;
-  mode: "add" | "edit" | "details" | "add employee" | "close object" | null;
+  mode:
+    | "add"
+    | "edit"
+    | "details"
+    | "add employee"
+    | "close object"
+    | "change foreman"
+    | "remove foreman"
+    | null;
   selectedObject: Object | null;
   openSheet: (mode: ObjectSheetState["mode"], object?: Object | null) => void;
   closeSheet: () => void;

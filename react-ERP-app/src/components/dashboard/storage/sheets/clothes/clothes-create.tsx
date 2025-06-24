@@ -24,7 +24,10 @@ type FormData = {
 export function ClothesCreate() {
   const { activeTab } = useFilterPanelStore();
   const createClothesMutation = useCreateClothes();
-  const { data: objects = [] } = useObjects();
+  const { data: objects = [] } = useObjects({
+    searchQuery: "",
+    status: "OPEN",
+  });
 
   const {
     register,

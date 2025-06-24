@@ -9,13 +9,17 @@ import { Label } from "@/components/ui/label";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { useTransferClothes } from "@/hooks/clothes/useClothes";
 import { useObjects } from "@/hooks/object/useObject";
+import type { Object } from "@/types/object";
 
 type ClothesTransferProps = { clothes: Clothes };
 
 export function ClothesTransfer({ clothes }: ClothesTransferProps) {
   const { closeSheet } = useClothesSheetStore();
   const transferClothesMutation = useTransferClothes(clothes.id);
-  const { data: objects = [] } = useObjects();
+  const { data: objects = [] } = useObjects({
+    searchQuery: "",
+    status: "OPEN",
+  });
 
   const formSchema = z.object({
     fromObjectId: z.string(),
@@ -123,7 +127,9 @@ export function ClothesTransfer({ clothes }: ClothesTransferProps) {
             <ObjectSelectForForms
               selectedObjectId={watch("toObjectId")}
               onSelectChange={(id) => setValue("toObjectId", id)}
-              objects={objects.filter((o) => o.id !== clothes.objectId)}
+              objects={objects.filter(
+                (item: Object) => item.id !== clothes.objectId
+              )}
             />
             {errors.toObjectId && (
               <p className="text-sm text-red-500">

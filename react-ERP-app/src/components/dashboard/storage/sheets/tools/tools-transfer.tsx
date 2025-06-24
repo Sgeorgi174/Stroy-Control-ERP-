@@ -9,6 +9,7 @@ import { z } from "zod";
 import { useObjects } from "@/hooks/object/useObject";
 import { useTransferTool } from "@/hooks/tool/useTransferTool";
 import { ToolsDetailsBox } from "./tool-details-box";
+import type { Object } from "@/types/object";
 
 type ToolsTransferProps = { tool: Tool };
 const transferSchema = z
@@ -30,7 +31,10 @@ type FormData = z.infer<typeof transferSchema>;
 
 export function ToolsTransfer({ tool }: ToolsTransferProps) {
   const { closeSheet } = useToolsSheetStore();
-  const { data: objects = [] } = useObjects();
+  const { data: objects = [] } = useObjects({
+    searchQuery: "",
+    status: "OPEN",
+  });
 
   const {
     handleSubmit,
@@ -85,7 +89,9 @@ export function ToolsTransfer({ tool }: ToolsTransferProps) {
             <ObjectSelectForForms
               selectedObjectId={selectedToObjectId}
               onSelectChange={(id) => id && setValue("toObjectId", id)}
-              objects={objects.filter((object) => object.id !== tool.objectId)}
+              objects={objects.filter(
+                (object: Object) => object.id !== tool.objectId
+              )}
             />
             {errors.toObjectId && (
               <p className="text-sm text-red-500">

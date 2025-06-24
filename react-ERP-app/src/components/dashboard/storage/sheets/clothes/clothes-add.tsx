@@ -15,7 +15,10 @@ type ClothesAddProps = { clothes: Clothes };
 export function ClothesAdd({ clothes }: ClothesAddProps) {
   const { closeSheet } = useClothesSheetStore();
   const addClothesMutation = useAddClothes(clothes.id);
-  const { data: objects = [] } = useObjects();
+  const { data: objects = [] } = useObjects({
+    searchQuery: "",
+    status: "OPEN",
+  });
 
   const formSchema = z.object({
     fromObjectId: z.string(),

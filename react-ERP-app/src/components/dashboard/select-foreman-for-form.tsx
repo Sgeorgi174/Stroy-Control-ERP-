@@ -24,7 +24,7 @@ type ForemanAutocompleteProps = {
 };
 
 export function ForemanAutocomplete({
-  foremen,
+  foremen = [],
   selectedUserId,
   onSelectChange,
   disabled,

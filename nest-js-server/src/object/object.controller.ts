@@ -8,6 +8,8 @@ import {
   Param,
   HttpCode,
   HttpStatus,
+  Query,
+  Patch,
 } from '@nestjs/common';
 import { ObjectService } from './object.service';
 import { CreateDto } from './dto/create.dto';
@@ -15,6 +17,8 @@ import { UpdateDto } from './dto/update.dto';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
 import { Roles } from 'generated/prisma';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
+import { GetObjectQueryDto } from './dto/get-object-query.dto';
+import { ChangeForemanDto } from './dto/changeForeman.dto';
 
 @Controller('objects')
 export class ObjectController {
@@ -28,9 +32,9 @@ export class ObjectController {
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
-  @Get('all')
-  async getAll() {
-    return this.objectService.getAll();
+  @Get('filter')
+  async getFiltered(@Query() query: GetObjectQueryDto) {
+    return this.objectService.getFiltered(query);
   }
 
   @Authorization(Roles.OWNER)
@@ -49,6 +53,18 @@ export class ObjectController {
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateDto) {
     return this.objectService.update(id, dto);
+  }
+
+  @Authorization(Roles.OWNER)
+  @Patch('change-foreman/:id')
+  async changeForeman(@Param('id') id: string, @Body() dto: ChangeForemanDto) {
+    return this.objectService.changeForeman(id, dto);
+  }
+
+  @Authorization(Roles.OWNER)
+  @Patch('remove-foreman/:id')
+  async removeForeman(@Param('id') id: string) {
+    return this.objectService.removeForeman(id);
   }
 
   @Authorization(Roles.OWNER)

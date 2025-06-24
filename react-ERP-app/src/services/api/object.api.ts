@@ -1,10 +1,22 @@
 // services/api/object.api.ts
-import type { Object } from "@/types/object"; // создай этот тип
-import type { CreateObjectDto, UpdateObjectDto } from "@/types/dto/object.dto";
+import type { Object, ObjectStatus } from "@/types/object"; // создай этот тип
+import type {
+  ChangeForemanDto,
+  CreateObjectDto,
+  UpdateObjectDto,
+} from "@/types/dto/object.dto";
 import { api } from "@/lib/api";
 
-export const getAllObjects = async (): Promise<Object[]> => {
-  const res = await api.get("/objects/all");
+export const getFilteredObjects = async (params: {
+  searchQuery: string;
+  status?: ObjectStatus | null;
+}) => {
+  const res = await api.get("/objects/filter", {
+    params: {
+      searchQuery: params.searchQuery || undefined,
+      status: params.status || undefined,
+    },
+  });
   return res.data;
 };
 
@@ -33,4 +45,17 @@ export const updateObject = async (
 
 export const deleteObject = async (id: string): Promise<void> => {
   await api.delete(`/objects/delete/${id}`);
+};
+
+export const changeForeman = async (
+  id: string,
+  dto: ChangeForemanDto
+): Promise<Object> => {
+  const res = await api.patch(`/objects/change-foreman/${id}`, dto);
+  return res.data;
+};
+
+export const removeForeman = async (id: string): Promise<Object> => {
+  const res = await api.patch(`/objects/remove-foreman/${id}`);
+  return res.data;
 };

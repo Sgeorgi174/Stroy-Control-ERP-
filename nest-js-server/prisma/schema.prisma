@@ -54,6 +54,7 @@ model Object {
 
   name    String
   address String
+  status  ObjectStatus @default(OPEN)
 
   foreman User?   @relation(fields: [userId], references: [id])
   userId  String? @unique @map("user_id")
@@ -72,6 +73,11 @@ model Object {
   toDeviceHistories   DeviceHistory[] @relation("device_to_object_fk")
 
   @@unique([name, address], name: "object_name_address_unique")
+}
+
+enum ObjectStatus {
+  OPEN
+  CLOSE
 }
 
 model Tool {

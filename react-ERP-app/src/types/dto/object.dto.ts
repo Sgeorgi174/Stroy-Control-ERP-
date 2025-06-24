@@ -10,3 +10,7 @@ export type UpdateObjectDto = {
   address: string;
   userId?: string | null;
 };
+
+export type ChangeForemanDto = {
+  userId?: string | null;
+};

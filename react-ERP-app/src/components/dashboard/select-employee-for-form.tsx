@@ -34,7 +34,6 @@ export function EmployeeAutocomplete({
 
   useEffect(() => {
     const selected = employees.find((e) => e.id === selectedEmployeeId);
-    // console.log(selectedEmployeeId);
 
     if (selected) {
       setSelectedLabel(`${selected.lastName} ${selected.firstName}`);

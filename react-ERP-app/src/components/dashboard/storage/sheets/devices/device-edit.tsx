@@ -24,7 +24,10 @@ type DeviceEditProps = {
 };
 
 export function DeviceEdit({ device }: DeviceEditProps) {
-  const { data: objects = [] } = useObjects();
+  const { data: objects = [] } = useObjects({
+    searchQuery: "",
+    status: "OPEN",
+  });
 
   const {
     register,

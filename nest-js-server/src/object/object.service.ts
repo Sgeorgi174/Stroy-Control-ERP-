@@ -7,6 +7,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
+import { GetObjectQueryDto } from './dto/get-object-query.dto';
+import { ChangeForemanDto } from './dto/changeForeman.dto';
 
 @Injectable()
 export class ObjectService {
@@ -30,16 +32,36 @@ export class ObjectService {
     }
   }
 
-  public async getAll() {
-    try {
-      return await this.prismaService.object.findMany({
-        include: { tools: true, employees: true, clothes: true, devices: true },
-      });
-    } catch (error) {
-      handlePrismaError(error, {
-        defaultMessage: 'Ошибка получения объектов',
-      });
-    }
+  public async getFiltered(query: GetObjectQueryDto) {
+    const objects = await this.prismaService.object.findMany({
+      where: {
+        ...(query.status ? { status: query.status } : {}),
+        ...(query.searchQuery
+          ? {
+              OR: [
+                {
+                  name: {
+                    contains: query.searchQuery,
+                    mode: 'insensitive',
+                  },
+                },
+                {
+                  address: { contains: query.searchQuery, mode: 'insensitive' },
+                },
+              ],
+            }
+          : {}),
+      },
+      include: {
+        foreman: {
+          select: { firstName: true, lastName: true, phone: true, id: true },
+        },
+        employees: { select: { _count: true } },
+      },
+      orderBy: { name: 'asc' },
+    });
+
+    return objects;
   }
 
   public async getById(id: string) {
@@ -89,6 +111,38 @@ export class ObjectService {
           userId: dto.userId ?? null,
         },
         include: { tools: true, employees: true, clothes: true, devices: true },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        conflictMessage: 'Обновление нарушает уникальность объекта',
+        defaultMessage: 'Ошибка при обновлении объекта',
+      });
+    }
+  }
+
+  public async changeForeman(objectId: string, dto: ChangeForemanDto) {
+    await this.getById(objectId);
+
+    try {
+      return await this.prismaService.object.update({
+        where: { id: objectId },
+        data: { userId: dto.userId ? dto.userId : null },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        conflictMessage: 'Обновление нарушает уникальность объекта',
+        defaultMessage: 'Ошибка при обновлении объекта',
+      });
+    }
+  }
+
+  public async removeForeman(objectId: string) {
+    await this.getById(objectId);
+
+    try {
+      return await this.prismaService.object.update({
+        where: { id: objectId },
+        data: { userId: null },
       });
     } catch (error) {
       handlePrismaError(error, {

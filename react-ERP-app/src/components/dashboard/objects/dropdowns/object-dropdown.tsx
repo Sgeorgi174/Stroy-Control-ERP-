@@ -7,28 +7,44 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { EllipsisVertical } from "lucide-react";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { AlertDialogDelete } from "../../alert-dialog-delete";
+import { AlertDialogRemove } from "../dialog-remove-foreman";
 import type { Object } from "@/types/object";
 import { useObjectSheetStore } from "@/stores/objects-sheet-store";
+import { useDeleteObject } from "@/hooks/object/useDeleteObject";
+import { useRemoveForeman } from "@/hooks/object/useRemoveForeman";
 
 type ObjectDropDownProps = { object: Object };
 
 export function ObjectDropDown({ object }: ObjectDropDownProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const { openSheet } = useObjectSheetStore();
 
-  const handleDelete = async () => {
-    try {
-      // Здесь будет логика удаления
-      // Например: await api.delete(`/tools/${tool.id}`);
-      toast.success(`Инструмент "${object.name}" успешно удален`);
-    } catch (error) {
-      toast.error("Не удалось удалить инструмент");
-      console.error("Ошибка при удалении:", error);
-    } finally {
-      setIsDeleteDialogOpen(false);
-    }
+  const { mutate: deleteObject, isPending: isDeleting } = useDeleteObject();
+  const { mutate: removeForeman, isPending: isRemovingForeman } =
+    useRemoveForeman(object.id);
+
+  const handleDelete = () => {
+    deleteObject(object.id, {
+      onSuccess: () => {
+        setIsDeleteDialogOpen(false);
+      },
+      onError: () => {
+        setIsDeleteDialogOpen(false);
+      },
+    });
+  };
+
+  const handleRemove = () => {
+    removeForeman(undefined, {
+      onSuccess: () => {
+        setIsRemoveDialogOpen(false);
+      },
+      onError: () => {
+        setIsRemoveDialogOpen(false);
+      },
+    });
   };
 
   return (
@@ -44,6 +60,15 @@ export function ObjectDropDown({ object }: ObjectDropDownProps) {
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => openSheet("edit", object)}>
             Редактировать
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openSheet("change foreman", object)}>
+            Сменить бригадира
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            disabled={!object.foreman}
+            onClick={() => setIsRemoveDialogOpen(true)}
+          >
+            Снять бригадира
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => openSheet("add employee", object)}>
             Добавить сотрудников
@@ -70,7 +95,18 @@ export function ObjectDropDown({ object }: ObjectDropDownProps) {
         handleDelete={handleDelete}
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
         item={object}
+        isLoading={isDeleting}
       />
+
+      {object.foreman && (
+        <AlertDialogRemove
+          isRemoveDialogOpen={isRemoveDialogOpen}
+          handleRemove={handleRemove}
+          setIsRemoveDialogOpen={setIsRemoveDialogOpen}
+          item={object.foreman}
+          isLoading={isRemovingForeman}
+        />
+      )}
     </>
   );
 }

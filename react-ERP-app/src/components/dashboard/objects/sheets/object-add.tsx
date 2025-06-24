@@ -2,14 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useObjectSheetStore } from "@/stores/objects-sheet-store";
 import { ForemanAutocomplete } from "../../select-foreman-for-form";
-import { users } from "@/constants/objects&Users";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect } from "react";
+import { useCreateObject } from "@/hooks/object/useCreateObject";
+import { useGetFreeForemen } from "@/hooks/user/useGetFreeForemen";
 
 // 1. Схема валидации Zod
 const tabletSchema = z
@@ -51,7 +51,8 @@ export function ObjectAdd() {
       noForeman: false,
     },
   });
-
+  const { mutate: createObject, isPending } = useCreateObject();
+  const { data: foremen = [] } = useGetFreeForemen();
   const { closeSheet } = useObjectSheetStore();
   const selectedUserId = watch("userId");
   const noForeman = watch("noForeman");
@@ -67,20 +68,19 @@ export function ObjectAdd() {
     const trimmedName = data.name.trim();
     const trimmedAddress = `${data.city.trim()}, ${data.street.trim()}, ${data.buildings.trim()}`;
 
-    console.log("Собранные данные:", {
-      name: trimmedName,
-      address: trimmedAddress,
-      userId: data.noForeman ? null : data.userId,
-    });
-
-    toast.success(
-      `Успешно создан объект\nИмя: ${trimmedName} Адрес: ${trimmedAddress}\nСотрудника: ${
-        data.noForeman ? "не назначен" : data.userId
-      }`
+    createObject(
+      {
+        name: trimmedName,
+        address: trimmedAddress,
+        userId: data.noForeman ? null : data.userId,
+      },
+      {
+        onSuccess: () => {
+          reset();
+          closeSheet();
+        },
+      }
     );
-
-    reset();
-    closeSheet();
   };
 
   return (
@@ -146,7 +146,7 @@ export function ObjectAdd() {
           <div className="flex items-center gap-8">
             <ForemanAutocomplete
               disabled={noForeman}
-              foremen={users}
+              foremen={foremen}
               onSelectChange={(userId) =>
                 setValue("userId", userId, { shouldValidate: true })
               }
@@ -178,8 +178,8 @@ export function ObjectAdd() {
 
         {/* Кнопка */}
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]">
-            Добавить
+          <Button type="submit" className="w-[200px]" disabled={isPending}>
+            {isPending ? "Сохранение..." : "Добавить"}
           </Button>
         </div>
       </form>

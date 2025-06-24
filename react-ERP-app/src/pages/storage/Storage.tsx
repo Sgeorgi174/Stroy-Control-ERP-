@@ -12,7 +12,6 @@ import { useTools } from "@/hooks/tool/useTools";
 import { useDevices } from "@/hooks/device/useDevices";
 import { useClothes } from "@/hooks/clothes/useClothes";
 import { useTablets } from "@/hooks/tablet/useTablet";
-import { useMemo } from "react";
 
 export function Storage() {
   const {
@@ -23,14 +22,6 @@ export function Storage() {
     selectedTabletStatus,
     selectedItemStatus,
   } = useFilterPanelStore();
-
-  const tabletParams = useMemo(
-    () => ({
-      searchQuery,
-      status: selectedTabletStatus,
-    }),
-    [searchQuery, selectedTabletStatus]
-  );
 
   const {
     data: tools = [],
@@ -76,7 +67,13 @@ export function Storage() {
     data: tablets = [],
     isLoading: tabletsLoading,
     isError: tabletsError,
-  } = useTablets(tabletParams, activeTab === "tablet");
+  } = useTablets(
+    {
+      searchQuery,
+      status: selectedTabletStatus,
+    },
+    activeTab === "tablet"
+  );
 
   return (
     <div>

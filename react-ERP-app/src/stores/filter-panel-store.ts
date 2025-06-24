@@ -1,4 +1,5 @@
 import type { DeviceStatus } from "@/types/device";
+import type { ObjectStatus } from "@/types/object";
 import type { TabletStatus } from "@/types/tablet";
 import type { TabKey } from "@/types/tabs";
 import type { ToolStatus } from "@/types/tool";
@@ -23,6 +24,9 @@ type TabState = {
   selectedItemStatus: DeviceStatus | ToolStatus | null;
   setSelectedItemStatus: (status: DeviceStatus | ToolStatus | null) => void;
 
+  selectedObjectStatus: ObjectStatus;
+  setSetelectedObjectStatus: (status: ObjectStatus) => void;
+
   resetFilters: () => void;
 };
 
@@ -45,6 +49,9 @@ export const useFilterPanelStore = create<TabState>((set) => ({
   selectedItemStatus: null,
   setSelectedItemStatus: (status) => set({ selectedItemStatus: status }),
 
+  selectedObjectStatus: "OPEN",
+  setSetelectedObjectStatus: (status) => set({ selectedObjectStatus: status }),
+
   resetFilters: () =>
     set({
       searchQuery: "",
@@ -52,5 +59,6 @@ export const useFilterPanelStore = create<TabState>((set) => ({
       selectedSeason: null,
       selectedTabletStatus: null,
       selectedItemStatus: null,
+      selectedObjectStatus: "OPEN",
     }),
 }));

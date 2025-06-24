@@ -1,4 +1,7 @@
+import type { Employee } from "./employee";
 import type { User } from "./user";
+
+export type ObjectStatus = "OPEN" | "CLOSE";
 
 export type Object = {
   id: string;
@@ -8,5 +11,6 @@ export type Object = {
   address: string;
   userId: string | null;
   foreman: User | null;
-  employees: number;
+  employees: Employee[];
+  status: ObjectStatus;
 };

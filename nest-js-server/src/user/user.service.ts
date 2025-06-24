@@ -60,4 +60,13 @@ export class UserService {
       });
     }
   }
+
+  public async getFreeForemen() {
+    const foremen = await this.prismaService.user.findMany({
+      where: { role: 'FOREMAN', object: null },
+      orderBy: { lastName: 'asc' },
+    });
+
+    return foremen;
+  }
 }

@@ -11,6 +11,7 @@ import { ObjectEdit } from "./object-edit";
 import { ObjectDetails } from "./object-details";
 import { ObjectAddEmployee } from "./object-add-employee";
 import { CloseObject } from "./close-object/close-object";
+import { ChangeForeman } from "./change-foreman";
 
 export function ObjectsSheet() {
   const { isOpen, mode, selectedObject, closeSheet } = useObjectSheetStore();
@@ -18,7 +19,7 @@ export function ObjectsSheet() {
   return (
     <Sheet open={isOpen} onOpenChange={closeSheet}>
       <SheetContent
-        className="w-[750px] sm:max-w-[1000px]"
+        className="w-[850px] sm:max-w-[1000px]"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
         onOpenAutoFocus={(event) => event.preventDefault()}
@@ -31,6 +32,7 @@ export function ObjectsSheet() {
             {mode === "add" && "Добавление нового объекта"}
             {mode === "edit" && `Редактирвоание объекта`}
             {mode === "details" && `Подробная информация об объекте`}
+            {mode === "change foreman" && `Смена бригадира на объекте`}
             {mode === "add employee" &&
               `Выберите сотрудников для назначения на объект`}
             {mode === "close object" &&
@@ -50,6 +52,9 @@ export function ObjectsSheet() {
         )}
         {mode === "close object" && selectedObject && (
           <CloseObject object={selectedObject} />
+        )}
+        {mode === "change foreman" && selectedObject && (
+          <ChangeForeman object={selectedObject} />
         )}
       </SheetContent>
     </Sheet>

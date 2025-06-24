@@ -22,3 +22,8 @@ export interface UpdateEmployeeDto {
 export interface TransferEmployeeDto {
   objectId: string;
 }
+
+export interface AssignEmployeesDto {
+  employeeIds: string[];
+  objectId: string;
+}

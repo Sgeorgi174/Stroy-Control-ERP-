@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { GetEmployeeQueryDto } from './dto/employee-query.dto';
 import { TransferEmployeeDto } from './dto/transfer.dto';
+import { AssignEmployeesDto } from './dto/assign-employees.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -67,12 +68,18 @@ export class EmployeeService {
       },
       include: {
         skills: true,
-        workPlace: { select: { name: true, address: true } },
+        workPlace: { select: { name: true, address: true, id: true } },
         clothing: true,
       },
     });
 
-    if (!employees.length) throw new NotFoundException('Сотрудники не найдены');
+    return employees;
+  }
+
+  public async getFreeEmployees() {
+    const employees = await this.prismaService.employee.findMany({
+      where: { objectId: null },
+    });
 
     return employees;
   }
@@ -116,6 +123,26 @@ export class EmployeeService {
         notFoundMessage: 'Сотрудник не найден',
         conflictMessage: 'Обновление нарушает уникальность данных',
         defaultMessage: 'Не удалось обновить сотрудника',
+      });
+    }
+  }
+
+  public async assignToObject(dto: AssignEmployeesDto) {
+    try {
+      await this.prismaService.employee.updateMany({
+        where: {
+          id: { in: dto.employeeIds },
+        },
+        data: {
+          objectId: dto.objectId,
+        },
+      });
+
+      return { success: true, assignedCount: dto.employeeIds.length };
+    } catch (error) {
+      console.error(error);
+      handlePrismaError(error, {
+        defaultMessage: 'Не удалось назначить сотрудников на объект',
       });
     }
   }

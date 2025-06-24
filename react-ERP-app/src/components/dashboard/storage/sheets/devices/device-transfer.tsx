@@ -9,6 +9,7 @@ import { useDeviceSheetStore } from "@/stores/device-sheet-store";
 import { useTransferDevice } from "@/hooks/device/useTransferDevice";
 import { useObjects } from "@/hooks/object/useObject";
 import { DeviceDetailsBox } from "./device-details-box";
+import type { Object } from "@/types/object";
 
 type DeviceTransferProps = { device: Device };
 
@@ -30,7 +31,10 @@ const transferSchema = z
 type FormData = z.infer<typeof transferSchema>;
 
 export function DeviceTransfer({ device }: DeviceTransferProps) {
-  const { data: objects = [] } = useObjects();
+  const { data: objects = [] } = useObjects({
+    searchQuery: "",
+    status: "OPEN",
+  });
   const { closeSheet } = useDeviceSheetStore();
 
   const {
@@ -84,7 +88,7 @@ export function DeviceTransfer({ device }: DeviceTransferProps) {
             <ObjectSelectForForms
               selectedObjectId={selectedToObjectId}
               onSelectChange={(id) => id && setValue("toObjectId", id)}
-              objects={objects.filter((o) => o.id !== device.objectId)}
+              objects={objects.filter((o: Object) => o.id !== device.objectId)}
               disabled={isPending}
             />
             {errors.toObjectId && (

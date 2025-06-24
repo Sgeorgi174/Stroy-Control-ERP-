@@ -8,12 +8,20 @@ import {
 } from "@/components/ui/table";
 import type { Object } from "@/types/object";
 import { ObjectDropDown } from "../dropdowns/object-dropdown";
+import { PendingTable } from "../../storage/tables/pending-table";
+import { splitAddress } from "@/lib/utils/splitAddress";
 
 type ObjectsTableProps = {
   objects: Object[];
+  isError: boolean;
+  isLoading: boolean;
 };
 
-export function ObjectsTable({ objects }: ObjectsTableProps) {
+export function ObjectsTable({
+  objects,
+  isError,
+  isLoading,
+}: ObjectsTableProps) {
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>
@@ -34,14 +42,27 @@ export function ObjectsTable({ objects }: ObjectsTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
+          <PendingTable
+            isError={isError}
+            isLoading={isLoading}
+            data={objects}
+          />
           {objects.map((object) => (
             <TableRow key={object.id}>
               <TableCell></TableCell>
               <TableCell className="font-medium">{object.name}</TableCell>
-              <TableCell>{object.address}</TableCell>
-              <TableCell>{`${object.user.lastName} ${object.user.firstName}`}</TableCell>
-              <TableCell>{object.user.phone}</TableCell>
-              <TableCell>{object.employees}</TableCell>
+              <TableCell>{`г. ${splitAddress(object).city}, ул. ${
+                splitAddress(object).street
+              }, ${splitAddress(object).buldings}`}</TableCell>
+              <TableCell>
+                {object.foreman
+                  ? `${object.foreman.lastName} ${object.foreman.firstName}`
+                  : "Не назначен"}
+              </TableCell>
+              <TableCell>
+                {object.foreman ? object.foreman.phone : "-"}
+              </TableCell>
+              <TableCell>{object.employees.length}</TableCell>
               <TableCell>
                 <ObjectDropDown object={object} />
               </TableCell>

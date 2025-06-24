@@ -15,7 +15,10 @@ type ClothesWrittenOffProps = { clothes: Clothes };
 export function ClothesWrittenOff({ clothes }: ClothesWrittenOffProps) {
   const { closeSheet } = useClothesSheetStore();
   const writeOffClothesMutation = useWriteOffClothes(clothes.id);
-  const { data: objects = [] } = useObjects();
+  const { data: objects = [] } = useObjects({
+    searchQuery: "",
+    status: "OPEN",
+  });
 
   const formSchema = z.object({
     fromObjectId: z.string(),

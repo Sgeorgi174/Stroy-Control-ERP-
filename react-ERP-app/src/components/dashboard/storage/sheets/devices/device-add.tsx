@@ -19,7 +19,10 @@ const deviceSchema = z.object({
 type FormData = z.infer<typeof deviceSchema>;
 
 export function DeviceAdd() {
-  const { data: objects = [] } = useObjects();
+  const { data: objects = [] } = useObjects({
+    searchQuery: "",
+    status: "OPEN",
+  });
   const {
     register,
     handleSubmit,
