@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetToolHistory = (toolId: string) => {
   return useQuery({
-    queryKey: ["tool-history"],
+    queryKey: ["tool-history", toolId],
     queryFn: () => getToolHistory(toolId),
   });
 };

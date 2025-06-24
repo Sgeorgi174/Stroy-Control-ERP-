@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetDeviceStatusChanges = (deviceId: string) => {
   return useQuery({
-    queryKey: ["tool-statuses"],
+    queryKey: ["device-statuses", deviceId],
     queryFn: () => getDeviceStatusChangesHistory(deviceId),
   });
 };

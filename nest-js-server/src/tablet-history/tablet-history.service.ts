@@ -23,7 +23,12 @@ export class TabletHistoryService {
   async getByTabletId(tabletId: string) {
     return this.prisma.tabletHistory.findMany({
       where: { tabletId },
-      orderBy: { createdAt: 'desc' },
+      include: {
+        fromEmployee: { select: { firstName: true, lastName: true } },
+        toEmployee: { select: { firstName: true, lastName: true } },
+        changedBy: { select: { firstName: true, lastName: true } },
+      },
+      orderBy: { createdAt: 'asc' },
     });
   }
 

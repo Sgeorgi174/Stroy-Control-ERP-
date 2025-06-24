@@ -97,6 +97,7 @@ export class ToolService {
           },
         },
       },
+      orderBy: { name: 'asc' },
     });
 
     return tools;

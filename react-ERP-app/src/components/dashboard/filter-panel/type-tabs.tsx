@@ -29,15 +29,21 @@ const TABS: {
 ];
 
 export function TypeTabs() {
-  const { activeTab, setActiveTab } = useFilterPanelStore();
+  const { activeTab, setActiveTab, resetFilters } = useFilterPanelStore();
+
   return (
     <Tabs
       value={activeTab}
-      onValueChange={(val) => setActiveTab(val as TabKey)} // <- ключевой момент
+      onValueChange={(val) => {
+        if (val !== activeTab) {
+          setActiveTab(val as TabKey);
+          resetFilters(); // 👈 красивее, чем вручную затирать всё
+        }
+      }}
     >
       <TabsList>
         {TABS.map((tab) => (
-          <TabsTrigger className="" key={tab.key} value={tab.key}>
+          <TabsTrigger key={tab.key} value={tab.key}>
             {tab.label}
           </TabsTrigger>
         ))}

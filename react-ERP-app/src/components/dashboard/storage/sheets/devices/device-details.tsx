@@ -8,12 +8,17 @@ import { StatusChangesHistoryTable } from "../../tables/status-changes-table/sta
 type DeviceDetailsProps = { device: Device };
 
 export function DeviceDetails({ device }: DeviceDetailsProps) {
-  const { data: deviceHistoryData = [], isError: deviceHistoryError } =
-    useGetDeviceHistory(device.id);
+  const {
+    data: deviceHistoryData = [],
+    isError: deviceHistoryError,
+    isLoading: deviceHistoryLoading,
+  } = useGetDeviceHistory(device.id);
   const {
     data: deviceStatusChangesData = [],
     isError: deviceStatusChangesError,
+    isLoading: deviceStatusChangesLoading,
   } = useGetDeviceStatusChanges(device.id);
+
   return (
     <>
       <div className="p-5 flex flex-col gap-1">
@@ -23,13 +28,15 @@ export function DeviceDetails({ device }: DeviceDetailsProps) {
           Последние перемещения
         </p>
         <TransferHistoryTable
-          transferRecords={deviceHistoryData}
           isError={deviceHistoryError}
+          isLoading={deviceHistoryLoading}
+          transferRecords={deviceHistoryData}
         />
         <p className="text-center font-medium text-xl mt-8">Смены статусов</p>
         <StatusChangesHistoryTable
-          statusChangesRecords={deviceStatusChangesData}
           isError={deviceStatusChangesError}
+          isLoading={deviceStatusChangesLoading}
+          statusChangesRecords={deviceStatusChangesData}
         />
       </div>
     </>

@@ -13,15 +13,15 @@ import { ToolsDetailsBox } from "./tool-details-box";
 type ToolsTransferProps = { tool: Tool };
 const transferSchema = z
   .object({
-    fromObjectId: z.string().nullable().optional(), // ✅ исправлено
-    toObjectId: z.string().min(1, "Выберите склад для перемещения"),
+    fromObjectId: z.string().nullable().optional(),
+    toObjectId: z.string().min(1, "Выберите объект для перемещения"),
   })
   .superRefine(({ fromObjectId, toObjectId }, ctx) => {
     if (fromObjectId && fromObjectId === toObjectId) {
       ctx.addIssue({
         code: "custom",
         path: ["toObjectId"],
-        message: "Нельзя переместить на тот же склад",
+        message: "Нельзя переместить на тот же объект",
       });
     }
   });
@@ -41,7 +41,7 @@ export function ToolsTransfer({ tool }: ToolsTransferProps) {
   } = useForm<FormData>({
     resolver: zodResolver(transferSchema),
     defaultValues: {
-      fromObjectId: null,
+      fromObjectId: "",
       toObjectId: "",
     },
   });
@@ -72,7 +72,7 @@ export function ToolsTransfer({ tool }: ToolsTransferProps) {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex justify-center gap-52 mt-10">
           <div className="flex flex-col gap-2">
-            <Label>С какого склада</Label>
+            <Label>С какого объекта</Label>
             <ObjectSelectForForms
               disabled
               selectedObjectId={tool.objectId ?? ""}
@@ -81,7 +81,7 @@ export function ToolsTransfer({ tool }: ToolsTransferProps) {
             />
           </div>
           <div className="flex flex-col gap-2">
-            <Label>На какой склад *</Label>
+            <Label>На какой объект *</Label>
             <ObjectSelectForForms
               selectedObjectId={selectedToObjectId}
               onSelectChange={(id) => id && setValue("toObjectId", id)}

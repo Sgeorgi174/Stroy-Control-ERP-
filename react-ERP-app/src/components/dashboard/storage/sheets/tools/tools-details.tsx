@@ -10,10 +10,16 @@ type ToolsDetailsProps = {
 };
 
 export function ToolsDetails({ tool }: ToolsDetailsProps) {
-  const { data: toolHistoryData = [], isError: toolHistoryError } =
-    useGetToolHistory(tool.id);
-  const { data: toolStatusChangesData = [], isError: toolStatusChangesError } =
-    useGetToolStatusChanges(tool.id);
+  const {
+    data: toolHistoryData = [],
+    isError: toolHistoryError,
+    isLoading: toolHistoryLoading,
+  } = useGetToolHistory(tool.id);
+  const {
+    data: toolStatusChangesData = [],
+    isError: toolStatusChangesError,
+    isLoading: toolStatusChangesLoading,
+  } = useGetToolStatusChanges(tool.id);
 
   return (
     <>
@@ -26,11 +32,13 @@ export function ToolsDetails({ tool }: ToolsDetailsProps) {
         <TransferHistoryTable
           transferRecords={toolHistoryData}
           isError={toolHistoryError}
+          isLoading={toolHistoryLoading}
         />
         <p className="text-center font-medium text-xl mt-8">Смены статусов</p>
         <StatusChangesHistoryTable
           statusChangesRecords={toolStatusChangesData}
           isError={toolStatusChangesError}
+          isLoading={toolStatusChangesLoading}
         />
       </div>
     </>

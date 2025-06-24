@@ -3,8 +3,11 @@ import { TransferHistoryTable } from "../../tables/transfer-history-table";
 import { useGetClothesHistory } from "@/hooks/clothes/useClothes";
 
 export function ClothesDetails({ clothes }: { clothes: Clothes }) {
-  const { data: clothesHistoryData = [], isError: clothesHistoryError } =
-    useGetClothesHistory(clothes.id);
+  const {
+    data: clothesHistoryData = [],
+    isError,
+    isLoading,
+  } = useGetClothesHistory(clothes.id);
 
   return (
     <>
@@ -37,7 +40,8 @@ export function ClothesDetails({ clothes }: { clothes: Clothes }) {
         </p>
         <TransferHistoryTable
           transferRecords={clothesHistoryData}
-          isError={clothesHistoryError}
+          isError={isError}
+          isLoading={isLoading}
         />
       </div>
     </>

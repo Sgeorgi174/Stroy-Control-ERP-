@@ -16,13 +16,10 @@ import { ToolsDetailsBox } from "./tool-details-box";
 type ToolsEditProps = { tool: Tool };
 
 const schema = z.object({
-  status: z.enum([
-    "ON_OBJECT",
-    "IN_TRANSIT",
-    "IN_REPAIR",
-    "LOST",
-    "WRITTEN_OFF",
-  ]),
+  status: z.enum(
+    ["ON_OBJECT", "IN_TRANSIT", "IN_REPAIR", "LOST", "WRITTEN_OFF"],
+    { message: "Новый статус обязателен" }
+  ),
   comment: z.string().min(1, "Комментарий обязателен"),
 });
 
@@ -41,8 +38,8 @@ export function ToolsChangeStatus({ tool }: ToolsEditProps) {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      status: tool.status,
-      comment: "",
+      status: undefined,
+      comment: undefined,
     },
   });
 
@@ -74,7 +71,8 @@ export function ToolsChangeStatus({ tool }: ToolsEditProps) {
           <div className="flex flex-col gap-2">
             <Label>Новый статус</Label>
             <SelectStatusToolOrDeviceForForms
-              selectedStatus={selectedStatus}
+              currentStatus={tool.status}
+              selectedStatus={selectedStatus ?? ""}
               onSelectChange={(status) =>
                 setValue("status", status as DeviceStatus)
               }

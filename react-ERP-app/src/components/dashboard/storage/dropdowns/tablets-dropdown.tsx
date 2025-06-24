@@ -52,7 +52,12 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
           <DropdownMenuItem onClick={() => openSheet("edit", tablet)}>
             Редактировать
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openSheet("change user", tablet)}>
+          <DropdownMenuItem
+            disabled={
+              tablet.status === "LOST" || tablet.status === "WRITTEN_OFF"
+            }
+            onClick={() => openSheet("change user", tablet)}
+          >
             {tablet.employee ? "Сменить владельца" : "Выдать планшет"}
           </DropdownMenuItem>
           {tablet.employee && (
@@ -60,7 +65,12 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
               Вернуть планшет
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem onClick={() => openSheet("change status", tablet)}>
+          <DropdownMenuItem
+            disabled={
+              tablet.status === "LOST" || tablet.status === "WRITTEN_OFF"
+            }
+            onClick={() => openSheet("change status", tablet)}
+          >
             Сменить статус
           </DropdownMenuItem>
           <DropdownMenuSeparator />

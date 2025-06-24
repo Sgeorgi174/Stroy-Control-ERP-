@@ -15,14 +15,14 @@ type DeviceTransferProps = { device: Device };
 const transferSchema = z
   .object({
     fromObjectId: z.string().min(1, "Исходный объект обязателен"),
-    toObjectId: z.string().min(1, "Выберите склад для перемещения"),
+    toObjectId: z.string().min(1, "Выберите объект для перемещения"),
   })
   .superRefine(({ fromObjectId, toObjectId }, ctx) => {
     if (fromObjectId === toObjectId) {
       ctx.addIssue({
         code: "custom",
         path: ["toObjectId"],
-        message: "Нельзя переместить на тот же склад",
+        message: "Нельзя переместить на тот же объект",
       });
     }
   });
@@ -42,7 +42,7 @@ export function DeviceTransfer({ device }: DeviceTransferProps) {
   } = useForm<FormData>({
     defaultValues: {
       fromObjectId: device.objectId,
-      toObjectId: objects.find((o) => o.id !== device.objectId)?.id ?? "",
+      toObjectId: "",
     },
     resolver: zodResolver(transferSchema),
   });

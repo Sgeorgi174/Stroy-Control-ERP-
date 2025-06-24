@@ -37,7 +37,7 @@ export function NotificationCard() {
         </div>
       )}
 
-      {!isLoading && unconfirmed.length === 0 && (
+      {!isLoading && !isError && unconfirmed.length === 0 && (
         <div className="w-full h-full flex justify-center items-center text-2xl text-gray-200">
           Новых уведомлений нет
         </div>

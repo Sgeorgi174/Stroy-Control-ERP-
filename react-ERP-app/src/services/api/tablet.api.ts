@@ -69,3 +69,8 @@ export const releaseTablet = async (id: string) => {
 export const deleteTablet = async (id: string): Promise<void> => {
   await api.delete(`/tablets/delete/${id}`);
 };
+
+export const getTabletHistory = async (tabletId: string) => {
+  const res = await api.get(`/tablet-history/by-tablet/${tabletId}`);
+  return res.data;
+};

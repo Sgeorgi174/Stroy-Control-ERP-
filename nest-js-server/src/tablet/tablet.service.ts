@@ -56,6 +56,7 @@ export class TabletService {
           },
         },
       },
+      orderBy: { name: 'asc' },
     });
 
     return tablets;
@@ -106,6 +107,7 @@ export class TabletService {
             tabletId: tablet.id,
             fromStatus: tablet.status,
             toStatus: dto.status,
+            comment: dto.comment,
           },
           userId,
         );

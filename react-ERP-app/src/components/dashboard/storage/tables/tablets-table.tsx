@@ -9,7 +9,7 @@ import {
 import type { Tablet } from "@/types/tablet";
 import { TabletsDropDown } from "../dropdowns/tablets-dropdown";
 import { useTabletSheetStore } from "@/stores/tablet-sheet-store";
-import { TabletSkeleton } from "../../tablet-skeleton";
+import { PendingTable } from "./pending-table";
 
 type TabletsTableProps = {
   tablets: Tablet[];
@@ -54,21 +54,11 @@ export function TabletsTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isError && (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center text-red-500">
-                Ошибка при загрузке, попробуйте позже
-              </TableCell>
-            </TableRow>
-          )}
-          {tablets.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center text-gray-400">
-                Ничего не найдено
-              </TableCell>
-            </TableRow>
-          )}
-          {isLoading && <TabletSkeleton />}
+          <PendingTable
+            isError={isError}
+            isLoading={isLoading}
+            data={tablets}
+          />
           {tablets.map((tablet) => (
             <TableRow key={tablet.id}>
               <TableCell></TableCell>

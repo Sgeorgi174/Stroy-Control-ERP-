@@ -101,6 +101,7 @@ export class DeviceService {
           },
         },
       },
+      orderBy: { name: 'asc' },
     });
 
     return devices;

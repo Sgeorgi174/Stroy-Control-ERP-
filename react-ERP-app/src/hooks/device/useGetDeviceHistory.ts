@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetDeviceHistory = (deviceId: string) => {
   return useQuery({
-    queryKey: ["device-history"],
+    queryKey: ["device-history", deviceId],
     queryFn: () => getDeviceHistory(deviceId),
   });
 };

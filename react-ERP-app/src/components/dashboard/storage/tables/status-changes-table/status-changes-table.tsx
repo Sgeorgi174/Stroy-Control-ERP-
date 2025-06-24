@@ -10,15 +10,18 @@ import { toolStatusMap } from "@/constants/toolStatusMap";
 import { formatDate, formatTime } from "@/lib/utils/format-date";
 import { CommentPopover } from "./comment-popover";
 import type { StatusChangesRecord } from "@/types/historyRecords";
+import { PendingTable } from "../pending-table";
 
 type StatusChangesHistoryTableProps = {
   statusChangesRecords: StatusChangesRecord[];
   isError: boolean;
+  isLoading: boolean;
 };
 
 export function StatusChangesHistoryTable({
   statusChangesRecords,
   isError,
+  isLoading,
 }: StatusChangesHistoryTableProps) {
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
@@ -45,20 +48,12 @@ export function StatusChangesHistoryTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isError && (
-            <TableRow>
-              <TableCell colSpan={6} className="text-center text-red-500">
-                Ошибка при загрузке, попробуйте позже
-              </TableCell>
-            </TableRow>
-          )}
-          {statusChangesRecords.length === 0 && !isError && (
-            <TableRow>
-              <TableCell colSpan={6} className="text-center text-gray-400">
-                Нет записей
-              </TableCell>
-            </TableRow>
-          )}
+          <PendingTable
+            isError={isError}
+            isLoading={isLoading}
+            data={statusChangesRecords}
+            small={true}
+          />
           {statusChangesRecords.map((record) => (
             <TableRow key={record.id}>
               <TableCell>{formatDate(record.createdAt)}</TableCell>

@@ -9,8 +9,8 @@ import {
 import { ToolsDropDown } from "../dropdowns/tools-dropdown";
 import type { Tool } from "@/types/tool";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
-import { TabletSkeleton } from "../../tablet-skeleton";
 import { toolStatusMap } from "@/constants/toolStatusMap";
+import { PendingTable } from "./pending-table";
 
 type ToolsTableProps = {
   tools: Tool[];
@@ -44,21 +44,7 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isError && (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center text-red-500">
-                Ошибка при загрузке, попробуйте позже
-              </TableCell>
-            </TableRow>
-          )}
-          {tools.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center text-gray-400">
-                Ничего не найдено
-              </TableCell>
-            </TableRow>
-          )}
-          {isLoading && <TabletSkeleton />}
+          <PendingTable isError={isError} isLoading={isLoading} data={tools} />
           {tools.map((tool) => (
             <TableRow key={tool.id}>
               <TableCell></TableCell>

@@ -13,7 +13,9 @@ import { TabletDetailsBox } from "./tablet-details-box";
 type TabletChangeStatusProps = { tablet: Tablet };
 
 const schema = z.object({
-  status: z.enum(["ACTIVE", "INACTIVE", "IN_REPAIR", "LOST", "WRITTEN_OFF"]),
+  status: z.enum(["ACTIVE", "INACTIVE", "IN_REPAIR", "LOST", "WRITTEN_OFF"], {
+    message: "Новый статус обязателен",
+  }),
   comment: z.string().min(1, "Комментарий обязателен"),
 });
 
@@ -31,7 +33,7 @@ export function TabletChangeStatus({ tablet }: TabletChangeStatusProps) {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      status: tablet.status,
+      status: undefined,
       comment: "",
     },
   });
@@ -61,6 +63,7 @@ export function TabletChangeStatus({ tablet }: TabletChangeStatusProps) {
           <div className="flex flex-col gap-2">
             <Label>Новый статус</Label>
             <SelectTabletStatusForForms
+              currentStatus={tablet.status}
               selectedStatus={selectedStatus}
               onSelectChange={(status) =>
                 setValue("status", status as TabletStatus)

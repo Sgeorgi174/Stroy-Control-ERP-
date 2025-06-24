@@ -13,13 +13,10 @@ import { DeviceDetailsBox } from "./device-details-box";
 type DeviceChangeStatusProps = { device: Device };
 
 const schema = z.object({
-  status: z.enum([
-    "ON_OBJECT",
-    "IN_TRANSIT",
-    "IN_REPAIR",
-    "LOST",
-    "WRITTEN_OFF",
-  ]),
+  status: z.enum(
+    ["ON_OBJECT", "IN_TRANSIT", "IN_REPAIR", "LOST", "WRITTEN_OFF"],
+    { message: "Новый статус обязателен" }
+  ),
   comment: z.string().min(1, "Комментарий обязателен"),
 });
 
@@ -38,8 +35,8 @@ export function DeviceChangeStatus({ device }: DeviceChangeStatusProps) {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      status: device.status,
-      comment: "",
+      status: undefined,
+      comment: undefined,
     },
   });
 
@@ -75,7 +72,8 @@ export function DeviceChangeStatus({ device }: DeviceChangeStatusProps) {
           <div className="flex flex-col gap-2">
             <Label>Новый статус</Label>
             <SelectStatusToolOrDeviceForForms
-              selectedStatus={selectedStatus}
+              currentStatus={device.status}
+              selectedStatus={selectedStatus ?? ""}
               onSelectChange={(status) =>
                 setValue("status", status as DeviceStatus)
               }

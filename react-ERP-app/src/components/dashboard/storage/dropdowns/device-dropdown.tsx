@@ -46,7 +46,11 @@ export function DeviceDropDown({ device }: DeviceDropDownProps) {
             Переместить
           </DropdownMenuItem>
           <DropdownMenuItem
-            disabled={device.status === "IN_TRANSIT"}
+            disabled={
+              device.status === "IN_TRANSIT" ||
+              device.status === "LOST" ||
+              device.status === "WRITTEN_OFF"
+            }
             onClick={() => openSheet("change status", device)}
           >
             Сменить статус

@@ -9,15 +9,18 @@ import {
 import { formatDate, formatTime } from "@/lib/utils/format-date";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
 import type { TransferRecord } from "@/types/historyRecords";
+import { PendingTable } from "./pending-table";
 
 type TransferHistoryTableProps = {
   transferRecords: TransferRecord[];
   isError: boolean;
+  isLoading: boolean;
 };
 
 export function TransferHistoryTable({
   transferRecords,
   isError,
+  isLoading,
 }: TransferHistoryTableProps) {
   const { activeTab } = useFilterPanelStore();
   return (
@@ -33,7 +36,7 @@ export function TransferHistoryTable({
               Время
             </TableHead>
             <TableHead className="text-secondary font-medium">Кто</TableHead>
-            {activeTab !== "tool" && (
+            {(activeTab === "clothing" || activeTab === "footwear") && (
               <TableHead className="text-secondary font-medium">
                 Кол-во
               </TableHead>
@@ -43,20 +46,12 @@ export function TransferHistoryTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isError && (
-            <TableRow>
-              <TableCell colSpan={6} className="text-center text-red-500">
-                Ошибка при загрузке, попробуйте позже
-              </TableCell>
-            </TableRow>
-          )}
-          {transferRecords.length === 0 && !isError && (
-            <TableRow>
-              <TableCell colSpan={6} className="text-center text-gray-400">
-                Нет записей
-              </TableCell>
-            </TableRow>
-          )}
+          <PendingTable
+            isError={isError}
+            isLoading={isLoading}
+            data={transferRecords}
+            small={true}
+          />
           {transferRecords.map((transfer) => (
             <TableRow key={transfer.id}>
               <TableCell>{formatDate(transfer.createdAt)}</TableCell>
@@ -64,7 +59,7 @@ export function TransferHistoryTable({
               <TableCell>
                 {`${transfer.movedBy.lastName} ${transfer.movedBy.firstName} `}
               </TableCell>
-              {activeTab !== "tool" && (
+              {(activeTab === "clothing" || activeTab === "footwear") && (
                 <TableCell>{transfer.quantity}</TableCell>
               )}
 

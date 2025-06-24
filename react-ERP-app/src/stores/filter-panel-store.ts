@@ -22,6 +22,8 @@ type TabState = {
 
   selectedItemStatus: DeviceStatus | ToolStatus | null;
   setSelectedItemStatus: (status: DeviceStatus | ToolStatus | null) => void;
+
+  resetFilters: () => void;
 };
 
 export const useFilterPanelStore = create<TabState>((set) => ({
@@ -42,4 +44,13 @@ export const useFilterPanelStore = create<TabState>((set) => ({
 
   selectedItemStatus: null,
   setSelectedItemStatus: (status) => set({ selectedItemStatus: status }),
+
+  resetFilters: () =>
+    set({
+      searchQuery: "",
+      selectedObjectId: null,
+      selectedSeason: null,
+      selectedTabletStatus: null,
+      selectedItemStatus: null,
+    }),
 }));

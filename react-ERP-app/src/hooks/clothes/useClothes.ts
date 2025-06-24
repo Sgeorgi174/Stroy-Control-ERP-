@@ -200,7 +200,7 @@ export function useDeleteClothes() {
 
 export const useGetClothesHistory = (clothesId: string) => {
   return useQuery({
-    queryKey: ["clothes-history"],
+    queryKey: ["clothes-history", clothesId],
     queryFn: () => getClothesHistory(clothesId),
   });
 };

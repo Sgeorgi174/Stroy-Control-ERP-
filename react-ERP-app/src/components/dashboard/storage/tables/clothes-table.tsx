@@ -9,7 +9,7 @@ import {
 import { ClothesDropdown } from "../dropdowns/clothes-dropdown";
 import type { Clothes } from "@/types/clothes";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
-import { TabletSkeleton } from "../../tablet-skeleton";
+import { PendingTable } from "./pending-table";
 
 type ClothesTableProps = {
   clothes: Clothes[];
@@ -46,21 +46,11 @@ export function ClothesTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isError && (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center text-red-500">
-                Ошибка при загрузке, попробуйте позже
-              </TableCell>
-            </TableRow>
-          )}
-          {clothes.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center text-gray-400">
-                Ничего не найдено
-              </TableCell>
-            </TableRow>
-          )}
-          {isLoading && <TabletSkeleton />}
+          <PendingTable
+            isError={isError}
+            isLoading={isLoading}
+            data={clothes}
+          />
           {clothes.map((item) => (
             <TableRow key={item.id}>
               <TableCell></TableCell>

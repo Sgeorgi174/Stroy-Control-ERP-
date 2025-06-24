@@ -52,7 +52,11 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
             Переместить
           </DropdownMenuItem>
           <DropdownMenuItem
-            disabled={tool.status === "IN_TRANSIT"}
+            disabled={
+              tool.status === "IN_TRANSIT" ||
+              tool.status === "LOST" ||
+              tool.status === "WRITTEN_OFF"
+            }
             onClick={() => openSheet("change status", tool)}
           >
             Сменить статус

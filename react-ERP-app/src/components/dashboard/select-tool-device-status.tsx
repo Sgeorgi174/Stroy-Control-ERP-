@@ -11,33 +11,46 @@ import type { DeviceStatus } from "@/types/device";
 import type { ToolStatus } from "@/types/tool";
 
 type SelectStatusToolOrDeviceForFormsProps = {
-  selectedStatus: ToolStatus | DeviceStatus | null;
-  onSelectChange: (season: string | null) => void;
+  selectedStatus: ToolStatus | DeviceStatus;
+  onSelectChange: (status: string) => void;
   disabled?: boolean;
+  currentStatus: ToolStatus | DeviceStatus;
 };
+
+const itemList = [
+  { value: "ON_OBJECT", label: "На объекте" },
+  { value: "IN_REPAIR", label: "В ремонте" },
+  { value: "LOST", label: "Потерян" },
+  { value: "WRITTEN_OFF", label: "Списан" },
+];
 
 export function SelectStatusToolOrDeviceForForms({
   selectedStatus,
   onSelectChange,
   disabled,
+  currentStatus,
 }: SelectStatusToolOrDeviceForFormsProps) {
+  const filteredStatus = itemList.filter(
+    (item) => item.value !== currentStatus
+  );
+
   return (
     <Select
-      value={selectedStatus ?? "null"}
-      onValueChange={(value) => onSelectChange(value === "null" ? null : value)}
-      defaultValue="ON_OBJECT"
+      value={selectedStatus ?? ""}
+      onValueChange={(value) => onSelectChange(value)}
       disabled={disabled}
     >
       <SelectTrigger className="w-[200px]">
-        <SelectValue placeholder="Статус" />
+        <SelectValue placeholder="Выберите статус" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Объекты</SelectLabel>
-          <SelectItem value="ON_OBJECT">На объекте</SelectItem>
-          <SelectItem value="IN_REPAIR">В ремонте</SelectItem>
-          <SelectItem value="LOST">Потерян</SelectItem>
-          <SelectItem value="WRITTEN_OFF">Списан</SelectItem>
+          <SelectLabel>Статус</SelectLabel>
+          {filteredStatus.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
         </SelectGroup>
       </SelectContent>
     </Select>

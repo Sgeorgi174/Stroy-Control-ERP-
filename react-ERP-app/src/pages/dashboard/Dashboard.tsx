@@ -30,7 +30,8 @@ export function Dashboard() {
   useEffect(() => {
     setActive(location.pathname);
     const tab = pathToTabMap[location.pathname];
-    if (tab) {
+
+    if (tab && tab !== useFilterPanelStore.getState().activeTab) {
       setActiveTab(tab);
     }
   }, [location.pathname, setActiveTab]);

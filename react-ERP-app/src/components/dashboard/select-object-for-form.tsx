@@ -25,9 +25,8 @@ export function ObjectSelectForForms({
   return (
     <Select
       disabled={disabled}
-      value={selectedObjectId}
+      value={selectedObjectId ?? ""}
       onValueChange={(value) => onSelectChange(value)}
-      defaultValue={objects[0].id}
     >
       <SelectTrigger className="w-[200px]">
         <SelectValue placeholder="Объект" />

@@ -9,7 +9,7 @@ import {
 import type { Device } from "@/types/device";
 import { DeviceDropDown } from "../dropdowns/device-dropdown";
 import { useDeviceSheetStore } from "@/stores/device-sheet-store";
-import { TabletSkeleton } from "../../tablet-skeleton";
+import { PendingTable } from "./pending-table";
 
 type DeviceTableProps = {
   devices: Device[];
@@ -55,21 +55,11 @@ export function DevicesTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isError && (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center text-red-500">
-                Ошибка при загрузке, попробуйте позже
-              </TableCell>
-            </TableRow>
-          )}
-          {devices.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center text-gray-400">
-                Ничего не найдено
-              </TableCell>
-            </TableRow>
-          )}
-          {isLoading && <TabletSkeleton />}
+          <PendingTable
+            isError={isError}
+            isLoading={isLoading}
+            data={devices}
+          />
           {devices.map((device) => (
             <TableRow key={device.id}>
               <TableCell></TableCell>
