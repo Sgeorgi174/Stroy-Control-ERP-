@@ -24,6 +24,8 @@ export function ClothesTable({
 }: ClothesTableProps) {
   const { openSheet } = useClothesSheetStore();
 
+  console.log(clothes);
+
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>
@@ -65,7 +67,9 @@ export function ClothesTable({
                 {item.season === "SUMMER" ? "Лето" : "Зима"}
               </TableCell>
               <TableCell>{item.quantity}</TableCell>
-              <TableCell>{item.inTransit}</TableCell>
+              <TableCell>
+                {item.inTransit.reduce((acc, curr) => acc + curr.quantity, 0)}
+              </TableCell>
               <TableCell>{item.storage.name}</TableCell>
               <TableCell>
                 <ClothesDropdown clothes={item} />

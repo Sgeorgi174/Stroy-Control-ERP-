@@ -57,12 +57,6 @@ export class ClothesService {
     }
   }
 
-  async getAll() {
-    return await this.prismaService.clothes.findMany({
-      include: { storage: true },
-    });
-  }
-
   public async getFiltered(query: GetClothesQueryDto) {
     const clothes = await this.prismaService.clothes.findMany({
       where: {
@@ -72,6 +66,7 @@ export class ClothesService {
         ...(Number(query.size) ? { size: Number(query.size) } : {}),
       },
       include: {
+        inTransit: true,
         storage: {
           select: {
             foreman: {
@@ -138,29 +133,21 @@ export class ClothesService {
           data: { quantity: { decrement: dto.quantity } },
         });
 
-        const targetClothes = await prisma.clothes.upsert({
+        const createdTransfer = await prisma.pendingTransfersClothes.upsert({
           where: {
-            objectId_name_size_type_season: {
-              objectId: dto.toObjectId,
-              name: clothes.name,
-              size: clothes.size,
-              type: clothes.type,
-              season: clothes.season,
+            fromObjectId_toObjectId_clothesId: {
+              fromObjectId: clothes.objectId,
+              toObjectId: dto.toObjectId,
+              clothesId: id,
             },
           },
           create: {
-            objectId: dto.toObjectId,
-            name: clothes.name,
-            size: clothes.size,
-            type: clothes.type,
-            season: clothes.season,
-            price: clothes.price,
-            quantity: 0,
-            inTransit: dto.quantity,
+            fromObjectId: clothes.objectId,
+            toObjectId: dto.toObjectId,
+            clothesId: id,
+            quantity: dto.quantity,
           },
-          update: {
-            inTransit: { increment: dto.quantity },
-          },
+          update: { quantity: { increment: dto.quantity } },
         });
 
         const recordHistory = await this.clothesHistoryService.create({
@@ -174,7 +161,7 @@ export class ClothesService {
 
         return {
           source: { id: updatedSource.id, quantity: updatedSource.quantity },
-          target: targetClothes,
+          target: createdTransfer,
           createdHistory: recordHistory,
         };
       });
@@ -185,8 +172,16 @@ export class ClothesService {
     }
   }
 
-  async confirmTransfer(id: string, dto: ConfirmDto) {
-    const clothes = await this.getById(id);
+  async confirmTransfer(id: string, dto: ConfirmDto, userId: string) {
+    const transfer =
+      await this.prismaService.pendingTransfersClothes.findUnique({
+        where: { id },
+        include: { clothes: true },
+      });
+
+    if (!transfer) {
+      throw new NotFoundException('Перемещение не найдено');
+    }
 
     if (dto.quantity <= 0) {
       throw new BadRequestException(
@@ -194,20 +189,63 @@ export class ClothesService {
       );
     }
 
-    if (clothes.inTransit < dto.quantity) {
-      throw new BadRequestException('Недостаточное количество одежды в пути');
+    if (transfer.quantity < dto.quantity) {
+      throw new BadRequestException(
+        'Недостаточное количество одежды в перемещении',
+      );
     }
 
     try {
-      await this.prismaService.clothes.update({
-        where: { id },
-        data: {
-          inTransit: { decrement: dto.quantity },
-          quantity: { increment: dto.quantity },
-        },
-      });
+      return await this.prismaService.$transaction(async (prisma) => {
+        if (dto.quantity === transfer.quantity) {
+          await prisma.pendingTransfersClothes.delete({
+            where: { id },
+          });
+        } else {
+          await prisma.pendingTransfersClothes.update({
+            where: { id },
+            data: { quantity: { decrement: dto.quantity } },
+          });
+        }
 
-      return { success: true };
+        const transferedClothes = await this.prismaService.clothes.upsert({
+          where: {
+            objectId_name_size_type_season: {
+              name: transfer.clothes.name,
+              objectId: transfer.toObjectId,
+              season: transfer.clothes.season,
+              size: transfer.clothes.size,
+              type: transfer.clothes.type,
+            },
+          },
+          create: {
+            name: transfer.clothes.name,
+            size: transfer.clothes.size,
+            type: transfer.clothes.type,
+            season: transfer.clothes.season,
+            quantity: dto.quantity,
+            price: transfer.clothes.price,
+            objectId: transfer.toObjectId,
+          },
+          update: {
+            quantity: { increment: dto.quantity },
+          },
+        });
+
+        // Записываем в историю
+        await this.clothesHistoryService.create({
+          userId: userId,
+          clothesId: transferedClothes.id,
+          quantity: dto.quantity,
+          action: 'CONFIRM',
+          fromObjectId: transfer.fromObjectId,
+          toObjectId: transfer.toObjectId,
+        });
+
+        return {
+          success: true,
+        };
+      });
     } catch (error) {
       handlePrismaError(error, {
         conflictMessage: 'Обновление нарушает уникальность данных',
@@ -298,7 +336,7 @@ export class ClothesService {
         }
 
         // Уменьшаем количество на складе
-        await prisma.clothes.update({
+        const updated = await prisma.clothes.update({
           where: { id: clothingId },
           data: {
             quantity: { decrement: 1 },
@@ -321,13 +359,13 @@ export class ClothesService {
             clothesId: clothingId,
             userId: userId,
             quantity: 1,
-            action: 'TRANSFER',
+            action: 'GIVE_TO_EMPLOYEE',
             fromObjectId: clothing.objectId,
             toObjectId: clothing.objectId, // остаётся на том же объекте
           },
         });
 
-        return { message: 'Одежда успешно выдана сотруднику' };
+        return updated;
       });
     } catch (error) {
       handlePrismaError(error, {

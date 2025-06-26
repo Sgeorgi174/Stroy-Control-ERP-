@@ -17,6 +17,14 @@ type TransferHistoryTableProps = {
   isLoading: boolean;
 };
 
+const actionMap = {
+  ADD: "Пополнение",
+  TRANSFER: "Перемещение",
+  CONFIRM: "Приняли на объекте",
+  GIVE_TO_EMPLOYEE: "Выдача",
+  WRITTEN_OFF: "Списание",
+};
+
 export function TransferHistoryTable({
   transferRecords,
   isError,
@@ -41,6 +49,11 @@ export function TransferHistoryTable({
                 Кол-во
               </TableHead>
             )}
+            {(activeTab === "clothing" || activeTab === "footwear") && (
+              <TableHead className="text-secondary font-medium">
+                Действие
+              </TableHead>
+            )}
             <TableHead className="text-secondary font-medium">Откуда</TableHead>
             <TableHead className="text-secondary font-medium">Куда</TableHead>
           </TableRow>
@@ -63,10 +76,19 @@ export function TransferHistoryTable({
                 <TableCell>{transfer.quantity}</TableCell>
               )}
 
+              {(activeTab === "clothing" || activeTab === "footwear") && (
+                <TableCell>{actionMap[transfer.action]}</TableCell>
+              )}
+
               <TableCell>
-                {transfer.fromObject ? transfer.fromObject.name : "-"}
+                {(transfer.fromObject && transfer.action === "TRANSFER") ||
+                transfer.action === "CONFIRM"
+                  ? transfer.fromObject.name
+                  : "-"}
               </TableCell>
-              <TableCell>{transfer.toObject.name}</TableCell>
+              <TableCell>
+                {transfer.action === "TRANSFER" ? transfer.toObject.name : "-"}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -12,6 +12,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import type { NotificationWithType } from "@/types/notificationWithType";
 import { useConfirmTransfer } from "@/hooks/useConfirmTransfer";
+import { Label } from "@radix-ui/react-dropdown-menu";
+import { Input } from "@/components/ui/input";
 
 type ConfirmTransferDialogProps = {
   trigger: React.ReactNode;
@@ -24,6 +26,7 @@ export function ConfirmTransferDialog({
 }: ConfirmTransferDialogProps) {
   const [checked, setChecked] = useState(false);
   const [open, setOpen] = useState(false);
+  const [quantity, setQuantity] = useState(0);
 
   const { handleConfirm, isPending, isSuccess } = useConfirmTransfer(item);
 
@@ -48,7 +51,8 @@ export function ConfirmTransferDialog({
 
         <div>
           <p>
-            Наименование: <span>{item.name}</span>
+            Наименование:{" "}
+            <span>{isClothes ? item.clothes.name : item.name}</span>
           </p>
           {!isClothes && (
             <p>
@@ -58,25 +62,47 @@ export function ConfirmTransferDialog({
           {isClothes && (
             <>
               <p>
-                Количество: <span>{item.inTransit}</span>
+                Количество: <span>{item.quantity}</span>
               </p>
               <p>
-                Размер: <span>{item.size}</span>
+                Размер: <span>{item.clothes.size}</span>
               </p>
               <p>
-                Сезон: <span>{item.season === "SUMMER" ? "Лето" : "Зима"}</span>
+                Сезон:{" "}
+                <span>
+                  {item.clothes.season === "SUMMER" ? "Лето" : "Зима"}
+                </span>
               </p>
             </>
           )}
           <div className="mt-5">
             <p>
-              Объект: <span>{item.storage.name}</span>
+              Объект:{" "}
+              <span>{isClothes ? item.toObject.name : item.storage.name}</span>
             </p>
             <p>
               Ответственный:{" "}
-              <span>{`${item.storage.foreman?.lastName} ${item.storage.foreman?.firstName}`}</span>
+              <span>
+                {isClothes
+                  ? `${item.toObject.foreman?.lastName} ${item.toObject.foreman?.firstName}`
+                  : ` ${item.storage.foreman?.lastName} ${item.storage.foreman?.firstName}`}
+              </span>
             </p>
           </div>
+          {isClothes && (
+            <div className="flex mt-8 items-center gap-2">
+              <Label>Подтверждаю количество :</Label>
+              <Input
+                value={quantity}
+                onChange={(e) => setQuantity(Number(e.target.value))}
+                className="w-[150px]"
+                id="quantity"
+                type="number"
+                min="1"
+                autoFocus={false}
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex items-center space-x-2 py-4">
@@ -91,7 +117,10 @@ export function ConfirmTransferDialog({
         </div>
 
         <DialogFooter>
-          <Button onClick={handleConfirm} disabled={!checked || isPending}>
+          <Button
+            onClick={() => handleConfirm(quantity)}
+            disabled={!checked || isPending}
+          >
             Подтвердить
           </Button>
         </DialogFooter>

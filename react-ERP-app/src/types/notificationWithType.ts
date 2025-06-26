@@ -1,8 +1,8 @@
 import type { Tool } from "./tool";
 import type { Device } from "./device";
-import type { Clothes } from "./clothes";
+import type { ClothesTransfer } from "./clothesTransfer";
 
 export type NotificationWithType =
   | (Tool & { itemType: "tool" })
   | (Device & { itemType: "device" })
-  | (Clothes & { itemType: "clothes" });
+  | (ClothesTransfer & { itemType: "clothes" });

@@ -10,19 +10,13 @@ import type { Device } from "@/types/device";
 import { DeviceDropDown } from "../dropdowns/device-dropdown";
 import { useDeviceSheetStore } from "@/stores/device-sheet-store";
 import { PendingTable } from "./pending-table";
+import { StatusBadge } from "./status-badge";
+import { statusMap } from "@/constants/statusMap";
 
 type DeviceTableProps = {
   devices: Device[];
   isLoading: boolean;
   isError: boolean;
-};
-
-const deviceStatusMap = {
-  ON_OBJECT: "На объекте",
-  IN_TRANSIT: "В пути",
-  IN_REPAIR: "На ремонте",
-  LOST: "Утерян",
-  WRITTEN_OFF: "Списан",
 };
 
 export function DevicesTable({
@@ -72,7 +66,14 @@ export function DevicesTable({
               >
                 {device.name}
               </TableCell>
-              <TableCell>{deviceStatusMap[device.status]}</TableCell>
+              <TableCell>
+                <StatusBadge
+                  isAnimate={device.status === "IN_TRANSIT"}
+                  color={statusMap[device.status]?.color}
+                  Icon={statusMap[device.status]?.icon}
+                  text={statusMap[device.status]?.label}
+                />
+              </TableCell>
               <TableCell>
                 {device.storage && device.storage.foreman
                   ? `${device.storage.foreman.lastName} ${device.storage.foreman.firstName}`

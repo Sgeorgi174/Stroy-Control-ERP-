@@ -81,6 +81,60 @@ export class ObjectService {
     }
   }
 
+  public async getByIdToClose(id: string) {
+    try {
+      const object = await this.prismaService.object.findUnique({
+        where: { id },
+        include: {
+          tools: {
+            select: {
+              name: true,
+              serialNumber: true,
+              id: true,
+              objectId: true,
+              status: true,
+            },
+          },
+          employees: {
+            select: {
+              firstName: true,
+              lastName: true,
+              position: true,
+              id: true,
+            },
+          },
+          clothes: {
+            select: {
+              id: true,
+              name: true,
+              size: true,
+              season: true,
+              inTransit: true,
+              quantity: true,
+            },
+          },
+          devices: {
+            select: {
+              name: true,
+              serialNumber: true,
+              id: true,
+              objectId: true,
+              status: true,
+            },
+          },
+        },
+      });
+
+      if (!object) throw new NotFoundException('Объект не найден');
+
+      return object;
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка получения объекта по ID',
+      });
+    }
+  }
+
   public async getByUserId(userId: string) {
     try {
       const object = await this.prismaService.object.findUnique({

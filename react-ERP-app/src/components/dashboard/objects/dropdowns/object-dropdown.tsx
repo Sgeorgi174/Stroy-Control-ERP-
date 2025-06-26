@@ -62,7 +62,7 @@ export function ObjectDropDown({ object }: ObjectDropDownProps) {
             Редактировать
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => openSheet("change foreman", object)}>
-            Сменить бригадира
+            {object.foreman ? "Сменить бригадира" : "Назначить бригадира"}
           </DropdownMenuItem>
           <DropdownMenuItem
             disabled={!object.foreman}

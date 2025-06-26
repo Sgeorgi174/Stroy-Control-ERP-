@@ -1,3 +1,5 @@
+import type { ClothesTransfer } from "./clothesTransfer";
+
 export type ClothesType = "CLOTHING" | "FOOTWEAR";
 export type Seasons = "SUMMER" | "WINTER";
 
@@ -11,7 +13,7 @@ export type Clothes = {
   size: number;
   price: number;
   quantity: number;
-  inTransit: number;
+  inTransit: ClothesTransfer[];
   objectId: string;
   storage: {
     foreman: {

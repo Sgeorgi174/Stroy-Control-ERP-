@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { useWriteOffClothes } from "@/hooks/clothes/useClothes";
 import { useObjects } from "@/hooks/object/useObject";
+import { ClothesDetailsBox } from "./clothes-details-box";
 
 type ClothesWrittenOffProps = { clothes: Clothes };
 
@@ -61,28 +62,7 @@ export function ClothesWrittenOff({ clothes }: ClothesWrittenOffProps) {
 
   return (
     <div className="p-5 flex flex-col gap-1">
-      <p>
-        Наименование: <span className="font-medium">{clothes.name}</span>
-      </p>
-      <p>
-        Размер: <span className="font-medium">{clothes.size}</span>
-      </p>
-      <p>
-        Сезон:{" "}
-        <span className="font-medium">
-          {clothes.season === "SUMMER" ? "Лето" : "Зима"}
-        </span>
-      </p>
-      <p>
-        Количество: <span className="font-medium">{clothes.quantity}</span>
-      </p>
-      <p>
-        В пути: <span className="font-medium">{clothes.inTransit}</span>
-      </p>
-      <p>
-        Место хранения:{" "}
-        <span className="font-medium">{clothes.storage.name}</span>
-      </p>
+      <ClothesDetailsBox clothes={clothes} />
 
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
 

@@ -25,6 +25,11 @@ export const getObjectById = async (id: string): Promise<Object> => {
   return res.data;
 };
 
+export const getObjectByIdToClose = async (id: string): Promise<Object> => {
+  const res = await api.get(`/objects/close-object/${id}`);
+  return res.data;
+};
+
 export const getObjectByUser = async (): Promise<Object> => {
   const res = await api.get("/objects/user");
   return res.data;

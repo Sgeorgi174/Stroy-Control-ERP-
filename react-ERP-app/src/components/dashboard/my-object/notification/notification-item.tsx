@@ -17,7 +17,10 @@ export function NotificationItem({ item }: NotificationItemProps) {
         <CircleDashed className="animate-spin text-muted-foreground" />
         <div>
           <p>
-            Перемещение: <span className="font-medium">{item.name}</span>
+            Перемещение:{" "}
+            <span className="font-medium">
+              {isClothes ? item.clothes.name : item.name}
+            </span>
           </p>
 
           <div className="flex gap-3 mt-1 flex-wrap">
@@ -31,15 +34,16 @@ export function NotificationItem({ item }: NotificationItemProps) {
               <>
                 <p className="text-gray-400 text-[13px]">
                   Количество:{" "}
-                  <span className="font-medium">{item.inTransit}</span>
+                  <span className="font-medium">{item.quantity}</span>
                 </p>
                 <p className="text-gray-400 text-[13px]">
-                  Размер: <span className="font-medium">{item.size}</span>
+                  Размер:{" "}
+                  <span className="font-medium">{item.clothes.size}</span>
                 </p>
                 <p className="text-gray-400 text-[13px]">
                   Сезон:{" "}
                   <span className="font-medium">
-                    {item.season === "SUMMER" ? "Лето" : "Зима"}
+                    {item.clothes.season === "SUMMER" ? "Лето" : "Зима"}
                   </span>
                 </p>
               </>
@@ -49,11 +53,17 @@ export function NotificationItem({ item }: NotificationItemProps) {
           <div className="flex items-center gap-5 mt-7">
             <p className="text-gray-400 text-xs">
               Кому:
-              <span>{` ${item.storage.foreman?.lastName} ${item.storage.foreman?.firstName}`}</span>
+              <span>
+                {isClothes
+                  ? `${item.toObject.foreman?.lastName} ${item.toObject.foreman?.firstName}`
+                  : ` ${item.storage.foreman?.lastName} ${item.storage.foreman?.firstName}`}
+              </span>
             </p>
             <p className="text-gray-400 text-xs">
               Объект:
-              <span>{` ${item.storage.name}`}</span>
+              <span>
+                {isClothes ? `${item.toObject.name}` : ` ${item.storage.name}`}
+              </span>
             </p>
           </div>
         </div>
@@ -61,7 +71,7 @@ export function NotificationItem({ item }: NotificationItemProps) {
 
       <ConfirmTransferDialog
         item={item}
-        trigger={<Button>Подтвердить</Button>}
+        trigger={<Button type="submit">Подтвердить</Button>}
       />
     </Card>
   );

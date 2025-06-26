@@ -10,19 +10,13 @@ import type { Tablet } from "@/types/tablet";
 import { TabletsDropDown } from "../dropdowns/tablets-dropdown";
 import { useTabletSheetStore } from "@/stores/tablet-sheet-store";
 import { PendingTable } from "./pending-table";
+import { StatusBadge } from "./status-badge";
+import { statusMap } from "@/constants/statusMap";
 
 type TabletsTableProps = {
   tablets: Tablet[];
   isLoading: boolean;
   isError: boolean;
-};
-
-const tabletStatusMap = {
-  ACTIVE: "Активен",
-  INACTIVE: "Свободен",
-  IN_REPAIR: "На ремонте",
-  LOST: "Утерян",
-  WRITTEN_OFF: "Списан",
 };
 
 export function TabletsTable({
@@ -71,7 +65,13 @@ export function TabletsTable({
               >
                 {tablet.name}
               </TableCell>
-              <TableCell>{tabletStatusMap[tablet.status]}</TableCell>
+              <TableCell>
+                <StatusBadge
+                  color={statusMap[tablet.status]?.color}
+                  Icon={statusMap[tablet.status]?.icon}
+                  text={statusMap[tablet.status]?.label}
+                />
+              </TableCell>
               <TableCell>
                 {tablet.employee
                   ? `${tablet.employee.lastName} ${tablet.employee.firstName}`

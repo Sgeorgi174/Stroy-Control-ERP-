@@ -11,13 +11,13 @@ export const useConfirmTransfer = (item: NotificationWithType) => {
   const confirmDeviceMutation = useConfirmDeviceTransfer();
   const confirmToolMutation = useConfirmToolTransfer();
 
-  const handleConfirm = () => {
+  const handleConfirm = (quantity: number) => {
     switch (item.itemType) {
       case "clothes":
         confirmClothesMutation.mutate(
           {
             id: item.id,
-            quantity: Number(item.inTransit),
+            quantity: quantity,
           },
           {
             onSuccess: () => {

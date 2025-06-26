@@ -42,15 +42,23 @@ export class UserService {
           include: { storage: { include: { foreman: true } } },
         });
 
-        const unconfirmedClothes = await prisma.clothes.findMany({
-          where: {
-            objectId: object.id,
-            inTransit: {
-              gt: 0,
+        const unconfirmedClothes =
+          await prisma.pendingTransfersClothes.findMany({
+            where: {
+              toObjectId: object.id,
             },
-          },
-          include: { storage: { include: { foreman: true } } },
-        });
+            include: {
+              clothes: {
+                select: { name: true, season: true, type: true, size: true },
+              },
+              toObject: {
+                select: {
+                  foreman: { select: { firstName: true, lastName: true } },
+                  name: true,
+                },
+              },
+            },
+          });
 
         return { unconfirmedClothes, unconfirmedDevices, unconfirmedTools };
       });

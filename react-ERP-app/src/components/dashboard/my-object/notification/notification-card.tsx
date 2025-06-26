@@ -1,12 +1,14 @@
 import { Card } from "@/components/ui/card";
 import { NotificationItem } from "./notification-item";
-import type { Clothes } from "@/types/clothes";
 import type { Device } from "@/types/device";
 import type { Tool } from "@/types/tool";
 import { useUserNotifications } from "@/hooks/user/useGetNotification";
+import type { ClothesTransfer } from "@/types/clothesTransfer";
 
 export function NotificationCard() {
   const { data, isLoading, isError } = useUserNotifications();
+
+  console.log(data);
 
   const unconfirmed = [
     ...(data?.unconfirmedTools?.map((item: Tool) => ({
@@ -17,7 +19,7 @@ export function NotificationCard() {
       ...item,
       itemType: "device",
     })) ?? []),
-    ...(data?.unconfirmedClothes?.map((item: Clothes) => ({
+    ...(data?.unconfirmedClothes?.map((item: ClothesTransfer) => ({
       ...item,
       itemType: "clothes",
     })) ?? []),

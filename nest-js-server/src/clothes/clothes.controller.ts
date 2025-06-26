@@ -35,12 +35,6 @@ export class ClothesController {
     return this.clothesService.create(dto);
   }
 
-  @Authorization(Roles.OWNER)
-  @Get('all')
-  async getAll() {
-    return this.clothesService.getAll();
-  }
-
   @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('filter')
   async getFiltered(@Query() query: GetClothesQueryDto) {
@@ -71,8 +65,12 @@ export class ClothesController {
 
   @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
   @Patch('confirm/:id')
-  async confirmTransfer(@Param('id') id: string, @Body() dto: ConfirmDto) {
-    return this.clothesService.confirmTransfer(id, dto);
+  async confirmTransfer(
+    @Param('id') id: string,
+    @Body() dto: ConfirmDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.clothesService.confirmTransfer(id, dto, userId);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)

@@ -38,9 +38,15 @@ export class ObjectController {
   }
 
   @Authorization(Roles.OWNER)
+  @Get('close-object/:id')
+  async getByIdToClose(@Param('id') id: string) {
+    return this.objectService.getByIdToClose(id);
+  }
+
+  @Authorization(Roles.OWNER)
   @Get('by-id/:id')
   async getById(@Param('id') id: string) {
-    return this.objectService.getById(id);
+    return this.objectService.getByIdToClose(id);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)

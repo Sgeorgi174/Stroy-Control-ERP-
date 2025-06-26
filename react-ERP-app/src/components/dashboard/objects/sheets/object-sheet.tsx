@@ -51,7 +51,7 @@ export function ObjectsSheet() {
           <ObjectAddEmployee object={selectedObject} />
         )}
         {mode === "close object" && selectedObject && (
-          <CloseObject object={selectedObject} />
+          <CloseObject objectId={selectedObject.id} />
         )}
         {mode === "change foreman" && selectedObject && (
           <ChangeForeman object={selectedObject} />
