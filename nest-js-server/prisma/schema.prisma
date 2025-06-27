@@ -46,6 +46,16 @@ enum Roles {
   FOREMAN
 }
 
+model TelegramUser {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  phone  String @unique
+  chatId Int    @unique
+}
+
 model Object {
   id String @id @default(uuid())
 
