@@ -12,13 +12,13 @@ import type {
   Employee,
   EmployeeType,
   Positions,
-  Statuses,
+  EmployeeStatuses,
 } from "@/types/employee";
 
 export const getFilteredEmployees = async (params: {
   searchQuery: string;
   objectId?: string | null;
-  status?: Statuses | null;
+  status?: EmployeeStatuses | null;
   position?: Positions | null;
   type?: EmployeeType | null;
   skillIds?: string;

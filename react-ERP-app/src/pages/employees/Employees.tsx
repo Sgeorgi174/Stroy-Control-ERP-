@@ -12,7 +12,6 @@ export function Employees() {
     selectedEmployeePosition,
     selectedSkills,
     selectedEmployeeType,
-    selectedEmployeeStatus,
   } = useFilterPanelStore();
   const { data: employees = [] } = useEmployees(
     {

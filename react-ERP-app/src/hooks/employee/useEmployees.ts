@@ -1,11 +1,15 @@
 import { getFilteredEmployees } from "@/services/api/employee.api";
-import type { EmployeeType, Positions, Statuses } from "@/types/employee";
+import type {
+  EmployeeType,
+  Positions,
+  EmployeeStatuses,
+} from "@/types/employee";
 import { useQuery } from "@tanstack/react-query";
 
 interface FilterParams {
   searchQuery: string;
   objectId?: string | null;
-  status?: Statuses | null;
+  status?: EmployeeStatuses | null;
   position?: Positions | null;
   skillIds?: string;
   type?: EmployeeType | null;
