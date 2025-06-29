@@ -75,7 +75,7 @@ export class DeviceService {
     const statusFilter = buildStatusFilter(query.status);
     const devices = await this.prismaService.device.findMany({
       where: {
-        ...(query.objectId ? { objectId: query.objectId } : {}),
+        ...(query.objectId === 'all' ? {} : { objectId: query.objectId }),
         ...statusFilter,
         ...(query.searchQuery
           ? {

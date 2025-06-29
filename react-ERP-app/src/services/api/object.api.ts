@@ -6,6 +6,7 @@ import type {
   UpdateObjectDto,
 } from "@/types/dto/object.dto";
 import { api } from "@/lib/api";
+import type { ObjectToCloseResponse } from "@/types/objectToCloseResponse";
 
 export const getFilteredObjects = async (params: {
   searchQuery: string;
@@ -25,7 +26,9 @@ export const getObjectById = async (id: string): Promise<Object> => {
   return res.data;
 };
 
-export const getObjectByIdToClose = async (id: string): Promise<Object> => {
+export const getObjectByIdToClose = async (
+  id: string
+): Promise<ObjectToCloseResponse> => {
   const res = await api.get(`/objects/close-object/${id}`);
   return res.data;
 };

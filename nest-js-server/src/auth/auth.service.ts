@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -7,27 +8,29 @@ import {
 } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { hash, verify } from 'argon2';
 import { User } from 'generated/prisma';
 import { Request, Response } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { ConfigService } from '@nestjs/config';
+import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 
 @Injectable()
 export class AuthService {
   public constructor(
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
+    private readonly telegramBotService: TelegramBotService,
   ) {}
 
   public async register(req: Request, dto: RegisterDto) {
     const isExists = await this.prismaService.user.findUnique({
-      where: { login: dto.login },
+      where: { phone: dto.phone },
     });
 
     if (isExists) {
       throw new ConflictException(
-        'Пользователь с таким логином уже существует',
+        'Пользователь с таким номером телефона уже существует',
       );
     }
 
@@ -50,8 +53,6 @@ export class AuthService {
 
     const newUser = await this.prismaService.user.create({
       data: {
-        login: dto.login,
-        password: await hash(dto.password),
         firstName: dto.firstName,
         lastName: dto.lastName,
         phone: dto.phone,
@@ -71,17 +72,48 @@ export class AuthService {
     return this.saveSession(req, newUser);
   }
 
-  public async login(req: Request, dto: LoginDto) {
+  public async login(dto: LoginDto) {
     const user = await this.prismaService.user.findUnique({
-      where: { login: dto.login },
+      where: { phone: dto.phone },
     });
 
-    if (!user) throw new NotFoundException('Неверный логин или пароль');
+    if (!user)
+      throw new NotFoundException(
+        'Пользователь с таким номером не зарегистрирован. Пожалуйста, обратитесь к администратору ',
+      );
 
-    const isValidPassword = await verify(user.password, dto.password);
+    await this.telegramBotService.sendOtp({
+      phone: user.phone,
+      userId: user.id,
+    });
 
-    if (!isValidPassword)
-      throw new UnauthorizedException('Неверный логин или пароль');
+    return { success: true };
+  }
+
+  public async verifyOtp(req: Request, dto: VerifyOtpDto) {
+    const user = await this.prismaService.user.findUnique({
+      where: { phone: dto.phone },
+      include: { verificationCode: true },
+    });
+
+    if (!user || !user.verificationCode) {
+      throw new NotFoundException('OTP не найден');
+    }
+
+    const now = new Date();
+
+    if (now > user.verificationCode.codeExp) {
+      throw new BadRequestException('OTP истёк');
+    }
+
+    if (user.verificationCode.code !== dto.otp) {
+      throw new UnauthorizedException('Неверный OTP');
+    }
+
+    // Очистим OTP после успешной проверки
+    await this.prismaService.verifacationCode.delete({
+      where: { userId: user.id },
+    });
 
     return this.saveSession(req, user);
   }

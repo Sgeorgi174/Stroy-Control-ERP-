@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
@@ -6,6 +6,9 @@ import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { GetEmployeeQueryDto } from './dto/employee-query.dto';
 import { TransferEmployeeDto } from './dto/transfer.dto';
 import { AssignEmployeesDto } from './dto/assign-employees.dto';
+import { AddSkillsDto } from './dto/add-skill.dto';
+import { RemoveSkillsDto } from './dto/remove-skill.dto';
+import { ArchiveDto } from './dto/archive-employee.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -42,6 +45,8 @@ export class EmployeeService {
         include: {
           workPlace: true,
           clothing: true,
+          devices: true,
+          archive: true,
         },
       });
     } catch (error) {
@@ -54,23 +59,75 @@ export class EmployeeService {
   }
 
   public async getFiltered(query: GetEmployeeQueryDto) {
+    const { skillIds = [] } = query;
+
     const employees = await this.prismaService.employee.findMany({
       where: {
-        ...(query.objectId ? { objectId: query.objectId } : {}),
+        ...(query.objectId === 'all'
+          ? {}
+          : query.objectId
+            ? { objectId: query.objectId }
+            : { objectId: null }),
         ...(query.status ? { status: query.status } : {}),
         ...(query.position ? { position: query.position } : {}),
-        ...(query.firstName
-          ? { name: { contains: query.firstName, mode: 'insensitive' } }
+        ...(query.type ? { type: query.type } : {}),
+        ...(query.searchQuery
+          ? {
+              OR: [
+                {
+                  firstName: {
+                    contains: query.searchQuery,
+                    mode: 'insensitive',
+                  },
+                },
+                {
+                  lastName: {
+                    contains: query.searchQuery,
+                    mode: 'insensitive',
+                  },
+                },
+                {
+                  phoneNumber: {
+                    contains: query.searchQuery,
+                    mode: 'insensitive',
+                  },
+                },
+              ],
+            }
           : {}),
-        ...(query.lastName
-          ? { name: { contains: query.lastName, mode: 'insensitive' } }
+        ...(skillIds.length > 0
+          ? {
+              AND: skillIds.map((skillId) => ({
+                skills: {
+                  some: {
+                    id: skillId,
+                  },
+                },
+              })),
+            }
           : {}),
       },
       include: {
-        skills: true,
+        skills: { select: { skill: true, id: true } },
         workPlace: { select: { name: true, address: true, id: true } },
-        clothing: true,
+        archive: { select: { id: true, comment: true, archivedAt: true } },
+        clothing: {
+          select: {
+            id: true,
+            priceWhenIssued: true,
+            issuedAt: true,
+            clothing: {
+              select: {
+                id: true,
+                name: true,
+                size: true,
+                season: true,
+              },
+            },
+          },
+        },
       },
+      orderBy: { lastName: 'asc' },
     });
 
     return employees;
@@ -78,7 +135,7 @@ export class EmployeeService {
 
   public async getFreeEmployees() {
     const employees = await this.prismaService.employee.findMany({
-      where: { objectId: null },
+      where: { objectId: null, type: 'ACTIVE' },
     });
 
     return employees;
@@ -143,6 +200,120 @@ export class EmployeeService {
       console.error(error);
       handlePrismaError(error, {
         defaultMessage: 'Не удалось назначить сотрудников на объект',
+      });
+    }
+  }
+
+  public async addSkillsToEmployee(employeeId: string, dto: AddSkillsDto) {
+    try {
+      return await this.prismaService.employee.update({
+        where: { id: employeeId },
+        data: {
+          skills: {
+            connect: dto.skillIds.map((id) => ({ id })),
+          },
+        },
+        include: {
+          skills: true,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      handlePrismaError(error, {
+        notFoundMessage: 'Сотрудник или навык не найден',
+        defaultMessage: 'Не удалось добавить навыки сотруднику',
+      });
+    }
+  }
+
+  public async removeSkillFromEmployee(
+    employeeId: string,
+    dto: RemoveSkillsDto,
+  ) {
+    try {
+      return await this.prismaService.employee.update({
+        where: { id: employeeId },
+        data: {
+          skills: {
+            disconnect: { id: dto.skillId },
+          },
+        },
+        include: {
+          skills: true,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      handlePrismaError(error, {
+        notFoundMessage: 'Сотрудник или навык не найден',
+        defaultMessage: 'Не удалось удалить навык у сотрудника',
+      });
+    }
+  }
+
+  public async archiveEmployee(id: string, dto: ArchiveDto) {
+    const employee = await this.getById(id);
+
+    if (employee.clothing.filter((item) => item.debtAmount > 0).length > 0)
+      throw new BadRequestException(
+        'Архивация не возможна. У сотрудника есть непогашенный долг',
+      );
+
+    if (employee.devices.length > 0)
+      throw new BadRequestException(
+        'Архивация не возможна. У сотрудника остался планшет',
+      );
+
+    if (employee.type === 'ARCHIVE')
+      throw new BadRequestException('Сотрудник уже в архиве');
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.employee.update({
+          where: { id },
+          data: { type: 'ARCHIVE', objectId: null, status: 'OK' },
+        });
+
+        await prisma.employeeArchive.create({
+          data: { employeeId: id, comment: dto.comment },
+        });
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Сотрудник не найден',
+        defaultMessage: 'Не удалось архивировать сотрудника',
+      });
+    }
+  }
+
+  public async restoreEmployee(id: string) {
+    const employee = await this.getById(id);
+
+    if (!employee.archive) {
+      throw new BadRequestException('Сотрудник не находится в архиве');
+    }
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.employeeArchive.delete({
+          where: {
+            employeeId: id,
+          },
+        });
+
+        // Обновляем сотрудника
+        return await prisma.employee.update({
+          where: { id },
+          data: {
+            type: 'ACTIVE',
+            status: 'OK',
+          },
+        });
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Сотрудник не найден',
+        defaultMessage: 'Не удалось восстановить сотрудника из архива',
       });
     }
   }

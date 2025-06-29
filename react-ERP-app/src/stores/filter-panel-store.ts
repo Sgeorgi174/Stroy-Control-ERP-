@@ -1,4 +1,5 @@
 import type { DeviceStatus } from "@/types/device";
+import type { EmployeeStatuses, Positions } from "@/types/employee";
 import type { ObjectStatus } from "@/types/object";
 import type { TabletStatus } from "@/types/tablet";
 import type { TabKey } from "@/types/tabs";
@@ -27,10 +28,23 @@ type TabState = {
   selectedObjectStatus: ObjectStatus;
   setSetelectedObjectStatus: (status: ObjectStatus) => void;
 
+  selectedEmployeePosition: Positions | null;
+  setSetelectedEmployeePosition: (position: Positions | null) => void;
+
+  selectedEmployeeType: "ACTIVE" | "ARCHIVE";
+  setSetelectedEmployeeType: (type: "ACTIVE" | "ARCHIVE") => void;
+
+  selectedEmployeeStatus: EmployeeStatuses;
+  setSetelectedEmployeeStatus: (status: EmployeeStatuses) => void;
+
+  selectedSkills: string[];
+  setSelectedSkills: (skills: string[]) => void;
+  toggleSkill: (skillId: string) => void;
+
   resetFilters: () => void;
 };
 
-export const useFilterPanelStore = create<TabState>((set) => ({
+export const useFilterPanelStore = create<TabState>((set, get) => ({
   activeTab: "tool",
   setActiveTab: (tab) => set({ activeTab: tab }),
 
@@ -52,6 +66,28 @@ export const useFilterPanelStore = create<TabState>((set) => ({
   selectedObjectStatus: "OPEN",
   setSetelectedObjectStatus: (status) => set({ selectedObjectStatus: status }),
 
+  selectedEmployeePosition: null,
+  setSetelectedEmployeePosition: (position) =>
+    set({ selectedEmployeePosition: position }),
+
+  selectedEmployeeType: "ACTIVE",
+  setSetelectedEmployeeType: (type) => set({ selectedEmployeeType: type }),
+
+  selectedEmployeeStatus: "OK",
+  setSetelectedEmployeeStatus: (status) =>
+    set({ selectedEmployeeStatus: status }),
+
+  selectedSkills: [],
+  setSelectedSkills: (skills) => set({ selectedSkills: skills }),
+  toggleSkill: (skillId) => {
+    const current = get().selectedSkills;
+    if (current.includes(skillId)) {
+      set({ selectedSkills: current.filter((id) => id !== skillId) });
+    } else {
+      set({ selectedSkills: [...current, skillId] });
+    }
+  },
+
   resetFilters: () =>
     set({
       searchQuery: "",
@@ -59,6 +95,8 @@ export const useFilterPanelStore = create<TabState>((set) => ({
       selectedSeason: null,
       selectedTabletStatus: null,
       selectedItemStatus: null,
+      selectedEmployeePosition: null,
       selectedObjectStatus: "OPEN",
+      selectedSkills: [],
     }),
 }));

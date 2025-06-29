@@ -61,7 +61,7 @@ export class ClothesService {
     const clothes = await this.prismaService.clothes.findMany({
       where: {
         ...(query.type ? { type: query.type } : {}),
-        ...(query.objectId ? { objectId: query.objectId } : {}),
+        ...(query.objectId === 'all' ? {} : { objectId: query.objectId }),
         ...(query.season ? { season: query.season } : {}),
         ...(Number(query.size) ? { size: Number(query.size) } : {}),
       },

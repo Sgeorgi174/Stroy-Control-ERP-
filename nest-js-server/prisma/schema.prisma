@@ -14,29 +14,23 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  login    String @unique
-  password String
-
   firstName String @map("first_name")
   lastName  String @map("last_name")
 
-  phone String
+  phone String @unique
 
   object Object?
 
   role Roles
 
-  clothesHistory ClothesHistory[]
-
+  verificationCode     VerifacationCode?
+  clothesHistory       ClothesHistory[]
   toolsHistory         ToolHistory[]
   toolsStatusHistories ToolStatusHistory[]
-
-  devicesHistory      DeviceHistory[]
-  deviceStatusHistory DeviceStatusHistory[]
-
-  tabletsHistory TabletHistory[]
-
-  actionLogs ActionLog[]
+  devicesHistory       DeviceHistory[]
+  deviceStatusHistory  DeviceStatusHistory[]
+  tabletsHistory       TabletHistory[]
+  actionLogs           ActionLog[]
 }
 
 enum Roles {
@@ -44,6 +38,18 @@ enum Roles {
   MASTER
   ACCOUNTANT
   FOREMAN
+}
+
+model VerifacationCode {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  code    Int
+  codeExp DateTime
+
+  forUser User?   @relation(fields: [userId], references: [id])
+  userId  String? @unique @map("user_id")
 }
 
 model TelegramUser {
@@ -352,10 +358,12 @@ model Employee {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  type employeeType @default(ACTIVE)
+
   firstName    String  @map("first_name")
   lastName     String  @map("last_name")
   fatherName   String? @map("father_name")
-  phoneNumber  String  @map("phone_number")
+  phoneNumber  String  @unique @map("phone_number")
   clothingSize Int?    @map("clothing_size")
   footwearSize Int?    @map("footwear_size")
 
@@ -366,6 +374,7 @@ model Employee {
   clothing EmployeeClothing[]
   devices  Tablet[]
   skills   Skill[]
+  archive  EmployeeArchive?
 
   workPlace Object? @relation(fields: [objectId], references: [id])
   objectId  String? @map("object_id")
@@ -376,10 +385,16 @@ model Employee {
   @@unique([firstName, lastName, phoneNumber], name: "employee_identity_unique")
 }
 
+enum employeeType {
+  ACTIVE
+  ARCHIVE
+}
+
 enum Statuses {
   OK // 🟢 Всё в порядке
   WARNING // 🟡 Есть моменты, требующие внимания (например, срок подходит)
   OVERDUE // 🔴 Нарушены сроки (просрочено что-то)
+  INACTIVE
 }
 
 enum Position {
@@ -398,8 +413,16 @@ model Skill {
 
   skill String @unique
 
+  employees Employee[]
+}
+
+model EmployeeArchive {
+  id         String   @id @default(uuid())
   employee   Employee @relation(fields: [employeeId], references: [id])
-  employeeId String   @map("employee_id")
+  employeeId String   @unique
+
+  comment    String?
+  archivedAt DateTime @default(now())
 }
 
 model EmployeeClothing {

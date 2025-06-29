@@ -6,6 +6,6 @@ import { TelegramBotController } from './telegram-bot.controller';
 @Module({
   controllers: [TelegramBotController],
   providers: [TelegramBotService, TelegramBotUpdate],
-  imports: [],
+  exports: [TelegramBotService],
 })
 export class TelegramBotModule {}

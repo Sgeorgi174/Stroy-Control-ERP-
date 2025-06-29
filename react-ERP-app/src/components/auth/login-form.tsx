@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -11,35 +11,85 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import toast from "react-hot-toast";
-import { useAuthStore } from "@/stores/auth/auth.store";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { useLogin } from "@/hooks/auth/useLogin";
+import { useVerifyOtp } from "@/hooks/auth/useVerify";
 
-type FormData = {
-  login: string;
-  password: string;
+type PhoneForm = {
+  phone: string;
+};
+
+type OtpForm = {
+  otp: string;
 };
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { login: loginAction, isLoading } = useAuthStore();
+  const [step, setStep] = useState<"phone" | "otp">("phone");
+  const [phoneValue, setPhoneValue] = useState<string>("");
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (cooldown > 0) {
+      timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [cooldown]);
 
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    mode: "onBlur",
+    register: registerPhone,
+    handleSubmit: handleSubmitPhone,
+    formState: { errors: phoneErrors },
+  } = useForm<PhoneForm>();
+
+  const {
+    register: registerOtp,
+    handleSubmit: handleSubmitOtp,
+    setValue: setOtpValue,
+    watch: watchOtp,
+    formState: { errors: otpErrors },
+  } = useForm<OtpForm>({
+    defaultValues: {
+      otp: "",
+    },
   });
 
-  const onSubmit = async (data: FormData) => {
+  const { mutateAsync: sendOtp, isPending: isSending } = useLogin();
+  const { mutateAsync: verifyOtp, isPending: isVerifying } = useVerifyOtp();
+
+  const onSubmitPhone = async (data: PhoneForm) => {
     try {
-      await loginAction(data);
-      toast.success("Вы успешно вошли в аккаунт");
-    } catch (error) {
-      toast.error("Не удалось войти, попробуйте снова");
-      console.error("Ошибка:", error);
+      await sendOtp(data);
+      setPhoneValue(data.phone);
+      setStep("otp");
+    } catch (e) {
+      // toast уже в хуке
+    }
+  };
+
+  const onSubmitOtp = async (data: OtpForm) => {
+    try {
+      await verifyOtp({ phone: phoneValue, otp: +data.otp });
+    } catch (e) {
+      // toast уже в хуке
+    }
+  };
+
+  const retrySendOtp = async (data: PhoneForm) => {
+    try {
+      setOtpValue("otp", "");
+      await sendOtp(data);
+      setCooldown(30); // 30 секунд ожидания
+    } catch (e) {
+      // toast уже в хуке
     }
   };
 
@@ -47,63 +97,107 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-center text-3xl">Вход в аккаунт</CardTitle>
+          <CardTitle className="text-center text-3xl">Вход</CardTitle>
           <CardDescription className="text-center mt-3">
-            Введите логин и пароль для входа
+            {step === "phone"
+              ? "Введите номер телефона"
+              : "Введите код от Telegram-бота"}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-6">
+          {step === "phone" ? (
+            <form
+              onSubmit={handleSubmitPhone(onSubmitPhone)}
+              className="flex flex-col gap-6"
+            >
               <div className="grid gap-3">
-                <Label htmlFor="login">Логин</Label>
+                <Label htmlFor="phone">Телефон</Label>
                 <Input
-                  id="login"
-                  type="text"
-                  {...register("login", { required: "Логин обязателен" })}
-                  aria-invalid={!!errors.login}
-                  aria-describedby="login-error"
-                  disabled={isLoading}
-                />
-                {errors.login && (
-                  <p className="text-sm text-red-600 mt-1" id="login-error">
-                    {errors.login.message}
-                  </p>
-                )}
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="password">Пароль</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  {...register("password", {
-                    required: "Пароль обязателен",
-                    minLength: {
-                      value: 6,
-                      message: "Минимум 6 символов",
+                  id="phone"
+                  type="tel"
+                  placeholder="+7"
+                  {...registerPhone("phone", {
+                    required: "Телефон обязателен",
+                    pattern: {
+                      value: /^\+7\d{10}$/,
+                      message: "Введите номер в формате +7",
                     },
                   })}
-                  aria-invalid={!!errors.password}
-                  aria-describedby="password-error"
-                  disabled={isLoading}
+                  aria-invalid={!!phoneErrors.phone}
+                  aria-describedby="phone-error"
+                  disabled={isSending}
                 />
-                {errors.password && (
-                  <p className="text-sm text-red-600 mt-1" id="password-error">
-                    {errors.password.message}
+                {phoneErrors.phone && (
+                  <p className="text-sm text-red-600 mt-1" id="phone-error">
+                    {phoneErrors.phone.message}
                   </p>
                 )}
               </div>
-              <div className="flex flex-col gap-3">
+              <Button
+                type="submit"
+                className="w-full mt-6"
+                disabled={isSending}
+              >
+                {isSending ? "Отправка..." : "Отправить код"}
+              </Button>
+            </form>
+          ) : (
+            <>
+              <form
+                onSubmit={handleSubmitOtp(onSubmitOtp)}
+                className="flex flex-col gap-6"
+              >
+                <div className="grid justify-center gap-3">
+                  <InputOTP
+                    maxLength={6}
+                    id="otp"
+                    pattern={REGEXP_ONLY_DIGITS}
+                    value={watchOtp("otp")}
+                    onChange={async (value) => {
+                      setOtpValue("otp", value);
+                      if (value.length === 6) {
+                        await handleSubmitOtp(onSubmitOtp)();
+                      }
+                    }}
+                    disabled={isVerifying}
+                  >
+                    <InputOTPGroup>
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <InputOTPSlot
+                          className="min-w-[50px] min-h-[50px] text-[20px] font-bold"
+                          key={i}
+                          index={i}
+                        />
+                      ))}
+                    </InputOTPGroup>
+                  </InputOTP>
+                  {otpErrors.otp && (
+                    <p className="text-sm text-red-600 mt-1">
+                      {otpErrors.otp.message}
+                    </p>
+                  )}
+                </div>
+              </form>
+
+              <div className="flex flex-col mt-10 justify-start gap-2">
+                <div className="min-h-[20px]">
+                  {cooldown > 0 && (
+                    <p className="text-sm text-muted-foreground text-center">
+                      Повторный запрос доступен через {cooldown} сек.
+                    </p>
+                  )}
+                </div>
+
                 <Button
-                  type="submit"
-                  className="w-full mt-6"
-                  disabled={isLoading}
+                  type="button"
+                  onClick={() => retrySendOtp({ phone: phoneValue })}
+                  disabled={cooldown > 0 || isVerifying || isSending}
                 >
-                  {isLoading ? "Вход..." : "Войти"}
+                  Отправить код еще раз
                 </Button>
               </div>
-            </div>
-          </form>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>

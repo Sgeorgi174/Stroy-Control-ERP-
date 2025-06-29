@@ -14,6 +14,7 @@ import { Request, Response } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { Authorized } from './decorators/authorized.decorator';
 import { Authorization } from './decorators/auth.decorator';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -27,8 +28,14 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  public async login(@Req() req: Request, @Body() dto: LoginDto) {
-    return this.authService.login(req, dto);
+  public async login(@Body() dto: LoginDto) {
+    return this.authService.login(dto);
+  }
+
+  @Post('verify')
+  @HttpCode(HttpStatus.OK)
+  public async verifyOtp(@Req() req: Request, @Body() dto: VerifyOtpDto) {
+    return this.authService.verifyOtp(req, dto);
   }
 
   @Authorization()

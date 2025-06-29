@@ -1,30 +1,41 @@
 import { api } from "@/lib/api";
 import type {
+  AddSkillsDto,
+  ArchiveDto,
   AssignEmployeesDto,
   CreateEmployeeDto,
+  RemoveSkillDto,
   TransferEmployeeDto,
   UpdateEmployeeDto,
 } from "@/types/dto/employee.dto";
-import type { Employee, Positions, Statuses } from "@/types/employee";
+import type {
+  Employee,
+  EmployeeType,
+  Positions,
+  Statuses,
+} from "@/types/employee";
 
 export const getFilteredEmployees = async (params: {
   searchQuery: string;
   objectId?: string | null;
   status?: Statuses | null;
   position?: Positions | null;
+  type?: EmployeeType | null;
+  skillIds?: string;
 }) => {
   const res = await api.get("/employees/filter", {
     params: {
-      serialNumber: params.searchQuery || undefined,
+      searchQuery: params.searchQuery || undefined,
       objectId: params.objectId || undefined,
       status: params.status || undefined,
       position: params.position || undefined,
+      skillIds: params.skillIds || undefined,
+      type: params.type || undefined,
     },
   });
   return res.data;
 };
 
-// Получить инструмент по id
 export const getEmployeeById = async (id: string): Promise<Employee> => {
   const res = await api.get(`/employees/by-id/${id}`);
   return res.data;
@@ -35,7 +46,6 @@ export const getFreeEmployees = async (): Promise<Employee[]> => {
   return res.data;
 };
 
-// Создать инструмент
 export const createEmployee = async (
   data: CreateEmployeeDto
 ): Promise<Employee> => {
@@ -43,7 +53,6 @@ export const createEmployee = async (
   return res.data;
 };
 
-// Обновить инструмент
 export const updateEmployee = async (
   id: string,
   data: UpdateEmployeeDto
@@ -52,7 +61,6 @@ export const updateEmployee = async (
   return res.data;
 };
 
-// Передать инструмент
 export const transferEmployee = async (
   id: string,
   data: TransferEmployeeDto
@@ -66,7 +74,26 @@ export const assignToObject = async (data: AssignEmployeesDto) => {
   return res.data;
 };
 
-// Удалить инструмент
+export const addSkill = async (id: string, data: AddSkillsDto) => {
+  const res = await api.post(`/employees/add-skills/${id}`, data);
+  return res.data;
+};
+
+export const removeSkill = async (id: string, data: RemoveSkillDto) => {
+  const res = await api.patch(`/employees/remove-skil/${id}`, data);
+  return res.data;
+};
+
+export const archiveEmployee = async (id: string, data: ArchiveDto) => {
+  const res = await api.patch(`/employees/archive/${id}`, data);
+  return res.data;
+};
+
+export const restoreEmployee = async (id: string) => {
+  const res = await api.patch(`/employees/restore/${id}`);
+  return res.data;
+};
+
 export const deleteEmployee = async (id: string): Promise<void> => {
   await api.delete(`/employees/delete/${id}`);
 };

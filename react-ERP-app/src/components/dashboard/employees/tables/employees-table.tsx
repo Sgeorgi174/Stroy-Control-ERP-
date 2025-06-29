@@ -7,7 +7,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Employee } from "@/types/employee";
-import { EllipsisVertical } from "lucide-react";
+import { SkillsPopover } from "./skills-popover";
+import { EmployeeDropDown } from "../employee-dropdown";
 
 type EmployeesTableProps = {
   employees: Employee[];
@@ -17,9 +18,13 @@ const positionMap = {
   FOREMAN: "Бригадир",
   ELECTRICAN: "Электромонтажник",
   LABORER: "Разнорабочий",
+  DESIGNER: "Проектировщик",
+  ENGINEER: "Инженер",
 };
 
 export function EmployeesTable({ employees }: EmployeesTableProps) {
+  console.log(employees);
+
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>
@@ -32,7 +37,10 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
             </TableHead>
             <TableHead className="text-secondary font-bold">Телефон</TableHead>
             <TableHead className="text-secondary font-bold">Объект</TableHead>
-            <TableHead className="text-secondary font-bold">Статус</TableHead>
+            <TableHead className="text-secondary font-bold">Навыки</TableHead>
+            <TableHead className="text-secondary font-bold text-center ">
+              Статус
+            </TableHead>
 
             <TableHead className="text-secondary font-bold"></TableHead>
           </TableRow>
@@ -47,9 +55,26 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
               <TableCell>
                 {employee.workPlace ? employee.workPlace.name : "На назначен"}
               </TableCell>
-              <TableCell>Работает</TableCell>
+              <TableCell className="w-[150px]">
+                <SkillsPopover skills={employee.skills} />
+              </TableCell>
               <TableCell>
-                <EllipsisVertical />
+                <div className="flex items-center justify-center gap-2">
+                  <span
+                    className={`h-3 w-3 rounded-full text-center ${
+                      employee.status === "OK"
+                        ? "glow-green"
+                        : employee.status === "WARNING"
+                        ? "glow-yellow"
+                        : employee.status === "INACTIVE"
+                        ? "bg-gray-500"
+                        : "glow-red"
+                    }`}
+                  />
+                </div>
+              </TableCell>
+              <TableCell>
+                <EmployeeDropDown employee={employee} />
               </TableCell>
             </TableRow>
           ))}

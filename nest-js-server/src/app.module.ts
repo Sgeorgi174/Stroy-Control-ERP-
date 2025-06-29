@@ -17,6 +17,7 @@ import { DeviceHistoryModule } from './device-history/device-history.module';
 import { TabletModule } from './tablet/tablet.module';
 import { TabletHistoryModule } from './tablet-history/tablet-history.module';
 import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
+import { SkillModule } from './skill/skill.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
     TabletModule,
     TabletHistoryModule,
     TelegramBotModule,
+    SkillModule,
   ],
 })
 export class AppModule {}

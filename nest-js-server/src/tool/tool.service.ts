@@ -71,7 +71,7 @@ export class ToolService {
     const statusFilter = buildStatusFilter(query.status);
     const tools = await this.prismaService.tool.findMany({
       where: {
-        ...(query.objectId ? { objectId: query.objectId } : {}),
+        ...(query.objectId === 'all' ? {} : { objectId: query.objectId }),
         ...statusFilter,
         ...(query.searchQuery
           ? {

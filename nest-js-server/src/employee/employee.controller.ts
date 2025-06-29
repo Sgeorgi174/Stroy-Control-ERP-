@@ -19,6 +19,9 @@ import { Roles } from 'generated/prisma';
 import { GetEmployeeQueryDto } from './dto/employee-query.dto';
 import { TransferEmployeeDto } from './dto/transfer.dto';
 import { AssignEmployeesDto } from './dto/assign-employees.dto';
+import { AddSkillsDto } from './dto/add-skill.dto';
+import { RemoveSkillsDto } from './dto/remove-skill.dto';
+import { ArchiveDto } from './dto/archive-employee.dto';
 
 @Controller('employees')
 export class EmployeeController {
@@ -65,6 +68,33 @@ export class EmployeeController {
   @Patch('transfer/:id')
   async transfer(@Param('id') id: string, @Body() dto: TransferEmployeeDto) {
     return this.employeeService.transfer(id, dto);
+  }
+
+  @Authorization(Roles.OWNER)
+  @Post('add-skills/:id')
+  async addSkills(@Param('id') employeeId: string, @Body() dto: AddSkillsDto) {
+    return this.employeeService.addSkillsToEmployee(employeeId, dto);
+  }
+
+  @Authorization(Roles.OWNER)
+  @Patch('remove-skill/:id')
+  async removeSkill(
+    @Param('id') employeeId: string,
+    @Body() dto: RemoveSkillsDto,
+  ) {
+    return this.employeeService.removeSkillFromEmployee(employeeId, dto);
+  }
+
+  @Authorization(Roles.OWNER)
+  @Patch('archive/:id')
+  async archiveEmployee(@Param('id') id: string, dto: ArchiveDto) {
+    return this.employeeService.archiveEmployee(id, dto);
+  }
+
+  @Authorization(Roles.OWNER)
+  @Patch('restore/:id')
+  async restoreEmployee(@Param('id') id: string) {
+    return this.employeeService.restoreEmployee(id);
   }
 
   @Authorization(Roles.OWNER)

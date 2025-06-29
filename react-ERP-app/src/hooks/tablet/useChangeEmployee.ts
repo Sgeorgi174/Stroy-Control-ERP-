@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import type { TransferTabletDto } from "@/types/dto/tablet.dto";
 import { transferTablet } from "@/services/api/tablet.api";
+import type { AppAxiosError } from "@/types/error-response";
 
 export const useChangeEmployee = (tabletId: string) => {
   const queryClient = useQueryClient();
@@ -12,7 +13,7 @@ export const useChangeEmployee = (tabletId: string) => {
       toast.success("Планшет успешно передан другому сотруднику");
       queryClient.invalidateQueries({ queryKey: ["tablets"] });
     },
-    onError: (error: any) => {
+    onError: (error: AppAxiosError) => {
       const message =
         error?.response?.data?.message || "Не удалось передать планшет";
       toast.error(message);

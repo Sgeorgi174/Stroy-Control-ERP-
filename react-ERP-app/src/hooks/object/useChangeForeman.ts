@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { changeForeman } from "@/services/api/object.api";
 import type { ChangeForemanDto } from "@/types/dto/object.dto";
 import toast from "react-hot-toast";
+import type { AppAxiosError } from "@/types/error-response";
 
 export const useChangeForeman = (id: string) => {
   const queryClient = useQueryClient();
@@ -12,7 +13,7 @@ export const useChangeForeman = (id: string) => {
       queryClient.invalidateQueries({ queryKey: ["objects"] });
       toast.success(`На объекте «${data.name}» успешно изменен бригадир`);
     },
-    onError: (error: any) => {
+    onError: (error: AppAxiosError) => {
       const message =
         error?.response?.data?.message || "Не удалось сменить бригадира";
       toast.error(message);

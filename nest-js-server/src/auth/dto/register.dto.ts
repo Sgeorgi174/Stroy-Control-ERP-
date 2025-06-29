@@ -1,24 +1,7 @@
-import {
-  IsNotEmpty,
-  IsString,
-  MinLength,
-  IsEnum,
-  IsOptional,
-} from 'class-validator';
+import { IsNotEmpty, IsString, IsEnum, IsOptional } from 'class-validator';
 import { Roles } from 'generated/prisma';
 
 export class RegisterDto {
-  @IsString({ message: 'Логин должен быть строкой.' })
-  @IsNotEmpty({ message: 'Логин обязателен для заполнения.' })
-  login: string;
-
-  @IsString({ message: 'Пароль должен быть строкой.' })
-  @IsNotEmpty({ message: 'Пароль обязателен для заполнения.' })
-  @MinLength(6, {
-    message: 'Пароль должен содержать минимум 6 символов.',
-  })
-  password: string;
-
   @IsString({ message: 'Имя должно быть строкой.' })
   @IsNotEmpty({ message: 'Имя должно быть указано обязательно.' })
   firstName: string;

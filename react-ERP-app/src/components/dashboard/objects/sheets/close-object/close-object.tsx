@@ -1,66 +1,89 @@
-import { Progress } from "@/components/ui/progress";
-import { useState } from "react";
-import { ToolsStep } from "./tools-step";
-import { GeneralInformation } from "./general-information";
-import { DeviceStep } from "./device-step";
-import { ClotheseStep } from "./clothes-step";
-import { EmployeeStep } from "./employee-step";
-import { FinalStep } from "./final-step";
 import { useGetObjectByIdToClose } from "@/hooks/object/useGetByIdToClose";
+import { Button } from "@/components/ui/button";
+import { ItemCardtoCloseObject } from "./item-card";
+import { ErrorBoxToCloseObject } from "./error-box-to-close-object";
 
 type CloseObjectProps = {
   objectId: string;
 };
 
 export function CloseObject({ objectId }: CloseObjectProps) {
-  const [progress, setProgress] = useState(0);
-  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6>(1);
   const { data, isLoading, isError } = useGetObjectByIdToClose(objectId);
 
-  console.log(data);
-
-  const handleNext = async () => {
-    setStep((prev) => {
-      switch (prev) {
-        case 1:
-          return 2;
-        case 2:
-          setProgress(25);
-          return 3;
-        case 3:
-          setProgress(50);
-          return 4;
-        case 4:
-          setProgress(75);
-          return 5;
-        case 5:
-          setProgress(100);
-          return 6;
-        case 6:
-          setProgress(100);
-          return 6;
-      }
-    });
+  const incomingUnconfirmedItems = {
+    data: data?.incomingUnconfirmedItems,
+    isError:
+      data?.incomingUnconfirmedItems.tools.length !== 0 ||
+      data?.incomingUnconfirmedItems.devices.length !== 0 ||
+      data?.incomingUnconfirmedItems.clothes.length !== 0,
   };
 
-  const handleFinal = async () => {
-    console.log("click");
+  const notEmptyObject = {
+    data: data?.notEmptyObject,
+    isError:
+      data?.notEmptyObject.tools.length !== 0 ||
+      data?.notEmptyObject.devices.length !== 0 ||
+      data?.notEmptyObject.clothes.length !== 0 ||
+      data?.notEmptyObject.employees.length !== 0,
+  };
+  const outgoingUnconfirmedTransfers = {
+    data: data?.outgoingUnconfirmedTransfers,
+    isError:
+      data?.outgoingUnconfirmedTransfers.tools.length !== 0 ||
+      data?.outgoingUnconfirmedTransfers.devices.length !== 0 ||
+      data?.outgoingUnconfirmedTransfers.clothes.length !== 0,
   };
 
   return (
-    <div>
-      <div className="flex justify-center">
-        {step !== 1 && <Progress value={progress} className="w-[60%]" />}
+    <div className="mt-6 flex px-7 flex-col">
+      <ErrorBoxToCloseObject
+        hasIncomingUnconfirmedItemsError={incomingUnconfirmedItems.isError}
+        hasNotEmptyObjectError={notEmptyObject.isError}
+        hasOutgoingUnconfirmedTransfersError={
+          outgoingUnconfirmedTransfers.isError
+        }
+      />
+
+      <p className="text-xl mt-6 text-center">Не пермещенные элементы</p>
+
+      <div className="flex flex-col gap-2 mt-8">
+        <ItemCardtoCloseObject
+          handleClick={() => {}}
+          category="Инструменты"
+          quantity={notEmptyObject.data?.tools.length}
+        />
+        <ItemCardtoCloseObject
+          handleClick={() => {}}
+          category="Оргтехника"
+          quantity={notEmptyObject.data?.devices.length}
+        />
+        <ItemCardtoCloseObject
+          handleClick={() => {}}
+          category="Одежда и обувь"
+          quantity={notEmptyObject.data?.clothes.reduce(
+            (acc, curr) => acc + curr.quantity,
+            0
+          )}
+        />
+        <ItemCardtoCloseObject
+          handleClick={() => {}}
+          category="Сотрудники"
+          quantity={notEmptyObject.data?.employees.length}
+        />
       </div>
-      <div>
-        {step === 1 && data && (
-          <GeneralInformation object={data} handleClick={handleNext} />
-        )}
-        {step === 2 && <ToolsStep handleClick={handleNext} />}
-        {step === 3 && <DeviceStep handleClick={handleNext} />}
-        {step === 4 && <ClotheseStep handleClick={handleNext} />}
-        {step === 5 && <EmployeeStep handleClick={handleNext} />}
-        {step === 6 && <FinalStep handleClick={handleFinal} />}
+
+      <div className="flex w-full justify-end">
+        <Button
+          disabled={
+            incomingUnconfirmedItems.isError ||
+            notEmptyObject.isError ||
+            outgoingUnconfirmedTransfers.isError
+          }
+          variant={"destructive"}
+          className="mt-8 w-[250px]"
+        >
+          Закрыть объект
+        </Button>
       </div>
     </div>
   );

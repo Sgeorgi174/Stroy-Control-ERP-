@@ -10,6 +10,7 @@ import type { Object } from "@/types/object";
 import { ObjectDropDown } from "../dropdowns/object-dropdown";
 import { PendingTable } from "../../storage/tables/pending-table";
 import { splitAddress } from "@/lib/utils/splitAddress";
+import { useObjectSheetStore } from "@/stores/objects-sheet-store";
 
 type ObjectsTableProps = {
   objects: Object[];
@@ -22,6 +23,8 @@ export function ObjectsTable({
   isError,
   isLoading,
 }: ObjectsTableProps) {
+  const { openSheet } = useObjectSheetStore();
+
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>
@@ -50,7 +53,12 @@ export function ObjectsTable({
           {objects.map((object) => (
             <TableRow key={object.id}>
               <TableCell></TableCell>
-              <TableCell className="font-medium">{object.name}</TableCell>
+              <TableCell
+                onClick={() => openSheet("details", object)}
+                className="font-medium cursor-pointer hover:underline"
+              >
+                {object.name}
+              </TableCell>
               <TableCell>{`г. ${splitAddress(object).city}, ул. ${
                 splitAddress(object).street
               }, ${splitAddress(object).buldings}`}</TableCell>

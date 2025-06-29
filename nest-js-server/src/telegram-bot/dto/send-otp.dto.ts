@@ -4,4 +4,8 @@ export class SendOtpDto {
   @IsString()
   @IsNotEmpty()
   phone: string;
+
+  @IsString()
+  @IsNotEmpty()
+  userId: string;
 }

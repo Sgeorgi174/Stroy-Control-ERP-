@@ -44,18 +44,28 @@ export class TelegramBotUpdate {
       return await ctx.reply('Произошла ошибка. Попробуйте ещё раз.');
     }
 
-    const phone = contact.phone_number;
+    let phone = contact.phone_number;
 
-    // ✅ Сохраняем или обновляем в БД
-    await this.prismaService.telegramUser.upsert({
-      where: { chatId },
-      update: { phone },
-      create: {
-        chatId,
-        phone,
-      },
-    });
+    // Нормализация: если номер не начинается с '+', добавляем его
+    if (!phone.startsWith('+')) {
+      phone = '+' + phone;
+    }
 
-    await ctx.reply('Спасибо! Ваш номер сохранён ✅');
+    const user = await this.prismaService.user.findUnique({ where: { phone } });
+
+    if (!user) {
+      await ctx.reply('У вас нет доступа к этому боту ⚠️');
+    } else {
+      await this.prismaService.telegramUser.upsert({
+        where: { chatId },
+        update: { phone },
+        create: {
+          chatId,
+          phone,
+        },
+      });
+
+      await ctx.reply('Спасибо! Ваш номер сохранён ✅');
+    }
   }
 }

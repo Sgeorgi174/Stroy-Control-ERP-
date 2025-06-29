@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
@@ -68,7 +64,6 @@ export class ObjectService {
     try {
       const object = await this.prismaService.object.findUnique({
         where: { id },
-        include: { tools: true, employees: true, clothes: true, devices: true },
       });
 
       if (!object) throw new NotFoundException('Объект не найден');
@@ -82,55 +77,76 @@ export class ObjectService {
   }
 
   public async getByIdToClose(id: string) {
+    await this.getById(id);
     try {
-      const object = await this.prismaService.object.findUnique({
-        where: { id },
-        include: {
-          tools: {
-            select: {
-              name: true,
-              serialNumber: true,
-              id: true,
-              objectId: true,
-              status: true,
-            },
-          },
-          employees: {
-            select: {
-              firstName: true,
-              lastName: true,
-              position: true,
-              id: true,
-            },
-          },
-          clothes: {
-            select: {
-              id: true,
-              name: true,
-              size: true,
-              season: true,
-              inTransit: true,
-              quantity: true,
-            },
-          },
-          devices: {
-            select: {
-              name: true,
-              serialNumber: true,
-              id: true,
-              objectId: true,
-              status: true,
-            },
-          },
-        },
+      return await this.prismaService.$transaction(async (prisma) => {
+        const [incomingTools, incomingDevices, incomingClothes] =
+          await Promise.all([
+            prisma.tool.findMany({
+              where: { objectId: id, status: 'IN_TRANSIT' },
+            }),
+            prisma.device.findMany({
+              where: { objectId: id, status: 'IN_TRANSIT' },
+            }),
+            prisma.pendingTransfersClothes.findMany({
+              where: { toObjectId: id },
+            }),
+          ]);
+        const incomingUnconfirmedItems = {
+          tools: incomingTools,
+          devices: incomingDevices,
+          clothes: incomingClothes,
+        };
+
+        const [objectTools, objectDevices, objectClothes, objectEmployees] =
+          await Promise.all([
+            prisma.tool.findMany({ where: { objectId: id } }),
+            prisma.device.findMany({ where: { objectId: id } }),
+            prisma.clothes.findMany({
+              where: { objectId: id, quantity: { gt: 0 } },
+            }),
+            prisma.employee.findMany({ where: { objectId: id } }),
+          ]);
+        const notEmptyObject = {
+          tools: objectTools,
+          devices: objectDevices,
+          clothes: objectClothes,
+          employees: objectEmployees,
+        };
+        const [outgoingTools, outgoingDevices, outgoingClothes] =
+          await Promise.all([
+            prisma.tool.findMany({
+              where: {
+                status: 'IN_TRANSIT',
+                history: { some: { fromObjectId: id } },
+              },
+            }),
+            prisma.device.findMany({
+              where: {
+                status: 'IN_TRANSIT',
+                history: { some: { fromObjectId: id } },
+              },
+            }),
+            prisma.pendingTransfersClothes.findMany({
+              where: { fromObjectId: id },
+              include: { clothes: true },
+            }),
+          ]);
+        const outgoingUnconfirmedTransfers = {
+          tools: outgoingTools,
+          devices: outgoingDevices,
+          clothes: outgoingClothes,
+        };
+
+        return {
+          incomingUnconfirmedItems,
+          notEmptyObject,
+          outgoingUnconfirmedTransfers,
+        };
       });
-
-      if (!object) throw new NotFoundException('Объект не найден');
-
-      return object;
     } catch (error) {
       handlePrismaError(error, {
-        defaultMessage: 'Ошибка получения объекта по ID',
+        defaultMessage: 'Ошибка получения данных, для закрытия объекта',
       });
     }
   }
@@ -207,33 +223,7 @@ export class ObjectService {
   }
 
   public async delete(id: string) {
-    const object = await this.getById(id);
-
-    const errors: string[] = [];
-
-    if (object.employees.length > 0) {
-      errors.push(`Сотрудники (${object.employees.length})`);
-    }
-
-    if (object.tools.length > 0) {
-      errors.push(`Инструмент (${object.tools.length})`);
-    }
-
-    if (object.clothes.length > 0) {
-      errors.push(`Одежда (${object.clothes.length})`);
-    }
-
-    if (object.devices.length > 0) {
-      errors.push(`Техника (${object.clothes.length})`);
-    }
-
-    if (errors.length > 0) {
-      throw new BadRequestException(
-        `Нельзя удалить объект: с ним связаны следующие элементы: ${errors.join(
-          ', ',
-        )}. Пожалуйста, сначала переместите или удалите их.`,
-      );
-    }
+    await this.getById(id);
 
     try {
       await this.prismaService.object.delete({ where: { id } });

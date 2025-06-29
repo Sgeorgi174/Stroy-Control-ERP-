@@ -21,7 +21,8 @@ import type {
   AddClothesDto,
   GiveClothingDto,
 } from "@/types/dto/clothes.dto";
-import type { Clothes, ClothesType, Seasons } from "@/types/clothes";
+import type { ClothesType, Seasons } from "@/types/clothes";
+import type { AppAxiosError } from "@/types/error-response";
 
 // Хук для списка одежды с фильтрами
 export const useClothes = (
@@ -58,7 +59,7 @@ export const useCreateClothes = () => {
       toast.success(`Одежда «${data.name}» успешно создана`);
       queryClient.invalidateQueries({ queryKey: ["clothes"] });
     },
-    onError: (error: any) => {
+    onError: (error: AppAxiosError) => {
       const message =
         error?.response?.data?.message || "Не удалось создать одежду";
       toast.error(message);
@@ -70,14 +71,14 @@ export const useCreateClothes = () => {
 export const useUpdateClothes = (clothesId: string) => {
   const queryClient = useQueryClient();
 
-  return useMutation<Clothes, unknown, UpdateClothesDto>({
-    mutationFn: (data) => updateClothes(clothesId, data),
+  return useMutation({
+    mutationFn: (data: UpdateClothesDto) => updateClothes(clothesId, data),
     onSuccess: (data) => {
       toast.success(`Одежда «${data.name}» успешно обновлена`);
       queryClient.invalidateQueries({ queryKey: ["clothes"] });
       queryClient.invalidateQueries({ queryKey: ["clothes", clothesId] });
     },
-    onError: (error: any) => {
+    onError: (error: AppAxiosError) => {
       const message =
         error?.response?.data?.message || "Не удалось обновить одежду";
       toast.error(message);
@@ -96,7 +97,7 @@ export const useTransferClothes = (clothesId: string) => {
       queryClient.invalidateQueries({ queryKey: ["clothes"] });
       queryClient.invalidateQueries({ queryKey: ["clothes", clothesId] });
     },
-    onError: (error: any) => {
+    onError: (error: AppAxiosError) => {
       const message =
         error?.response?.data?.message || "Не удалось передать одежду";
       toast.error(message);
@@ -116,7 +117,7 @@ export const useConfirmClothesTransfer = () => {
       queryClient.invalidateQueries({ queryKey: ["clothes"] });
       queryClient.invalidateQueries({ queryKey: ["clothes", id] });
     },
-    onError: (error: any) => {
+    onError: (error: AppAxiosError) => {
       const message =
         error?.response?.data?.message || "Не удалось подтвердить передачу";
       toast.error(message);
@@ -135,7 +136,7 @@ export const useWriteOffClothes = (clothesId: string) => {
       queryClient.invalidateQueries({ queryKey: ["clothes"] });
       queryClient.invalidateQueries({ queryKey: ["clothes", clothesId] });
     },
-    onError: (error: any) => {
+    onError: (error: AppAxiosError) => {
       const message =
         error?.response?.data?.message || "Не удалось списать одежду";
       toast.error(message);
@@ -154,7 +155,7 @@ export const useAddClothes = (clothesId: string) => {
       queryClient.invalidateQueries({ queryKey: ["clothes"] });
       queryClient.invalidateQueries({ queryKey: ["clothes", clothesId] });
     },
-    onError: (error: any) => {
+    onError: (error: AppAxiosError) => {
       const message =
         error?.response?.data?.message || "Не удалось добавить одежду";
       toast.error(message);
@@ -173,7 +174,7 @@ export const useGiveClothes = (clothesId: string) => {
       queryClient.invalidateQueries({ queryKey: ["clothes"] });
       queryClient.invalidateQueries({ queryKey: ["clothes", clothesId] });
     },
-    onError: (error: any) => {
+    onError: (error: AppAxiosError) => {
       const message =
         error?.response?.data?.message || "Не удалось выдать одежду";
       toast.error(message);

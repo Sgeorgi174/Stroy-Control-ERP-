@@ -1,5 +1,5 @@
 import { getFilteredEmployees } from "@/services/api/employee.api";
-import type { Positions, Statuses } from "@/types/employee";
+import type { EmployeeType, Positions, Statuses } from "@/types/employee";
 import { useQuery } from "@tanstack/react-query";
 
 interface FilterParams {
@@ -7,6 +7,8 @@ interface FilterParams {
   objectId?: string | null;
   status?: Statuses | null;
   position?: Positions | null;
+  skillIds?: string;
+  type?: EmployeeType | null;
 }
 
 export const useEmployees = (params: FilterParams, enabled = true) => {

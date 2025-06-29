@@ -1,9 +1,10 @@
-import { IsOptional, IsEnum, IsUUID, IsString } from 'class-validator';
-import { Position, Statuses } from 'generated/prisma';
+import { Transform } from 'class-transformer';
+import { IsOptional, IsEnum, IsString, IsArray } from 'class-validator';
+import { employeeType, Position, Statuses } from 'generated/prisma';
 
 export class GetEmployeeQueryDto {
   @IsOptional()
-  @IsUUID()
+  @IsString()
   objectId?: string;
 
   @IsOptional()
@@ -12,13 +13,18 @@ export class GetEmployeeQueryDto {
 
   @IsOptional()
   @IsString()
-  firstName?: string;
-
-  @IsOptional()
-  @IsString()
-  lastName?: string;
+  searchQuery?: string;
 
   @IsOptional()
   @IsEnum(Position)
   position?: Position;
+
+  @IsOptional()
+  @IsEnum(employeeType)
+  type?: employeeType;
+
+  @IsOptional()
+  @Transform(({ value }: { value: string }) => value.split(','))
+  @IsArray()
+  skillIds?: string[];
 }

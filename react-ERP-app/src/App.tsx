@@ -11,7 +11,7 @@ export function App() {
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
-        <Toaster position="bottom-right" />
+        <Toaster position="bottom-right" toastOptions={{ duration: 5000 }} />
       </QueryClientProvider>
     </ThemeProvider>
   );
