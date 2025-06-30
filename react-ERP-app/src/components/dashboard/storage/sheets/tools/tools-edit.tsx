@@ -105,7 +105,7 @@ export function ToolsEdit({ tool }: ToolsEditProps) {
         <div className="flex justify-center mt-10">
           <Button
             type="submit"
-            className="w-[200px]"
+            className="w-[300px]"
             disabled={updateToolMutation.isPending}
           >
             {updateToolMutation.isPending ? "Сохраняем..." : "Сохранить"}

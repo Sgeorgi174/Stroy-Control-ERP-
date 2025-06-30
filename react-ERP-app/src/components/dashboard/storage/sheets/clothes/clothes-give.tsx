@@ -2,20 +2,30 @@ import type { Clothes } from "@/types/clothes";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { objects } from "@/constants/objects&Users";
-import toast from "react-hot-toast";
 import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-form";
 import { Button } from "@/components/ui/button";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { Label } from "@/components/ui/label";
 import { EmployeeAutocomplete } from "@/components/dashboard/select-employee-for-form";
-import { employees } from "@/constants/employees";
 import { ClothesDetailsBox } from "./clothes-details-box";
+import { useObjects } from "@/hooks/object/useObject";
+import { useEmployees } from "@/hooks/employee/useEmployees";
+import { useGiveClothes } from "@/hooks/clothes/useClothes";
 
 type ClothesGiveProps = { clothes: Clothes };
 
 export function ClothesGive({ clothes }: ClothesGiveProps) {
   const { closeSheet } = useClothesSheetStore();
+  const { data: objects = [] } = useObjects({
+    searchQuery: "",
+    status: "OPEN",
+  });
+  const { data: employees = [] } = useEmployees({
+    searchQuery: "",
+    objectId: "all",
+  });
+
+  const giveClothesMutation = useGiveClothes(clothes.id);
 
   // Валидация без quantity, employeeId — обязательный
   const formSchema = z.object({
@@ -40,18 +50,14 @@ export function ClothesGive({ clothes }: ClothesGiveProps) {
   });
 
   const selectedEmployeeId = watch("employeeId");
+  const selectedObjectId = watch("fromObjectId");
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     try {
-      console.log("Собранные данные:", {
-        clotheId: clothes.id,
-        employeeId: data.employeeId,
-      });
+      await giveClothesMutation.mutateAsync(data);
       reset();
       closeSheet();
-      toast.success("Успешно перемещен комплект одежды");
     } catch (error) {
-      toast.error("Не удалось переместить комплект одежды");
       console.error("Ошибка:", error);
     }
   };
@@ -83,15 +89,20 @@ export function ClothesGive({ clothes }: ClothesGiveProps) {
           <div className="flex flex-col gap-2">
             <Label>С какого склада</Label>
             <ObjectSelectForForms
+              className="w-[300px]"
               disabled
-              selectedObjectId={clothes.objectId}
-              onSelectChange={(id) => setValue("fromObjectId", id)}
+              selectedObjectId={selectedObjectId}
+              onSelectChange={(id) => {
+                if (id !== null) {
+                  setValue("fromObjectId", id);
+                }
+              }}
               objects={objects}
             />
           </div>
         </div>
         <div className="flex justify-center mt-15">
-          <Button type="submit" className="w-[200px]">
+          <Button type="submit" className="w-[300px]">
             Выдать
           </Button>
         </div>

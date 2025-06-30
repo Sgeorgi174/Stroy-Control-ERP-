@@ -10,7 +10,7 @@ export function SearchInput({ searchQuery, setSearchQuery }: SearchInputProps) {
     <Input
       type="text"
       placeholder="Поиск"
-      className="w-[350px]"
+      className="w-[250px]"
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
     />

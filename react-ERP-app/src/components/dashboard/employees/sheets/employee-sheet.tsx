@@ -6,6 +6,9 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useEmployeeSheetStore } from "@/stores/employee-sheet-store";
+import { EmployeeCreate } from "./create-employee";
+import { EmployeeUpdate } from "./update-employee";
+import { EmployeeDetails } from "./details-employee";
 
 export function EmployeeSheet() {
   const { isOpen, mode, selectedEmployee, closeSheet } =
@@ -14,7 +17,7 @@ export function EmployeeSheet() {
   return (
     <Sheet open={isOpen} onOpenChange={closeSheet}>
       <SheetContent
-        className="w-[850px] sm:max-w-[1000px]"
+        className="w-[850px] sm:max-w-[1000px] overflow-auto"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
         onOpenAutoFocus={(event) => event.preventDefault()}
@@ -35,10 +38,14 @@ export function EmployeeSheet() {
           </SheetDescription>
         </SheetHeader>
 
-        {mode === "create" && <div>Работаем</div>}
-        {mode === "details" && <div>Работаем</div>}
+        {mode === "create" && <EmployeeCreate />}
+        {mode === "details" && selectedEmployee && (
+          <EmployeeDetails employee={selectedEmployee} />
+        )}
         {mode === "skills" && <div>Работаем</div>}
-        {mode === "edit" && <div>Работаем</div>}
+        {mode === "edit" && selectedEmployee && (
+          <EmployeeUpdate employee={selectedEmployee} />
+        )}
         {mode === "change object" && <div>Работаем</div>}
         {mode === "archive" && <div>Работаем</div>}
       </SheetContent>

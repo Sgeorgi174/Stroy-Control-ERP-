@@ -7,6 +7,7 @@ import { useAssignToObject } from "@/hooks/employee/useAssignToObject";
 import { AddEmployeesTable } from "../tables/add-employees-table";
 import { useObjectSheetStore } from "@/stores/objects-sheet-store";
 import type { Object } from "@/types/object";
+import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
   employeeIds: z
@@ -92,13 +93,15 @@ export function ObjectAddEmployee({ object }: ObjectAddEmployeeProps) {
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={assignMutation.isPending}
-        className="mt-6 self-center bg-primary text-secondary px-6 py-2 rounded-md disabled:opacity-50"
-      >
-        Назначить сотрудников
-      </button>
+      <div className="flex justify-center mt-10">
+        <Button
+          type="submit"
+          className="w-[300px]"
+          disabled={assignMutation.isPending}
+        >
+          {assignMutation.isPending ? "Сохранение..." : "Добавить"}
+        </Button>
+      </div>
     </form>
   );
 }

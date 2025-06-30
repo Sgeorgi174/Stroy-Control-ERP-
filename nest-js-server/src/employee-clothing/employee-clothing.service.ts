@@ -57,10 +57,13 @@ export class EmployeeClothingService {
         await this.prismaService.employeeClothing.findMany({
           where: {
             employeeId,
-            isReturned: false,
-            debtAmount: { gt: 0 },
           },
-          include: { clothing: true },
+          include: {
+            clothing: {
+              select: { name: true, id: true, season: true, size: true },
+            },
+          },
+          orderBy: { issuedAt: 'asc' },
         });
 
       const totalDebt: number = items.reduce((sum, item) => {

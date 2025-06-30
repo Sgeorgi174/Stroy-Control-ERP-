@@ -26,6 +26,15 @@ export class EmployeeService {
           footwearSize: dto.footwearSize,
           position: dto.position,
           objectId: dto.objectId ?? null,
+          skills:
+            dto.skillIds && dto.skillIds.length > 0
+              ? {
+                  connect: dto.skillIds.map((id) => ({ id })),
+                }
+              : undefined,
+        },
+        include: {
+          skills: { select: { id: true, skill: true } },
         },
       });
     } catch (error) {

@@ -22,7 +22,7 @@ export function SkillsPopover({ skills }: SkillsPopover) {
           {"Открыть"}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[350px]">
+      <PopoverContent className="w-[400px]">
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <h4 className="leading-none font-medium">Навыки:</h4>

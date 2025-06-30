@@ -58,13 +58,16 @@ export function TabletChangeUser({ tablet }: TabletDetailsProps) {
 
       <p className="text-center font-medium text-xl mt-5">Перемещение</p>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex justify-between mt-10 px-10">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-6 m-auto w-[700px]"
+      >
+        <div className="flex justify-between mt-10">
           {/* Предыдущий владелец */}
           <div className="flex flex-col gap-2">
-            <Label>Предыдущий владелец</Label>
+            <Label>Предыдущий пользователь</Label>
             <Input
-              className="w-[250px]"
+              className="w-[300px]"
               type="text"
               disabled
               value={
@@ -77,7 +80,7 @@ export function TabletChangeUser({ tablet }: TabletDetailsProps) {
 
           {/* Новый владелец */}
           <div className="flex flex-col gap-2">
-            <Label>Сотрудник *</Label>
+            <Label>Новый пользователь *</Label>
             <EmployeeAutocomplete
               employees={employees}
               onSelectChange={(employeeId) =>
@@ -96,7 +99,7 @@ export function TabletChangeUser({ tablet }: TabletDetailsProps) {
         <div className="flex justify-center mt-10">
           <Button
             type="submit"
-            className="w-[200px]"
+            className="w-[300px]"
             disabled={changeEmployeeMutation.isPending}
           >
             {changeEmployeeMutation.isPending ? "Передача..." : "Передать"}

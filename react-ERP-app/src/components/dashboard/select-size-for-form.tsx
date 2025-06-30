@@ -8,23 +8,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { clothisngSizes, shoesSizes } from "@/constants/sizes";
-import { useFilterPanelStore } from "@/stores/filter-panel-store";
+import { cn } from "@/lib/utils";
 
 type SizeSelectProps = {
   selectedSize: number;
   onSelectChange: (size: number) => void;
+  type: "CLOTHING" | "FOOTWEAR";
+  className?: string;
 };
 
 export function SizeSelectForForms({
   selectedSize,
   onSelectChange,
+  type,
+  className,
 }: SizeSelectProps) {
-  const { activeTab } = useFilterPanelStore();
-
-  if (activeTab === "tool") return <div>У инструмента нет размера</div>;
-
-  const currentSizesList =
-    activeTab === "clothing" ? clothisngSizes : shoesSizes;
+  const currentSizesList = type === "CLOTHING" ? clothisngSizes : shoesSizes;
 
   // Выбираем первый размер из списка, если вдруг selectedSize не совпадает
   const validSelectedSize = currentSizesList.includes(selectedSize.toString())
@@ -36,7 +35,7 @@ export function SizeSelectForForms({
       value={validSelectedSize.toString()}
       onValueChange={(value) => onSelectChange(Number(value))}
     >
-      <SelectTrigger className="w-[200px]">
+      <SelectTrigger className={cn("w-[200px]", className ? className : "")}>
         <SelectValue placeholder="Размер" />
       </SelectTrigger>
       <SelectContent>

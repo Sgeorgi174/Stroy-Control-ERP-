@@ -4,22 +4,26 @@ import { SizeSelectForForms } from "@/components/dashboard/select-size-for-form"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { clothisngSizes, shoesSizes } from "@/constants/sizes";
 import { useCreateClothes } from "@/hooks/clothes/useClothes";
 import { useObjects } from "@/hooks/object/useObject";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
-import type { Season } from "@/types/season";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-type FormData = {
-  name: string;
-  size: number;
-  objectId: string;
-  price: number;
-  quantity: number;
-  type: "CLOTHING" | "FOOTWEAR";
-  season: Season;
-};
+const clothesSchema = z.object({
+  name: z.string().min(1, "Это поле обязательно"),
+  size: z.number().min(1, "Это поле обязательно"),
+  objectId: z.string().min(1, "Выберите объект"),
+  price: z.number().min(1, "Это поле обязательно"),
+  quantity: z.number().min(1, "Это поле обязательно"),
+  type: z.enum(["CLOTHING", "FOOTWEAR"], { message: "Выберите тип одежды" }),
+  season: z.enum(["WINTER", "SUMMER"], { message: "Выберите сезон" }),
+});
+
+type FormData = z.infer<typeof clothesSchema>;
 
 export function ClothesCreate() {
   const { activeTab } = useFilterPanelStore();
@@ -37,12 +41,16 @@ export function ClothesCreate() {
     reset,
     formState: { errors },
   } = useForm<FormData>({
+    resolver: zodResolver(clothesSchema),
     defaultValues: {
       name: "",
-      size: activeTab === "clothing" ? 44 : 38,
-      objectId: objects[0].id,
+      size:
+        activeTab === "clothing"
+          ? Number(clothisngSizes[0])
+          : Number(shoesSizes[0]),
+      objectId: "",
       price: 0,
-      quantity: 1,
+      quantity: 0,
       type: activeTab === "clothing" ? "CLOTHING" : "FOOTWEAR",
       season: "SUMMER",
     },
@@ -77,7 +85,7 @@ export function ClothesCreate() {
     <div className="p-5">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-6 m-auto w-[600px]"
+        className="flex flex-col gap-6 m-auto w-[700px]"
       >
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
@@ -97,6 +105,7 @@ export function ClothesCreate() {
           <div className="flex flex-col gap-2">
             <Label>Сезон</Label>
             <SeasonSelectForForms
+              className="w-[300px]"
               selectedSeason={selectedSeason}
               onSelectChange={(season) => setValue("season", season)}
             />
@@ -108,6 +117,7 @@ export function ClothesCreate() {
             <Label htmlFor="quantity">Количество</Label>
             <Input
               id="quantity"
+              className="w-[300px]"
               type="number"
               {...register("quantity", {
                 required: "Это поле обязательно",
@@ -123,6 +133,8 @@ export function ClothesCreate() {
           <div className="flex flex-col gap-2">
             <Label>Размер</Label>
             <SizeSelectForForms
+              className="w-[300px]"
+              type={activeTab === "clothing" ? "CLOTHING" : "FOOTWEAR"}
               selectedSize={selectedSize}
               onSelectChange={(size) => setValue("size", size)}
             />
@@ -133,15 +145,24 @@ export function ClothesCreate() {
           <div className="flex flex-col gap-2">
             <Label>Место хранения</Label>
             <ObjectSelectForForms
+              className="w-[300px]"
               objects={objects}
               selectedObjectId={selectedObjectId}
-              onSelectChange={(objectId) => setValue("objectId", objectId)}
+              onSelectChange={(id) => {
+                if (id !== null) {
+                  setValue("objectId", id);
+                }
+              }}
             />
+            {errors.objectId && (
+              <p className="text-sm text-red-500">{errors.objectId.message}</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="price">Цена</Label>
             <Input
+              className="w-[300px]"
               id="price"
               type="number"
               {...register("price", {
@@ -159,7 +180,7 @@ export function ClothesCreate() {
         <div className="flex justify-center mt-10">
           <Button
             type="submit"
-            className="w-full"
+            className="w-[300px]"
             disabled={createClothesMutation.isPending}
           >
             {createClothesMutation.isPending

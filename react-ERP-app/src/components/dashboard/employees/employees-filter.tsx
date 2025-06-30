@@ -36,24 +36,27 @@ export function EmployeesFilter() {
 
   return (
     <FilterPanel>
-      <div className="flex w-full flex-wrap justify-between gap-6">
+      <div className="flex flex-wrap justify-start gap-y-6 gap-x-5">
         <div className="flex items-center gap-2">
           <p className="font-medium">Сотрудники:</p>
           <EmployeeTypeForFilter />
         </div>
-        <div className="flex items-center gap-2">
-          <p className="font-medium">Объект:</p>
-          <ObjectSelectForFilter objects={objects} nullElement={true} />
+        <div className="flex gap-3">
+          <div className="flex items-center gap-2">
+            <p className="font-medium">Объект:</p>
+            <ObjectSelectForFilter objects={objects} nullElement={true} />
+          </div>
+          <div className="flex items-center gap-2">
+            <p className="font-medium">Должность:</p>
+            <PositionSelectForFilter />
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <p className="font-medium">Должность:</p>
-          <PositionSelectForFilter />
-        </div>
-        <SkillsFilterPopover skills={skills} />
         <div className="flex items-center gap-2">
           <p className="font-medium">Статус:</p>
           <EmployeeStatusForFilter />
         </div>
+        <SkillsFilterPopover skills={skills} />
+
         <div className="flex gap-8">
           <AddButton handleAdd={handleAdd} />
           <SearchInput

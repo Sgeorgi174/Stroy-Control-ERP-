@@ -190,7 +190,7 @@ export function ObjectEdit({ object }: ObjectEditProps) {
 
         {/* Кнопка */}
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]" disabled={isPending}>
+          <Button type="submit" className="w-[300px]" disabled={isPending}>
             {isPending ? "Сохранение..." : "Сохранить"}
           </Button>
         </div>

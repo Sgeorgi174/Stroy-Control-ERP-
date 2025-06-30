@@ -65,7 +65,7 @@ export class TelegramBotUpdate {
         },
       });
 
-      await ctx.reply('Спасибо! Ваш номер сохранён ✅');
+      await ctx.reply(`Спасибо, ${user.firstName}! Ваш номер сохранён ✅`);
     }
   }
 }

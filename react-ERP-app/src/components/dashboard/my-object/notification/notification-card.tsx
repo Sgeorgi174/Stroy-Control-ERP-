@@ -8,8 +8,6 @@ import type { ClothesTransfer } from "@/types/clothesTransfer";
 export function NotificationCard() {
   const { data, isLoading, isError } = useUserNotifications();
 
-  console.log(data);
-
   const unconfirmed = [
     ...(data?.unconfirmedTools?.map((item: Tool) => ({
       ...item,

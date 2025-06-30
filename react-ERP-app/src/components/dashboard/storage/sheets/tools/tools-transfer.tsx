@@ -73,11 +73,15 @@ export function ToolsTransfer({ tool }: ToolsTransferProps) {
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
       <p className="text-center font-medium text-xl mt-5">Перемещение</p>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex justify-center gap-52 mt-10">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-6 m-auto w-[700px]"
+      >
+        <div className="flex justify-between mt-10">
           <div className="flex flex-col gap-2">
             <Label>С какого объекта</Label>
             <ObjectSelectForForms
+              className="w-[300px]"
               disabled
               selectedObjectId={tool.objectId ?? ""}
               onSelectChange={(id) => setValue("fromObjectId", id)}
@@ -87,6 +91,7 @@ export function ToolsTransfer({ tool }: ToolsTransferProps) {
           <div className="flex flex-col gap-2">
             <Label>На какой объект *</Label>
             <ObjectSelectForForms
+              className="w-[300px]"
               selectedObjectId={selectedToObjectId}
               onSelectChange={(id) => id && setValue("toObjectId", id)}
               objects={objects.filter(
@@ -104,7 +109,7 @@ export function ToolsTransfer({ tool }: ToolsTransferProps) {
         <div className="flex justify-center mt-10">
           <Button
             type="submit"
-            className="w-[200px]"
+            className="w-[300px]"
             disabled={transferToolMutation.isPending}
           >
             {transferToolMutation.isPending ? "Перемещаем..." : "Переместить"}

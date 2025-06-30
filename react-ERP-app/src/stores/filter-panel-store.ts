@@ -51,7 +51,7 @@ export const useFilterPanelStore = create<TabState>((set, get) => ({
   searchQuery: "",
   setSearchQuery: (query) => set({ searchQuery: query }),
 
-  selectedObjectId: null,
+  selectedObjectId: "all",
   setSelectedObjectId: (id) => set({ selectedObjectId: id }),
 
   selectedSeason: null,
@@ -91,7 +91,7 @@ export const useFilterPanelStore = create<TabState>((set, get) => ({
   resetFilters: () =>
     set({
       searchQuery: "",
-      selectedObjectId: null,
+      selectedObjectId: "all",
       selectedSeason: null,
       selectedTabletStatus: null,
       selectedItemStatus: null,

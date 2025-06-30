@@ -10,8 +10,6 @@ export function ClothesDetails({ clothes }: { clothes: Clothes }) {
     isLoading,
   } = useGetClothesHistory(clothes.id);
 
-  console.log(clothesHistoryData);
-
   return (
     <>
       <div className="p-5 flex flex-col gap-1">

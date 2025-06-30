@@ -22,7 +22,7 @@ export function ClothesAdd({ clothes }: ClothesAddProps) {
   });
 
   const formSchema = z.object({
-    fromObjectId: z.string(),
+    fromObjectId: z.string().nullable(),
     quantity: z
       .number({ invalid_type_error: "Введите число" })
       .min(1, { message: "Количество должно быть больше 0" }),
@@ -64,12 +64,15 @@ export function ClothesAdd({ clothes }: ClothesAddProps) {
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
 
       <p className="text-center font-medium text-xl mt-5">Пополнение</p>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex justify-center gap-52 mt-10 px-10">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-6 m-auto w-[700px]"
+      >
+        <div className="flex justify-between mt-10">
           <div className="flex flex-col gap-2">
             <Label>Количество *</Label>
             <Input
-              className="w-[150px]"
+              className="w-[300px]"
               id="quantity"
               type="number"
               min="1"
@@ -82,6 +85,7 @@ export function ClothesAdd({ clothes }: ClothesAddProps) {
           <div className="flex flex-col gap-2">
             <Label>Пополняемый склад</Label>
             <ObjectSelectForForms
+              className="w-[300px]"
               disabled
               selectedObjectId={clothes.objectId}
               onSelectChange={(id) => setValue("fromObjectId", id)}
@@ -89,10 +93,11 @@ export function ClothesAdd({ clothes }: ClothesAddProps) {
             />
           </div>
         </div>
+
         <div className="flex justify-center mt-10">
           <Button
             type="submit"
-            className="w-[200px]"
+            className="w-[300px]"
             disabled={addClothesMutation.isPending}
           >
             {addClothesMutation.isPending ? "Пополнение..." : "Пополнить"}

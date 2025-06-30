@@ -6,6 +6,7 @@ import {
   IsString,
   Min,
   IsPhoneNumber,
+  IsArray,
 } from 'class-validator';
 import { Position } from 'generated/prisma';
 
@@ -46,4 +47,7 @@ export class CreateDto {
   @IsString({ message: 'ID объекта должен быть строкой' })
   @IsOptional()
   objectId?: string;
+
+  @IsArray()
+  skillIds?: string[];
 }

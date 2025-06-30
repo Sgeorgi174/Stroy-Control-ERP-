@@ -23,7 +23,7 @@ export function ClothesTransfer({ clothes }: ClothesTransferProps) {
   });
 
   const formSchema = z.object({
-    fromObjectId: z.string(),
+    fromObjectId: z.string().nullable(),
     toObjectId: z.string().refine((val) => val !== clothes.objectId, {
       message: "Нельзя выбрать тот же склад",
     }),
@@ -80,7 +80,7 @@ export function ClothesTransfer({ clothes }: ClothesTransferProps) {
           <div className="flex flex-col gap-2">
             <Label>Количество *</Label>
             <Input
-              className="w-[90px]"
+              className="w-[200px]"
               id="quantity"
               type="number"
               min="1"
@@ -106,7 +106,11 @@ export function ClothesTransfer({ clothes }: ClothesTransferProps) {
             <Label>На какой склад *</Label>
             <ObjectSelectForForms
               selectedObjectId={watch("toObjectId")}
-              onSelectChange={(id) => setValue("toObjectId", id)}
+              onSelectChange={(id) => {
+                if (id !== null) {
+                  setValue("toObjectId", id);
+                }
+              }}
               objects={objects.filter(
                 (item: Object) => item.id !== clothes.objectId
               )}
@@ -122,7 +126,7 @@ export function ClothesTransfer({ clothes }: ClothesTransferProps) {
         <div className="flex justify-center mt-10">
           <Button
             type="submit"
-            className="w-[200px]"
+            className="w-[300px]"
             disabled={transferClothesMutation.isPending}
           >
             {transferClothesMutation.isPending

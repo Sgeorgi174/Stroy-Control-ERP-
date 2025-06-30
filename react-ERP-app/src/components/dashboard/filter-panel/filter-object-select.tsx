@@ -34,7 +34,7 @@ export function ObjectSelectForFilter({
         }
       }}
     >
-      <SelectTrigger className="w-[200px]">
+      <SelectTrigger className="w-[150px]">
         <SelectValue placeholder="Объект" />
       </SelectTrigger>
       <SelectContent>

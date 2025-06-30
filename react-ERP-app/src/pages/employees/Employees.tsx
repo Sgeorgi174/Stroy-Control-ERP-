@@ -13,7 +13,11 @@ export function Employees() {
     selectedSkills,
     selectedEmployeeType,
   } = useFilterPanelStore();
-  const { data: employees = [] } = useEmployees(
+  const {
+    data: employees = [],
+    isLoading,
+    isError,
+  } = useEmployees(
     {
       searchQuery,
       objectId: selectedObjectId,
@@ -27,7 +31,11 @@ export function Employees() {
   return (
     <div>
       <EmployeesFilter />
-      <EmployeesTable employees={employees} />
+      <EmployeesTable
+        employees={employees}
+        isError={isError}
+        isLoading={isLoading}
+      />
       <EmployeeSheet />
     </div>
   );

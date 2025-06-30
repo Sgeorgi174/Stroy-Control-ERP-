@@ -67,12 +67,15 @@ export function ClothesWrittenOff({ clothes }: ClothesWrittenOffProps) {
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
 
       <p className="text-center font-medium text-xl mt-5">Списание</p>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex justify-center gap-52 mt-10 px-10">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-6 m-auto w-[700px]"
+      >
+        <div className="flex justify-between mt-10">
           <div className="flex flex-col gap-2">
             <Label>Количество *</Label>
             <Input
-              className="w-[150px]"
+              className="w-[300px]"
               id="quantity"
               type="number"
               min="1"
@@ -86,9 +89,14 @@ export function ClothesWrittenOff({ clothes }: ClothesWrittenOffProps) {
           <div className="flex flex-col gap-2">
             <Label>С какого склада</Label>
             <ObjectSelectForForms
+              className="w-[300px]"
               disabled
               selectedObjectId={clothes.objectId}
-              onSelectChange={(id) => setValue("fromObjectId", id)}
+              onSelectChange={(id) => {
+                if (id !== null) {
+                  setValue("fromObjectId", id);
+                }
+              }}
               objects={objects}
             />
           </div>

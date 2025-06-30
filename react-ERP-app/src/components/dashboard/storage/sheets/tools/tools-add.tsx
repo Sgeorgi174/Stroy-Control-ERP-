@@ -108,7 +108,7 @@ export function ToolsAdd() {
 
         {/* Кнопка */}
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]">
+          <Button type="submit" className="w-[300px]">
             Добавить
           </Button>
         </div>

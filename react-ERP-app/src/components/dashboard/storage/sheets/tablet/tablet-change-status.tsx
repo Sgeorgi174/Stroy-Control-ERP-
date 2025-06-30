@@ -90,7 +90,7 @@ export function TabletChangeStatus({ tablet }: TabletChangeStatusProps) {
         <div className="flex justify-center mt-10">
           <Button
             type="submit"
-            className="w-[200px]"
+            className="w-[300px]"
             disabled={mutation.isPending}
           >
             {mutation.isPending ? "Сохранение..." : "Сменить статус"}

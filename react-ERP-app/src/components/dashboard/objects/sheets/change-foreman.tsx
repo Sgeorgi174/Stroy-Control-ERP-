@@ -77,13 +77,16 @@ export function ChangeForeman({ object }: ObjectDetailsProps) {
         <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
         <p className="text-center font-medium text-xl mt-5">Смена бригадира</p>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-          <div className="flex justify-center gap-60">
-            <div className="flex flex-col gap-2 mt-10">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-6 m-auto w-[700px]"
+        >
+          <div className="flex justify-between mt-10">
+            <div className="flex flex-col gap-2 ">
               <Label>Старый бригадир</Label>
               <div className="flex items-center gap-8">
                 <Input
-                  className="w-[250px]"
+                  className="w-[300px]"
                   disabled
                   value={
                     object.foreman
@@ -94,7 +97,7 @@ export function ChangeForeman({ object }: ObjectDetailsProps) {
               </div>
             </div>
 
-            <div className="flex flex-col gap-2 mt-10">
+            <div className="flex flex-col gap-2">
               <Label>Новый бригадир *</Label>
               <div className="flex items-center gap-8">
                 <ForemanAutocomplete
@@ -112,7 +115,7 @@ export function ChangeForeman({ object }: ObjectDetailsProps) {
           </div>
 
           <div className="flex justify-center mt-10">
-            <Button type="submit" className="w-[200px]" disabled={isPending}>
+            <Button type="submit" className="w-[300px]" disabled={isPending}>
               {isPending ? "Сохранение..." : "Сменить"}
             </Button>
           </div>

@@ -11,6 +11,7 @@ import type {
   TransferRecord,
 } from "@/types/historyRecords";
 import type { TabletHistoryRecord } from "@/types/tabletHistoryRecord";
+import type { EmployeeClothingItem } from "@/types/employeesClothing";
 
 type PendingTableProps = {
   data:
@@ -22,7 +23,8 @@ type PendingTableProps = {
     | Employee[]
     | TransferRecord[]
     | TabletHistoryRecord[]
-    | StatusChangesRecord[];
+    | StatusChangesRecord[]
+    | EmployeeClothingItem[];
   isError: boolean;
   isLoading: boolean;
   small?: boolean;

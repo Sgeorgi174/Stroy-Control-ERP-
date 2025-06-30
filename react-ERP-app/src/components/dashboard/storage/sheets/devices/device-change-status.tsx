@@ -100,7 +100,7 @@ export function DeviceChangeStatus({ device }: DeviceChangeStatusProps) {
         </div>
 
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]" disabled={isPending}>
+          <Button type="submit" className="w-[300px]" disabled={isPending}>
             {isPending ? "Обновление..." : "Сменить статус"}
           </Button>
         </div>

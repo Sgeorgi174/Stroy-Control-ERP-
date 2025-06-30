@@ -13,9 +13,11 @@ import { ClothesDetails } from "./clothes-details";
 import { ClothesGive } from "./clothes-give";
 import { ClothesAdd } from "./clothes-add";
 import { ClothesWrittenOff } from "./clothes-written-off";
+import { useFilterPanelStore } from "@/stores/filter-panel-store";
 
 export function ClothesSheet() {
   const { isOpen, mode, selectedClothes, closeSheet } = useClothesSheetStore();
+  const { activeTab } = useFilterPanelStore();
 
   return (
     <Sheet open={isOpen} onOpenChange={closeSheet}>
@@ -28,9 +30,7 @@ export function ClothesSheet() {
         <SheetHeader>
           <SheetTitle className="text-center text-xl font-medium">
             {mode === "create" &&
-              `Добавление ${
-                selectedClothes?.type === "CLOTHING" ? "одежды" : "обуви"
-              }`}
+              `Добавление ${activeTab === "clothing" ? "одежды" : "обуви"}`}
             {mode === "edit" && `Редактирование: ${selectedClothes?.name}`}
             {mode === "transfer" && `Перемещение: ${selectedClothes?.name}`}
             {mode === "details" && `${selectedClothes?.name}`}
@@ -50,7 +50,7 @@ export function ClothesSheet() {
           <SheetDescription className="text-center">
             {mode === "create" &&
               `Заполните данные о новой ${
-                selectedClothes?.type === "CLOTHING" ? "спец. одежде" : "обуви"
+                activeTab === "clothing" ? "спец. одежде" : "обуви"
               }`}
             {mode === "edit" &&
               `Редактирование ${

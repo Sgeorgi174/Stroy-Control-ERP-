@@ -20,8 +20,6 @@ export function SkillsFilterPopover({ skills }: SkillsFilterPopoverProps) {
   const selectedSkills = useFilterPanelStore((s) => s.selectedSkills);
   const toggleSkill = useFilterPanelStore((s) => s.toggleSkill);
 
-  console.log(selectedSkills);
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>

@@ -9,24 +9,18 @@ import { EllipsisVertical } from "lucide-react";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import type { Clothes } from "@/types/clothes";
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { AlertDialogDelete } from "../../alert-dialog-delete";
+import { useDeleteClothes } from "@/hooks/clothes/useClothes";
 
 export function ClothesDropdown({ clothes }: { clothes: Clothes }) {
   const { openSheet } = useClothesSheetStore();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const deleteMutation = useDeleteClothes();
 
   const handleDelete = async () => {
-    try {
-      // Здесь будет логика удаления
-      // Например: await api.delete(`/tools/${tool.id}`);
-      toast.success(`Инструмент "${clothes.name}" успешно удален`);
-    } catch (error) {
-      toast.error("Не удалось удалить инструмент");
-      console.error("Ошибка при удалении:", error);
-    } finally {
-      setIsDeleteDialogOpen(false);
-    }
+    deleteMutation.mutate(clothes.id, {
+      onSettled: () => setIsDeleteDialogOpen(false),
+    });
   };
 
   return (
@@ -77,6 +71,7 @@ export function ClothesDropdown({ clothes }: { clothes: Clothes }) {
       </DropdownMenu>
 
       <AlertDialogDelete
+        isLoading={deleteMutation.isPending}
         isDeleteDialogOpen={isDeleteDialogOpen}
         handleDelete={handleDelete}
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}

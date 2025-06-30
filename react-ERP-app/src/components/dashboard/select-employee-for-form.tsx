@@ -58,7 +58,7 @@ export function EmployeeAutocomplete({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="justify-between w-[250px]"
+          className="justify-between w-[300px]"
           disabled={disabled}
         >
           {selectedLabel || "Выберите сотрудника"}
@@ -75,7 +75,7 @@ export function EmployeeAutocomplete({
               return (
                 <CommandItem
                   key={employee.id}
-                  value={employee.id}
+                  value={fullName} // используем имя для поиска
                   onSelect={() => handleSelect(employee.id)}
                 >
                   <Check

@@ -12,6 +12,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUpdateClothes } from "@/hooks/clothes/useClothes";
 import { useObjects } from "@/hooks/object/useObject";
+import { clothisngSizes, shoesSizes } from "@/constants/sizes";
 
 const clothesSchema = z.object({
   name: z.string().min(1, "Это поле обязательно"),
@@ -48,7 +49,11 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
     mode: "onChange",
     defaultValues: {
       name: clothes.name,
-      size: clothes.size ?? (activeTab === "clothing" ? 44 : 38),
+      size:
+        clothes.size ??
+        (activeTab === "clothing"
+          ? Number(clothisngSizes[0])
+          : Number(shoesSizes[0])),
       objectId: clothes.objectId ?? objects[0].id,
       price: clothes.price ?? 0,
       quantity: clothes.quantity ?? 1,
@@ -76,7 +81,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
     <div className="p-5">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-6 m-auto w-[600px]"
+        className="flex flex-col gap-6 m-auto w-[700px]"
       >
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
@@ -95,6 +100,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
           <div className="flex flex-col gap-2">
             <Label>Сезон</Label>
             <SeasonSelectForForms
+              className="w-[300px]"
               selectedSeason={selectedSeason}
               onSelectChange={(season) => setValue("season", season)}
             />
@@ -108,6 +114,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
           <div className="flex flex-col gap-2">
             <Label htmlFor="quantity">Количество</Label>
             <Input
+              className="w-[300px]"
               id="quantity"
               type="number"
               {...register("quantity", { valueAsNumber: true })}
@@ -120,6 +127,8 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
           <div className="flex flex-col gap-2">
             <Label>Размер</Label>
             <SizeSelectForForms
+              className="w-[300px]"
+              type={clothes.type}
               selectedSize={selectedSize}
               onSelectChange={(size) => setValue("size", size)}
             />
@@ -133,9 +142,14 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
           <div className="flex flex-col gap-2">
             <Label>Место хранения</Label>
             <ObjectSelectForForms
+              className="w-[300px]"
               objects={objects}
               selectedObjectId={selectedObjectId}
-              onSelectChange={(objectId) => setValue("objectId", objectId)}
+              onSelectChange={(id) => {
+                if (id !== null) {
+                  setValue("objectId", id);
+                }
+              }}
             />
             {errors.objectId && (
               <p className="text-sm text-red-500">{errors.objectId.message}</p>
@@ -145,6 +159,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
           <div className="flex flex-col gap-2">
             <Label htmlFor="price">Цена</Label>
             <Input
+              className="w-[300px]"
               id="price"
               type="number"
               {...register("price", { valueAsNumber: true })}
@@ -158,7 +173,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
         <div className="flex justify-center mt-10">
           <Button
             type="submit"
-            className="w-[200px]"
+            className="w-[300px]"
             disabled={!isValid || updateClothesMutation.isPending}
           >
             {updateClothesMutation.isPending ? "Сохранение..." : "Сохранить"}

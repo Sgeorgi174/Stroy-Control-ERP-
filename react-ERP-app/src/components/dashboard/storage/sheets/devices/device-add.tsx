@@ -116,7 +116,7 @@ export function DeviceAdd() {
 
         {/* Кнопка */}
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]" disabled={isPending}>
+          <Button type="submit" className="w-[300px]" disabled={isPending}>
             {isPending ? "Добавление..." : "Добавить"}
           </Button>
         </div>

@@ -14,6 +14,7 @@ import type {
   Positions,
   EmployeeStatuses,
 } from "@/types/employee";
+import type { EmployeeClothing } from "@/types/employeesClothing";
 
 export const getFilteredEmployees = async (params: {
   searchQuery: string;
@@ -91,6 +92,13 @@ export const archiveEmployee = async (id: string, data: ArchiveDto) => {
 
 export const restoreEmployee = async (id: string) => {
   const res = await api.patch(`/employees/restore/${id}`);
+  return res.data;
+};
+
+export const getEmployeeDebtDetails = async (
+  id: string
+): Promise<EmployeeClothing> => {
+  const res = await api.get<EmployeeClothing>(`/employee-clothing/debt/${id}`);
   return res.data;
 };
 

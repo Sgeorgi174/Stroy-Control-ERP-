@@ -103,7 +103,7 @@ export function TabletEdit({ tablet }: TabletEditProps) {
         <div className="flex justify-center mt-10">
           <Button
             type="submit"
-            className="w-[200px]"
+            className="w-[300px]"
             disabled={updateTabletMutation.isPending}
           >
             {updateTabletMutation.isPending ? "Сохранение..." : "Сохранить"}

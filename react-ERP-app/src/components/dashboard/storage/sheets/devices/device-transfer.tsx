@@ -72,20 +72,29 @@ export function DeviceTransfer({ device }: DeviceTransferProps) {
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
       <p className="text-center font-medium text-xl mt-5">Перемещение</p>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex justify-center gap-52 mt-10">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-6 m-auto w-[700px]"
+      >
+        <div className="flex justify-between mt-10">
           <div className="flex flex-col gap-2">
             <Label>С какого склада</Label>
             <ObjectSelectForForms
+              className="w-[300px]"
               disabled
               selectedObjectId={device.objectId}
-              onSelectChange={(id) => setValue("fromObjectId", id)}
+              onSelectChange={(id) => {
+                if (id !== null) {
+                  setValue("toObjectId", id);
+                }
+              }}
               objects={objects}
             />
           </div>
           <div className="flex flex-col gap-2">
             <Label>На какой склад *</Label>
             <ObjectSelectForForms
+              className="w-[300px]"
               selectedObjectId={selectedToObjectId}
               onSelectChange={(id) => id && setValue("toObjectId", id)}
               objects={objects.filter((o: Object) => o.id !== device.objectId)}
@@ -100,7 +109,7 @@ export function DeviceTransfer({ device }: DeviceTransferProps) {
         </div>
 
         <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[200px]" disabled={isPending}>
+          <Button type="submit" className="w-[300px]" disabled={isPending}>
             {isPending ? "Перемещаем..." : "Переместить"}
           </Button>
         </div>

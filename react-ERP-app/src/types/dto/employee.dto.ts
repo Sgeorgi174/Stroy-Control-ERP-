@@ -1,4 +1,3 @@
-import type { DeviceStatus } from "../device";
 import type { Positions } from "../employee";
 
 export type CreateEmployeeDto = {
@@ -10,13 +9,18 @@ export type CreateEmployeeDto = {
   footwearSize: number;
   position: Positions;
   objectId?: string;
+  skillIds?: string[];
 };
 
 export type UpdateEmployeeDto = {
-  name: string;
-  serialNumber: string;
-  objectId: string;
-  status?: DeviceStatus;
+  firstName: string;
+  lastName: string;
+  fatherName?: string;
+  phoneNumber: string;
+  clothingSize: number;
+  footwearSize: number;
+  position: Positions;
+  objectId?: string;
 };
 
 export type TransferEmployeeDto = {

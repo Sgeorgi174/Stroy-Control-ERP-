@@ -21,12 +21,13 @@ export function EmployeeStatusForFilter() {
         setSetelectedEmployeeStatus(value as EmployeeStatuses)
       }
     >
-      <SelectTrigger className="w-[100px]">
+      <SelectTrigger className="w-[80px]">
         <SelectValue placeholder="Статус" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Фильтр по статусу</SelectLabel>
+          <SelectItem value="null">Все</SelectItem>
           <SelectItem value="OK">
             <span className="h-3 w-3 rounded-full text-center glow-green"></span>
           </SelectItem>

@@ -9,20 +9,20 @@ import {
 import type { Employee } from "@/types/employee";
 import { SkillsPopover } from "./skills-popover";
 import { EmployeeDropDown } from "../employee-dropdown";
+import { PendingTable } from "../../storage/tables/pending-table";
+import { positionMap } from "@/constants/positionMap";
 
 type EmployeesTableProps = {
   employees: Employee[];
+  isLoading: boolean;
+  isError: boolean;
 };
 
-const positionMap = {
-  FOREMAN: "Бригадир",
-  ELECTRICAN: "Электромонтажник",
-  LABORER: "Разнорабочий",
-  DESIGNER: "Проектировщик",
-  ENGINEER: "Инженер",
-};
-
-export function EmployeesTable({ employees }: EmployeesTableProps) {
+export function EmployeesTable({
+  employees,
+  isError,
+  isLoading,
+}: EmployeesTableProps) {
   console.log(employees);
 
   return (
@@ -46,6 +46,11 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
+          <PendingTable
+            data={employees}
+            isError={isError}
+            isLoading={isLoading}
+          />
           {employees.map((employee) => (
             <TableRow key={employee.id}>
               <TableCell></TableCell>
