@@ -43,7 +43,11 @@ export function TabletEdit({ tablet }: TabletEditProps) {
 
   const { closeSheet } = useTabletSheetStore();
   const updateTabletMutation = useUpdateTablet(tablet.id);
-  const { data: employees = [] } = useEmployees({ searchQuery: "" });
+  const { data: employees = [] } = useEmployees({
+    searchQuery: "",
+    objectId: "all",
+    type: "ACTIVE",
+  });
 
   const onSubmit = (data: FormData) => {
     updateTabletMutation.mutate(

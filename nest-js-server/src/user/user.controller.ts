@@ -19,4 +19,10 @@ export class UserController {
   async getFreeForemen() {
     return this.userService.getFreeForemen();
   }
+
+  @Authorization(Roles.OWNER)
+  @Get('transfers')
+  async getAllTransfers() {
+    return this.userService.getAllTransfers();
+  }
 }

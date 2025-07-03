@@ -1,4 +1,11 @@
-import { Building, ChartBarBig, HardHat, Store, Users } from "lucide-react";
+import {
+  Building,
+  ChartBarBig,
+  HardHat,
+  Store,
+  Truck,
+  Users,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -24,6 +31,12 @@ const items = [
     url: "/storage",
     tab: "tool",
     icon: Store,
+  },
+  {
+    title: "Перемещения",
+    url: "/transfers",
+    tab: "transfers",
+    icon: Truck,
   },
   {
     title: "Объекты",

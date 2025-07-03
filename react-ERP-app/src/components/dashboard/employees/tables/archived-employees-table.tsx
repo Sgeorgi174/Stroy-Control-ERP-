@@ -10,36 +10,37 @@ import type { Employee } from "@/types/employee";
 import { SkillsPopover } from "./skills-popover";
 import { EmployeeDropDown } from "../dropdowns/employee-dropdown";
 import { PendingTable } from "../../storage/tables/pending-table";
-import { positionMap } from "@/constants/positionMap";
+import { formatDate } from "@/lib/utils/format-date";
 
-type EmployeesTableProps = {
+type ArchiveEmployeesTableProps = {
   employees: Employee[];
   isLoading: boolean;
   isError: boolean;
 };
 
-export function EmployeesTable({
+export function ArchiveEmployeesTable({
   employees,
   isError,
   isLoading,
-}: EmployeesTableProps) {
+}: ArchiveEmployeesTableProps) {
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>
         <TableHeader className="bg-primary pointer-events-none">
           <TableRow>
             <TableHead className="w-[30px]"></TableHead>
-            <TableHead className="text-secondary font-bold">ФИО</TableHead>
             <TableHead className="text-secondary font-bold">
-              Должность
+              Дата архивации
+            </TableHead>
+            <TableHead className="text-secondary font-bold">
+              Кто архивировал
+            </TableHead>
+            <TableHead className="text-secondary font-bold">Причина</TableHead>
+            <TableHead className="text-secondary font-bold">
+              Сотрудник
             </TableHead>
             <TableHead className="text-secondary font-bold">Телефон</TableHead>
-            <TableHead className="text-secondary font-bold">Объект</TableHead>
             <TableHead className="text-secondary font-bold">Навыки</TableHead>
-            <TableHead className="text-secondary font-bold text-center ">
-              Статус
-            </TableHead>
-
             <TableHead className="text-secondary font-bold"></TableHead>
           </TableRow>
         </TableHeader>
@@ -52,29 +53,23 @@ export function EmployeesTable({
           {employees.map((employee) => (
             <TableRow key={employee.id}>
               <TableCell></TableCell>
-              <TableCell className="font-medium">{`${employee.lastName} ${employee.firstName} ${employee.fatherName}`}</TableCell>
-              <TableCell>{positionMap[employee.position]}</TableCell>
-              <TableCell>{employee.phoneNumber}</TableCell>
               <TableCell>
-                {employee.workPlace ? employee.workPlace.name : "На назначен"}
+                {employee.archive && formatDate(employee.archive.archivedAt)}
+              </TableCell>
+              <TableCell>
+                {employee.archive &&
+                  `${employee.archive.changedBy.lastName} ${employee.archive.changedBy.firstName}`}
+              </TableCell>
+
+              <TableCell>
+                {employee.archive && employee.archive.comment}
+              </TableCell>
+              <TableCell className="font-medium">{`${employee.lastName} ${employee.firstName} ${employee.fatherName}`}</TableCell>
+              <TableCell className="font-medium">
+                {employee.phoneNumber}
               </TableCell>
               <TableCell className="w-[150px]">
                 <SkillsPopover skills={employee.skills} />
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center justify-center gap-2">
-                  <span
-                    className={`h-3 w-3 rounded-full text-center ${
-                      employee.status === "OK"
-                        ? "glow-green"
-                        : employee.status === "WARNING"
-                        ? "glow-yellow"
-                        : employee.status === "INACTIVE"
-                        ? "bg-gray-500"
-                        : "glow-red"
-                    }`}
-                  />
-                </div>
               </TableCell>
               <TableCell>
                 <EmployeeDropDown employee={employee} />

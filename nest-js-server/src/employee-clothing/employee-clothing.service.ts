@@ -8,6 +8,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { IssueClothingDto } from './dto/issue-clothing.dto';
 import { EmployeeClothing } from 'generated/prisma';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
+import { ChangeDebtDto } from './dto/change-debt.dto';
 
 @Injectable()
 export class EmployeeClothingService {
@@ -75,6 +76,39 @@ export class EmployeeClothingService {
       console.error(error);
       throw new InternalServerErrorException(
         'Ошибка получения задолженности сотрудника',
+      );
+    }
+  }
+
+  async changeDebt(recordId: string, dto: ChangeDebtDto) {
+    try {
+      if (dto.debt <= 0) {
+        throw new BadRequestException('Сумма списания должна быть больше 0');
+      }
+
+      const employeeClothingRec =
+        await this.prismaService.employeeClothing.findFirstOrThrow({
+          where: {
+            id: recordId,
+            isReturned: false, // работаем только с незакрытыми долгами
+          },
+        });
+
+      const currentDebt = employeeClothingRec.debtAmount;
+      const newDebt = Math.max(0, currentDebt - dto.debt); // не позволим уйти в минус
+      const isReturned = newDebt === 0;
+
+      return await this.prismaService.employeeClothing.update({
+        where: { id: recordId },
+        data: {
+          debtAmount: newDebt,
+          isReturned,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(
+        'Ошибка при изменении задолженности',
       );
     }
   }

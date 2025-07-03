@@ -9,7 +9,7 @@ import {
 import type { EmployeeClothingItem } from "@/types/employeesClothing";
 import { PendingTable } from "../../storage/tables/pending-table";
 import { formatDate } from "@/lib/utils/format-date";
-import { EllipsisVertical } from "lucide-react";
+import { EmployeeClothingDropDown } from "../dropdowns/employee-clothes.dropdown";
 
 type ToolsTableProps = {
   items: EmployeeClothingItem[];
@@ -59,7 +59,7 @@ export function EmployeeClothesTable({
               <TableCell>{item.priceWhenIssued}</TableCell>
               <TableCell>{item.debtAmount}</TableCell>
               <TableCell>
-                <EllipsisVertical />
+                <EmployeeClothingDropDown employeeClohing={item} />
               </TableCell>
             </TableRow>
           ))}

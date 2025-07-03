@@ -1,5 +1,5 @@
 import type { Clothes } from "./clothes";
-import type { ClothesTransfer } from "./clothesTransfer";
+import type { ClothesTransfer } from "./transfers";
 import type { Device } from "./device";
 import type { Employee } from "./employee";
 import type { Tool } from "./tool";

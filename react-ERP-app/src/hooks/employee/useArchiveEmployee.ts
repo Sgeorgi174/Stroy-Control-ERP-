@@ -11,6 +11,7 @@ export const useArchiveEmployee = (id: string) => {
     mutationFn: (data: ArchiveDto) => archiveEmployee(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employee", id] });
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
       toast.success("Сотрудник удачно перемещен в архив");
     },
     onError: (error: AppAxiosError) => {

@@ -15,6 +15,7 @@ export class ToolHistoryService {
           toolId: dto.toolId,
           fromObjectId: dto.fromObjectId ? dto.fromObjectId : undefined,
           toObjectId: dto.toObjectId,
+          action: dto.action,
         },
         include: {
           fromObject: { select: { name: true } },

@@ -3,7 +3,7 @@ import { NotificationItem } from "./notification-item";
 import type { Device } from "@/types/device";
 import type { Tool } from "@/types/tool";
 import { useUserNotifications } from "@/hooks/user/useGetNotification";
-import type { ClothesTransfer } from "@/types/clothesTransfer";
+import type { ClothesTransfer } from "@/types/transfers";
 
 export function NotificationCard() {
   const { data, isLoading, isError } = useUserNotifications();

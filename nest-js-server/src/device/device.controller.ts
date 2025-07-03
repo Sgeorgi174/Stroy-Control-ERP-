@@ -75,8 +75,20 @@ export class DeviceController {
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Patch('confirm/:id')
-  async confirmTransfer(@Param('id') id: string) {
-    return this.deviceService.confirmTransfer(id);
+  async confirmTransfer(
+    @Param('id') id: string,
+    @Authorized('id') userId: string,
+  ) {
+    return this.deviceService.confirmTransfer(id, userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Patch('reject/:id')
+  async rejectTransfer(
+    @Param('id') id: string,
+    @Authorized('id') userId: string,
+  ) {
+    return this.deviceService.rejectTransfer(id, userId);
   }
 
   @Authorization(Roles.OWNER)

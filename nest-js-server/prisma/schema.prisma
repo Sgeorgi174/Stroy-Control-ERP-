@@ -30,6 +30,7 @@ model User {
   devicesHistory       DeviceHistory[]
   deviceStatusHistory  DeviceStatusHistory[]
   tabletsHistory       TabletHistory[]
+  archiveHistory       EmployeeArchive[]
   actionLogs           ActionLog[]
 }
 
@@ -82,11 +83,15 @@ model Object {
   fromClothesHistories ClothesHistory[] @relation("clothes_from_object_fk")
   toClothesHistories   ClothesHistory[] @relation("clothes_to_object_fk")
 
-  fromToolHistories ToolHistory[] @relation("tool_from_object_fk")
-  toToolHistories   ToolHistory[] @relation("tool_to_object_fk")
+  fromToolHistories         ToolHistory[]           @relation("tool_from_object_fk")
+  toToolHistories           ToolHistory[]           @relation("tool_to_object_fk")
+  fromPendingTransfersTools PendingTransfersTools[] @relation("pending_tools_from_object_fk")
+  toPendingTransfersTools   PendingTransfersTools[] @relation("pending_tools_to_object_fk")
 
-  fromDeviceHistories DeviceHistory[] @relation("device_from_object_fk")
-  toDeviceHistories   DeviceHistory[] @relation("device_to_object_fk")
+  fromDeviceHistories         DeviceHistory[]           @relation("device_from_object_fk")
+  toDeviceHistories           DeviceHistory[]           @relation("device_to_object_fk")
+  fromPendingTransfersDevices PendingTransfersDevices[] @relation("pending_devices_from_object_fk")
+  toPendingTransfersDevices   PendingTransfersDevices[] @relation("pending_devices_to_object_fk")
 
   fromPendingTransfersClothes PendingTransfersClothes[] @relation("pending_clothes_from_object_fk")
   toPendingTransfersClothes   PendingTransfersClothes[] @relation("pending_clothes_to_object_fk")
@@ -97,6 +102,11 @@ model Object {
 enum ObjectStatus {
   OPEN
   CLOSE
+}
+
+enum PendingStatuses {
+  IN_TRANSIT
+  REJECT
 }
 
 model Tool {
@@ -112,6 +122,7 @@ model Tool {
   storage  Object? @relation(fields: [objectId], references: [id])
   objectId String? @map("object_id")
 
+  inTransit       PendingTransfersTools?
   history         ToolHistory[]
   statusHistories ToolStatusHistory[]
 }
@@ -124,11 +135,32 @@ enum ToolStatus {
   WRITTEN_OFF
 }
 
+model PendingTransfersTools {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  status PendingStatuses
+
+  fromObject   Object? @relation("pending_tools_from_object_fk", fields: [fromObjectId], references: [id])
+  fromObjectId String?
+
+  toObject   Object @relation("pending_tools_to_object_fk", fields: [toObjectId], references: [id])
+  toObjectId String
+
+  tool   Tool   @relation(fields: [toolId], references: [id])
+  toolId String @unique
+
+  @@unique([fromObjectId, toObjectId, toolId], name: "fromObjectId_toObjectId_toolId")
+}
+
 model ToolHistory {
   id String @id @default(uuid())
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  action ToolActions
 
   tool   Tool   @relation(fields: [toolId], references: [id], onDelete: Cascade)
   toolId String @map("tool_id")
@@ -141,6 +173,12 @@ model ToolHistory {
 
   toObject   Object @relation(fields: [toObjectId], references: [id], name: "tool_to_object_fk")
   toObjectId String
+}
+
+enum ToolActions {
+  CONFIRM
+  TRANSFER
+  REJECT
 }
 
 model ToolStatusHistory {
@@ -173,6 +211,7 @@ model Device {
   storage  Object? @relation(fields: [objectId], references: [id])
   objectId String? @map("object_id")
 
+  inTransit       PendingTransfersDevices?
   history         DeviceHistory[]
   statusHistories DeviceStatusHistory[]
 }
@@ -185,11 +224,32 @@ enum DeviceStatus {
   WRITTEN_OFF
 }
 
+model PendingTransfersDevices {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  status PendingStatuses
+
+  fromObject   Object? @relation("pending_devices_from_object_fk", fields: [fromObjectId], references: [id])
+  fromObjectId String?
+
+  toObject   Object @relation("pending_devices_to_object_fk", fields: [toObjectId], references: [id])
+  toObjectId String
+
+  device   Device @relation(fields: [deviceId], references: [id])
+  deviceId String @unique
+
+  @@unique([fromObjectId, toObjectId, deviceId], name: "fromObjectId_toObjectId_deviceId")
+}
+
 model DeviceHistory {
   id String @id @default(uuid())
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  action DeviceActions
 
   device   Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   deviceId String @map("device_id")
@@ -202,6 +262,12 @@ model DeviceHistory {
 
   toObject   Object @relation(fields: [toObjectId], references: [id], name: "device_to_object_fk")
   toObjectId String
+}
+
+enum DeviceActions {
+  CONFIRM
+  TRANSFER
+  REJECT
 }
 
 model DeviceStatusHistory {
@@ -259,7 +325,8 @@ model PendingTransfersClothes {
   id String @id @default(uuid())
 
   quantity  Int
-  createdAt DateTime @default(now()) @map("created_at")
+  status    PendingStatuses
+  createdAt DateTime        @default(now()) @map("created_at")
 
   fromObject   Object @relation("pending_clothes_from_object_fk", fields: [fromObjectId], references: [id])
   fromObjectId String
@@ -418,11 +485,14 @@ model Skill {
 
 model EmployeeArchive {
   id         String   @id @default(uuid())
-  employee   Employee @relation(fields: [employeeId], references: [id])
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   employeeId String   @unique
 
   comment    String?
   archivedAt DateTime @default(now())
+
+  changedBy User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String @map("user_id")
 }
 
 model EmployeeClothing {
@@ -431,10 +501,10 @@ model EmployeeClothing {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  employee   Employee @relation(fields: [employeeId], references: [id])
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   employeeId String   @map("employee_id")
 
-  clothing   Clothes @relation(fields: [clothingId], references: [id])
+  clothing   Clothes @relation(fields: [clothingId], references: [id], onDelete: Cascade)
   clothingId String  @map("clothing_id")
 
   issuedAt        DateTime @default(now()) @map("issued_at")

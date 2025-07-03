@@ -37,7 +37,11 @@ export function TabletAdd() {
   const selectedEmployeeId = watch("employeeId");
   const { closeSheet } = useTabletSheetStore();
   const createTabletMutation = useCreateTablet();
-  const { data: employees = [] } = useEmployees({ searchQuery: "" });
+  const { data: employees = [] } = useEmployees({
+    searchQuery: "",
+    objectId: "all",
+    type: "ACTIVE",
+  });
 
   const onSubmit = (data: FormData) => {
     createTabletMutation.mutate(

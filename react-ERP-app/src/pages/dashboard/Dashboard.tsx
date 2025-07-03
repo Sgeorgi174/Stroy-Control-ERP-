@@ -12,6 +12,7 @@ const pathToTabMap: Record<string, TabKey> = {
   "/storage": "tool",
   "/objects": "object",
   "/employees": "employee",
+  "/transfers": "transfers",
 };
 
 export function Dashboard() {

@@ -43,3 +43,7 @@ export type RemoveSkillDto = {
 export type ArchiveDto = {
   comment: string;
 };
+
+export type ChangeDebtDto = {
+  debt: number;
+};

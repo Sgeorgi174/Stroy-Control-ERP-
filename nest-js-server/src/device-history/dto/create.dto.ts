@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { DeviceActions } from 'generated/prisma';
 
 export class CreateDto {
   @IsUUID()
@@ -16,4 +17,8 @@ export class CreateDto {
   @IsUUID()
   @IsNotEmpty()
   toObjectId: string;
+
+  @IsEnum(DeviceActions)
+  @IsNotEmpty()
+  action: DeviceActions;
 }

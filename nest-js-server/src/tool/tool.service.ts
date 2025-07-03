@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -175,7 +176,7 @@ export class ToolService {
 
     if (tool.status !== 'ON_OBJECT')
       throw new ConflictException(
-        'Нельзя перемещать технику, которая, не на объекте',
+        'Нельзя перемещать инструмент, который, не на объекте',
       );
 
     try {
@@ -183,10 +184,18 @@ export class ToolService {
         const transferredTool = await prisma.tool.update({
           where: { id },
           data: {
-            objectId: dto.objectId,
             status: 'IN_TRANSIT',
           },
           include: { storage: true },
+        });
+
+        await prisma.pendingTransfersTools.create({
+          data: {
+            status: 'IN_TRANSIT',
+            fromObjectId: tool.objectId ? tool.objectId : null,
+            toObjectId: dto.objectId,
+            toolId: tool.id,
+          },
         });
 
         const recordHistory = await this.toolHistoryService.create({
@@ -194,6 +203,7 @@ export class ToolService {
           toolId: id,
           fromObjectId: tool.objectId ? tool.objectId : undefined,
           toObjectId: dto.objectId,
+          action: 'TRANSFER',
         });
 
         return { transferredTool, recordHistory };
@@ -207,20 +217,75 @@ export class ToolService {
     }
   }
 
-  public async confirmTransfer(id: string) {
+  public async confirmTransfer(recordId: string, userId: string) {
+    const transfer = await this.prismaService.pendingTransfersTools.findUnique({
+      where: { id: recordId },
+      include: { tool: true },
+    });
+
+    if (!transfer)
+      throw new BadRequestException('Не удалось найти перемещение');
+
     try {
-      return await this.prismaService.tool.update({
-        where: { id },
-        data: {
-          status: 'ON_OBJECT',
-        },
-        include: { storage: true },
+      return await this.prismaService.$transaction(async (prisma) => {
+        const updatedTool = await prisma.tool.update({
+          where: { id: transfer.toolId },
+          data: {
+            objectId: transfer?.toObjectId,
+            status: 'ON_OBJECT',
+          },
+          include: { storage: true },
+        });
+
+        const transferRecord = await this.toolHistoryService.create({
+          action: 'CONFIRM',
+          userId,
+          fromObjectId: transfer.fromObjectId
+            ? transfer.fromObjectId
+            : undefined,
+          toObjectId: transfer.toObjectId,
+          toolId: transfer.toolId,
+        });
+
+        await prisma.pendingTransfersTools.delete({ where: { id: recordId } });
+
+        return { updatedTool, transferRecord };
       });
     } catch (error) {
       handlePrismaError(error, {
         notFoundMessage: 'Инструмент не найден',
         conflictMessage: 'Обновление нарушает уникальность данных',
         defaultMessage: 'Не удалось подтвердить передачу',
+      });
+    }
+  }
+
+  public async rejectTransfer(recordId: string, userId: string) {
+    try {
+      return this.prismaService.$transaction(async (prisma) => {
+        const updatedPendingTransfer =
+          await prisma.pendingTransfersTools.update({
+            where: { id: recordId },
+            data: { status: 'REJECT' },
+          });
+
+        const tranferRecord = await this.toolHistoryService.create({
+          action: 'REJECT',
+          fromObjectId: updatedPendingTransfer.fromObjectId
+            ? updatedPendingTransfer.fromObjectId
+            : undefined,
+          toObjectId: updatedPendingTransfer.toObjectId,
+          toolId: updatedPendingTransfer.toolId,
+          userId,
+        });
+
+        return { updatedPendingTransfer, tranferRecord };
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось отклонить передачу',
       });
     }
   }

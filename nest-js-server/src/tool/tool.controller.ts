@@ -72,8 +72,20 @@ export class ToolController {
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Patch('confirm/:id')
-  async confirmTransfer(@Param('id') id: string) {
-    return this.toolService.confirmTransfer(id);
+  async confirmTransfer(
+    @Param('id') id: string,
+    @Authorized('id') userId: string,
+  ) {
+    return this.toolService.confirmTransfer(id, userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Patch('reject/:id')
+  async rejectTransfer(
+    @Param('id') id: string,
+    @Authorized('id') userId: string,
+  ) {
+    return this.toolService.rejectTransfer(id, userId);
   }
 
   @Authorization(Roles.OWNER)

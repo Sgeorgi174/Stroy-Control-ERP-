@@ -22,6 +22,7 @@ import { AssignEmployeesDto } from './dto/assign-employees.dto';
 import { AddSkillsDto } from './dto/add-skill.dto';
 import { RemoveSkillsDto } from './dto/remove-skill.dto';
 import { ArchiveDto } from './dto/archive-employee.dto';
+import { Authorized } from 'src/auth/decorators/authorized.decorator';
 
 @Controller('employees')
 export class EmployeeController {
@@ -87,8 +88,12 @@ export class EmployeeController {
 
   @Authorization(Roles.OWNER)
   @Patch('archive/:id')
-  async archiveEmployee(@Param('id') id: string, dto: ArchiveDto) {
-    return this.employeeService.archiveEmployee(id, dto);
+  async archiveEmployee(
+    @Param('id') id: string,
+    @Body() dto: ArchiveDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.employeeService.archiveEmployee(id, dto, userId);
   }
 
   @Authorization(Roles.OWNER)

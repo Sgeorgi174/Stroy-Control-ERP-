@@ -77,4 +77,138 @@ export class UserService {
 
     return foremen;
   }
+
+  public async getAllTransfers() {
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        const toolTransfers = await prisma.pendingTransfersTools.findMany({
+          select: {
+            tool: { select: { id: true, name: true, serialNumber: true } },
+            status: true,
+            id: true,
+            createdAt: true,
+            fromObjectId: true,
+            toObjectId: true,
+            toolId: true,
+            fromObject: {
+              select: {
+                name: true,
+                id: true,
+                foreman: {
+                  select: { lastName: true, firstName: true, phone: true },
+                },
+                address: true,
+              },
+            },
+            toObject: {
+              select: {
+                name: true,
+                id: true,
+                address: true,
+                foreman: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                    phone: true,
+                    id: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+        const deviceTransfers = await prisma.pendingTransfersDevices.findMany({
+          select: {
+            device: { select: { id: true, name: true, serialNumber: true } },
+            status: true,
+            id: true,
+            fromObjectId: true,
+            toObjectId: true,
+            deviceId: true,
+            createdAt: true,
+            fromObject: {
+              select: {
+                name: true,
+                id: true,
+                foreman: {
+                  select: { lastName: true, firstName: true, phone: true },
+                },
+                address: true,
+              },
+            },
+            toObject: {
+              select: {
+                name: true,
+                id: true,
+                address: true,
+                foreman: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                    phone: true,
+                    id: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+        const clothesTransfers = await prisma.pendingTransfersClothes.findMany({
+          select: {
+            clothes: {
+              select: {
+                id: true,
+                name: true,
+                size: true,
+                season: true,
+                type: true,
+              },
+            },
+            status: true,
+            id: true,
+            createdAt: true,
+            quantity: true,
+            fromObjectId: true,
+            toObjectId: true,
+            clothesId: true,
+            fromObject: {
+              select: {
+                name: true,
+                id: true,
+                foreman: {
+                  select: { lastName: true, firstName: true, phone: true },
+                },
+                address: true,
+              },
+            },
+            toObject: {
+              select: {
+                name: true,
+                id: true,
+                address: true,
+                foreman: {
+                  select: {
+                    firstName: true,
+                    lastName: true,
+                    phone: true,
+                    id: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        return {
+          tools: toolTransfers,
+          devices: deviceTransfers,
+          clothes: clothesTransfers,
+        };
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Не удалось получить уведомления',
+      });
+    }
+  }
 }

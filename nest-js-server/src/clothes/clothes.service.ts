@@ -146,6 +146,7 @@ export class ClothesService {
             toObjectId: dto.toObjectId,
             clothesId: id,
             quantity: dto.quantity,
+            status: 'IN_TRANSIT',
           },
           update: { quantity: { increment: dto.quantity } },
         });

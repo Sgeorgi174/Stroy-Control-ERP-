@@ -3,6 +3,7 @@ import type {
   AddSkillsDto,
   ArchiveDto,
   AssignEmployeesDto,
+  ChangeDebtDto,
   CreateEmployeeDto,
   RemoveSkillDto,
   TransferEmployeeDto,
@@ -14,7 +15,10 @@ import type {
   Positions,
   EmployeeStatuses,
 } from "@/types/employee";
-import type { EmployeeClothing } from "@/types/employeesClothing";
+import type {
+  EmployeeClothing,
+  EmployeeClothingItem,
+} from "@/types/employeesClothing";
 
 export const getFilteredEmployees = async (params: {
   searchQuery: string;
@@ -81,7 +85,7 @@ export const addSkill = async (id: string, data: AddSkillsDto) => {
 };
 
 export const removeSkill = async (id: string, data: RemoveSkillDto) => {
-  const res = await api.patch(`/employees/remove-skil/${id}`, data);
+  const res = await api.patch(`/employees/remove-skill/${id}`, data);
   return res.data;
 };
 
@@ -99,6 +103,16 @@ export const getEmployeeDebtDetails = async (
   id: string
 ): Promise<EmployeeClothing> => {
   const res = await api.get<EmployeeClothing>(`/employee-clothing/debt/${id}`);
+  return res.data;
+};
+export const changeEmployeeDebt = async (
+  id: string,
+  data: ChangeDebtDto
+): Promise<EmployeeClothingItem> => {
+  const res = await api.patch<EmployeeClothingItem>(
+    `/employee-clothing/change-debt/${id}`,
+    data
+  );
   return res.data;
 };
 

@@ -1,4 +1,5 @@
 import type { Object } from "./object";
+import type { User } from "./user";
 
 export type EmployeeStatuses = "OK" | "WARNING" | "OVERDUE" | "INACTIVE";
 export type Positions =
@@ -15,6 +16,13 @@ export type Skill = {
   skill: string;
 };
 
+export type ArchiveRecord = {
+  id: string;
+  comment: string;
+  archivedAt: string;
+  changedBy: User;
+};
+
 export type Employee = {
   id: string;
   createdAt: string;
@@ -26,9 +34,10 @@ export type Employee = {
   clothingSize: number;
   footwearSize: number;
   position: Positions;
+  objectId: string;
   workPlace: Object | null;
   status: EmployeeStatuses;
   skills: Skill[];
   type: EmployeeType;
-  archive: { id: string; comment: string; archivedAt: string } | null;
+  archive: ArchiveRecord | null;
 };

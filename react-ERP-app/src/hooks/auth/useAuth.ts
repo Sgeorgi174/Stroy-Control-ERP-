@@ -12,8 +12,6 @@ export const useAuth = () => {
     queryKey: ["auth", "me"],
     queryFn: checkAuth,
     retry: false,
-    refetchOnWindowFocus: false,
-    refetchInterval: 60_000,
   });
 
   // ⚠️ сайд-эффекты через useEffect

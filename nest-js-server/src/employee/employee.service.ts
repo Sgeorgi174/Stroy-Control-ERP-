@@ -52,10 +52,28 @@ export class EmployeeService {
       return await this.prismaService.employee.findUniqueOrThrow({
         where: { id },
         include: {
-          workPlace: true,
-          clothing: true,
-          devices: true,
-          archive: true,
+          workPlace: { select: { name: true, address: true, id: true } },
+          archive: { select: { id: true, comment: true, archivedAt: true } },
+          clothing: {
+            select: {
+              id: true,
+              priceWhenIssued: true,
+              issuedAt: true,
+              debtAmount: true,
+              clothing: {
+                select: {
+                  id: true,
+                  name: true,
+                  size: true,
+                  season: true,
+                },
+              },
+            },
+          },
+          skills: { select: { skill: true, id: true } },
+          devices: {
+            select: { id: true, name: true, serialNumber: true, status: true },
+          },
         },
       });
     } catch (error) {
@@ -119,12 +137,22 @@ export class EmployeeService {
       include: {
         skills: { select: { skill: true, id: true } },
         workPlace: { select: { name: true, address: true, id: true } },
-        archive: { select: { id: true, comment: true, archivedAt: true } },
+        archive: {
+          select: {
+            id: true,
+            comment: true,
+            archivedAt: true,
+            changedBy: {
+              select: { id: true, firstName: true, lastName: true },
+            },
+          },
+        },
         clothing: {
           select: {
             id: true,
             priceWhenIssued: true,
             issuedAt: true,
+            debtAmount: true,
             clothing: {
               select: {
                 id: true,
@@ -260,7 +288,7 @@ export class EmployeeService {
     }
   }
 
-  public async archiveEmployee(id: string, dto: ArchiveDto) {
+  public async archiveEmployee(id: string, dto: ArchiveDto, userId: string) {
     const employee = await this.getById(id);
 
     if (employee.clothing.filter((item) => item.debtAmount > 0).length > 0)
@@ -280,11 +308,11 @@ export class EmployeeService {
       return await this.prismaService.$transaction(async (prisma) => {
         await prisma.employee.update({
           where: { id },
-          data: { type: 'ARCHIVE', objectId: null, status: 'OK' },
+          data: { type: 'ARCHIVE', objectId: null, status: 'INACTIVE' },
         });
 
         await prisma.employeeArchive.create({
-          data: { employeeId: id, comment: dto.comment },
+          data: { employeeId: id, comment: dto.comment, userId },
         });
       });
     } catch (error) {

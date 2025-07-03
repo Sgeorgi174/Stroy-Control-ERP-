@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { EmployeeClothingService } from './employee-clothing.service';
 import { IssueClothingDto } from './dto/issue-clothing.dto';
+import { ChangeDebtDto } from './dto/change-debt.dto';
 
 @Controller('employee-clothing')
 export class EmployeeClothingController {
@@ -19,5 +20,13 @@ export class EmployeeClothingController {
   @Get('debt/:id')
   async getDebtDetails(@Param('id') employeeId: string) {
     return this.employeeClothingService.getEmployeeDebtDetails(employeeId);
+  }
+
+  @Patch('change-debt/:recordId')
+  async changeDebt(
+    @Param('recordId') recordId: string,
+    @Body() dto: ChangeDebtDto,
+  ) {
+    return this.employeeClothingService.changeDebt(recordId, dto);
   }
 }

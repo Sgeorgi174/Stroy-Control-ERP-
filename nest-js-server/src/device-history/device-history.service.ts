@@ -15,6 +15,7 @@ export class DeviceHistoryService {
           deviceId: dto.deviceId,
           fromObjectId: dto.fromObjectId ? dto.fromObjectId : undefined,
           toObjectId: dto.toObjectId,
+          action: dto.action,
         },
         include: {
           fromObject: { select: { name: true } },

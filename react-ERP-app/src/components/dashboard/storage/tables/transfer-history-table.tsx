@@ -30,6 +30,8 @@ export function TransferHistoryTable({
   isError,
   isLoading,
 }: TransferHistoryTableProps) {
+  console.log(transferRecords);
+
   const { activeTab } = useFilterPanelStore();
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">

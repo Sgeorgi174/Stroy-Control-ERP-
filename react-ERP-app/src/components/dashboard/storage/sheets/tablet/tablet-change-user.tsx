@@ -36,7 +36,11 @@ export function TabletChangeUser({ tablet }: TabletDetailsProps) {
   const { closeSheet } = useTabletSheetStore();
   const selectedEmployeeId = watch("employeeId");
   const changeEmployeeMutation = useChangeEmployee(tablet.id);
-  const { data: employees = [] } = useEmployees({ searchQuery: "" });
+  const { data: employees = [] } = useEmployees({
+    searchQuery: "",
+    objectId: "all",
+    type: "ACTIVE",
+  });
 
   const onSubmit = (data: FormData) => {
     changeEmployeeMutation.mutate(

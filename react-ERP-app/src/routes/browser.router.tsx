@@ -7,6 +7,7 @@ import { Objects } from "@/pages/objects/Objects";
 import { Auth } from "@/pages/auth/Auth";
 import { MyObject } from "@/pages/my-object/MyObject";
 import { NotFound } from "@/pages/not-found/NotFound";
+import { Transfers } from "@/pages/transfers/Transfers";
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
           { path: "/storage", element: <Storage /> },
           { path: "/employees", element: <Employees /> },
           { path: "/objects", element: <Objects /> },
+          { path: "/transfers", element: <Transfers /> },
         ],
       },
       { path: "/login", element: <Auth /> },

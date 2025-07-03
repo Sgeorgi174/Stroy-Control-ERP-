@@ -9,6 +9,9 @@ import { useEmployeeSheetStore } from "@/stores/employee-sheet-store";
 import { EmployeeCreate } from "./create-employee";
 import { EmployeeUpdate } from "./update-employee";
 import { EmployeeDetails } from "./details-employee";
+import { EmployeeChangeObject } from "./change-object";
+import { EmployeeSkillsEdit } from "./employee-skills";
+import { EmployeeArchive } from "./archive-employee";
 
 export function EmployeeSheet() {
   const { isOpen, mode, selectedEmployee, closeSheet } =
@@ -42,12 +45,18 @@ export function EmployeeSheet() {
         {mode === "details" && selectedEmployee && (
           <EmployeeDetails employee={selectedEmployee} />
         )}
-        {mode === "skills" && <div>Работаем</div>}
+        {mode === "skills" && selectedEmployee && (
+          <EmployeeSkillsEdit employee={selectedEmployee} />
+        )}
         {mode === "edit" && selectedEmployee && (
           <EmployeeUpdate employee={selectedEmployee} />
         )}
-        {mode === "change object" && <div>Работаем</div>}
-        {mode === "archive" && <div>Работаем</div>}
+        {mode === "change object" && selectedEmployee && (
+          <EmployeeChangeObject employee={selectedEmployee} />
+        )}
+        {mode === "archive" && selectedEmployee && (
+          <EmployeeArchive employee={selectedEmployee} />
+        )}
       </SheetContent>
     </Sheet>
   );

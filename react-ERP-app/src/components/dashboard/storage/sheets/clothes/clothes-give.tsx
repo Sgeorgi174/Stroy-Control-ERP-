@@ -23,6 +23,7 @@ export function ClothesGive({ clothes }: ClothesGiveProps) {
   const { data: employees = [] } = useEmployees({
     searchQuery: "",
     objectId: "all",
+    type: "ACTIVE",
   });
 
   const giveClothesMutation = useGiveClothes(clothes.id);

@@ -12,9 +12,11 @@ import { SkillsFilterPopover } from "../filter-panel/filter-skills";
 import { useSkill } from "@/hooks/skill/useSkill";
 import { EmployeeTypeForFilter } from "../filter-panel/filter-employee-type";
 import { EmployeeStatusForFilter } from "../filter-panel/filter-employee-status";
+import { cn } from "@/lib/utils";
 
 export function EmployeesFilter() {
-  const { searchQuery, setSearchQuery } = useFilterPanelStore();
+  const { searchQuery, setSearchQuery, selectedEmployeeType } =
+    useFilterPanelStore();
   const { data: objects = [] } = useObjects({
     searchQuery: "",
     status: "OPEN",
@@ -36,25 +38,36 @@ export function EmployeesFilter() {
 
   return (
     <FilterPanel>
-      <div className="flex flex-wrap justify-start gap-y-6 gap-x-5">
+      <div
+        className={cn(
+          "flex flex-wrap w-full gap-y-6 gap-x-5",
+          selectedEmployeeType === "ARCHIVE"
+            ? "justify-between"
+            : "justify-start"
+        )}
+      >
         <div className="flex items-center gap-2">
           <p className="font-medium">Сотрудники:</p>
           <EmployeeTypeForFilter />
         </div>
-        <div className="flex gap-3">
-          <div className="flex items-center gap-2">
-            <p className="font-medium">Объект:</p>
-            <ObjectSelectForFilter objects={objects} nullElement={true} />
+        {selectedEmployeeType === "ACTIVE" && (
+          <div className="flex gap-3">
+            <div className="flex items-center gap-2">
+              <p className="font-medium">Объект:</p>
+              <ObjectSelectForFilter objects={objects} nullElement={true} />
+            </div>
+            <div className="flex items-center gap-2">
+              <p className="font-medium">Должность:</p>
+              <PositionSelectForFilter />
+            </div>
           </div>
+        )}
+        {selectedEmployeeType === "ACTIVE" && (
           <div className="flex items-center gap-2">
-            <p className="font-medium">Должность:</p>
-            <PositionSelectForFilter />
+            <p className="font-medium">Статус:</p>
+            <EmployeeStatusForFilter />
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <p className="font-medium">Статус:</p>
-          <EmployeeStatusForFilter />
-        </div>
+        )}
         <SkillsFilterPopover skills={skills} />
 
         <div className="flex gap-8">

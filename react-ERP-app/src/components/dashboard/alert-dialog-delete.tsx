@@ -13,9 +13,10 @@ import type { Tool } from "@/types/tool";
 import type { Device } from "@/types/device";
 import type { Tablet } from "@/types/tablet";
 import type { Object } from "@/types/object";
+import type { Employee } from "@/types/employee";
 
 type AlertDialogDeleteProps = {
-  item: Clothes | Tool | Device | Tablet | Object;
+  item: Clothes | Tool | Device | Tablet | Object | Employee;
   isDeleteDialogOpen: boolean;
   setIsDeleteDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   handleDelete: () => void;
@@ -29,13 +30,20 @@ export function AlertDialogDelete({
   handleDelete,
   isLoading,
 }: AlertDialogDeleteProps) {
+  const itemLabel =
+    "lastName" in item && "firstName" in item
+      ? `${item.lastName} ${item.firstName}`
+      : "name" in item
+      ? item.name
+      : "объект";
+
   return (
     <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Подтверждение удаления</AlertDialogTitle>
           <AlertDialogDescription>
-            Вы уверены, что хотите удалить "{item.name}"?
+            Вы уверены, что хотите удалить "{itemLabel}"?
             <br />
             Это действие нельзя отменить.
           </AlertDialogDescription>

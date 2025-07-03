@@ -3,13 +3,14 @@ import { restoreEmployee } from "@/services/api/employee.api";
 import toast from "react-hot-toast";
 import type { AppAxiosError } from "@/types/error-response";
 
-export const useRestoreEmployee = (id: string) => {
+export const useRestoreEmployee = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => restoreEmployee(id),
-    onSuccess: () => {
+    mutationFn: (id: string) => restoreEmployee(id),
+    onSuccess: (id: string) => {
       queryClient.invalidateQueries({ queryKey: ["employee", id] });
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
       toast.success("Сотрудник удачно восстановлен из архива");
     },
     onError: (error: AppAxiosError) => {

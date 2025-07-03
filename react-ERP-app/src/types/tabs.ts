@@ -6,4 +6,5 @@ export type TabKey =
   | "tablet"
   | "object"
   | "employee"
-  | "my-object";
+  | "my-object"
+  | "transfers";

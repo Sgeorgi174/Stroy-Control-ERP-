@@ -1,4 +1,4 @@
-import type { ClothesTransfer } from "./clothesTransfer";
+import type { ClothesTransfer } from "./transfers";
 
 export type ClothesType = "CLOTHING" | "FOOTWEAR";
 export type Seasons = "SUMMER" | "WINTER";

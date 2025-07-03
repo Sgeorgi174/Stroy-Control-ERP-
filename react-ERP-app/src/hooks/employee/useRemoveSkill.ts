@@ -11,6 +11,8 @@ export const useRemoveSkill = (id: string) => {
     mutationFn: (data: RemoveSkillDto) => removeSkill(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employee", id] });
+      queryClient.invalidateQueries({ queryKey: ["skills"] });
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
       toast.success("Навык удален");
     },
     onError: (error: AppAxiosError) => {

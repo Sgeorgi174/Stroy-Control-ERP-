@@ -97,6 +97,7 @@ export const useFilterPanelStore = create<TabState>((set, get) => ({
       selectedItemStatus: null,
       selectedEmployeePosition: null,
       selectedObjectStatus: "OPEN",
+      selectedEmployeeType: "ACTIVE",
       selectedSkills: [],
     }),
 }));

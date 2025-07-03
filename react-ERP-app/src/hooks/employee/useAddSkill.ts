@@ -11,6 +11,8 @@ export const useAddSkill = (id: string) => {
     mutationFn: (data: AddSkillsDto) => addSkill(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employee", id] });
+      queryClient.invalidateQueries({ queryKey: ["skills"] });
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
       toast.success("Навык добавлен");
     },
     onError: (error: AppAxiosError) => {
