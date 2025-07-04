@@ -32,7 +32,7 @@ export class ToolController {
     return this.toolService.create(dto);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('by-id/:id')
   async getById(@Param('id') id: string) {
     return this.toolService.getById(id);
@@ -44,7 +44,7 @@ export class ToolController {
     return this.toolService.getFiltered(query);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateDto) {
     return this.toolService.update(id, dto);
@@ -88,7 +88,7 @@ export class ToolController {
     return this.toolService.rejectTransfer(id, userId);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Delete('delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {

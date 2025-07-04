@@ -13,6 +13,8 @@ import { useDeleteEmployee } from "@/hooks/employee/useDeleteEmployee";
 import { useState } from "react";
 import { AlertDialogRestore } from "../alert-restore-employee";
 import { useRestoreEmployee } from "@/hooks/employee/useRestoreEmployee";
+import { AlertDialogUnassignFromObject } from "../alert-remove-object";
+import { useUnassignEmployee } from "@/hooks/employee/useUssignEmployee";
 
 type EmployeeDropDownProps = { employee: Employee };
 
@@ -20,7 +22,10 @@ export function EmployeeDropDown({ employee }: EmployeeDropDownProps) {
   const { openSheet } = useEmployeeSheetStore();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isRestoreDialogOpen, setIsRestoreDialogOpen] = useState(false);
+  const [isUnassignDialogOpen, setIsUnassignDialogOpen] = useState(false);
   const { mutate: deleteEmployee, isPending: isDeleting } = useDeleteEmployee();
+  const { mutate: unassignEmployee, isPending: isTransfer } =
+    useUnassignEmployee();
   const { mutate: restoreEmployee, isPending: isRestoring } =
     useRestoreEmployee();
 
@@ -37,6 +42,17 @@ export function EmployeeDropDown({ employee }: EmployeeDropDownProps) {
 
   const handleRestore = () => {
     restoreEmployee(employee.id, {
+      onSuccess: () => {
+        setIsDeleteDialogOpen(false);
+      },
+      onError: () => {
+        setIsDeleteDialogOpen(false);
+      },
+    });
+  };
+
+  const handleUnassign = () => {
+    unassignEmployee(employee.id, {
       onSuccess: () => {
         setIsDeleteDialogOpen(false);
       },
@@ -70,7 +86,12 @@ export function EmployeeDropDown({ employee }: EmployeeDropDownProps) {
               >
                 {employee.workPlace ? "Сменить объект" : "Назначить на объект"}
               </DropdownMenuItem>
-              <DropdownMenuItem>Снять с объекта</DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={employee.objectId === null}
+                onClick={() => setIsUnassignDialogOpen(true)}
+              >
+                Снять с объекта
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => openSheet("archive", employee)}
@@ -101,6 +122,14 @@ export function EmployeeDropDown({ employee }: EmployeeDropDownProps) {
         setIsDeleteDialogOpen={setIsDeleteDialogOpen}
         item={employee}
         isLoading={isDeleting}
+      />
+
+      <AlertDialogUnassignFromObject
+        isUnassignDialogOpen={isUnassignDialogOpen}
+        handleUnassign={handleUnassign}
+        setIsUnassignDialogOpen={setIsUnassignDialogOpen}
+        item={employee}
+        isLoading={isTransfer}
       />
 
       <AlertDialogRestore

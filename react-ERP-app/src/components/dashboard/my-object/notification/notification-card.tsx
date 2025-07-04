@@ -1,30 +1,33 @@
 import { Card } from "@/components/ui/card";
-import { NotificationItem } from "./notification-item";
-import type { Device } from "@/types/device";
-import type { Tool } from "@/types/tool";
 import { useUserNotifications } from "@/hooks/user/useGetNotification";
-import type { ClothesTransfer } from "@/types/transfers";
+import { useGetStatusObject } from "@/hooks/user/useGetStatusObject";
+import NotificationPanel from "./accept-object";
+import ToolNotification from "./tool-notification";
 
 export function NotificationCard() {
-  const { data, isLoading, isError } = useUserNotifications();
+  const { data: myObject } = useGetStatusObject();
 
-  const unconfirmed = [
-    ...(data?.unconfirmedTools?.map((item: Tool) => ({
-      ...item,
-      itemType: "tool",
-    })) ?? []),
-    ...(data?.unconfirmedDevices?.map((item: Device) => ({
-      ...item,
-      itemType: "device",
-    })) ?? []),
-    ...(data?.unconfirmedClothes?.map((item: ClothesTransfer) => ({
-      ...item,
-      itemType: "clothes",
-    })) ?? []),
-  ];
+  const {
+    data: unconfirmedItems = { tools: [], devices: [], clothes: [] },
+    isLoading,
+    isError,
+  } = useUserNotifications();
+
+  const hasUnconfirmedItems =
+    unconfirmedItems.tools.length > 0 ||
+    unconfirmedItems.devices.length > 0 ||
+    unconfirmedItems.clothes.length > 0;
 
   return (
     <Card className="w-[700px] max-h-[480px] overflow-auto bg-accent p-5">
+      {myObject && (
+        <NotificationPanel
+          tools={myObject.tools}
+          devices={myObject.devices}
+          clothes={myObject.clothes}
+          objectId={myObject.id}
+        />
+      )}
       {isLoading && (
         <div className="w-full h-full flex justify-center items-center text-xl text-muted-foreground">
           Загрузка уведомлений...
@@ -37,14 +40,14 @@ export function NotificationCard() {
         </div>
       )}
 
-      {!isLoading && !isError && unconfirmed.length === 0 && (
+      {!isLoading && !isError && !hasUnconfirmedItems && (
         <div className="w-full h-full flex justify-center items-center text-2xl text-gray-200">
           Новых уведомлений нет
         </div>
       )}
 
-      {unconfirmed.map((item) => (
-        <NotificationItem key={item.id} item={item} />
+      {unconfirmedItems.tools.map((toolTransfer) => (
+        <ToolNotification key={toolTransfer.id} toolTransfer={toolTransfer} />
       ))}
     </Card>
   );

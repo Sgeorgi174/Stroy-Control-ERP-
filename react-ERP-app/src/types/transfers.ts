@@ -3,7 +3,7 @@ import type { Device } from "./device";
 import type { Object } from "./object";
 import type { Tool } from "./tool";
 
-export type PendingStatus = "IN_TRANSIT" | "REJECT";
+export type PendingStatus = "IN_TRANSIT" | "REJECT" | "CONFIRM";
 
 export interface PendingClothesTransfer {
   id: string;

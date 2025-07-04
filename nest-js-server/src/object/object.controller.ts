@@ -24,7 +24,7 @@ import { ChangeForemanDto } from './dto/changeForeman.dto';
 export class ObjectController {
   constructor(private readonly objectService: ObjectService) {}
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateDto) {
@@ -37,13 +37,13 @@ export class ObjectController {
     return this.objectService.getFiltered(query);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('close-object/:id')
   async getByIdToClose(@Param('id') id: string) {
     return this.objectService.getByIdToClose(id);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('by-id/:id')
   async getById(@Param('id') id: string) {
     return this.objectService.getByIdToClose(id);
@@ -55,25 +55,34 @@ export class ObjectController {
     return this.objectService.getByUserId(userId);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateDto) {
     return this.objectService.update(id, dto);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Patch('change-foreman/:id')
   async changeForeman(@Param('id') id: string, @Body() dto: ChangeForemanDto) {
     return this.objectService.changeForeman(id, dto);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Patch('remove-foreman/:id')
   async removeForeman(@Param('id') id: string) {
     return this.objectService.removeForeman(id);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Patch('activate/:id')
+  async activateObject(
+    @Param('id') id: string,
+    @Authorized('id') userId: string,
+  ) {
+    return this.objectService.activateObject(id, userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Delete('delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {

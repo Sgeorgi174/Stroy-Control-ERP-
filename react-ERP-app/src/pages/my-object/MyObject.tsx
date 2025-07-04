@@ -3,8 +3,6 @@ import { NotificationCard } from "@/components/dashboard/my-object/notification/
 import { Card } from "@/components/ui/card";
 import { Clock } from "@/components/ui/clock";
 
-// const notifications = [{ id: "1", text: "" }];
-
 export function MyObject() {
   return (
     <div className="flex gap-10 mt-6 justify-center">

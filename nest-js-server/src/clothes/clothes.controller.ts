@@ -28,7 +28,7 @@ import { GetClothesQueryDto } from './dto/get-clothes-query.dto';
 export class ClothesController {
   constructor(private readonly clothesService: ClothesService) {}
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateDto) {
@@ -41,13 +41,13 @@ export class ClothesController {
     return this.clothesService.getFiltered(query);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('by-id/:id')
   async getById(@Param('id') id: string) {
     return this.clothesService.getById(id);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateDto) {
     return this.clothesService.update(id, dto);
@@ -103,7 +103,7 @@ export class ClothesController {
     return this.clothesService.giveToEmployee(id, dto, userId);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Delete('delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {

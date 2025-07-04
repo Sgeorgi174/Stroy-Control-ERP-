@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
@@ -10,6 +14,19 @@ import { ChangeForemanDto } from './dto/changeForeman.dto';
 export class ObjectService {
   constructor(private readonly prismaService: PrismaService) {}
 
+  private async accessObject(objectId: string, userId: string) {
+    const user = await this.prismaService.user.findUnique({
+      where: { id: userId },
+      include: { object: true },
+    });
+    if (!user) throw new NotFoundException('Пользователь не найден');
+
+    if (user.role === 'FOREMAN' && user.object?.id !== objectId)
+      throw new ForbiddenException('Недостаточно прав для этого объекта');
+
+    return user;
+  }
+
   public async create(dto: CreateDto) {
     try {
       return await this.prismaService.object.create({
@@ -17,6 +34,7 @@ export class ObjectService {
           name: dto.name,
           address: dto.address,
           userId: dto.userId ?? null,
+          isPending: true,
         },
         include: { tools: true, employees: true, clothes: true, devices: true },
       });
@@ -196,7 +214,7 @@ export class ObjectService {
     try {
       return await this.prismaService.object.update({
         where: { id: objectId },
-        data: { userId: dto.userId ? dto.userId : null },
+        data: { userId: dto.userId ? dto.userId : null, isPending: true },
       });
     } catch (error) {
       handlePrismaError(error, {
@@ -212,7 +230,22 @@ export class ObjectService {
     try {
       return await this.prismaService.object.update({
         where: { id: objectId },
-        data: { userId: null },
+        data: { userId: null, isPending: true },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        conflictMessage: 'Обновление нарушает уникальность объекта',
+        defaultMessage: 'Ошибка при обновлении объекта',
+      });
+    }
+  }
+
+  public async activateObject(objectId: string, userId: string) {
+    await this.accessObject(objectId, userId);
+    try {
+      return await this.prismaService.object.update({
+        where: { id: objectId },
+        data: { isPending: false },
       });
     } catch (error) {
       handlePrismaError(error, {

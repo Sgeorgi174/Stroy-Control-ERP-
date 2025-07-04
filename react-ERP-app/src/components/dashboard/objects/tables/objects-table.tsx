@@ -11,6 +11,8 @@ import { ObjectDropDown } from "../dropdowns/object-dropdown";
 import { PendingTable } from "../../storage/tables/pending-table";
 import { splitAddress } from "@/lib/utils/splitAddress";
 import { useObjectSheetStore } from "@/stores/objects-sheet-store";
+import { StatusBadge } from "../../storage/tables/status-badge";
+import { CircleCheck, PauseIcon } from "lucide-react";
 
 type ObjectsTableProps = {
   objects: Object[];
@@ -37,6 +39,7 @@ export function ObjectsTable({
             <TableHead className="text-secondary font-bold">Адрес</TableHead>
             <TableHead className="text-secondary font-bold">Бригадир</TableHead>
             <TableHead className="text-secondary font-bold">Телефон</TableHead>
+            <TableHead className="text-secondary font-bold">Статус</TableHead>
             <TableHead className="text-secondary font-bold">
               Кол-во сотрудников
             </TableHead>
@@ -69,6 +72,13 @@ export function ObjectsTable({
               </TableCell>
               <TableCell>
                 {object.foreman ? object.foreman.phone : "-"}
+              </TableCell>
+              <TableCell>
+                <StatusBadge
+                  Icon={object.isPending ? PauseIcon : CircleCheck}
+                  color={object.isPending ? "#807F7F" : "#23732E"}
+                  text={object.isPending ? "На паузе" : "Активен"}
+                ></StatusBadge>
               </TableCell>
               <TableCell>{object.employees.length}</TableCell>
               <TableCell>

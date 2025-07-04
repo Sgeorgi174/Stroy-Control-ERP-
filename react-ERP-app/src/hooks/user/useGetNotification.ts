@@ -1,8 +1,12 @@
 // src/hooks/user/useUserNotifications.ts
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { getUserNotifications } from "@/services/api/user.api";
+import type { PendingTransfersResponse } from "@/types/transfers";
 
-export const useUserNotifications = () => {
+export const useUserNotifications = (): UseQueryResult<
+  PendingTransfersResponse,
+  Error
+> => {
   return useQuery({
     queryKey: ["user-notifications"],
     queryFn: getUserNotifications,

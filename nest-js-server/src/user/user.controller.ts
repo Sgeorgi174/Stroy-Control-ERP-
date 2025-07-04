@@ -14,13 +14,19 @@ export class UserController {
     return this.userService.getNotifications(userId);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('foremen')
   async getFreeForemen() {
     return this.userService.getFreeForemen();
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Get('get-status-object')
+  async getStatusObject(@Authorized('id') userId: string) {
+    return this.userService.getStatusObject(userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('transfers')
   async getAllTransfers() {
     return this.userService.getAllTransfers();

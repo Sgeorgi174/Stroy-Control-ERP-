@@ -193,6 +193,7 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
           <div className="flex flex-col gap-2">
             <Label htmlFor="objectId">Объект</Label>
             <ObjectSelectForForms
+              disabled
               className="w-[300px]"
               isEmptyElement
               objects={objects}

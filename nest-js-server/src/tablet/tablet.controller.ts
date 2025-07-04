@@ -38,13 +38,13 @@ export class TabletController {
     return this.tabletService.getFiltered(query);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('by-id/:id')
   getById(@Param('id') id: string) {
     return this.tabletService.getById(id);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Put('update/:id')
   update(@Param('id') id: string, @Body() dto: UpdateTabletDto) {
     return this.tabletService.update(id, dto);
@@ -76,7 +76,7 @@ export class TabletController {
     return this.tabletService.release(id, userId);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Delete('delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   delete(@Param('id') id: string) {

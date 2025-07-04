@@ -221,6 +221,24 @@ export class EmployeeService {
     }
   }
 
+  public async unassignFromObject(id: string) {
+    try {
+      return await this.prismaService.employee.update({
+        where: { id },
+        data: {
+          objectId: null,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      handlePrismaError(error, {
+        notFoundMessage: 'Сотрудник не найден',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось обновить сотрудника',
+      });
+    }
+  }
+
   public async assignToObject(dto: AssignEmployeesDto) {
     try {
       await this.prismaService.employee.updateMany({

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import type { Employee } from "@/types/employee";
 
-type ForemanAutocompleteProps = {
+type EmployeeAutocompleteProps = {
   employees: Employee[];
   selectedEmployeeId: string | null;
   onSelectChange: (id: string) => void;
@@ -28,27 +28,34 @@ export function EmployeeAutocomplete({
   selectedEmployeeId,
   onSelectChange,
   disabled,
-}: ForemanAutocompleteProps) {
+}: EmployeeAutocompleteProps) {
   const [open, setOpen] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState("");
+  const [query, setQuery] = useState("");
 
-  useEffect(() => {
+  const selectedLabel = useMemo(() => {
     const selected = employees.find((e) => e.id === selectedEmployeeId);
-
-    if (selected) {
-      setSelectedLabel(`${selected.lastName} ${selected.firstName}`);
-    } else {
-      setSelectedLabel("");
-    }
+    return selected
+      ? `${selected.lastName} ${selected.firstName} ${
+          selected.fatherName ?? ""
+        }`.trim()
+      : "";
   }, [selectedEmployeeId, employees]);
 
+  const filteredEmployees = useMemo(() => {
+    return employees.filter((employee) => {
+      const fullName = `${employee.lastName} ${employee.firstName} ${
+        employee.fatherName ?? ""
+      }`
+        .toLowerCase()
+        .trim();
+      return fullName.includes(query.toLowerCase());
+    });
+  }, [employees, query]);
+
   const handleSelect = (employeeId: string) => {
-    const employee = employees.find((u) => u.id === employeeId);
-    if (employee) {
-      onSelectChange(employeeId);
-      setSelectedLabel(`${employee.lastName} ${employee.firstName}`);
-      setOpen(false);
-    }
+    onSelectChange(employeeId);
+    setOpen(false);
+    setQuery("");
   };
 
   return (
@@ -65,17 +72,23 @@ export function EmployeeAutocomplete({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[250px] p-0 max-h-60 overflow-auto">
+      <PopoverContent className="w-[300px] p-0 max-h-60 overflow-auto">
         <Command>
-          <CommandInput placeholder="Поиск..." />
+          <CommandInput
+            placeholder="Поиск..."
+            value={query}
+            onValueChange={setQuery}
+          />
           <CommandEmpty>Совпадений не найдено</CommandEmpty>
           <CommandGroup>
-            {employees.map((employee) => {
-              const fullName = `${employee.lastName} ${employee.firstName}`;
+            {filteredEmployees.map((employee) => {
+              const fullName = `${employee.lastName} ${employee.firstName} ${
+                employee.fatherName ?? ""
+              }`.trim();
               return (
                 <CommandItem
                   key={employee.id}
-                  value={fullName} // используем имя для поиска
+                  value={employee.id}
                   onSelect={() => handleSelect(employee.id)}
                 >
                   <Check

@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -17,13 +13,9 @@ export class UserService {
   public async getNotifications(userId: string) {
     try {
       const user = await this.prismaService.user.findUnique({
-        where: { id: userId, role: 'FOREMAN' },
+        where: { id: userId },
         include: { object: true },
       });
-
-      if (!user) {
-        throw new BadRequestException('Вы не являетесь бригадиром');
-      }
 
       const object = user?.object;
 
@@ -32,35 +24,97 @@ export class UserService {
       }
 
       return await this.prismaService.$transaction(async (prisma) => {
-        const unconfirmedTools = await prisma.tool.findMany({
-          where: { objectId: object.id, status: 'IN_TRANSIT' },
-          include: { storage: { include: { foreman: true } } },
-        });
-
-        const unconfirmedDevices = await prisma.device.findMany({
-          where: { objectId: object.id, status: 'IN_TRANSIT' },
-          include: { storage: { include: { foreman: true } } },
-        });
-
-        const unconfirmedClothes =
-          await prisma.pendingTransfersClothes.findMany({
-            where: {
-              toObjectId: object.id,
+        const tools = await prisma.pendingTransfersTools.findMany({
+          where: {
+            toObjectId: object.id,
+            status: 'IN_TRANSIT',
+          },
+          include: {
+            tool: {
+              select: { name: true, id: true, serialNumber: true },
             },
-            include: {
-              clothes: {
-                select: { name: true, season: true, type: true, size: true },
-              },
-              toObject: {
-                select: {
-                  foreman: { select: { firstName: true, lastName: true } },
-                  name: true,
+            toObject: {
+              select: {
+                foreman: {
+                  select: { firstName: true, lastName: true, phone: true },
                 },
+                name: true,
               },
             },
-          });
+            fromObject: {
+              select: {
+                foreman: {
+                  select: { firstName: true, lastName: true, phone: true },
+                },
+                name: true,
+              },
+            },
+          },
+        });
 
-        return { unconfirmedClothes, unconfirmedDevices, unconfirmedTools };
+        const devices = await prisma.pendingTransfersDevices.findMany({
+          where: {
+            toObjectId: object.id,
+            status: 'IN_TRANSIT',
+          },
+          include: {
+            device: {
+              select: { name: true, id: true, serialNumber: true },
+            },
+            toObject: {
+              select: {
+                foreman: {
+                  select: { firstName: true, lastName: true, phone: true },
+                },
+                name: true,
+              },
+            },
+            fromObject: {
+              select: {
+                foreman: {
+                  select: { firstName: true, lastName: true, phone: true },
+                },
+                name: true,
+              },
+            },
+          },
+        });
+
+        const clothes = await prisma.pendingTransfersClothes.findMany({
+          where: {
+            toObjectId: object.id,
+            status: 'IN_TRANSIT',
+          },
+          include: {
+            clothes: {
+              select: {
+                name: true,
+                season: true,
+                type: true,
+                size: true,
+                id: true,
+              },
+            },
+            toObject: {
+              select: {
+                foreman: {
+                  select: { firstName: true, lastName: true, phone: true },
+                },
+                name: true,
+              },
+            },
+            fromObject: {
+              select: {
+                foreman: {
+                  select: { firstName: true, lastName: true, phone: true },
+                },
+                name: true,
+              },
+            },
+          },
+        });
+
+        return { clothes, devices, tools };
       });
     } catch (error) {
       handlePrismaError(error, {
@@ -76,6 +130,29 @@ export class UserService {
     });
 
     return foremen;
+  }
+
+  public async getStatusObject(userId: string) {
+    try {
+      const object = await this.prismaService.object.findUnique({
+        where: { userId, isPending: true },
+        include: {
+          clothes: true,
+          devices: { where: { status: { not: 'IN_TRANSIT' } } },
+          employees: true,
+          tools: { where: { status: { not: 'IN_TRANSIT' } } },
+        },
+      });
+
+      if (!object) return undefined;
+
+      return object;
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Ошибка поиска объекта',
+        defaultMessage: 'Не удалось получить уведомления',
+      });
+    }
   }
 
   public async getAllTransfers() {

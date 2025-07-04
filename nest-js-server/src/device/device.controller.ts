@@ -23,13 +23,13 @@ import { GetToolsQueryDto } from 'src/tool/dto/get-tools-query.dto';
 export class DeviceController {
   constructor(private readonly deviceService: DeviceService) {}
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Post('create')
   create(@Body() dto: CreateDto) {
     return this.deviceService.create(dto);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('all')
   getAll() {
     return this.deviceService.getAll();
@@ -41,13 +41,13 @@ export class DeviceController {
     return this.deviceService.getFiltered(query);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('by-id/:id')
   getById(@Param('id') id: string) {
     return this.deviceService.getById(id);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Put('update/:id')
   update(@Param('id') id: string, @Body() dto: UpdateDto) {
     return this.deviceService.update(id, dto);
@@ -91,7 +91,7 @@ export class DeviceController {
     return this.deviceService.rejectTransfer(id, userId);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Delete('delete/:id')
   delete(@Param('id') id: string) {
     return this.deviceService.delete(id);

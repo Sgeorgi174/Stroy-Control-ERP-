@@ -74,6 +74,11 @@ export const transferEmployee = async (
   return res.data;
 };
 
+export const unassignFromObject = async (id: string): Promise<Employee> => {
+  const res = await api.patch(`/employees/unassign/${id}`);
+  return res.data;
+};
+
 export const assignToObject = async (data: AssignEmployeesDto) => {
   const res = await api.post(`/employees/assign/`, data);
   return res.data;

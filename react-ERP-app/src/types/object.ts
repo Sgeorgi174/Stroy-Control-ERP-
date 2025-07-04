@@ -19,4 +19,5 @@ export type Object = {
   devices: Device[];
   tools: Tool[];
   status: ObjectStatus;
+  isPending: boolean;
 };

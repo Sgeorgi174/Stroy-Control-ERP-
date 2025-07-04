@@ -7,13 +7,13 @@ import { Roles } from 'generated/prisma';
 export class ClothesHistoryController {
   constructor(private readonly clothesHistoryService: ClothesHistoryService) {}
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('transfers/:id')
   async getByClothesId(@Param('id') id: string) {
     return this.clothesHistoryService.getByClothesId(id);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Delete('delete/:id')
   async delete(@Param('id') id: string) {
     return this.clothesHistoryService.delete(id);

@@ -7,19 +7,19 @@ import { DeviceHistoryService } from './device-history.service';
 export class DeviceHistoryController {
   constructor(private readonly deviceHistoryService: DeviceHistoryService) {}
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('transfers/:id')
   async getTransfersByDeviceId(@Param('id') id: string) {
     return this.deviceHistoryService.getTransfersByDeviceId(id);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('statuses/:id')
   async getStatusChangesByDeviceId(@Param('id') id: string) {
     return this.deviceHistoryService.getStatusChangesByDeviceId(id);
   }
 
-  @Authorization(Roles.OWNER)
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Delete('delete/:id')
   async delete(@Param('id') id: string) {
     return this.deviceHistoryService.delete(id);
