@@ -4,6 +4,7 @@ import type {
   UpdateToolDto,
   TransferToolDto,
   UpdateToolStatusDto,
+  RejectToolDto,
 } from "@/types/dto/tool.dto";
 import type { Tool, ToolStatus } from "@/types/tool";
 
@@ -63,8 +64,13 @@ export const transferTool = async (
 };
 
 // Подтвердить передачу
-export const confirmToolTransfer = async (id: string): Promise<Tool> => {
+export const confirmToolTransfer = async (id: string) => {
   const res = await api.patch(`/tools/confirm/${id}`);
+  return res.data;
+};
+
+export const rejectToolTransfer = async (id: string, data: RejectToolDto) => {
+  const res = await api.patch(`/tools/reject/${id}`, data);
   return res.data;
 };
 
@@ -75,6 +81,11 @@ export const deleteTool = async (id: string): Promise<void> => {
 
 export const getToolHistory = async (id: string): Promise<void> => {
   const res = await api.get(`/tool-history/transfers/${id}`);
+  return res.data;
+};
+
+export const requestPhotoByTransferId = async (transferId: string) => {
+  const res = await api.post(`/tools/request-photo-transfer/${transferId}`);
   return res.data;
 };
 

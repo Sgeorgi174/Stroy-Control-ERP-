@@ -288,4 +288,47 @@ export class UserService {
       });
     }
   }
+
+  public async setPhotoRequestTransferId(phone: string, transferId: string) {
+    try {
+      const telegramUser = await this.prismaService.telegramUser.update({
+        where: { phone },
+        data: { photoRequestedTransferId: transferId },
+      });
+
+      return telegramUser;
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Не удалось найти айди перемещения',
+      });
+    }
+  }
+
+  public async clearPhotoRequestTransferId(phone: string) {
+    try {
+      const telegramUser = await this.prismaService.telegramUser.update({
+        where: { phone },
+        data: { photoRequestedTransferId: null },
+      });
+
+      return telegramUser;
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Не удалось найти айди перемещения',
+      });
+    }
+  }
+
+  public async getToolTransferPhoto(transferId: string) {
+    try {
+      return await this.prismaService.pendingTransfersTools.findUniqueOrThrow({
+        where: { id: transferId, photoUrl: { not: null } },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Фото еще не получено',
+        defaultMessage: 'Не удалось найти айди перемещения',
+      });
+    }
+  }
 }

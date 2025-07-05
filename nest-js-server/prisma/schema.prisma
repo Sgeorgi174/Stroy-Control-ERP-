@@ -59,8 +59,9 @@ model TelegramUser {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  phone  String @unique
-  chatId Int    @unique
+  phone                    String  @unique
+  chatId                   Int     @unique
+  photoRequestedTransferId String?
 }
 
 model Object {
@@ -141,8 +142,11 @@ model PendingTransfersTools {
   id String @id @default(uuid())
 
   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  status PendingStatuses
+  status           PendingStatuses
+  photoUrl         String?
+  rejectionComment String?
 
   fromObject   Object? @relation("pending_tools_from_object_fk", fields: [fromObjectId], references: [id])
   fromObjectId String?
@@ -231,7 +235,9 @@ model PendingTransfersDevices {
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  status PendingStatuses
+  status           PendingStatuses
+  photoUrl         String?
+  rejectionComment String?
 
   fromObject   Object? @relation("pending_devices_from_object_fk", fields: [fromObjectId], references: [id])
   fromObjectId String?

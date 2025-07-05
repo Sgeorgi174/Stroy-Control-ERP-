@@ -20,10 +20,17 @@ import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { TransferDto } from './dto/transfer.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { GetToolsQueryDto } from './dto/get-tools-query.dto';
+import { UserService } from 'src/user/user.service';
+import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+import { RejectToolTransferDto } from './dto/reject-transfer.dto';
 
 @Controller('tools')
 export class ToolController {
-  constructor(private readonly toolService: ToolService) {}
+  constructor(
+    private readonly toolService: ToolService,
+    private readonly userService: UserService,
+    private readonly telegramBotService: TelegramBotService,
+  ) {}
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Post('create')
@@ -83,9 +90,10 @@ export class ToolController {
   @Patch('reject/:id')
   async rejectTransfer(
     @Param('id') id: string,
+    @Body() dto: RejectToolTransferDto,
     @Authorized('id') userId: string,
   ) {
-    return this.toolService.rejectTransfer(id, userId);
+    return this.toolService.rejectTransfer(id, userId, dto);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
@@ -93,5 +101,18 @@ export class ToolController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {
     return this.toolService.delete(id);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('request-photo-transfer/:id')
+  async rejectToolTransfer(
+    @Param('id') transferId: string,
+    @Authorized('phone') phone: string,
+  ) {
+    console.log(phone);
+
+    await this.userService.setPhotoRequestTransferId(phone, transferId);
+    await this.telegramBotService.sendRequestTransferPhoto(phone);
+    return { success: true };
   }
 }

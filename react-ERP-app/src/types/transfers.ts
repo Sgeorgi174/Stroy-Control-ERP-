@@ -23,11 +23,14 @@ export interface PendingToolTransfer {
   toolId: string;
   tool: Tool;
   status: PendingStatus;
+  photoUrl?: string;
+  rejectionComment?: string;
   fromObjectId: string;
   toObjectId: string;
   fromObject: Object;
   toObject: Object;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface PendingDeviceTransfer {
@@ -35,6 +38,8 @@ export interface PendingDeviceTransfer {
   deviceId: string;
   device: Device;
   status: PendingStatus;
+  photoUrl?: string;
+  rejectionComment?: string;
   fromObjectId: string;
   toObjectId: string;
   fromObject: Object;

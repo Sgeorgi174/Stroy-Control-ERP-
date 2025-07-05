@@ -68,4 +68,59 @@ export class TelegramBotUpdate {
       await ctx.reply(`Спасибо, ${user.firstName}! Ваш номер сохранён ✅`);
     }
   }
+
+  @On('photo')
+  async onPhoto(@Ctx() ctx: Context) {
+    const chatId = Number(ctx.chat?.id);
+    const message = ctx.message as Message.PhotoMessage;
+
+    const telegramUser = await this.prismaService.telegramUser.findUnique({
+      where: { chatId },
+    });
+
+    if (!telegramUser) {
+      await ctx.reply('У вас нет дотсупа к боту ⚠️');
+      return;
+    }
+
+    if (!telegramUser.photoRequestedTransferId) {
+      await ctx.reply('Нет активного запроса на отправку фото.');
+      return;
+    }
+
+    const transferId = telegramUser.photoRequestedTransferId as string;
+
+    const photoArray = message.photo;
+    const largestPhoto = photoArray?.[photoArray.length - 1];
+
+    if (!largestPhoto?.file_id) {
+      await ctx.reply('Не удалось получить фото.');
+      return;
+    }
+
+    const fileLink = await ctx.telegram.getFileLink(largestPhoto.file_id);
+
+    const file = await fetch(fileLink.href);
+    const buffer = await file.arrayBuffer();
+
+    const filename = `${telegramUser.photoRequestedTransferId}.jpg`;
+    const fs = await import('fs/promises');
+    await fs.writeFile(`uploads/photos/${filename}`, Buffer.from(buffer));
+
+    const url = `/uploads/photos/${filename}`;
+
+    // Обновляем запись
+
+    await this.prismaService.pendingTransfersTools.update({
+      where: { id: transferId },
+      data: { photoUrl: url },
+    });
+
+    await this.prismaService.telegramUser.update({
+      where: { chatId },
+      data: { photoRequestedTransferId: null },
+    });
+
+    await ctx.reply('Фото получено, статус обновлён.');
+  }
 }

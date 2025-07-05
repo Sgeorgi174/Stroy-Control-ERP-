@@ -14,6 +14,7 @@ import { handlePrismaError } from '../libs/common/utils/prisma-error.util';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { GetToolsQueryDto } from './dto/get-tools-query.dto';
 import { buildStatusFilter } from 'src/libs/common/utils/buildStatusFilter';
+import { RejectToolTransferDto } from './dto/reject-transfer.dto';
 
 @Injectable()
 export class ToolService {
@@ -247,7 +248,10 @@ export class ToolService {
           toolId: transfer.toolId,
         });
 
-        await prisma.pendingTransfersTools.delete({ where: { id: recordId } });
+        await prisma.pendingTransfersTools.update({
+          where: { id: recordId },
+          data: { status: 'CONFIRM' },
+        });
 
         return { updatedTool, transferRecord };
       });
@@ -260,13 +264,17 @@ export class ToolService {
     }
   }
 
-  public async rejectTransfer(recordId: string, userId: string) {
+  public async rejectTransfer(
+    recordId: string,
+    userId: string,
+    dto: RejectToolTransferDto,
+  ) {
     try {
       return this.prismaService.$transaction(async (prisma) => {
         const updatedPendingTransfer =
           await prisma.pendingTransfersTools.update({
             where: { id: recordId },
-            data: { status: 'REJECT' },
+            data: { status: 'REJECT', rejectionComment: dto.rejectionComment },
           });
 
         const tranferRecord = await this.toolHistoryService.create({

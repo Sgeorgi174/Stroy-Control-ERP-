@@ -18,3 +18,7 @@ export interface UpdateToolStatusDto {
 export interface TransferToolDto {
   objectId: string;
 }
+
+export interface RejectToolDto {
+  rejectionComment: string;
+}

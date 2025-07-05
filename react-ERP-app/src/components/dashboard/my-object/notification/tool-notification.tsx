@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-  AlertTriangle,
-  MapPin,
-  Minus,
-  MoveRight,
-  Package,
-  User,
-} from "lucide-react";
+import { MapPin, Minus, MoveRight, Package, User, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,6 +20,10 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import type { PendingToolTransfer } from "@/types/transfers";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import { ToolPhotoSection } from "./notification-tool-photo";
 
 type ToolNotificationProp = {
   toolTransfer: PendingToolTransfer;
@@ -36,6 +33,7 @@ export default function ToolNotification({
   toolTransfer,
 }: ToolNotificationProp) {
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const [isReject, setIsReject] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
@@ -101,45 +99,90 @@ export default function ToolNotification({
         </Card>
       </DialogTrigger>
 
-      <DialogContent className="max-w-3xl min-w-[700px] max-h-[80vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-3xl min-w-[700px] max-h-[80vh] overflow-auto flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-orange-600" />
-            Принятие инвентаря на объекте
+            <Package className="w-5 h-5 text-violet-500" />
+            Подтверждение перемещения
           </DialogTitle>
           <DialogDescription>
-            В качестве нового бригадира, пожалуйста, ознакомьтесь со списком
-            инвентаря ниже и подтвердите, что вы принимаете все позиции,
-            прикреплённые к объекту.
+            Пожалуйста, ознакомьтесь с деталями перемещения и подтвердите
+            получение инструмента.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto py-4">
-          <div className="space-y-3"></div>
+        <div className="flex flex-col gap-5 py-4">
+          <div className="space-y-3 font-medium">Инструмент:</div>
+
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-muted">
+            <div className="flex-shrink-0 w-8 h-8  rounded-md flex items-center justify-center">
+              <Wrench className="w-4 h-4" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <p className="font-medium  text-sm">{toolTransfer.tool.name}</p>
+              </div>
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                <span className="font-mono">
+                  Серийный номер: {toolTransfer.tool.serialNumber}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
+        {isReject && <Separator className="my-2" />}
+        {isReject && (
+          <div className="flex justify-between">
+            <ToolPhotoSection toolTransfer={toolTransfer} />
+
+            <div className="col-8 flex flex-col gap-2">
+              <Label>Укажите причину отказа</Label>
+              <Textarea
+                placeholder="Укажите причину отмены, например (Инструмент пришел неисправным, пришла не та позиция и т.д.)"
+                className="resize-none w-[350px] h-full"
+              />
+            </div>
+          </div>
+        )}
 
         <div className="border-t pt-4">
-          <div className="flex items-center space-x-2 mb-4 p-3 bg-attention rounded-lg">
-            <Checkbox
-              className="border-accent-foreground"
-              id="confirm-responsibility"
-              checked={isConfirmed}
-              onCheckedChange={(checked) => setIsConfirmed(checked as boolean)}
-            />
-            <label
-              htmlFor="confirm-responsibility"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          {!isReject && (
+            <div
+              className={`flex items-center space-x-2 mb-4 p-3 ${
+                isConfirmed ? "bg-green-500/40" : "bg-attention"
+              } rounded-lg`}
             >
-              Я подтверждаю, что получил весь инвентарь и принимаю полную
-              ответственность за указанные позиции в качестве бригадира объекта.
-            </label>
-          </div>
+              <Checkbox
+                className="border-accent-foreground"
+                id="confirm-responsibility"
+                checked={isConfirmed}
+                onCheckedChange={(checked) =>
+                  setIsConfirmed(checked as boolean)
+                }
+              />
+              <label
+                htmlFor="confirm-responsibility"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Я подтверждаю, что получил указанный инвентарь.
+              </label>
+            </div>
+          )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Отменить
-            </Button>
-            <Button disabled={!isConfirmed}>{"Принять объект"}</Button>
+            <div className="flex gap-5">
+              {isReject && (
+                <Button variant="outline" onClick={() => setIsReject(false)}>
+                  Отмена
+                </Button>
+              )}
+              <Button variant="destructive" onClick={() => setIsReject(true)}>
+                Отказаться
+              </Button>
+              {!isReject && (
+                <Button disabled={!isConfirmed}>{"Принять"}</Button>
+              )}
+            </div>
           </DialogFooter>
         </div>
       </DialogContent>

@@ -1,6 +1,9 @@
 import { api } from "@/lib/api";
 import type { Object } from "@/types/object";
-import type { PendingTransfersResponse } from "@/types/transfers";
+import type {
+  PendingToolTransfer,
+  PendingTransfersResponse,
+} from "@/types/transfers";
 
 export const getUserNotifications =
   async (): Promise<PendingTransfersResponse> => {
@@ -20,6 +23,13 @@ export const getAllTransfers = async (): Promise<PendingTransfersResponse> => {
 
 export const getStatusObject = async (): Promise<Object> => {
   const response = await api.get("/users/get-status-object");
+  return response.data;
+};
+
+export const getToolTransferPhoto = async (
+  transferId: string
+): Promise<PendingToolTransfer> => {
+  const response = await api.get(`/users/get-transfer-photo/${transferId}`);
   return response.data;
 };
 

@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { Context, Telegraf } from 'telegraf';
@@ -47,6 +51,31 @@ export class TelegramBotService {
       await this.bot.telegram.sendMessage(
         chatId,
         `Ваш одноразовый код: ${otp}`,
+      );
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(
+        'Не удалось отправить сообщение в Telegram',
+      );
+    }
+  }
+
+  public async sendRequestTransferPhoto(phone: string) {
+    const telegramUser = await this.prismaService.telegramUser.findUnique({
+      where: { phone: phone },
+    });
+
+    if (!telegramUser) {
+      throw new NotFoundException('Вы не зарегистрированы в боте!');
+    }
+
+    const chatId: number = telegramUser.chatId;
+
+    try {
+      await this.bot.telegram.sendMessage(
+        chatId,
+        `Пожалуйста, отправьте фотографию инструмента, от которого вы хотите отказаться.`,
       );
       return true;
     } catch (error) {
