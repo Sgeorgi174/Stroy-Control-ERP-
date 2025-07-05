@@ -76,13 +76,17 @@ export function ClothesTransferDialog({
         </DialogTitle>
         <DialogDescription>
           Пожалуйста, ознакомьтесь с деталями перемещения и подтвердите
-          получение инструмента.
+          получение{" "}
+          {clothesTransfer.clothes.type === "CLOTHING" ? "одежды" : "обуви"}.
         </DialogDescription>
       </DialogHeader>
 
       <div className="flex flex-col gap-5 py-4">
-        <div className="space-y-3 font-medium">Инструмент:</div>
+        <div className="space-y-3 font-medium">
+          {clothesTransfer.clothes.type === "CLOTHING" ? "Одежда" : "Обувь"}:
+        </div>
         <ClothesInfo
+          isReject={isReject}
           quantity={Number(quantity)}
           setQuantity={setQuantity}
           clothesTransfer={clothesTransfer}
@@ -135,7 +139,11 @@ export function ClothesTransferDialog({
                   Отказаться
                 </Button>
                 <Button
-                  disabled={!isConfirmed || confirmTransferMutation.isPending}
+                  disabled={
+                    !isConfirmed ||
+                    confirmTransferMutation.isPending ||
+                    !quantity
+                  }
                   onClick={handleConfirm}
                 >
                   Принять

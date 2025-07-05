@@ -70,12 +70,12 @@ export function DeviceTransferDialog({
         </DialogTitle>
         <DialogDescription>
           Пожалуйста, ознакомьтесь с деталями перемещения и подтвердите
-          получение инструмента.
+          получение устройства.
         </DialogDescription>
       </DialogHeader>
 
       <div className="flex flex-col gap-5 py-4">
-        <div className="space-y-3 font-medium">Инструмент:</div>
+        <div className="space-y-3 font-medium">Оргтехника:</div>
         <DeviceInfo device={deviceTransfer.device} />
       </div>
 

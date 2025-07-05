@@ -132,7 +132,7 @@ model Tool {
   storage  Object? @relation(fields: [objectId], references: [id])
   objectId String? @map("object_id")
 
-  inTransit       PendingTransfersTools?
+  inTransit       PendingTransfersTools[]
   history         ToolHistory[]
   statusHistories ToolStatusHistory[]
 }
@@ -162,9 +162,7 @@ model PendingTransfersTools {
   toObjectId String
 
   tool   Tool   @relation(fields: [toolId], references: [id])
-  toolId String @unique
-
-  @@unique([fromObjectId, toObjectId, toolId], name: "fromObjectId_toObjectId_toolId")
+  toolId String
 }
 
 model ToolHistory {
@@ -224,7 +222,7 @@ model Device {
   storage  Object? @relation(fields: [objectId], references: [id])
   objectId String? @map("object_id")
 
-  inTransit       PendingTransfersDevices?
+  inTransit       PendingTransfersDevices[]
   history         DeviceHistory[]
   statusHistories DeviceStatusHistory[]
 }
@@ -254,9 +252,7 @@ model PendingTransfersDevices {
   toObjectId String
 
   device   Device @relation(fields: [deviceId], references: [id])
-  deviceId String @unique
-
-  @@unique([fromObjectId, toObjectId, deviceId], name: "fromObjectId_toObjectId_deviceId")
+  deviceId String
 }
 
 model DeviceHistory {
@@ -355,8 +351,6 @@ model PendingTransfersClothes {
 
   clothes   Clothes @relation(fields: [clothesId], references: [id])
   clothesId String
-
-  @@unique([fromObjectId, toObjectId, clothesId], name: "fromObjectId_toObjectId_clothesId")
 }
 
 model ClothesHistory {

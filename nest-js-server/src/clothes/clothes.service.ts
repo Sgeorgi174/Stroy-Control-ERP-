@@ -134,22 +134,14 @@ export class ClothesService {
           data: { quantity: { decrement: dto.quantity } },
         });
 
-        const createdTransfer = await prisma.pendingTransfersClothes.upsert({
-          where: {
-            fromObjectId_toObjectId_clothesId: {
-              fromObjectId: clothes.objectId,
-              toObjectId: dto.toObjectId,
-              clothesId: id,
-            },
-          },
-          create: {
+        const createdTransfer = await prisma.pendingTransfersClothes.create({
+          data: {
             fromObjectId: clothes.objectId,
             toObjectId: dto.toObjectId,
             clothesId: id,
             quantity: dto.quantity,
             status: 'IN_TRANSIT',
           },
-          update: { quantity: { increment: dto.quantity } },
         });
 
         const recordHistory = await this.clothesHistoryService.create({
@@ -209,6 +201,16 @@ export class ClothesService {
             where: { id },
             data: { quantity: { decrement: dto.quantity } },
           });
+
+          await prisma.pendingTransfersClothes.create({
+            data: {
+              quantity: dto.quantity,
+              status: 'CONFIRM',
+              clothesId: transfer.clothesId,
+              fromObjectId: transfer.fromObjectId,
+              toObjectId: transfer.toObjectId,
+            },
+          });
         }
 
         const transferedClothes = await this.prismaService.clothes.upsert({
@@ -261,7 +263,7 @@ export class ClothesService {
     try {
       return this.prismaService.$transaction(async (prisma) => {
         const updatedPendingTransfer =
-          await prisma.pendingTransfersTools.update({
+          await prisma.pendingTransfersClothes.update({
             where: { id: recordId },
             data: { status: 'REJECT', rejectionComment: dto.rejectionComment },
           });

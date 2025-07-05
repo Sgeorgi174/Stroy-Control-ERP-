@@ -1,5 +1,5 @@
 import type { PendingDeviceTransfer } from "@/types/transfers";
-import { Wrench } from "lucide-react";
+import { Printer } from "lucide-react";
 
 type ToolInfoProps = {
   device: PendingDeviceTransfer["device"];
@@ -7,9 +7,9 @@ type ToolInfoProps = {
 
 export function DeviceInfo({ device }: ToolInfoProps) {
   return (
-    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted">
+    <div className="flex items-center gap-4 p-3 rounded-lg bg-muted">
       <div className="flex-shrink-0 w-8 h-8 rounded-md flex items-center justify-center">
-        <Wrench className="w-4 h-4" />
+        <Printer className="w-6 h-6" />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">

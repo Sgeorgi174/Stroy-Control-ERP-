@@ -38,8 +38,6 @@ export function NotificationCard() {
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
 
-  console.log(sortedNotifications);
-
   return (
     <Card className="w-[700px] max-h-[480px] overflow-auto bg-accent p-5">
       {myObject && (

@@ -21,7 +21,7 @@ export function ClothesRejectSection({
       <div className="col-8 flex flex-col gap-2">
         <Label>Укажите причину отказа</Label>
         <Textarea
-          placeholder="Укажите причину отмены, например (Инструмент пришел неисправным, пришла не та позиция и т.д.)"
+          placeholder="Укажите причину отмены, например (Пришло неверное кол-во, спецовка ненадалежащего качества, неверный размер или сезон и т.д.)"
           className="resize-none w-[350px] h-full"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
