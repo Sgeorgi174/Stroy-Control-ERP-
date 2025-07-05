@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
 import { Roles } from 'generated/prisma';
@@ -33,25 +33,20 @@ export class UserController {
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
-  @Get('get-transfer-photo/:id')
+  @Get('transfer-tool-photo/:id')
   async getToolTransferPhoto(@Param('id') transferId: string) {
     return this.userService.getToolTransferPhoto(transferId);
   }
 
-  // 📸 Установить запрос фото по transferId
   @Authorization(Roles.OWNER, Roles.FOREMAN)
-  @Patch('photo-request/:id')
-  async requestTransferPhoto(
-    @Param('id') transferId: string,
-    @Authorized('phone') phone: string,
-  ) {
-    return this.userService.setPhotoRequestTransferId(phone, transferId);
+  @Get('transfer-device-photo/:id')
+  async getDeviceTransferPhoto(@Param('id') transferId: string) {
+    return this.userService.getDeviceTransferPhoto(transferId);
   }
 
-  // ❌ Очистить запрос фото
   @Authorization(Roles.OWNER, Roles.FOREMAN)
-  @Patch('photo-request/clear')
-  async clearTransferPhotoRequest(@Authorized('phone') phone: string) {
-    return this.userService.clearPhotoRequestTransferId(phone);
+  @Get('transfer-clothes-photo/:id')
+  async getClothesTransferPhoto(@Param('id') transferId: string) {
+    return this.userService.getClothesTransferPhoto(transferId);
   }
 }

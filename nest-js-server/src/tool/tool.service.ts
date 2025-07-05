@@ -169,7 +169,7 @@ export class ToolService {
   }
 
   public async transfer(id: string, dto: TransferDto, userId: string) {
-    await this.accessObject(id, userId);
+    // await this.accessObject(id, userId);
     const tool = await this.getById(id);
 
     if (tool.objectId === dto.objectId)

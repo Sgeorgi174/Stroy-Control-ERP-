@@ -14,6 +14,7 @@ import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { DeviceHistoryService } from 'src/device-history/device-history.service';
 import { GetDeviceQueryDto } from './dto/get-device-query.dto';
 import { buildStatusFilter } from 'src/libs/common/utils/buildStatusFilter';
+import { RejectDeviceTransferDto } from './dto/reject-transfer.dto';
 
 @Injectable()
 export class DeviceService {
@@ -166,7 +167,7 @@ export class DeviceService {
   }
 
   async transfer(id: string, dto: TransferDto, userId: string) {
-    await this.accessObject(id, userId);
+    // await this.accessObject(id, userId);
     const device = await this.getById(id);
 
     if (device.objectId === dto.objectId)
@@ -244,7 +245,10 @@ export class DeviceService {
           deviceId: transfer.deviceId,
         });
 
-        await prisma.pendingTransfersTools.delete({ where: { id: recordId } });
+        await prisma.pendingTransfersDevices.update({
+          where: { id: recordId },
+          data: { status: 'CONFIRM' },
+        });
 
         return { updatedDevice, transferRecord };
       });
@@ -257,13 +261,17 @@ export class DeviceService {
     }
   }
 
-  public async rejectTransfer(recordId: string, userId: string) {
+  public async rejectTransfer(
+    recordId: string,
+    userId: string,
+    dto: RejectDeviceTransferDto,
+  ) {
     try {
       return this.prismaService.$transaction(async (prisma) => {
         const updatedPendingTransfer =
           await prisma.pendingTransfersDevices.update({
             where: { id: recordId },
-            data: { status: 'REJECT' },
+            data: { status: 'REJECT', rejectionComment: dto.rejectionComment },
           });
 
         const tranferRecord = await this.historyService.create({

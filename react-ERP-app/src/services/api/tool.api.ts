@@ -84,7 +84,7 @@ export const getToolHistory = async (id: string): Promise<void> => {
   return res.data;
 };
 
-export const requestPhotoByTransferId = async (transferId: string) => {
+export const requestToolPhotoByTransferId = async (transferId: string) => {
   const res = await api.post(`/tools/request-photo-transfer/${transferId}`);
   return res.data;
 };

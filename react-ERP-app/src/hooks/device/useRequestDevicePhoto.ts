@@ -1,13 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
-import { requestPhotoByTransferId } from "@/services/api/tool.api"; // путь может отличаться
 import type { AppAxiosError } from "@/types/error-response";
+import { requestDevicePhotoByTransferId } from "@/services/api/device.api";
 
-export const useRequestPhoto = () => {
+export const useRequestDevicePhoto = () => {
   return useMutation({
-    mutationFn: (transferId: string) => requestPhotoByTransferId(transferId),
+    mutationFn: (transferId: string) =>
+      requestDevicePhotoByTransferId(transferId),
     onSuccess: () => {
-      toast.success(`Бот ожидает фото инструмента`);
+      toast.success(`Бот ожидает фото устройства`);
     },
     onError: (error: AppAxiosError) => {
       const message =

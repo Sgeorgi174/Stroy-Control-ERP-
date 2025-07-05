@@ -109,9 +109,7 @@ export class ToolController {
     @Param('id') transferId: string,
     @Authorized('phone') phone: string,
   ) {
-    console.log(phone);
-
-    await this.userService.setPhotoRequestTransferId(phone, transferId);
+    await this.userService.setPhotoRequestTransferId(phone, transferId, 'TOOL');
     await this.telegramBotService.sendRequestTransferPhoto(phone);
     return { success: true };
   }

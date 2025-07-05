@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getToolTransferPhoto } from "@/services/api/user.api";
+import { getClothesTransferPhoto } from "@/services/api/user.api";
 import { useEffect } from "react";
 
-export const useGetToolTransferPhoto = (
+export const useGetClothesTransferPhoto = (
   transferId: string,
   enabled = false
 ) => {
@@ -10,7 +10,7 @@ export const useGetToolTransferPhoto = (
 
   const query = useQuery({
     queryKey: ["transfer-photo", transferId],
-    queryFn: () => getToolTransferPhoto(transferId),
+    queryFn: () => getClothesTransferPhoto(transferId),
     enabled,
     refetchInterval: 5000,
   });

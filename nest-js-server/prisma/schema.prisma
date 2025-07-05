@@ -59,9 +59,16 @@ model TelegramUser {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  phone                    String  @unique
-  chatId                   Int     @unique
-  photoRequestedTransferId String?
+  phone                      String        @unique
+  chatId                     Int           @unique
+  photoRequestedTransferId   String?
+  photoRequestedTransferType TransferType?
+}
+
+enum TransferType {
+  TOOL
+  DEVICE
+  CLOTHES
 }
 
 model Object {
@@ -234,6 +241,7 @@ model PendingTransfersDevices {
   id String @id @default(uuid())
 
   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   status           PendingStatuses
   photoUrl         String?
@@ -332,9 +340,12 @@ enum Season {
 model PendingTransfersClothes {
   id String @id @default(uuid())
 
-  quantity  Int
-  status    PendingStatuses
-  createdAt DateTime        @default(now()) @map("created_at")
+  quantity         Int
+  photoUrl         String?
+  rejectionComment String?
+  status           PendingStatuses
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
 
   fromObject   Object @relation("pending_clothes_from_object_fk", fields: [fromObjectId], references: [id])
   fromObjectId String

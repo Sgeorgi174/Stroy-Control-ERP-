@@ -11,11 +11,14 @@ export interface PendingClothesTransfer {
   clothes: Clothes;
   quantity: number;
   status: PendingStatus;
+  photoUrl?: string;
+  rejectionComment?: string;
   fromObjectId: string;
   toObjectId: string;
   fromObject: Object;
   toObject: Object;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface PendingToolTransfer {
@@ -45,6 +48,7 @@ export interface PendingDeviceTransfer {
   fromObject: Object;
   toObject: Object;
   createdAt: string;
+  updatedAt: string;
 }
 
 // --- MAIN RESPONSE ---

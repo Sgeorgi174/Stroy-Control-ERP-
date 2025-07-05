@@ -12,6 +12,8 @@ import {
   addClothes,
   giveClothes,
   getClothesHistory,
+  requestClothesPhotoByTransferId,
+  rejectClothesTransfer,
 } from "@/services/api/clothes.api";
 import type {
   CreateClothesDto,
@@ -20,6 +22,8 @@ import type {
   WriteOffClothesDto,
   AddClothesDto,
   GiveClothingDto,
+  ConfirmTransferClothesDto,
+  RejectClotheseDto,
 } from "@/types/dto/clothes.dto";
 import type { ClothesType, Seasons } from "@/types/clothes";
 import type { AppAxiosError } from "@/types/error-response";
@@ -106,20 +110,52 @@ export const useTransferClothes = (clothesId: string) => {
 };
 
 // Подтверждение передачи одежды
-export const useConfirmClothesTransfer = () => {
+export const useConfirmClothesTransfer = (transferId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, quantity }: { id: string; quantity: number }) =>
-      confirmClothesTransfer(id, quantity),
-    onSuccess: (_, { id }) => {
-      toast.success("Передача одежды подтверждена");
-      queryClient.invalidateQueries({ queryKey: ["clothes"] });
-      queryClient.invalidateQueries({ queryKey: ["clothes", id] });
+    mutationFn: (dto: ConfirmTransferClothesDto) =>
+      confirmClothesTransfer(transferId, dto.quantity),
+    onSuccess: () => {
+      toast.success(`Перемещение успешно подтверждено`);
+      queryClient.invalidateQueries({ queryKey: ["user-notifications"] });
     },
     onError: (error: AppAxiosError) => {
       const message =
-        error?.response?.data?.message || "Не удалось подтвердить передачу";
+        error?.response?.data?.message || "Не удалось подтвердить перемещение";
+      toast.error(message);
+    },
+  });
+};
+
+export const useRejectClothesTransfer = (transferId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: RejectClotheseDto) =>
+      rejectClothesTransfer(transferId, data),
+    onSuccess: () => {
+      toast.success(`Вы успешно отклонили перемещение`);
+      queryClient.invalidateQueries({ queryKey: ["user-notifications"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось отклонить перемещение";
+      toast.error(message);
+    },
+  });
+};
+
+export const useRequestClothesPhoto = () => {
+  return useMutation({
+    mutationFn: (transferId: string) =>
+      requestClothesPhotoByTransferId(transferId),
+    onSuccess: () => {
+      toast.success(`Бот ожидает фото комплектов одежды или обуви`);
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось инициализировать бота";
       toast.error(message);
     },
   });

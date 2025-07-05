@@ -88,7 +88,8 @@ export class TelegramBotUpdate {
       return;
     }
 
-    const transferId = telegramUser.photoRequestedTransferId as string;
+    const transferId = telegramUser.photoRequestedTransferId;
+    const transferType = telegramUser.photoRequestedTransferType;
 
     const photoArray = message.photo;
     const largestPhoto = photoArray?.[photoArray.length - 1];
@@ -111,10 +112,29 @@ export class TelegramBotUpdate {
 
     // Обновляем запись
 
-    await this.prismaService.pendingTransfersTools.update({
-      where: { id: transferId },
-      data: { photoUrl: url },
-    });
+    switch (transferType) {
+      case 'TOOL':
+        await this.prismaService.pendingTransfersTools.update({
+          where: { id: transferId },
+          data: { photoUrl: url },
+        });
+        break;
+      case 'DEVICE':
+        await this.prismaService.pendingTransfersDevices.update({
+          where: { id: transferId },
+          data: { photoUrl: url },
+        });
+        break;
+      case 'CLOTHES':
+        await this.prismaService.pendingTransfersClothes.update({
+          where: { id: transferId },
+          data: { photoUrl: url },
+        });
+        break;
+      default:
+        await ctx.reply('Неизвестный тип перемещения.');
+        return;
+    }
 
     await this.prismaService.telegramUser.update({
       where: { chatId },

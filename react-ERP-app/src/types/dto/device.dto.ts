@@ -22,3 +22,7 @@ export interface UpdateDeviceStatusDto {
   status: DeviceStatus;
   comment?: string;
 }
+
+export interface RejectDeviceDto {
+  rejectionComment: string;
+}

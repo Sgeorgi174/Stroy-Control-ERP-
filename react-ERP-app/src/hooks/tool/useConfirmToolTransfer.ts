@@ -11,7 +11,7 @@ export const useConfirmToolTransfer = () => {
     mutationFn: (transferId: string) => confirmToolTransfer(transferId),
     onSuccess: () => {
       toast.success(`Перемещение успешно подтверждено`);
-      queryClient.invalidateQueries({ queryKey: ["transfers"] });
+      queryClient.invalidateQueries({ queryKey: ["user-notifications"] });
     },
     onError: (error: AppAxiosError) => {
       const message =

@@ -6,6 +6,7 @@ import type {
   WriteOffClothesDto,
   AddClothesDto,
   GiveClothingDto,
+  RejectClotheseDto,
 } from "@/types/dto/clothes.dto";
 import type { Clothes, ClothesType, Seasons } from "@/types/clothes";
 
@@ -65,6 +66,19 @@ export const confirmClothesTransfer = async (
   quantity: number
 ): Promise<Clothes> => {
   const res = await api.patch(`/clothes/confirm/${id}`, { quantity });
+  return res.data;
+};
+
+export const rejectClothesTransfer = async (
+  id: string,
+  data: RejectClotheseDto
+) => {
+  const res = await api.patch(`/clothes/reject/${id}`, data);
+  return res.data;
+};
+
+export const requestClothesPhotoByTransferId = async (transferId: string) => {
+  const res = await api.post(`/clothes/request-photo-transfer/${transferId}`);
   return res.data;
 };
 

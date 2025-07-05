@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Image, LoaderCircle } from "lucide-react";
-import { useRequestPhoto } from "@/hooks/tool/useRequestPhoto";
+import { useRequestToolPhoto } from "@/hooks/tool/useRequestToolPhoto";
 import { useGetToolTransferPhoto } from "@/hooks/user/useGetToolTransferPhoto";
 import type { PendingToolTransfer } from "@/types/transfers";
 import { baseUrl } from "@/constants/baseUrl";
@@ -14,7 +14,7 @@ export const ToolPhotoSection = ({ toolTransfer }: ToolPhotoSectionProps) => {
   const [isPoolingPhoto, setIsPoolingPhoto] = useState(false);
   const [lastUpdatedAt, setLastUpdatedAt] = useState(toolTransfer.updatedAt);
 
-  const { mutateAsync: requestPhoto } = useRequestPhoto();
+  const { mutateAsync: requestPhoto } = useRequestToolPhoto();
   const { data: toolTransferData } = useGetToolTransferPhoto(
     toolTransfer.id,
     isPoolingPhoto

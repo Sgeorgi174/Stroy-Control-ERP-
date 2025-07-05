@@ -75,8 +75,11 @@ export class TelegramBotService {
     try {
       await this.bot.telegram.sendMessage(
         chatId,
-        `Пожалуйста, отправьте фотографию инструмента, от которого вы хотите отказаться.`,
+        telegramUser.photoRequestedTransferType !== 'CLOTHES'
+          ? `Пожалуйста, отправьте фотографию ${telegramUser.photoRequestedTransferType === 'TOOL' ? 'инструмента' : 'устройства'}, от приёма которого вы отказываетесь. ⏳`
+          : `Пожалуйста, отправьте фотографию комплектов одежды или обуви, от приёма которых вы отказываетесь. ⏳`,
       );
+
       return true;
     } catch (error) {
       console.error(error);

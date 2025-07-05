@@ -16,6 +16,7 @@ import { WriteOffDto } from './dto/write-off.dto';
 import { ClothesActions } from 'generated/prisma';
 import { GiveClothingDto } from './dto/give-clothing.dto';
 import { GetClothesQueryDto } from './dto/get-clothes-query.dto';
+import { RejectClothesTransferDto } from './dto/reject-transfer.dto';
 
 @Injectable()
 export class ClothesService {
@@ -199,8 +200,9 @@ export class ClothesService {
     try {
       return await this.prismaService.$transaction(async (prisma) => {
         if (dto.quantity === transfer.quantity) {
-          await prisma.pendingTransfersClothes.delete({
+          await prisma.pendingTransfersClothes.update({
             where: { id },
+            data: { status: 'CONFIRM' },
           });
         } else {
           await prisma.pendingTransfersClothes.update({
@@ -251,6 +253,26 @@ export class ClothesService {
       handlePrismaError(error, {
         conflictMessage: 'Обновление нарушает уникальность данных',
         defaultMessage: 'Не удалось подтвердить перемещение одежды',
+      });
+    }
+  }
+
+  public async rejectTransfer(recordId: string, dto: RejectClothesTransferDto) {
+    try {
+      return this.prismaService.$transaction(async (prisma) => {
+        const updatedPendingTransfer =
+          await prisma.pendingTransfersTools.update({
+            where: { id: recordId },
+            data: { status: 'REJECT', rejectionComment: dto.rejectionComment },
+          });
+
+        return updatedPendingTransfer;
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось отклонить передачу',
       });
     }
   }

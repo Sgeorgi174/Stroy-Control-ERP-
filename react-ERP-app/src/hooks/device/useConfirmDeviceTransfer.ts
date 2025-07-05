@@ -1,16 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+import type { AppAxiosError } from "@/types/error-response";
 import { confirmDeviceTransfer } from "@/services/api/device.api";
 
 export const useConfirmDeviceTransfer = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => confirmDeviceTransfer(id),
+    mutationFn: (transferId: string) => confirmDeviceTransfer(transferId),
     onSuccess: () => {
-      toast.success("Передача подтверждена");
-      queryClient.invalidateQueries({ queryKey: ["devices"] });
+      toast.success(`Перемещение успешно подтверждено`);
+      queryClient.invalidateQueries({ queryKey: ["user-notifications"] });
     },
-    onError: () => toast.error("Не удалось подтвердить передачу"),
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось подтвердить перемещение";
+      toast.error(message);
+    },
   });
 };

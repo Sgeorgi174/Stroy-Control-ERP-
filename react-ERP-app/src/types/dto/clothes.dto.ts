@@ -40,3 +40,7 @@ export interface AddClothesDto {
 export interface GiveClothingDto {
   employeeId: string;
 }
+
+export interface RejectClotheseDto {
+  rejectionComment: string;
+}

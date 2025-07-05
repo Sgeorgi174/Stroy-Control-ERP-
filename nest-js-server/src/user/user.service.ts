@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { TransferType } from 'generated/prisma';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -164,8 +165,11 @@ export class UserService {
             status: true,
             id: true,
             createdAt: true,
+            updatedAt: true,
             fromObjectId: true,
             toObjectId: true,
+            photoUrl: true,
+            rejectionComment: true,
             toolId: true,
             fromObject: {
               select: {
@@ -201,8 +205,11 @@ export class UserService {
             id: true,
             fromObjectId: true,
             toObjectId: true,
+            photoUrl: true,
+            rejectionComment: true,
             deviceId: true,
             createdAt: true,
+            updatedAt: true,
             fromObject: {
               select: {
                 name: true,
@@ -244,9 +251,12 @@ export class UserService {
             status: true,
             id: true,
             createdAt: true,
+            updatedAt: true,
             quantity: true,
             fromObjectId: true,
             toObjectId: true,
+            photoUrl: true,
+            rejectionComment: true,
             clothesId: true,
             fromObject: {
               select: {
@@ -289,11 +299,18 @@ export class UserService {
     }
   }
 
-  public async setPhotoRequestTransferId(phone: string, transferId: string) {
+  public async setPhotoRequestTransferId(
+    phone: string,
+    transferId: string,
+    type: TransferType,
+  ) {
     try {
       const telegramUser = await this.prismaService.telegramUser.update({
         where: { phone },
-        data: { photoRequestedTransferId: transferId },
+        data: {
+          photoRequestedTransferId: transferId,
+          photoRequestedTransferType: type,
+        },
       });
 
       return telegramUser;
@@ -324,6 +341,36 @@ export class UserService {
       return await this.prismaService.pendingTransfersTools.findUniqueOrThrow({
         where: { id: transferId, photoUrl: { not: null } },
       });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Фото еще не получено',
+        defaultMessage: 'Не удалось найти айди перемещения',
+      });
+    }
+  }
+
+  public async getDeviceTransferPhoto(transferId: string) {
+    try {
+      return await this.prismaService.pendingTransfersDevices.findUniqueOrThrow(
+        {
+          where: { id: transferId, photoUrl: { not: null } },
+        },
+      );
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Фото еще не получено',
+        defaultMessage: 'Не удалось найти айди перемещения',
+      });
+    }
+  }
+
+  public async getClothesTransferPhoto(transferId: string) {
+    try {
+      return await this.prismaService.pendingTransfersClothes.findUniqueOrThrow(
+        {
+          where: { id: transferId, photoUrl: { not: null } },
+        },
+      );
     } catch (error) {
       handlePrismaError(error, {
         notFoundMessage: 'Фото еще не получено',

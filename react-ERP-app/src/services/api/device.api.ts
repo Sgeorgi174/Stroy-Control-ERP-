@@ -2,6 +2,7 @@ import { api } from "@/lib/api";
 import type { Device, DeviceStatus } from "@/types/device";
 import type {
   CreateDeviceDto,
+  RejectDeviceDto,
   TransferDeviceDto,
   UpdateDeviceDto,
   UpdateDeviceStatusDto,
@@ -62,8 +63,21 @@ export const transferDevice = async (
 };
 
 // Подтвердить передачу
-export const confirmDeviceTransfer = async (id: string): Promise<Device> => {
+export const confirmDeviceTransfer = async (id: string) => {
   const res = await api.patch(`/devices/confirm/${id}`);
+  return res.data;
+};
+
+export const rejectDeviceTransfer = async (
+  id: string,
+  data: RejectDeviceDto
+) => {
+  const res = await api.patch(`/devices/reject/${id}`, data);
+  return res.data;
+};
+
+export const requestDevicePhotoByTransferId = async (transferId: string) => {
+  const res = await api.post(`/devices/request-photo-transfer/${transferId}`);
   return res.data;
 };
 

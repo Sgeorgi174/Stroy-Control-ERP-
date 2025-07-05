@@ -23,10 +23,17 @@ import { AddDto } from './dto/add.dto';
 import { WriteOffDto } from './dto/write-off.dto';
 import { GiveClothingDto } from './dto/give-clothing.dto';
 import { GetClothesQueryDto } from './dto/get-clothes-query.dto';
+import { RejectClothesTransferDto } from './dto/reject-transfer.dto';
+import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+import { UserService } from 'src/user/user.service';
 
 @Controller('clothes')
 export class ClothesController {
-  constructor(private readonly clothesService: ClothesService) {}
+  constructor(
+    private readonly clothesService: ClothesService,
+    private readonly userService: UserService,
+    private readonly telegramBotService: TelegramBotService,
+  ) {}
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Post('create')
@@ -71,6 +78,30 @@ export class ClothesController {
     @Authorized('id') userId: string,
   ) {
     return this.clothesService.confirmTransfer(id, dto, userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Patch('reject/:id')
+  async rejectTransfer(
+    @Param('id') id: string,
+    @Body() dto: RejectClothesTransferDto,
+  ) {
+    return this.clothesService.rejectTransfer(id, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('request-photo-transfer/:id')
+  async rejectToolTransfer(
+    @Param('id') transferId: string,
+    @Authorized('phone') phone: string,
+  ) {
+    await this.userService.setPhotoRequestTransferId(
+      phone,
+      transferId,
+      'CLOTHES',
+    );
+    await this.telegramBotService.sendRequestTransferPhoto(phone);
+    return { success: true };
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)

@@ -1,6 +1,8 @@
 import { api } from "@/lib/api";
 import type { Object } from "@/types/object";
 import type {
+  PendingClothesTransfer,
+  PendingDeviceTransfer,
   PendingToolTransfer,
   PendingTransfersResponse,
 } from "@/types/transfers";
@@ -29,7 +31,21 @@ export const getStatusObject = async (): Promise<Object> => {
 export const getToolTransferPhoto = async (
   transferId: string
 ): Promise<PendingToolTransfer> => {
-  const response = await api.get(`/users/get-transfer-photo/${transferId}`);
+  const response = await api.get(`/users/transfer-tool-photo/${transferId}`);
+  return response.data;
+};
+
+export const getDeviceTransferPhoto = async (
+  transferId: string
+): Promise<PendingDeviceTransfer> => {
+  const response = await api.get(`/users/transfer-device-photo/${transferId}`);
+  return response.data;
+};
+
+export const getClothesTransferPhoto = async (
+  transferId: string
+): Promise<PendingClothesTransfer> => {
+  const response = await api.get(`/users/transfer-clothes-photo/${transferId}`);
   return response.data;
 };
 
