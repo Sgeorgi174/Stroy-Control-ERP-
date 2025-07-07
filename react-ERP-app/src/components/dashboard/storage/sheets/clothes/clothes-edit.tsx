@@ -79,14 +79,12 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
 
   return (
     <div className="p-5">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-6 m-auto w-[700px]"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <Label htmlFor="name">Наименование</Label>
             <Input
+              disabled
               className="w-[300px]"
               id="name"
               type="text"
@@ -100,6 +98,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
           <div className="flex flex-col gap-2">
             <Label>Сезон</Label>
             <SeasonSelectForForms
+              disabled
               className="w-[300px]"
               selectedSeason={selectedSeason}
               onSelectChange={(season) => setValue("season", season)}
@@ -114,6 +113,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
           <div className="flex flex-col gap-2">
             <Label htmlFor="quantity">Количество</Label>
             <Input
+              disabled
               className="w-[300px]"
               id="quantity"
               type="number"
@@ -127,6 +127,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
           <div className="flex flex-col gap-2">
             <Label>Размер</Label>
             <SizeSelectForForms
+              disabled
               className="w-[300px]"
               type={clothes.type}
               selectedSize={selectedSize}
@@ -142,6 +143,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
           <div className="flex flex-col gap-2">
             <Label>Место хранения</Label>
             <ObjectSelectForForms
+              disabled
               className="w-[300px]"
               objects={objects}
               selectedObjectId={selectedObjectId}

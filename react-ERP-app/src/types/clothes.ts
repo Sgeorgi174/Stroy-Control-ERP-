@@ -1,4 +1,5 @@
-import type { ClothesTransfer } from "./transfers";
+import type { Object } from "./object";
+import type { PendingClothesTransfer } from "./transfers";
 
 export type ClothesType = "CLOTHING" | "FOOTWEAR";
 export type Seasons = "SUMMER" | "WINTER";
@@ -13,14 +14,7 @@ export type Clothes = {
   size: number;
   price: number;
   quantity: number;
-  inTransit: ClothesTransfer[];
+  inTransit: PendingClothesTransfer[];
   objectId: string;
-  storage: {
-    foreman: {
-      firstName: string;
-      lastName: string;
-      phone: string;
-    } | null;
-    name: string;
-  };
+  storage: Object;
 };

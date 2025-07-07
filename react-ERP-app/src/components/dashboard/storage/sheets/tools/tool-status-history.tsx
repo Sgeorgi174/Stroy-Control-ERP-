@@ -3,7 +3,7 @@ import { statusMap } from "@/constants/statusMap";
 import { formatDate, formatTime } from "@/lib/utils/format-date";
 import type { StatusChangesRecord } from "@/types/historyRecords";
 import { ArrowRight, Calendar, Clock, SquarePen } from "lucide-react";
-import { CommentPopover } from "../../tables/status-changes-table/comment-popover";
+import { CommentPopover } from "../../comment-popover";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type ToolsStatusHistoryProps = {

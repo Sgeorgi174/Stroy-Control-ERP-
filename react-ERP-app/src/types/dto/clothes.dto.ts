@@ -31,6 +31,7 @@ export interface ConfirmTransferClothesDto {
 
 export interface WriteOffClothesDto {
   quantity: number;
+  writeOffComment: string;
 }
 
 export interface AddClothesDto {

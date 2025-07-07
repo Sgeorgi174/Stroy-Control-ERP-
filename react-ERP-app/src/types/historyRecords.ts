@@ -1,7 +1,8 @@
 import type { DeviceStatus } from "./device";
+import type { Employee } from "./employee";
 import type { ToolStatus } from "./tool";
 
-type Actions =
+export type ClothesActions =
   | "ADD"
   | "TRANSFER"
   | "CONFIRM"
@@ -20,7 +21,10 @@ export type TransferRecord = {
   updatedAt: string;
   userId: string;
   quantity: number;
-  action: Actions;
+  action: ClothesActions;
+  toEmployee: Employee;
+  emploeyeeId: string;
+  writeOffComment: string;
 };
 
 export type StatusChangesRecord = {

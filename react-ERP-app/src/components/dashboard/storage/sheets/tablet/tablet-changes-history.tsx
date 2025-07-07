@@ -3,7 +3,7 @@ import { formatDate } from "@/lib/utils/format-date";
 import { ArrowRight, User } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { TabletHistoryRecord } from "@/types/tabletHistoryRecord";
-import { CommentPopover } from "../../tables/status-changes-table/comment-popover";
+import { CommentPopover } from "../../comment-popover";
 import { tabletStatusMap } from "@/constants/tabletStatusMap";
 
 type TabletHistoryProps = {

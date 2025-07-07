@@ -74,10 +74,11 @@ export class ClothesService {
               select: { firstName: true, lastName: true, phone: true },
             },
             name: true,
+            address: true,
           },
         },
       },
-      orderBy: { size: 'asc' },
+      orderBy: { storage: { name: 'asc' } },
     });
 
     return clothes;
@@ -280,7 +281,7 @@ export class ClothesService {
   }
 
   async addClothes(id: string, dto: AddDto, userId: string) {
-    const clothes = await this.getById(id); // если id не найден — вылетит ошибка внутри getById с этим же хелпером
+    await this.getById(id); // если id не найден — вылетит ошибка внутри getById с этим же хелпером
 
     try {
       const updated = await this.prismaService.clothes.update({
@@ -293,8 +294,6 @@ export class ClothesService {
       await this.clothesHistoryService.create({
         userId: userId,
         clothesId: id,
-        fromObjectId: clothes.objectId,
-        toObjectId: clothes.objectId,
         quantity: dto.quantity,
         action: ClothesActions.ADD,
       });
@@ -327,10 +326,9 @@ export class ClothesService {
       await this.clothesHistoryService.create({
         userId: userId,
         clothesId: id,
-        fromObjectId: clothes.objectId,
-        toObjectId: clothes.objectId,
         quantity: dto.quantity,
         action: ClothesActions.WRITTEN_OFF,
+        writeOffComment: dto.writeOffComment,
       });
 
       return updated;
@@ -385,8 +383,8 @@ export class ClothesService {
             userId: userId,
             quantity: 1,
             action: 'GIVE_TO_EMPLOYEE',
+            employeeId: dto.employeeId,
             fromObjectId: clothing.objectId,
-            toObjectId: clothing.objectId, // остаётся на том же объекте
           },
         });
 

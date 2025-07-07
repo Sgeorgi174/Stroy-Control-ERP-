@@ -15,6 +15,7 @@ type SizeSelectProps = {
   onSelectChange: (size: number) => void;
   type: "CLOTHING" | "FOOTWEAR";
   className?: string;
+  disabled?: boolean;
 };
 
 export function SizeSelectForForms({
@@ -22,6 +23,7 @@ export function SizeSelectForForms({
   onSelectChange,
   type,
   className,
+  disabled = false,
 }: SizeSelectProps) {
   const currentSizesList = type === "CLOTHING" ? clothisngSizes : shoesSizes;
 
@@ -32,6 +34,7 @@ export function SizeSelectForForms({
 
   return (
     <Select
+      disabled={disabled}
       value={validSelectedSize.toString()}
       onValueChange={(value) => onSelectChange(Number(value))}
     >

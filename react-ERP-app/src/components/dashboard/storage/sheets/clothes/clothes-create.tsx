@@ -15,10 +15,14 @@ import { z } from "zod";
 
 const clothesSchema = z.object({
   name: z.string().min(1, "Это поле обязательно"),
-  size: z.number().min(1, "Это поле обязательно"),
+  size: z.number().min(1, "Выберите размер"),
   objectId: z.string().min(1, "Выберите объект"),
-  price: z.number().min(1, "Это поле обязательно"),
-  quantity: z.number().min(1, "Это поле обязательно"),
+  price: z
+    .number({ invalid_type_error: "Укажите цену" })
+    .min(1, { message: "Количество должно быть больше 0" }),
+  quantity: z
+    .number({ invalid_type_error: "Введите количество" })
+    .min(1, { message: "Количество должно быть больше 0" }),
   type: z.enum(["CLOTHING", "FOOTWEAR"], { message: "Выберите тип одежды" }),
   season: z.enum(["WINTER", "SUMMER"], { message: "Выберите сезон" }),
 });
@@ -43,14 +47,14 @@ export function ClothesCreate() {
   } = useForm<FormData>({
     resolver: zodResolver(clothesSchema),
     defaultValues: {
-      name: "",
+      name: activeTab === "clothing" ? "Рабочая одежда" : "Рабочая обувь",
       size:
         activeTab === "clothing"
           ? Number(clothisngSizes[0])
           : Number(shoesSizes[0]),
       objectId: "",
-      price: 0,
-      quantity: 0,
+      price: undefined,
+      quantity: undefined,
       type: activeTab === "clothing" ? "CLOTHING" : "FOOTWEAR",
       season: "SUMMER",
     },
@@ -83,19 +87,17 @@ export function ClothesCreate() {
 
   return (
     <div className="p-5">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-6 m-auto w-[700px]"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <Label htmlFor="name">Наименование</Label>
             <Input
+              disabled
               className="w-[300px]"
               placeholder="Введите наименование"
               id="name"
               type="text"
-              {...register("name", { required: "Это поле обязательно" })}
+              {...register("name")}
             />
             {errors.name && (
               <p className="text-sm text-red-500">{errors.name.message}</p>
@@ -122,7 +124,6 @@ export function ClothesCreate() {
               {...register("quantity", {
                 required: "Это поле обязательно",
                 valueAsNumber: true,
-                min: { value: 1, message: "Количество должно быть больше 0" },
               })}
             />
             {errors.quantity && (
@@ -168,7 +169,6 @@ export function ClothesCreate() {
               {...register("price", {
                 required: "Это поле обязательно",
                 valueAsNumber: true,
-                min: { value: 0, message: "Цена не может быть отрицательной" },
               })}
             />
             {errors.price && (

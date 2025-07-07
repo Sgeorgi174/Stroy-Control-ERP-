@@ -14,15 +14,18 @@ type SeasonSelectProps = {
   selectedSeason: Season;
   onSelectChange: (season: Season) => void;
   className?: string;
+  disabled?: boolean;
 };
 
 export function SeasonSelectForForms({
   selectedSeason,
   onSelectChange,
   className,
+  disabled = false,
 }: SeasonSelectProps) {
   return (
     <Select
+      disabled={disabled}
       value={selectedSeason}
       onValueChange={(value) => onSelectChange(value as Season)}
       defaultValue="SUMMER"

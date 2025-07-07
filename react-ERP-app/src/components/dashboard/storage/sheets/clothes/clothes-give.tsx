@@ -71,22 +71,7 @@ export function ClothesGive({ clothes }: ClothesGiveProps) {
 
       <p className="text-center font-medium text-xl mt-5">Выдача</p>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex justify-between mt-10 px-10">
-          <div className="flex flex-col gap-2 w-[250px]">
-            <Label>Укажите сотрудника *</Label>
-            <EmployeeAutocomplete
-              employees={employees}
-              onSelectChange={(employeeId) =>
-                setValue("employeeId", employeeId, { shouldValidate: true })
-              }
-              selectedEmployeeId={selectedEmployeeId}
-            />
-            {errors.employeeId && (
-              <p className="text-sm text-red-500">
-                {errors.employeeId.message}
-              </p>
-            )}
-          </div>
+        <div className="flex justify-between mt-10">
           <div className="flex flex-col gap-2">
             <Label>С какого склада</Label>
             <ObjectSelectForForms
@@ -100,6 +85,22 @@ export function ClothesGive({ clothes }: ClothesGiveProps) {
               }}
               objects={objects}
             />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label>Укажите сотрудника *</Label>
+            <EmployeeAutocomplete
+              employees={employees}
+              onSelectChange={(employeeId) =>
+                setValue("employeeId", employeeId, { shouldValidate: true })
+              }
+              selectedEmployeeId={selectedEmployeeId}
+            />
+            {errors.employeeId && (
+              <p className="text-sm text-red-500">
+                {errors.employeeId.message}
+              </p>
+            )}
           </div>
         </div>
         <div className="flex justify-center mt-15">

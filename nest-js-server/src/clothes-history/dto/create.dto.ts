@@ -1,4 +1,12 @@
-import { IsEnum, IsInt, IsNotEmpty, IsUUID, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Min,
+} from 'class-validator';
 import { ClothesActions } from 'generated/prisma';
 
 export class CreateDto {
@@ -11,12 +19,12 @@ export class CreateDto {
   clothesId: string;
 
   @IsUUID()
-  @IsNotEmpty()
-  fromObjectId: string;
+  @IsOptional()
+  fromObjectId?: string;
 
   @IsUUID()
-  @IsNotEmpty()
-  toObjectId: string;
+  @IsOptional()
+  toObjectId?: string;
 
   @IsInt()
   @Min(1)
@@ -29,4 +37,8 @@ export class CreateDto {
     message: 'тип action должен быть указан',
   })
   action: ClothesActions;
+
+  @IsString()
+  @IsOptional()
+  writeOffComment?: string;
 }

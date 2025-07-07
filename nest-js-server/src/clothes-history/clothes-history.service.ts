@@ -10,14 +10,7 @@ export class ClothesHistoryService {
   public async create(dto: CreateDto) {
     try {
       return await this.prismaService.clothesHistory.create({
-        data: {
-          userId: dto.userId,
-          clothesId: dto.clothesId,
-          fromObjectId: dto.fromObjectId,
-          toObjectId: dto.toObjectId,
-          quantity: dto.quantity,
-          action: dto.action,
-        },
+        data: dto,
         include: {
           fromObject: { select: { name: true } },
           toObject: { select: { name: true } },
@@ -40,7 +33,9 @@ export class ClothesHistoryService {
           fromObject: { select: { name: true } },
           toObject: { select: { name: true } },
           movedBy: { select: { firstName: true, lastName: true } },
+          toEmployee: { select: { lastName: true, firstName: true } },
         },
+        orderBy: { createdAt: 'asc' },
       });
     } catch (error) {
       console.error(error);

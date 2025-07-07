@@ -14,6 +14,8 @@ import { ClothesGive } from "./clothes-give";
 import { ClothesAdd } from "./clothes-add";
 import { ClothesWrittenOff } from "./clothes-written-off";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
+import { Shirt } from "lucide-react";
+import { BootIcon } from "@/components/ui/boot";
 
 export function ClothesSheet() {
   const { isOpen, mode, selectedClothes, closeSheet } = useClothesSheetStore();
@@ -22,32 +24,39 @@ export function ClothesSheet() {
   return (
     <Sheet open={isOpen} onOpenChange={closeSheet}>
       <SheetContent
-        className="w-[850px] sm:max-w-[1000px]"
+        className="w-[700px] sm:max-w-[1000px] overflow-auto"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
         <SheetHeader>
           <SheetTitle className="text-center text-xl font-medium">
-            {mode === "create" &&
-              `Добавление ${activeTab === "clothing" ? "одежды" : "обуви"}`}
-            {mode === "edit" && `Редактирование: ${selectedClothes?.name}`}
-            {mode === "transfer" && `Перемещение: ${selectedClothes?.name}`}
-            {mode === "details" && `${selectedClothes?.name}`}
-            {mode === "give" &&
-              `Выдача ${
-                selectedClothes?.type === "CLOTHING" ? "одежды" : "обуви"
-              }`}
-            {mode === "add" &&
-              `Пополнение ${
-                selectedClothes?.type === "CLOTHING" ? "одежды" : "обуви"
-              }`}
-            {mode === "written_off" &&
-              `Списание ${
-                selectedClothes?.type === "CLOTHING" ? "одежды" : "обуви"
-              }`}
+            {mode === "create" ? (
+              `Добавление ${activeTab === "clothing" ? "одежды" : "обуви"}`
+            ) : (
+              <div>
+                <div className="flex gap-3 items-center">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    {activeTab === "clothing" ? (
+                      <Shirt className="w-6 h-6 text-blue-600" />
+                    ) : (
+                      <BootIcon className="w-6 h-6 text-blue-600" />
+                    )}
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <p>{selectedClothes?.name}</p>
+                    <div className="flex items-center text-muted-foreground gap-2">
+                      <p className="text-lg text-muted-foreground">
+                        Сезон:{" "}
+                        {selectedClothes?.season === "SUMMER" ? "Лето" : "Зима"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </SheetTitle>
-          <SheetDescription className="text-center">
+          <SheetDescription className="text-center  text-transparent w-0 h-0">
             {mode === "create" &&
               `Заполните данные о новой ${
                 activeTab === "clothing" ? "спец. одежде" : "обуви"

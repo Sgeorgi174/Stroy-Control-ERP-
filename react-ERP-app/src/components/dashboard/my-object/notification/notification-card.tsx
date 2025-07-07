@@ -42,9 +42,9 @@ export function NotificationCard() {
   );
 
   return (
-    <Tabs defaultValue="important" className="w-[720px] gap-0">
+    <Tabs defaultValue="important" className="w-[720px] gap-0 ">
       {/* TabsList СНАРУЖИ — без паддингов и без скролла */}
-      <TabsList className="w-full h-[40px] sticky top-0 z-10 bg-accent rounded-b-none rounded-t-xl">
+      <TabsList className="w-full h-[40px] sticky top-0 z-3 bg-accent border border-b-0 rounded-b-none rounded-t-xl">
         <TabsTrigger value="important">
           Важное
           <Badge className="ml-2 rounded-full bg-muted text-muted-foreground">
@@ -76,7 +76,7 @@ export function NotificationCard() {
       {/* Только контент в скролле и в карточке */}
       <ScrollArea
         scrollHideDelay={0}
-        className="w-[720px] max-h-[550px] min-h-[550px] bg-accent rounded-b-xl"
+        className="w-[720px] max-h-[550px] min-h-[550px] bg-accent border border-t-0 rounded-b-xl"
       >
         <div className="bg-accent min-h-full p-2 pr-4">
           {/* Важное */}

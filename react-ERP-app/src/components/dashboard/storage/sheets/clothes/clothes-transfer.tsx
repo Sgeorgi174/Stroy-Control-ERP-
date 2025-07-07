@@ -24,11 +24,9 @@ export function ClothesTransfer({ clothes }: ClothesTransferProps) {
 
   const formSchema = z.object({
     fromObjectId: z.string().nullable(),
-    toObjectId: z.string().refine((val) => val !== clothes.objectId, {
-      message: "Нельзя выбрать тот же склад",
-    }),
+    toObjectId: z.string().min(1, { message: "Выберите объект" }),
     quantity: z
-      .number({ invalid_type_error: "Введите число" })
+      .number({ invalid_type_error: "Введите количество" })
       .min(1, { message: "Минимум 1" })
       .max(clothes.quantity, {
         message: `Максимум ${clothes.quantity}`,
@@ -48,9 +46,9 @@ export function ClothesTransfer({ clothes }: ClothesTransferProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       fromObjectId: clothes.objectId,
-      toObjectId:
-        objects[0].id === clothes.objectId ? objects[1].id : objects[0].id,
-      quantity: 1,
+      toObjectId: "",
+
+      quantity: undefined,
     },
   });
 
@@ -76,7 +74,17 @@ export function ClothesTransfer({ clothes }: ClothesTransferProps) {
 
       <p className="text-center font-medium text-xl mt-5">Перемещение</p>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex justify-between mt-10 px-10">
+        <div className="flex justify-between mt-10">
+          <div className="flex flex-col gap-2">
+            <Label>С какого склада</Label>
+            <ObjectSelectForForms
+              disabled
+              selectedObjectId={clothes.objectId}
+              onSelectChange={(id) => setValue("fromObjectId", id)}
+              objects={objects}
+            />
+          </div>
+
           <div className="flex flex-col gap-2">
             <Label>Количество *</Label>
             <Input
@@ -90,16 +98,6 @@ export function ClothesTransfer({ clothes }: ClothesTransferProps) {
             {errors.quantity && (
               <p className="text-sm text-red-500">{errors.quantity.message}</p>
             )}
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label>С какого склада</Label>
-            <ObjectSelectForForms
-              disabled
-              selectedObjectId={clothes.objectId}
-              onSelectChange={(id) => setValue("fromObjectId", id)}
-              objects={objects}
-            />
           </div>
 
           <div className="flex flex-col gap-2">

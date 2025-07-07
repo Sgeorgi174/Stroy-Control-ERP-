@@ -24,7 +24,7 @@ export function ClothesAdd({ clothes }: ClothesAddProps) {
   const formSchema = z.object({
     fromObjectId: z.string().nullable(),
     quantity: z
-      .number({ invalid_type_error: "Введите число" })
+      .number({ invalid_type_error: "Введите количество" })
       .min(1, { message: "Количество должно быть больше 0" }),
   });
 
@@ -40,7 +40,7 @@ export function ClothesAdd({ clothes }: ClothesAddProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       fromObjectId: clothes.objectId,
-      quantity: 1,
+      quantity: undefined,
     },
   });
 
@@ -64,11 +64,19 @@ export function ClothesAdd({ clothes }: ClothesAddProps) {
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
 
       <p className="text-center font-medium text-xl mt-5">Пополнение</p>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-6 m-auto w-[700px]"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="flex justify-between mt-10">
+          <div className="flex flex-col gap-2">
+            <Label>Пополняемый склад</Label>
+            <ObjectSelectForForms
+              className="w-[300px]"
+              disabled
+              selectedObjectId={clothes.objectId}
+              onSelectChange={(id) => setValue("fromObjectId", id)}
+              objects={objects}
+            />
+          </div>
+
           <div className="flex flex-col gap-2">
             <Label>Количество *</Label>
             <Input
@@ -81,16 +89,6 @@ export function ClothesAdd({ clothes }: ClothesAddProps) {
             {errors.quantity && (
               <p className="text-sm text-red-500">{errors.quantity.message}</p>
             )}
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label>Пополняемый склад</Label>
-            <ObjectSelectForForms
-              className="w-[300px]"
-              disabled
-              selectedObjectId={clothes.objectId}
-              onSelectChange={(id) => setValue("fromObjectId", id)}
-              objects={objects}
-            />
           </div>
         </div>
 
