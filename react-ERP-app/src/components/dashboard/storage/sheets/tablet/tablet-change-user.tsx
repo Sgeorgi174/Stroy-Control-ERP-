@@ -62,10 +62,7 @@ export function TabletChangeUser({ tablet }: TabletDetailsProps) {
 
       <p className="text-center font-medium text-xl mt-5">Перемещение</p>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-6 m-auto w-[700px]"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="flex justify-between mt-10">
           {/* Предыдущий владелец */}
           <div className="flex flex-col gap-2">

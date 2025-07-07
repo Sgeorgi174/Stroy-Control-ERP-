@@ -109,7 +109,7 @@ export function DeviceEdit({ device }: DeviceEditProps) {
               if (id) setValue("objectId", id);
             }}
             objects={objects}
-            disabled={isPending}
+            disabled
           />
           {errors.objectId && (
             <p className="text-sm text-red-500">{errors.objectId.message}</p>

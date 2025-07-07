@@ -49,6 +49,7 @@ export class TabletService {
       include: {
         employee: {
           select: {
+            position: true,
             firstName: true,
             lastName: true,
             phoneNumber: true,
@@ -171,7 +172,7 @@ export class TabletService {
             toEmployeeId: undefined,
             fromStatus: tablet.status,
             toStatus: 'INACTIVE',
-            comment: 'Освобождение планшета',
+            comment: 'Возврат планшета',
           },
           userId,
         );

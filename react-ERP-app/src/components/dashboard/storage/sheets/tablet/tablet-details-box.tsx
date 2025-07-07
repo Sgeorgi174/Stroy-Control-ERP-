@@ -1,5 +1,7 @@
-import { tabletStatusMap } from "@/constants/tabletStatusMap";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { positionMap } from "@/constants/positionMap";
 import type { Tablet } from "@/types/tablet";
+import { Contact, Phone, User } from "lucide-react";
 
 type TabletDetailsProps = {
   tablet: Tablet;
@@ -8,31 +10,48 @@ type TabletDetailsProps = {
 export function TabletDetailsBox({ tablet }: TabletDetailsProps) {
   return (
     <>
-      <p>
-        Серийный номер:{" "}
-        <span className="font-medium">{tablet.serialNumber}</span>
-      </p>
-      <p>
-        Наименование: <span className="font-medium">{tablet.name}</span>
-      </p>
-      <p>
-        Статус:{" "}
-        <span className="font-medium">{tabletStatusMap[tablet.status]}</span>
-      </p>
-      <p>
-        Кому выдан:{" "}
-        <span className="font-medium">
-          {tablet.employee
-            ? `${tablet.employee?.lastName} ${tablet.employee?.firstName} `
-            : "-"}
-        </span>
-      </p>
-      <p>
-        Телефон:{" "}
-        <span className="font-medium">
-          {tablet.employee ? tablet.employee?.phoneNumber : "-"}
-        </span>
-      </p>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Пользователь</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-3 items-start gap-y-5 gap-x-4">
+            <div className="col-span-1">
+              <p className="text-sm text-muted-foreground">Сотрудник</p>
+              <div className="flex gap-2 items-center">
+                <User className="w-5 h-5" />
+                <p className="font-medium">
+                  {tablet.employee
+                    ? `${tablet.employee.lastName} ${tablet.employee.firstName}`
+                    : "-"}
+                </p>
+              </div>
+            </div>
+
+            <div className="col-span-1">
+              <p className="text-sm text-muted-foreground">Должность</p>
+              <div className="flex gap-2 items-center">
+                <Contact className="w-5 h-5" />
+                <p className="font-medium">
+                  {tablet.employee
+                    ? positionMap[tablet.employee.position]
+                    : "-"}
+                </p>
+              </div>
+            </div>
+
+            <div className="col-span-1">
+              <p className="text-sm text-muted-foreground">Телефон</p>
+              <div className="flex gap-2 items-center">
+                <Phone className="w-5 h-5" />
+                <p className="font-medium">
+                  {tablet.employee ? tablet.employee.phoneNumber : "-"}
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </>
   );
 }

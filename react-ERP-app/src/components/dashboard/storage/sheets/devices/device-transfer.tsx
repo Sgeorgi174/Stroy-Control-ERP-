@@ -69,13 +69,11 @@ export function DeviceTransfer({ device }: DeviceTransferProps) {
   return (
     <div className="p-5 flex flex-col gap-1">
       <DeviceDetailsBox device={device} />
+
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
       <p className="text-center font-medium text-xl mt-5">Перемещение</p>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-6 m-auto w-[700px]"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="flex justify-between mt-10">
           <div className="flex flex-col gap-2">
             <Label>С какого склада</Label>

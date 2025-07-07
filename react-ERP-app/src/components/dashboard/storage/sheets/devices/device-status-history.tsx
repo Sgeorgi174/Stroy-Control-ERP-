@@ -6,7 +6,7 @@ import { ArrowRight, Calendar, Clock, SquarePen } from "lucide-react";
 import { CommentPopover } from "../../tables/status-changes-table/comment-popover";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type ToolsStatusHistoryProps = {
+type DeviceStatusHistoryProps = {
   statusChangesRecords: StatusChangesRecord[];
   isError: boolean;
   isLoading: boolean;
@@ -30,11 +30,11 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export function ToolsStatusHistory({
+export function DevicesStatusHistory({
   statusChangesRecords,
   isError,
   isLoading,
-}: ToolsStatusHistoryProps) {
+}: DeviceStatusHistoryProps) {
   return (
     <div className="mt-4">
       <h3 className="font-medium text-muted-foreground mb-3 flex items-center gap-2">
@@ -72,7 +72,7 @@ export function ToolsStatusHistory({
           {statusChangesRecords.map((status) => (
             <div
               key={status.id}
-              className="flex items-center justify-between p-3 pr-[50px] bg-muted rounded-lg border shadow"
+              className="flex items-center justify-between p-3 pr-[50px] border shadow bg-muted rounded-lg"
             >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">

@@ -1,9 +1,4 @@
-type Employee = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-};
+import type { Employee } from "./employee";
 
 export type TabletStatus =
   | "ACTIVE"

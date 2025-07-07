@@ -3,15 +3,15 @@ import { formatDate, formatTime } from "@/lib/utils/format-date";
 import type { TransferRecord } from "@/types/historyRecords";
 import { ArrowRight, Calendar, Clock, MapPin } from "lucide-react";
 
-type ToolTransferHistoryProps = {
+type DeviceTransferHistoryProps = {
   transferRecords: TransferRecord[];
   isError: boolean;
   isLoading: boolean;
 };
 
-export function ToolTransferHistory({
+export function DeviceTransferHistory({
   transferRecords,
-}: ToolTransferHistoryProps) {
+}: DeviceTransferHistoryProps) {
   return (
     <div className="space-y-6 mt-4">
       {/* Movement History */}

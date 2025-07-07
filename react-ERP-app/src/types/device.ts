@@ -1,3 +1,5 @@
+import type { Object } from "./object";
+
 export type DeviceStatus =
   | "ON_OBJECT"
   | "IN_TRANSIT"
@@ -13,12 +15,5 @@ export type Device = {
   objectId: string;
   createdAt: string;
   updatedAt: string;
-  storage: {
-    foreman: {
-      firstName: string;
-      lastName: string;
-      phone: string;
-    } | null;
-    name: string;
-  };
+  storage: Object;
 };

@@ -70,28 +70,33 @@ export function ToolsSheet() {
       >
         <SheetHeader>
           <SheetTitle className="text-center text-xl font-medium">
-            {mode === "add" && "Добавление инструмента"}
-            <div className="flex gap-3 items-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Wrench className="w-6 h-6 text-blue-600" />
+            {mode === "add" ? (
+              "Добавление инструмента"
+            ) : (
+              <div>
+                <div className="flex gap-3 items-center">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Wrench className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <p>{selectedTool?.name}</p>
+                    <p className="text-lg text-muted-foreground">
+                      Серийный: {selectedTool?.serialNumber}
+                    </p>
+                  </div>
+                </div>
+                <div className="w-full flex justify-start mt-5">
+                  <Badge
+                    className={`${getStatusColor(
+                      selectedTool ? selectedTool.status : "ON_OBJECT"
+                    )} flex items-center gap-1`}
+                  >
+                    {selectedTool && getStatusIcon(selectedTool.status)}
+                    {selectedTool && toolStatusMap[selectedTool.status]}
+                  </Badge>
+                </div>
               </div>
-              <div className="flex flex-col items-start">
-                <p>{selectedTool?.name}</p>
-                <p className="text-lg text-muted-foreground">
-                  Серийный: {selectedTool?.serialNumber}
-                </p>
-              </div>
-            </div>
-            <div className="w-full flex justify-start mt-5">
-              <Badge
-                className={`${getStatusColor(
-                  selectedTool ? selectedTool.status : "ON_OBJECT"
-                )} flex items-center gap-1`}
-              >
-                {selectedTool && getStatusIcon(selectedTool.status)}
-                {selectedTool && toolStatusMap[selectedTool.status]}
-              </Badge>
-            </div>
+            )}
           </SheetTitle>
           <SheetDescription className="text-center text-transparent w-0 h-0">
             {mode === "add" && "Заполните данные о новом инструменте"}

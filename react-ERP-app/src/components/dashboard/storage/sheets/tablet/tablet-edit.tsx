@@ -92,6 +92,7 @@ export function TabletEdit({ tablet }: TabletEditProps) {
         <div className="flex flex-col gap-2">
           <Label>Сотрудник *</Label>
           <EmployeeAutocomplete
+            disabled
             employees={employees}
             onSelectChange={(employeeId) =>
               setValue("employeeId", employeeId, { shouldValidate: true })

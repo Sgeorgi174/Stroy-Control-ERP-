@@ -100,6 +100,7 @@ export class DeviceService {
               select: { firstName: true, lastName: true, phone: true },
             },
             name: true,
+            address: true,
           },
         },
       },
