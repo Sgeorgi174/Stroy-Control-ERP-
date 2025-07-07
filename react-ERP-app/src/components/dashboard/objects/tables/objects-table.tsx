@@ -40,10 +40,6 @@ export function ObjectsTable({
             <TableHead className="text-secondary font-bold">Бригадир</TableHead>
             <TableHead className="text-secondary font-bold">Телефон</TableHead>
             <TableHead className="text-secondary font-bold">Статус</TableHead>
-            <TableHead className="text-secondary font-bold">
-              Кол-во сотрудников
-            </TableHead>
-
             <TableHead className="text-secondary font-bold"></TableHead>
           </TableRow>
         </TableHeader>
@@ -80,7 +76,6 @@ export function ObjectsTable({
                   text={object.isPending ? "На паузе" : "Активен"}
                 ></StatusBadge>
               </TableCell>
-              <TableCell>{object.employees.length}</TableCell>
               <TableCell>
                 <ObjectDropDown object={object} />
               </TableCell>

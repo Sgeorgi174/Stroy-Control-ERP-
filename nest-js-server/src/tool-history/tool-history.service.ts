@@ -33,7 +33,7 @@ export class ToolHistoryService {
   public async getTransfersByToolId(toolId: string) {
     try {
       return await this.prismaService.toolHistory.findMany({
-        where: { toolId },
+        where: { toolId, action: 'CONFIRM' },
         include: {
           fromObject: { select: { name: true } },
           toObject: { select: { name: true } },

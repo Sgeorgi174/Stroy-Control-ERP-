@@ -67,7 +67,7 @@ export class ClothesService {
         ...(Number(query.size) ? { size: Number(query.size) } : {}),
       },
       include: {
-        inTransit: true,
+        inTransit: { where: { status: 'IN_TRANSIT' } },
         storage: {
           select: {
             foreman: {

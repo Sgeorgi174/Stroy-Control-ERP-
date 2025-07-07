@@ -1,9 +1,9 @@
 import type { Tool } from "@/types/tool";
-import { TransferHistoryTable } from "../../tables/transfer-history-table";
 import { ToolsDetailsBox } from "./tool-details-box";
 import { useGetToolHistory } from "@/hooks/tool/useGetToolHistory";
 import { useGetToolStatusChanges } from "@/hooks/tool/useGetToolStatusChanges";
-import { StatusChangesHistoryTable } from "../../tables/status-changes-table/status-changes-table";
+import { ToolTransferHistory } from "./tool-tranfer-history";
+import { ToolsStatusHistory } from "./tool-status-history";
 
 type ToolsDetailsProps = {
   tool: Tool;
@@ -25,17 +25,14 @@ export function ToolsDetails({ tool }: ToolsDetailsProps) {
     <>
       <div className="p-5 flex flex-col gap-1">
         <ToolsDetailsBox tool={tool} />
-        <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
-        <p className="text-center font-medium text-xl mt-8">
-          Последние перемещения
-        </p>
-        <TransferHistoryTable
+        <p className="font-medium text-xl mt-6">История</p>
+        <ToolTransferHistory
           transferRecords={toolHistoryData}
           isError={toolHistoryError}
           isLoading={toolHistoryLoading}
         />
-        <p className="text-center font-medium text-xl mt-8">Смены статусов</p>
-        <StatusChangesHistoryTable
+        <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
+        <ToolsStatusHistory
           statusChangesRecords={toolStatusChangesData}
           isError={toolStatusChangesError}
           isLoading={toolStatusChangesLoading}

@@ -25,7 +25,7 @@ export function ObjectsFilter() {
 
   return (
     <FilterPanel>
-      <div className="flex w-full justify-between">
+      <div className="flex w-full justify-between flex-wrap ">
         <div className="flex items-center gap-2">
           <p className="font-medium">Объекты:</p>
           <ObjectStatusSelectForFilter />

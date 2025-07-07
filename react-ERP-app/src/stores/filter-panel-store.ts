@@ -4,6 +4,7 @@ import type { ObjectStatus } from "@/types/object";
 import type { TabletStatus } from "@/types/tablet";
 import type { TabKey } from "@/types/tabs";
 import type { ToolStatus } from "@/types/tool";
+import type { PendingStatus } from "@/types/transfers";
 import { create } from "zustand";
 
 type TabState = {
@@ -36,6 +37,18 @@ type TabState = {
 
   selectedEmployeeStatus: EmployeeStatuses;
   setSetelectedEmployeeStatus: (status: EmployeeStatuses) => void;
+
+  selectedTransferStatus: PendingStatus | null;
+  setSelectedTransferStatus: (status: PendingStatus | null) => void;
+
+  selectedTransferDate: Date;
+  setSelectedTransferDate: (date: Date) => void;
+
+  fromObjectId: string | null;
+  setFromObjectId: (id: string | null) => void;
+
+  toObjectId: string | null;
+  setToObjectId: (id: string | null) => void;
 
   selectedSkills: string[];
   setSelectedSkills: (skills: string[]) => void;
@@ -77,6 +90,19 @@ export const useFilterPanelStore = create<TabState>((set, get) => ({
   setSetelectedEmployeeStatus: (status) =>
     set({ selectedEmployeeStatus: status }),
 
+  selectedTransferStatus: null,
+  setSelectedTransferStatus: (status) =>
+    set({ selectedTransferStatus: status }),
+
+  selectedTransferDate: new Date(),
+  setSelectedTransferDate: (date) => set({ selectedTransferDate: date }),
+
+  fromObjectId: "all",
+  setFromObjectId: (id) => set({ fromObjectId: id }),
+
+  toObjectId: "all",
+  setToObjectId: (id) => set({ toObjectId: id }),
+
   selectedSkills: [],
   setSelectedSkills: (skills) => set({ selectedSkills: skills }),
   toggleSkill: (skillId) => {
@@ -99,5 +125,8 @@ export const useFilterPanelStore = create<TabState>((set, get) => ({
       selectedObjectStatus: "OPEN",
       selectedEmployeeType: "ACTIVE",
       selectedSkills: [],
+      selectedTransferDate: new Date(),
+      fromObjectId: "all",
+      toObjectId: "all",
     }),
 }));

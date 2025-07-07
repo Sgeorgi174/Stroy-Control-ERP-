@@ -18,8 +18,13 @@ export const getFreeForemen = async () => {
   return response.data;
 };
 
-export const getAllTransfers = async (): Promise<PendingTransfersResponse> => {
-  const response = await api.get("/users/transfers");
+export const getTransfers = async (params: {
+  status?: string | null;
+  fromObjectId?: string | null;
+  toObjectId?: string | null;
+  updatedAt?: string;
+}): Promise<PendingTransfersResponse> => {
+  const response = await api.get("/users/transfers", { params });
   return response.data;
 };
 

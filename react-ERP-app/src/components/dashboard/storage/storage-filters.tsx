@@ -56,7 +56,7 @@ export function StorageFilters() {
 
   return (
     <FilterPanel>
-      <div className="flex gap-8">
+      <div className="flex justify-between w-full flex-wrap gap-4">
         <TypeTabs />
         {activeTab !== "tablet" && (
           <div className="flex items-center gap-2">
@@ -85,13 +85,13 @@ export function StorageFilters() {
             <ItemStatusSelectForFilter />
           </div>
         )}
-      </div>
-      <div className="flex  gap-8">
-        <AddButton handleAdd={handleAdd} />
-        <SearchInput
-          searchQuery={localSearch}
-          setSearchQuery={setLocalSearch}
-        />
+        <div className="flex gap-8">
+          <AddButton handleAdd={handleAdd} />
+          <SearchInput
+            searchQuery={localSearch}
+            setSearchQuery={setLocalSearch}
+          />
+        </div>
       </div>
     </FilterPanel>
   );

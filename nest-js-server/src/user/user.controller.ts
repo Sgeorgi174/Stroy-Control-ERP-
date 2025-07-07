@@ -1,8 +1,9 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
 import { Roles } from 'generated/prisma';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
+import { QueryTransfersFilterDto } from './dto/query-transfer-filter.dto';
 
 @Controller('users')
 export class UserController {
@@ -28,8 +29,8 @@ export class UserController {
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('transfers')
-  async getAllTransfers() {
-    return this.userService.getAllTransfers();
+  async getAllTransfers(@Query() filters: QueryTransfersFilterDto) {
+    return this.userService.getAllTransfers(filters);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)

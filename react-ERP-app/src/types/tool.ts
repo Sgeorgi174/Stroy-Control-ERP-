@@ -1,3 +1,6 @@
+import type { Object } from "./object";
+import type { PendingToolTransfer } from "./transfers";
+
 export type ToolStatus =
   | "ON_OBJECT"
   | "IN_TRANSIT"
@@ -13,12 +16,6 @@ export type Tool = {
   status: ToolStatus;
   serialNumber: string;
   objectId: string;
-  storage: {
-    foreman: {
-      firstName: string;
-      lastName: string;
-      phone: string;
-    } | null;
-    name: string;
-  };
+  storage: Object;
+  inTransit: PendingToolTransfer[];
 };

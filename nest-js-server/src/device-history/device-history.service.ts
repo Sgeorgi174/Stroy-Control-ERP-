@@ -33,7 +33,7 @@ export class DeviceHistoryService {
   public async getTransfersByDeviceId(deviceId: string) {
     try {
       return await this.prismaService.deviceHistory.findMany({
-        where: { deviceId },
+        where: { deviceId, action: 'CONFIRM' },
         include: {
           fromObject: { select: { name: true } },
           toObject: { select: { name: true } },

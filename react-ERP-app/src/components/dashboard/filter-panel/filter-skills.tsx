@@ -27,7 +27,7 @@ export function SkillsFilterPopover({ skills }: SkillsFilterPopoverProps) {
           {"Навыки"}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[500px]">
+      <PopoverContent className="w-[600px]">
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <h4 className="leading-none font-medium">Навыки:</h4>

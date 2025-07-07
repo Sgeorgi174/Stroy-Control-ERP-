@@ -13,8 +13,12 @@ export function CommentPopover({ comment }: { comment: string }) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button disabled={!comment} variant="outline" className="w-[90px]">
-          {comment ? "Смотреть" : "Пусто"}
+        <Button
+          disabled={!comment}
+          variant="outline"
+          className="w-[120px] rounded-xl"
+        >
+          {comment ? "Комментарий" : "Пусто"}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="max-w-sm max-h-60 overflow-auto">

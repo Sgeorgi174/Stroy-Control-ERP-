@@ -1,16 +1,15 @@
 import { BootIcon } from "@/components/ui/boot";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { transferStatusMap } from "@/constants/transfer-status-map";
 import { formatDate, formatTime } from "@/lib/utils/format-date";
 import { getColorBorder } from "@/lib/utils/gerColorBadge";
 import { getColorStatus } from "@/lib/utils/getColorStatus";
+import { useTransferSheetStore } from "@/stores/transfer-sheet-store";
 import type { PendingClothesTransfer } from "@/types/transfers";
 import {
   ArrowRight,
   Calendar,
   Clock,
-  EllipsisVertical,
   MapPin,
   Minus,
   Shirt,
@@ -23,12 +22,14 @@ type TransferClothesCardProps = {
 export function TransferClothesCard({
   transferClothes,
 }: TransferClothesCardProps) {
+  const { openSheet } = useTransferSheetStore();
   return (
     <>
       {transferClothes.map((transfer) => (
         <Card
           key={transfer.id}
-          className={`p-2 bg-sidebar-accent border-l-4 border-b-4 ${getColorBorder(
+          onClick={() => openSheet("clothes", transfer)}
+          className={`p-2 bg-sidebar-accent hover:shadow-primary border-l-4 cursor-pointer border-b-4 ${getColorBorder(
             transfer.status
           )}`}
         >
@@ -66,16 +67,16 @@ export function TransferClothesCard({
               <div className="col-span-2">
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Calendar className="w-3 h-3" />
-                  {formatDate(transfer.createdAt)}
+                  {formatDate(transfer.updatedAt)}
                 </div>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                   <Clock className="w-3 h-3" />
-                  {formatTime(transfer.createdAt)}
+                  {formatTime(transfer.updatedAt)}
                 </div>
               </div>
 
               {/* Transfer Route */}
-              <div className="col-span-4 flex gap-3 items-center">
+              <div className="col-span-5 flex gap-3 items-center">
                 <div className="flex items-center gap-1 min-w-0">
                   <MapPin className="w-3 h-3 text-muted-foreground" />
                   <span className="text-sm text-primary truncate">
@@ -103,13 +104,6 @@ export function TransferClothesCard({
                 )} rounded-xl text-center`}
               >
                 {transferStatusMap[transfer.status]}
-              </div>
-
-              {/* Actions */}
-              <div className="col-span-1 flex justify-end">
-                <Button variant="ghost">
-                  <EllipsisVertical />
-                </Button>
               </div>
             </div>
           </CardContent>

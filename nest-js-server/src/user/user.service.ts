@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { TransferType } from 'generated/prisma';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { QueryTransfersFilterDto } from './dto/query-transfer-filter.dto';
 
 @Injectable()
 export class UserService {
@@ -156,10 +157,25 @@ export class UserService {
     }
   }
 
-  public async getAllTransfers() {
+  public async getAllTransfers(filters: QueryTransfersFilterDto) {
     try {
+      const { status, fromObjectId, toObjectId, updatedAt } = filters;
+
+      const whereCommon = {
+        ...(status && { status }),
+        ...(fromObjectId && { fromObjectId }),
+        ...(toObjectId && { toObjectId }),
+        ...(updatedAt && {
+          updatedAt: {
+            gte: new Date(updatedAt),
+            lt: new Date(new Date(updatedAt).getTime() + 24 * 60 * 60 * 1000),
+          },
+        }),
+      };
+
       return await this.prismaService.$transaction(async (prisma) => {
         const toolTransfers = await prisma.pendingTransfersTools.findMany({
+          where: whereCommon,
           select: {
             tool: { select: { id: true, name: true, serialNumber: true } },
             status: true,
@@ -198,7 +214,9 @@ export class UserService {
             },
           },
         });
+
         const deviceTransfers = await prisma.pendingTransfersDevices.findMany({
+          where: whereCommon,
           select: {
             device: { select: { id: true, name: true, serialNumber: true } },
             status: true,
@@ -237,7 +255,9 @@ export class UserService {
             },
           },
         });
+
         const clothesTransfers = await prisma.pendingTransfersClothes.findMany({
+          where: whereCommon,
           select: {
             clothes: {
               select: {

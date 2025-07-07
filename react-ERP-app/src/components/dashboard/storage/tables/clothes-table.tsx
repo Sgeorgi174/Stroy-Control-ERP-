@@ -24,6 +24,8 @@ export function ClothesTable({
 }: ClothesTableProps) {
   const { openSheet } = useClothesSheetStore();
 
+  console.log(clothes);
+
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>

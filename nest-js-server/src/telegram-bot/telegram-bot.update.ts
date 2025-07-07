@@ -41,7 +41,7 @@ export class TelegramBotUpdate {
     const chatId = Number(ctx.chat?.id); // ID чата, привязанный к пользователю
 
     if (!contact?.phone_number || !chatId) {
-      return await ctx.reply('Произошла ошибка. Попробуйте ещё раз.');
+      return await ctx.reply('Произошла ошибка. Попробуйте ещё раз. ⚠️');
     }
 
     let phone = contact.phone_number;
@@ -84,7 +84,7 @@ export class TelegramBotUpdate {
     }
 
     if (!telegramUser.photoRequestedTransferId) {
-      await ctx.reply('Нет активного запроса на отправку фото.');
+      await ctx.reply('Нет активного запроса на отправку фото. ⚠️');
       return;
     }
 
@@ -95,7 +95,7 @@ export class TelegramBotUpdate {
     const largestPhoto = photoArray?.[photoArray.length - 1];
 
     if (!largestPhoto?.file_id) {
-      await ctx.reply('Не удалось получить фото.');
+      await ctx.reply('Не удалось получить фото. ❌');
       return;
     }
 
@@ -132,7 +132,7 @@ export class TelegramBotUpdate {
         });
         break;
       default:
-        await ctx.reply('Неизвестный тип перемещения.');
+        await ctx.reply('Неизвестный тип перемещения. ❌');
         return;
     }
 
@@ -141,6 +141,6 @@ export class TelegramBotUpdate {
       data: { photoRequestedTransferId: null },
     });
 
-    await ctx.reply('Фото получено, статус обновлён.');
+    await ctx.reply('Фото получено, ожидайте его в приложении ✅.');
   }
 }

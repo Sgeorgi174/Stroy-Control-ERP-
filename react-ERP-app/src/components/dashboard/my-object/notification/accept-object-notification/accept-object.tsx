@@ -214,7 +214,11 @@ export default function NotificationPanel({
         </div>
 
         <div className="border-t pt-4">
-          <div className="flex items-center space-x-2 mb-4 p-3 bg-attention rounded-lg">
+          <div
+            className={`flex items-center space-x-2 mb-4 p-3 ${
+              isConfirmed ? "bg-green-500/40" : "bg-attention"
+            } rounded-lg`}
+          >
             <Checkbox
               className="border-accent-foreground"
               id="confirm-responsibility"
