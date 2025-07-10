@@ -1,5 +1,6 @@
 export type TabKey =
   | "tool"
+  | "monitoring"
   | "clothing"
   | "footwear"
   | "device"

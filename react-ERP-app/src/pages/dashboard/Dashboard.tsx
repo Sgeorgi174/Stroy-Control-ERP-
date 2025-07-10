@@ -8,7 +8,8 @@ import { useFilterPanelStore } from "@/stores/filter-panel-store";
 import type { TabKey } from "@/types/tabs";
 
 const pathToTabMap: Record<string, TabKey> = {
-  "/": "my-object",
+  "/monitoring": "monitoring",
+  "/my-object": "my-object",
   "/storage": "tool",
   "/objects": "object",
   "/employees": "employee",

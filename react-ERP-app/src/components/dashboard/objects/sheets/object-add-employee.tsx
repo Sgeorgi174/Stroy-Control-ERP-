@@ -8,6 +8,7 @@ import { AddEmployeesTable } from "../tables/add-employees-table";
 import { useObjectSheetStore } from "@/stores/objects-sheet-store";
 import type { Object } from "@/types/object";
 import { Button } from "@/components/ui/button";
+import { ObjectDetailsBox } from "./object-details-box";
 
 const formSchema = z.object({
   employeeIds: z
@@ -56,29 +57,8 @@ export function ObjectAddEmployee({ object }: ObjectAddEmployeeProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="p-5 flex flex-col gap-1">
-      <p>
-        Наименование: <span className="font-medium">{object.name}</span>
-      </p>
-      <p>
-        Адрес: <span className="font-medium">{object.address}</span>
-      </p>
-      <p>
-        Бригадир:{" "}
-        <span className="font-medium">
-          {object.foreman
-            ? `${object.foreman.firstName} ${object.foreman.lastName}`
-            : "-"}
-        </span>
-      </p>
-      <p>
-        Телефон:{" "}
-        <span className="font-medium">{object.foreman?.phone || "-"}</span>
-      </p>
-
-      <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
-
-      <p className="text-center font-medium text-xl mt-5">Список сотрудников</p>
+    <form onSubmit={handleSubmit(onSubmit)} className="p-5 flex flex-col gap-5">
+      <ObjectDetailsBox object={object} />
 
       <AddEmployeesTable
         isError={isError}

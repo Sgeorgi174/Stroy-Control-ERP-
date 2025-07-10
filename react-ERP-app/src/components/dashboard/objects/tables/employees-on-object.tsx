@@ -7,7 +7,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { Employee } from "@/types/employee";
-import { PendingTable } from "../../storage/tables/pending-table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { HardHat } from "lucide-react";
 
 type EmployeesOnObjectTableProps = {
   employees: Employee[];
@@ -29,36 +30,57 @@ export function EmployeesOnObjectTable({
   isError,
 }: EmployeesOnObjectTableProps) {
   return (
-    <div className="mt-6 rounded-lg border overflow-hidden">
-      <Table>
-        <TableHeader className="bg-primary pointer-events-none">
-          <TableRow>
-            <TableHead className="text-secondary font-medium">ФИО</TableHead>
-            <TableHead className="text-secondary font-medium">
-              Номер телефона
-            </TableHead>
-            <TableHead className="text-secondary font-medium">
-              Должность
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <PendingTable
-            isLoading={isLoading}
-            isError={isError}
-            data={employees}
-          />
-          {employees.map((employee) => (
-            <TableRow key={employee.id}>
-              <TableCell>{`${employee.lastName} ${employee.firstName} ${
-                employee.fatherName ? employee.fatherName : ""
-              }`}</TableCell>
-              <TableCell>{employee.phoneNumber}</TableCell>
-              <TableCell>{positionMap[employee.position]}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <Card className="gap-3">
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2">
+          <HardHat className="w-5 h-5" />
+          Сотрудники
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {employees.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Имя</TableHead>
+                <TableHead>Должность</TableHead>
+                <TableHead>Телефон</TableHead>
+                <TableHead>Статус</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {employees.map((employee) => (
+                <TableRow key={employee.id}>
+                  <TableCell className="font-medium">
+                    {employee.firstName} {employee.lastName}
+                  </TableCell>
+                  <TableCell>{positionMap[employee.position]}</TableCell>
+                  <TableCell>{employee.phoneNumber}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`h-3 w-3 rounded-full text-center ${
+                          employee.status === "OK"
+                            ? "glow-green"
+                            : employee.status === "WARNING"
+                            ? "glow-yellow"
+                            : employee.status === "INACTIVE"
+                            ? "bg-gray-500"
+                            : "glow-red"
+                        }`}
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <p className="text-gray-500 text-sm text-center py-8">
+            На объекте нет сотрудников
+          </p>
+        )}
+      </CardContent>
+    </Card>
   );
 }

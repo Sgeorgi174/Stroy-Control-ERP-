@@ -7,29 +7,19 @@ import { z } from "zod";
 import { useObjectSheetStore } from "@/stores/objects-sheet-store";
 import { ForemanAutocomplete } from "../../select-foreman-for-form";
 import type { Object } from "@/types/object";
-import { useEffect, useMemo } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { splitAddress } from "@/lib/utils/splitAddress";
 import { useUpdateObject } from "@/hooks/object/useUpdateObject";
 import { useGetFreeForemen } from "@/hooks/user/useGetFreeForemen";
+import { useMemo } from "react";
 
 // 1. Схема валидации Zod
-const tabletSchema = z
-  .object({
-    name: z.string().min(1, "Это поле обязательно"),
-    city: z.string().min(1, "Это поле обязательно"),
-    street: z.string().min(1, "Это поле обязательно"),
-    buildings: z.string().min(1, "Это поле обязательно"),
-    userId: z.string().nullable(), // Может быть null
-    noForeman: z.boolean(), // Чекбокс
-  })
-  .refine(
-    (data) => data.noForeman || (!!data.userId && data.userId.trim() !== ""),
-    {
-      message: "Выберите бригадира",
-      path: ["userId"],
-    }
-  );
+const tabletSchema = z.object({
+  name: z.string().min(1, "Это поле обязательно"),
+  city: z.string().min(1, "Это поле обязательно"),
+  street: z.string().min(1, "Это поле обязательно"),
+  buildings: z.string().min(1, "Это поле обязательно"),
+  userId: z.string().nullable(), // Может быть null
+});
 
 type FormData = z.infer<typeof tabletSchema>;
 
@@ -44,7 +34,6 @@ export function ObjectEdit({ object }: ObjectEditProps) {
     setValue,
     watch,
     reset,
-    clearErrors,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(tabletSchema),
@@ -54,13 +43,11 @@ export function ObjectEdit({ object }: ObjectEditProps) {
       street: splitAddress(object).street,
       buildings: splitAddress(object).buldings,
       userId: object.foreman ? object.foreman.id : null,
-      noForeman: false,
     },
   });
 
   const { closeSheet } = useObjectSheetStore();
   const selectedUserId = watch("userId");
-  const noForeman = watch("noForeman");
   const { data: foremen = [] } = useGetFreeForemen();
 
   const combinedForemen = useMemo(() => {
@@ -68,13 +55,6 @@ export function ObjectEdit({ object }: ObjectEditProps) {
   }, [object.foreman, foremen]);
 
   const { mutate: updateObject, isPending } = useUpdateObject(object.id);
-
-  useEffect(() => {
-    if (noForeman) {
-      setValue("userId", "", { shouldValidate: true });
-      clearErrors("userId");
-    }
-  }, [noForeman]);
 
   const onSubmit = (data: FormData) => {
     const trimmedName = data.name.trim();
@@ -84,7 +64,7 @@ export function ObjectEdit({ object }: ObjectEditProps) {
       {
         name: trimmedName,
         address: trimmedAddress,
-        userId: data.noForeman ? null : data.userId,
+        userId: data.userId,
       },
       {
         onSuccess: () => {
@@ -155,34 +135,16 @@ export function ObjectEdit({ object }: ObjectEditProps) {
         {/* Сотрудник */}
         <div className="flex flex-col gap-2 mt-10">
           <Label>Бригадир *</Label>
-          <div className="flex items-center gap-8">
-            <ForemanAutocomplete
-              disabled={noForeman}
-              foremen={combinedForemen}
-              onSelectChange={(userId) =>
-                setValue("userId", userId, { shouldValidate: true })
-              }
-              selectedUserId={selectedUserId}
-            />
 
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="noForeman"
-                checked={noForeman}
-                {...register("noForeman")}
-                onCheckedChange={(checked) => {
-                  const isChecked = !!checked;
-                  setValue("noForeman", isChecked, { shouldValidate: true });
+          <ForemanAutocomplete
+            disabled
+            foremen={combinedForemen}
+            onSelectChange={(userId) =>
+              setValue("userId", userId, { shouldValidate: true })
+            }
+            selectedUserId={selectedUserId}
+          />
 
-                  if (isChecked) {
-                    setValue("userId", null, { shouldValidate: true });
-                    clearErrors("userId");
-                  }
-                }}
-              />
-              <Label htmlFor="noForeman">Не назначать бригадира</Label>
-            </div>
-          </div>
           {errors.userId && (
             <p className="text-sm text-red-500">{errors.userId.message}</p>
           )}

@@ -7,7 +7,8 @@ type PageHeaderProps = {
 };
 
 const pathToTabMap = {
-  "/": "Мой объект",
+  "/monitoring": "Сводка по объектам",
+  "/my-object": "Мой объект",
   "/storage": "Склад",
   "/objects": "Объекты",
   "/employees": "Сотрудники",

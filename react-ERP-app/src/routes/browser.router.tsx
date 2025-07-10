@@ -1,3 +1,4 @@
+// src/routes/index.tsx
 import { createBrowserRouter } from "react-router";
 import { ProtectedRoute } from "@/routes/protected.route";
 import { Dashboard } from "@/pages/dashboard/Dashboard";
@@ -8,6 +9,8 @@ import { Auth } from "@/pages/auth/Auth";
 import { MyObject } from "@/pages/my-object/MyObject";
 import { NotFound } from "@/pages/not-found/NotFound";
 import { Transfers } from "@/pages/transfers/Transfers";
+import { Monitoring } from "@/pages/monitoring/Monitoring";
+import { RoleBasedRoute } from "./role-based.route";
 
 export const router = createBrowserRouter([
   {
@@ -17,11 +20,33 @@ export const router = createBrowserRouter([
         path: "/",
         element: <Dashboard />,
         children: [
-          { path: "/", element: <MyObject /> },
-          { path: "/storage", element: <Storage /> },
-          { path: "/employees", element: <Employees /> },
-          { path: "/objects", element: <Objects /> },
-          { path: "/transfers", element: <Transfers /> },
+          {
+            element: (
+              <RoleBasedRoute
+                allowedRoles={["OWNER", "ACCOUNTANT", "FOREMAN", "MASTER"]}
+              />
+            ),
+            children: [
+              { path: "/monitoring", element: <Monitoring /> },
+              { path: "/employees", element: <Employees /> },
+              { path: "/objects", element: <Objects /> },
+              { path: "/transfers", element: <Transfers /> },
+            ],
+          },
+          {
+            element: (
+              <RoleBasedRoute
+                allowedRoles={["OWNER", "FOREMAN", "ACCOUNTANT", "MASTER"]}
+              />
+            ),
+            children: [{ path: "/storage", element: <Storage /> }],
+          },
+          {
+            element: (
+              <RoleBasedRoute allowedRoles={["FOREMAN", "ACCOUNTANT"]} />
+            ),
+            children: [{ path: "/my-object", element: <MyObject /> }],
+          },
         ],
       },
       { path: "/login", element: <Auth /> },

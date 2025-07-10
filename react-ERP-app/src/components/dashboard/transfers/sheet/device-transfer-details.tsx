@@ -21,43 +21,51 @@ export function DeviceTransferDetails({
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-gray-500">Устройство</p>
+            <p className="text-sm text-muted-foreground">Устройство</p>
             <p className="font-medium">{deviceTransfer.device.name}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Серийный номер</p>
-            <p className="font-mono text-sm">
-              {deviceTransfer.device.serialNumber}
-            </p>
+            <p className="text-sm text-muted-foreground">Серийный номер</p>
+            <p className="font-medium">{deviceTransfer.device.serialNumber}</p>
           </div>
         </div>
 
         <Separator />
 
         <div>
-          <p className="text-sm text-gray-500 mb-2">Текущее место хранения</p>
-          <div className="bg-gray-50 p-3 rounded-lg">
+          <p className="text-sm text-muted-foreground mb-2">
+            Текущее место хранения
+          </p>
+          <div className="bg-muted p-3 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
-              <Building className="w-4 h-4 text-gray-600" />
+              <Building className="w-4 h-4 text-muted-foreground" />
               <span className="font-medium">
-                {deviceTransfer.fromObject.name}
+                {deviceTransfer.status !== "CONFIRM"
+                  ? deviceTransfer.fromObject.name
+                  : deviceTransfer.toObject.name}
               </span>
             </div>
-            {deviceTransfer.fromObject.foreman && (
-              <div className="flex items-center gap-4 text-sm text-gray-600">
-                <div className="flex items-center gap-1">
-                  <User className="w-3 h-3" />
-                  <span>
-                    {deviceTransfer.fromObject.foreman.lastName}{" "}
-                    {deviceTransfer.fromObject.foreman.firstName}
-                  </span>
+            {deviceTransfer.fromObject.foreman &&
+              deviceTransfer.toObject.foreman && (
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <User className="w-3 h-3" />
+                    <span>
+                      {deviceTransfer.status !== "CONFIRM"
+                        ? `${deviceTransfer.fromObject.foreman.lastName} ${deviceTransfer.fromObject.foreman.firstName}`
+                        : `${deviceTransfer.toObject.foreman.lastName} ${deviceTransfer.toObject.foreman.firstName}`}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Phone className="w-3 h-3" />
+                    <span>
+                      {deviceTransfer.status !== "CONFIRM"
+                        ? deviceTransfer.fromObject.foreman.phone
+                        : deviceTransfer.toObject.foreman.phone}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Phone className="w-3 h-3" />
-                  <span>{deviceTransfer.fromObject.foreman.phone}</span>
-                </div>
-              </div>
-            )}
+              )}
           </div>
         </div>
       </CardContent>

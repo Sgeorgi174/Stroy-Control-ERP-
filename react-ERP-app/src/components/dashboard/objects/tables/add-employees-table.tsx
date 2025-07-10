@@ -9,8 +9,9 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import type { Employee } from "@/types/employee";
 import { useState } from "react";
-import { PendingTable } from "../../storage/tables/pending-table";
-import { cn } from "@/lib/utils"; // обязательно должен быть подключен ваш `cn`
+import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { HardHat } from "lucide-react";
 
 type AddEmployeesTableProps = {
   employees: Employee[];
@@ -49,50 +50,54 @@ export function AddEmployeesTable({
   };
 
   return (
-    <div className="mt-6 rounded-lg border overflow-hidden">
-      <Table>
-        <TableHeader className="bg-primary pointer-events-none">
-          <TableRow>
-            <TableHead className="w-[40px]" />
-            <TableHead className="text-secondary font-medium">ФИО</TableHead>
-            <TableHead className="text-secondary font-medium">
-              Номер телефона
-            </TableHead>
-            <TableHead className="text-secondary font-medium">
-              Должность
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <PendingTable
-            isLoading={isLoading}
-            isError={isError}
-            data={employees}
-          />
-          {employees.map((employee) => {
-            const isSelected = selectedIds.includes(employee.id);
-
-            return (
-              <TableRow
-                key={employee.id}
-                className={cn({ "bg-muted/50": isSelected })}
-              >
-                <TableCell>
-                  <Checkbox
-                    checked={isSelected}
-                    onCheckedChange={() => toggleSelectOne(employee.id)}
-                  />
-                </TableCell>
-                <TableCell>{`${employee.lastName} ${employee.firstName} ${
-                  employee.fatherName ?? ""
-                }`}</TableCell>
-                <TableCell>{employee.phoneNumber}</TableCell>
-                <TableCell>{positionMap[employee.position]}</TableCell>
+    <Card className="gap-3">
+      <CardHeader>
+        <CardTitle className="text-lg flex items-center gap-2">
+          <HardHat className="w-5 h-5" />
+          Добавить сотрудников
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {employees.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Имя</TableHead>
+                <TableHead>Должность</TableHead>
+                <TableHead>Телефон</TableHead>
+                <TableHead>Статус</TableHead>
               </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </div>
+            </TableHeader>
+            <TableBody>
+              {employees.map((employee) => {
+                const isSelected = selectedIds.includes(employee.id);
+                return (
+                  <TableRow
+                    key={employee.id}
+                    className={cn({ "bg-muted/100": isSelected })}
+                  >
+                    <TableCell>
+                      <Checkbox
+                        checked={isSelected}
+                        onCheckedChange={() => toggleSelectOne(employee.id)}
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {employee.firstName} {employee.lastName}
+                    </TableCell>
+                    <TableCell>{positionMap[employee.position]}</TableCell>
+                    <TableCell>{employee.phoneNumber}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        ) : (
+          <p className="text-gray-500 text-sm text-center py-8">
+            На объекте нет сотрудников
+          </p>
+        )}
+      </CardContent>
+    </Card>
   );
 }

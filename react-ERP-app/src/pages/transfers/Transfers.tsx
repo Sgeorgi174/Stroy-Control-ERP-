@@ -1,4 +1,4 @@
-import { TransferSheet } from "@/components/dashboard/transfers/sheet/transfer-sheet";
+import { TransferSheet } from "@/components/dashboard/transfers/sheet/transfer-sheet/transfer-sheet";
 import { TransferClothesCard } from "@/components/dashboard/transfers/transfers-cards/clothes-card";
 import { TransferDeviceCard } from "@/components/dashboard/transfers/transfers-cards/device-card";
 import { TransferToolCard } from "@/components/dashboard/transfers/transfers-cards/tool-card";

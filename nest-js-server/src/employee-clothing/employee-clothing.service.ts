@@ -81,6 +81,8 @@ export class EmployeeClothingService {
   }
 
   async changeDebt(recordId: string, dto: ChangeDebtDto) {
+    console.log(recordId, dto);
+
     try {
       if (dto.debt <= 0) {
         throw new BadRequestException('Сумма списания должна быть больше 0');

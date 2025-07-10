@@ -22,53 +22,61 @@ export function ClothesTransferDetails({
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-gray-500">Наименование</p>
+            <p className="text-sm text-muted-foreground">Наименование</p>
             <p className="font-medium">{clothesTransfer.clothes.name}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Сезон</p>
-            <p className="font-mono text-sm">
-              {clothesTransfer.clothes.season}
+            <p className="text-sm text-muted-foreground">Сезон</p>
+            <p className="font-medium">
+              {clothesTransfer.clothes.season === "SUMMER" ? "Лето" : "Зима"}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Размер</p>
-            <p className="font-mono text-sm">
-              {clothesTransfer.clothes.season}
-            </p>
+            <p className="text-sm text-muted-foreground">Размер</p>
+            <p className="font-medium">{clothesTransfer.clothes.size}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Количество</p>
-            <p className="font-mono text-sm">{clothesTransfer.quantity}</p>
+            <p className="text-sm text-muted-foreground">Количество</p>
+            <p className="font-medium">{clothesTransfer.quantity}</p>
           </div>
         </div>
 
         <Separator />
 
         <div>
-          <p className="text-sm text-gray-500 mb-2">Текущее место хранения</p>
-          <div className="bg-gray-50 p-3 rounded-lg">
+          <p className="text-sm text-muted-foreground mb-2">
+            Текущее место хранения
+          </p>
+          <div className="bg-muted p-3 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
-              <Building className="w-4 h-4 text-gray-600" />
+              <Building className="w-4 h-4 text-muted-foreground" />
               <span className="font-medium">
-                {clothesTransfer.fromObject.name}
+                {clothesTransfer.status !== "CONFIRM"
+                  ? clothesTransfer.fromObject.name
+                  : clothesTransfer.toObject.name}
               </span>
             </div>
-            {clothesTransfer.fromObject.foreman && (
-              <div className="flex items-center gap-4 text-sm text-gray-600">
-                <div className="flex items-center gap-1">
-                  <User className="w-3 h-3" />
-                  <span>
-                    {clothesTransfer.fromObject.foreman.lastName}{" "}
-                    {clothesTransfer.fromObject.foreman.firstName}
-                  </span>
+            {clothesTransfer.fromObject.foreman &&
+              clothesTransfer.toObject.foreman && (
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <User className="w-3 h-3" />
+                    <span>
+                      {clothesTransfer.status !== "CONFIRM"
+                        ? `${clothesTransfer.fromObject.foreman.lastName} ${clothesTransfer.fromObject.foreman.firstName}`
+                        : `${clothesTransfer.toObject.foreman.lastName} ${clothesTransfer.toObject.foreman.firstName}`}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Phone className="w-3 h-3" />
+                    <span>
+                      {clothesTransfer.status !== "CONFIRM"
+                        ? clothesTransfer.fromObject.foreman.phone
+                        : clothesTransfer.toObject.foreman.phone}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Phone className="w-3 h-3" />
-                  <span>{clothesTransfer.fromObject.foreman.phone}</span>
-                </div>
-              </div>
-            )}
+              )}
           </div>
         </div>
       </CardContent>

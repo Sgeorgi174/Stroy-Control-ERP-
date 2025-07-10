@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { useObjectSheetStore } from "@/stores/objects-sheet-store";
 import { useChangeForeman } from "@/hooks/object/useChangeForeman";
 import { Button } from "@/components/ui/button";
+import { ObjectDetailsBox } from "./object-details-box";
 
 type ObjectDetailsProps = { object: Object };
 
@@ -54,33 +55,11 @@ export function ChangeForeman({ object }: ObjectDetailsProps) {
   return (
     <>
       <div className="p-5 flex flex-col gap-1">
-        <p>
-          Наименование: <span className="font-medium">{object.name}</span>
-        </p>
-        <p>
-          Адрес: <span className="font-medium">{object.address}</span>
-        </p>
-        <p>
-          Бригадир :{" "}
-          <span className="font-medium">
-            {object.foreman
-              ? `${object.foreman.firstName} ${object.foreman.lastName}`
-              : "-"}
-          </span>
-        </p>
-        <p>
-          Телефон:{" "}
-          <span className="font-medium">
-            {object.foreman ? object.foreman.phone : "-"}
-          </span>
-        </p>
+        <ObjectDetailsBox object={object} />
         <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
         <p className="text-center font-medium text-xl mt-5">Смена бригадира</p>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-6 m-auto w-[700px]"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <div className="flex justify-between mt-10">
             <div className="flex flex-col gap-2 ">
               <Label>Старый бригадир</Label>
