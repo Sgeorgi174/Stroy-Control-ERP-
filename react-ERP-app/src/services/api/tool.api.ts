@@ -5,6 +5,9 @@ import type {
   TransferToolDto,
   UpdateToolStatusDto,
   RejectToolDto,
+  ResendToolTransferDto,
+  WirteOffToolInTransferDto,
+  CancelToolTransferDto,
 } from "@/types/dto/tool.dto";
 import type { Tool, ToolStatus } from "@/types/tool";
 
@@ -74,7 +77,35 @@ export const rejectToolTransfer = async (id: string, data: RejectToolDto) => {
   return res.data;
 };
 
-// Удалить инструмент
+export const resendToolTransfer = async (
+  id: string,
+  data: ResendToolTransferDto
+) => {
+  const res = await api.post(`/tools/retransfer/${id}`, data);
+  return res.data;
+};
+
+export const returnToolToSource = async (id: string) => {
+  const res = await api.post(`/tools/transfer-return/${id}`);
+  return res.data;
+};
+
+export const cancelToolTransfer = async (
+  id: string,
+  data: CancelToolTransferDto
+) => {
+  const res = await api.post(`/tools/transfer-cancel/${id}`, data);
+  return res.data;
+};
+
+export const writeOffToolInTransfer = async (
+  id: string,
+  data: WirteOffToolInTransferDto
+) => {
+  const res = await api.post(`/tools/transfer-write-off/${id}`, data);
+  return res.data;
+};
+
 export const deleteTool = async (id: string): Promise<void> => {
   await api.delete(`/tools/delete/${id}`);
 };

@@ -25,8 +25,6 @@ export function Transfers() {
     toObjectId: toObjectId,
   });
 
-  console.log(updatedAt);
-
   return (
     <>
       <TransfersFilter />

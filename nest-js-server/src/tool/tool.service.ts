@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -15,6 +14,9 @@ import { UpdateStatusDto } from './dto/update-status.dto';
 import { GetToolsQueryDto } from './dto/get-tools-query.dto';
 import { buildStatusFilter } from 'src/libs/common/utils/buildStatusFilter';
 import { RejectToolTransferDto } from './dto/reject-transfer.dto';
+import { RetransferToolDto } from './dto/retransfer.dto';
+import { WriteOffInTransferDto } from './dto/write-off-in-transit.dto';
+import { CancelToolTransferDto } from './dto/cancel-tool-transfer.dto';
 
 @Injectable()
 export class ToolService {
@@ -69,6 +71,17 @@ export class ToolService {
     return tool;
   }
 
+  public async getTransferById(id: string) {
+    const transfer = await this.prismaService.pendingTransfersTools.findUnique({
+      where: { id },
+      include: { tool: true },
+    });
+
+    if (!transfer) throw new NotFoundException('Перемещение не найдено');
+
+    return transfer;
+  }
+
   public async getFiltered(query: GetToolsQueryDto) {
     const statusFilter = buildStatusFilter(query.status);
     const tools = await this.prismaService.tool.findMany({
@@ -106,10 +119,6 @@ export class ToolService {
     return tools;
   }
 
-  public async getAll() {
-    return this.prismaService.tool.findMany({ include: { storage: true } });
-  }
-
   public async update(id: string, dto: UpdateDto) {
     try {
       return await this.prismaService.tool.update({
@@ -132,7 +141,7 @@ export class ToolService {
   }
 
   public async changeStatus(id: string, userId: string, dto: UpdateStatusDto) {
-    const { tool } = await this.accessObject(id, userId);
+    const tool = await this.getById(id);
 
     try {
       return await this.prismaService.$transaction(async (prisma) => {
@@ -220,13 +229,11 @@ export class ToolService {
   }
 
   public async confirmTransfer(recordId: string, userId: string) {
-    const transfer = await this.prismaService.pendingTransfersTools.findUnique({
-      where: { id: recordId },
-      include: { tool: true },
-    });
+    const transfer = await this.getTransferById(recordId);
 
-    if (!transfer)
-      throw new BadRequestException('Не удалось найти перемещение');
+    if (transfer.status !== 'IN_TRANSIT') {
+      throw new ConflictException('Перемещение уже завершено');
+    }
 
     try {
       return await this.prismaService.$transaction(async (prisma) => {
@@ -270,6 +277,11 @@ export class ToolService {
     userId: string,
     dto: RejectToolTransferDto,
   ) {
+    const transfer = await this.getTransferById(recordId);
+
+    if (transfer.status !== 'IN_TRANSIT') {
+      throw new ConflictException('Перемещение уже завершено');
+    }
     try {
       return this.prismaService.$transaction(async (prisma) => {
         const updatedPendingTransfer =
@@ -295,6 +307,155 @@ export class ToolService {
         notFoundMessage: 'Запись не найдена',
         conflictMessage: 'Обновление нарушает уникальность данных',
         defaultMessage: 'Не удалось отклонить передачу',
+      });
+    }
+  }
+
+  public async reTransfer(
+    recordId: string,
+    dto: RetransferToolDto,
+    userId: string,
+  ) {
+    const transfer = await this.getTransferById(recordId);
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.pendingTransfersTools.update({
+          where: { id: recordId },
+          data: { rejectMode: 'RESEND' },
+        });
+
+        await this.toolHistoryService.create({
+          userId,
+          toolId: transfer.tool.id,
+          fromObjectId: undefined,
+          toObjectId: dto.toObjectId,
+          action: 'TRANSFER',
+        });
+
+        return await prisma.pendingTransfersTools.create({
+          data: {
+            fromObjectId: transfer.fromObjectId,
+            toObjectId: dto.toObjectId,
+            status: 'IN_TRANSIT',
+            toolId: transfer.toolId,
+          },
+        });
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось создать новое перемещение',
+      });
+    }
+  }
+
+  public async returnToSource(recordId: string, userId: string) {
+    const transfer = await this.getTransferById(recordId);
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.pendingTransfersTools.update({
+          where: { id: recordId },
+          data: { rejectMode: 'RETURN_TO_SOURCE' },
+        });
+
+        await this.toolHistoryService.create({
+          userId,
+          toolId: transfer.tool.id,
+          fromObjectId: undefined,
+          toObjectId: transfer.fromObjectId as string,
+          action: 'RETURN_TO_SOURCE',
+        });
+
+        return await prisma.pendingTransfersTools.create({
+          data: {
+            toObjectId: transfer.fromObjectId as string,
+            status: 'IN_TRANSIT',
+            toolId: transfer.toolId,
+            rejectMode: 'RETURN_TO_SOURCE',
+            rejectionComment: transfer.rejectionComment,
+            photoUrl: transfer.photoUrl,
+          },
+        });
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось создать новое перемещение',
+      });
+    }
+  }
+
+  public async writeOffInTransfer(
+    recordId: string,
+    userId: string,
+    dto: WriteOffInTransferDto,
+  ) {
+    const transfer = await this.getTransferById(recordId);
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.pendingTransfersTools.update({
+          where: { id: recordId },
+          data: { rejectMode: 'WRITE_OFF' },
+        });
+
+        await this.changeStatus(transfer.toolId, userId, {
+          comment: dto.comment,
+          status: dto.status,
+        });
+      });
+    } catch (error) {
+      console.log(error);
+
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось списать указанный инвентарь',
+      });
+    }
+  }
+
+  public async cancelTransfer(
+    recordId: string,
+    userId: string,
+    dto: CancelToolTransferDto,
+  ) {
+    const transfer = await this.getTransferById(recordId);
+    if (transfer.status !== 'IN_TRANSIT') {
+      throw new ConflictException('Нельзя отменить завершённое перемещение');
+    }
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.tool.update({
+          where: { id: transfer.toolId },
+          data: {
+            objectId: transfer.fromObjectId,
+            status: 'ON_OBJECT',
+          },
+        });
+
+        await this.toolHistoryService.create({
+          userId,
+          toolId: transfer.tool.id,
+          fromObjectId: transfer.fromObjectId as string,
+          toObjectId: transfer.toObjectId,
+          action: 'CANCEL',
+        });
+
+        return await prisma.pendingTransfersTools.update({
+          where: { id: recordId },
+          data: { status: 'CANCEL', rejectionComment: dto.rejectionComment },
+        });
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось отменить перемещение',
       });
     }
   }

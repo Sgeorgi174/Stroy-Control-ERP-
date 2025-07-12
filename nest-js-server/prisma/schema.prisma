@@ -117,6 +117,13 @@ enum PendingStatuses {
   IN_TRANSIT
   REJECT
   CONFIRM
+  CANCEL
+}
+
+enum RejectMode {
+  RETURN_TO_SOURCE
+  WRITE_OFF
+  RESEND
 }
 
 model Tool {
@@ -151,9 +158,11 @@ model PendingTransfersTools {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  status           PendingStatuses
+  status PendingStatuses
+
   photoUrl         String?
   rejectionComment String?
+  rejectMode       RejectMode?
 
   fromObject   Object? @relation("pending_tools_from_object_fk", fields: [fromObjectId], references: [id])
   fromObjectId String?
@@ -190,6 +199,8 @@ enum ToolActions {
   CONFIRM
   TRANSFER
   REJECT
+  CANCEL
+  RETURN_TO_SOURCE
 }
 
 model ToolStatusHistory {
@@ -244,6 +255,7 @@ model PendingTransfersDevices {
   status           PendingStatuses
   photoUrl         String?
   rejectionComment String?
+  rejectMode       RejectMode?
 
   fromObject   Object? @relation("pending_devices_from_object_fk", fields: [fromObjectId], references: [id])
   fromObjectId String?
@@ -280,6 +292,8 @@ enum DeviceActions {
   CONFIRM
   TRANSFER
   REJECT
+  CANCEL
+  RETURN_TO_SOURCE
 }
 
 model DeviceStatusHistory {
@@ -339,6 +353,7 @@ model PendingTransfersClothes {
   quantity         Int
   photoUrl         String?
   rejectionComment String?
+  rejectMode       RejectMode?
   status           PendingStatuses
   createdAt        DateTime        @default(now()) @map("created_at")
   updatedAt        DateTime        @updatedAt @map("updated_at")
@@ -387,6 +402,8 @@ enum ClothesActions {
   CONFIRM
   GIVE_TO_EMPLOYEE
   WRITTEN_OFF
+  CANCEL
+  RETURN_TO_SOURCE
 }
 
 model Tablet {

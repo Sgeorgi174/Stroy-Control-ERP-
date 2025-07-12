@@ -3,7 +3,9 @@ import type { Device } from "./device";
 import type { Object } from "./object";
 import type { Tool } from "./tool";
 
-export type PendingStatus = "IN_TRANSIT" | "REJECT" | "CONFIRM";
+export type PendingStatus = "IN_TRANSIT" | "REJECT" | "CONFIRM" | "CANCEL";
+
+export type RejectMode = "RESEND" | "RETURN_TO_SOURCE" | "WRITE_OFF";
 
 export interface PendingClothesTransfer {
   id: string;
@@ -19,6 +21,7 @@ export interface PendingClothesTransfer {
   toObject: Object;
   createdAt: string;
   updatedAt: string;
+  rejectMode: RejectMode;
 }
 
 export interface PendingToolTransfer {
@@ -34,6 +37,7 @@ export interface PendingToolTransfer {
   toObject: Object;
   createdAt: string;
   updatedAt: string;
+  rejectMode: RejectMode;
 }
 
 export interface PendingDeviceTransfer {
@@ -49,6 +53,7 @@ export interface PendingDeviceTransfer {
   toObject: Object;
   createdAt: string;
   updatedAt: string;
+  rejectMode: RejectMode;
 }
 
 // --- MAIN RESPONSE ---

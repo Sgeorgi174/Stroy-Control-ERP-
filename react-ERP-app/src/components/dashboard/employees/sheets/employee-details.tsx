@@ -25,11 +25,9 @@ export function EmployeeDetails({ employee }: EmployeeDetailsProps) {
     if (!selectedClothing) return;
 
     if (dialogType === "reduce") {
-      console.log(selectedClothing.id, amount);
       mutationEmployeeDebt.mutate({ debt: amount });
     } else {
       mutationEmployeeDebt.mutate({ debt: amount });
-      console.log(selectedClothing.id, amount);
     }
   };
 

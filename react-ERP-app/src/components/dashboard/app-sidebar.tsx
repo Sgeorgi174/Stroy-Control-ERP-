@@ -73,8 +73,6 @@ type AppSidebarProps = {
 export function AppSidebar({ active, handleClick }: AppSidebarProps) {
   const user = useAuthStore((s) => s.user);
 
-  console.log(user);
-
   if (!user) return null;
 
   return (

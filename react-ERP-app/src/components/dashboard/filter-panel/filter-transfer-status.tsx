@@ -35,7 +35,8 @@ export function TransferStatusForFilter() {
             <SelectItem value="all">Все</SelectItem>
             <SelectItem value="IN_TRANSIT">В пути</SelectItem>
             <SelectItem value="CONFIRM">Подтверждено</SelectItem>
-            <SelectItem value="REJECT">Отклонено</SelectItem>
+            <SelectItem value="CANCEL">Отменено</SelectItem>
+            <SelectItem value="REJECT">Отказ</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>

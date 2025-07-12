@@ -60,31 +60,36 @@ export function TransferReject({
 
         <Separator />
 
-        <div className="space-y-3">
-          <p className="font-medium text-gray-900">Возможные Решения</p>
-          <div className="grid gap-2">
-            <Button onClick={handleRetransfer} className="w-full justify-start">
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Перемещение
-            </Button>
-            <Button
-              onClick={handleWriteOff}
-              variant="destructive"
-              className="w-full justify-start"
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Списать
-            </Button>
-            <Button
-              onClick={handleReturn}
-              variant="outline"
-              className="w-full justify-start"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Вернуть на объект отправитель
-            </Button>
+        {!selectedTransfer.rejectMode && (
+          <div className="space-y-3">
+            <p className="font-medium text-gray-900">Возможные Решения</p>
+            <div className="grid gap-2">
+              <Button
+                onClick={handleRetransfer}
+                className="w-full justify-start"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Перемещение
+              </Button>
+              <Button
+                onClick={handleWriteOff}
+                variant="destructive"
+                className="w-full justify-start"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Списать
+              </Button>
+              <Button
+                onClick={handleReturn}
+                variant="outline"
+                className="w-full justify-start"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Вернуть на объект отправитель
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

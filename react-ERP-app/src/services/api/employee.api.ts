@@ -114,8 +114,6 @@ export const changeEmployeeDebt = async (
   id: string,
   data: ChangeDebtDto
 ): Promise<EmployeeClothingItem> => {
-  console.log(id);
-
   const res = await api.patch<EmployeeClothingItem>(
     `/employee-clothing/change-debt/${id}`,
     data

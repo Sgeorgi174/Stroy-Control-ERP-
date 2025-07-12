@@ -13,6 +13,11 @@ export const getUserNotifications =
     return response.data;
   };
 
+export const getReturns = async (): Promise<PendingTransfersResponse> => {
+  const response = await api.get("/users/notification-return");
+  return response.data;
+};
+
 export const getFreeForemen = async () => {
   const response = await api.get("/users/foremen");
   return response.data;

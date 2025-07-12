@@ -23,6 +23,9 @@ import { GetToolsQueryDto } from './dto/get-tools-query.dto';
 import { UserService } from 'src/user/user.service';
 import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { RejectToolTransferDto } from './dto/reject-transfer.dto';
+import { RetransferToolDto } from './dto/retransfer.dto';
+import { WriteOffInTransferDto } from './dto/write-off-in-transit.dto';
+import { CancelToolTransferDto } from './dto/cancel-tool-transfer.dto';
 
 @Controller('tools')
 export class ToolController {
@@ -105,12 +108,51 @@ export class ToolController {
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Post('request-photo-transfer/:id')
-  async rejectToolTransfer(
+  async requestPhotoToReject(
     @Param('id') transferId: string,
     @Authorized('phone') phone: string,
   ) {
     await this.userService.setPhotoRequestTransferId(phone, transferId, 'TOOL');
     await this.telegramBotService.sendRequestTransferPhoto(phone);
     return { success: true };
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('retransfer/:id')
+  async reTransfer(
+    @Param('id') transferId: string,
+    @Body() dto: RetransferToolDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.toolService.reTransfer(transferId, dto, userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('transfer-return/:id')
+  async returnToSource(
+    @Param('id') transferId: string,
+    @Authorized('id') userId: string,
+  ) {
+    return this.toolService.returnToSource(transferId, userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('transfer-cancel/:id')
+  async cancelTransfer(
+    @Param('id') transferId: string,
+    @Body() dto: CancelToolTransferDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.toolService.cancelTransfer(transferId, userId, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('transfer-write-off/:id')
+  async writeOffInTransfer(
+    @Param('id') transferId: string,
+    @Body() dto: WriteOffInTransferDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.toolService.writeOffInTransfer(transferId, userId, dto);
   }
 }

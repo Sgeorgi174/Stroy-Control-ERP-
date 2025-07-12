@@ -14,63 +14,125 @@ import type {
   PendingDeviceTransfer,
   PendingToolTransfer,
 } from "@/types/transfers";
-import { CheckCircle, Clock, Package, XCircle } from "lucide-react";
+import { Package } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { transferStatusMap } from "@/constants/transfer-status-map";
 import { TransferConfirm } from "./tranfer-confirm";
 import { TransferInTransit } from "./transfer-in-transit";
 import { TransferReject } from "./transfer-reject";
 import { TransferRoute } from "./transfer-route";
+import { useState } from "react";
+import ResendTransferDialog from "../../dialogs/resend-transfer-dialog";
+import WriteOffTransferDialog from "../../dialogs/write-off-transfer-dialog";
+import ReturnToSenderDialog from "../../dialogs/return-to-sender-dialog";
+import CancelTransferDialog from "../../dialogs/cancel-transfer-dialog";
+import { useCancelToolTransfer } from "@/hooks/tool/useCancelToolTransfer";
+import toast from "react-hot-toast";
+import { TransferCancel } from "./transfer-cancel";
+import { useResendToolTransfer } from "@/hooks/tool/useResendTransfer";
+import {
+  getStatusColor,
+  getStatusIcon,
+} from "@/lib/utils/IconAndColorTransferBadge";
+import { useWriteOffToolInTransfer } from "@/hooks/tool/useWriteOffToolInTransfer";
+import { useReturnToolToSource } from "@/hooks/tool/useReturnToolToSource";
 
 export function TransferSheet() {
   const { isOpen, selectedTransfer, type, closeSheet } =
     useTransferSheetStore();
+  const cancelTransferMutation = useCancelToolTransfer(
+    selectedTransfer ? selectedTransfer.id : ""
+  );
+  const resendToolTransferMutation = useResendToolTransfer(
+    selectedTransfer ? selectedTransfer.id : ""
+  );
+  const writeOffTransferMutation = useWriteOffToolInTransfer(
+    selectedTransfer ? selectedTransfer.id : ""
+  );
+  const returnTransferMutation = useReturnToolToSource();
+
+  const [isResendDialogOpen, setIsResendDialogOpen] = useState(false);
+  const [isWriteOffDialogOpen, setIsWriteOffDialogOpen] = useState(false);
+  const [isReturnDialogOpen, setIsReturnDialogOpen] = useState(false);
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+
+  const [selectedObjectId, setSelectedObjectId] = useState("");
+
+  const [comment, setComment] = useState("");
+
   if (!selectedTransfer) return null;
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return "bg-yellow-100 text-yellow-800";
-      case "IN_TRANSIT":
-        return "bg-blue-100 text-blue-800";
-      case "CONFIRM":
-        return "bg-green-100 text-green-800";
-      case "REJECT":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return <Clock className="w-4 h-4" />;
-      case "IN_TRANSIT":
-        return <Package className="w-4 h-4" />;
-      case "CONFIRM":
-        return <CheckCircle className="w-4 h-4" />;
-      case "REJECT":
-        return <XCircle className="w-4 h-4" />;
-      default:
-        return <Package className="w-4 h-4" />;
-    }
-  };
-
   const handleCancel = () => {
-    console.log("cancel");
+    if (type === "tool") {
+      cancelTransferMutation.mutate(
+        { rejectionComment: comment },
+        {
+          onSuccess: () => {
+            setIsCancelDialogOpen(false);
+            closeSheet();
+          },
+        }
+      );
+    } else {
+      toast.error("Отмена пока доступна только для инструментов");
+    }
+
+    setComment("");
   };
 
-  const handleRetransfer = () => {
-    console.log("retrans");
+  const handleResend = () => {
+    if (type === "tool") {
+      if (!selectedObjectId) {
+        toast.error("Выберите объект для перемещения");
+        return;
+      }
+
+      resendToolTransferMutation.mutate(
+        { toObjectId: selectedObjectId }, // <-- правильно
+        {
+          onSuccess: () => {
+            setIsResendDialogOpen(false);
+            closeSheet();
+          },
+        }
+      );
+    } else {
+      toast.error("Переотправка пока доступна только для инструментов");
+    }
+
+    setSelectedObjectId("");
   };
 
   const handleWriteOff = () => {
-    console.log("write off");
+    if (type === "tool") {
+      writeOffTransferMutation.mutate(
+        { status: "WRITTEN_OFF", comment: comment },
+        {
+          onSuccess: () => {
+            setIsWriteOffDialogOpen(false);
+            closeSheet();
+          },
+        }
+      );
+    } else {
+      toast.error("Отмена пока доступна только для инструментов");
+    }
+
+    setComment("");
   };
 
   const handleReturn = () => {
-    console.log("return");
+    if (type === "tool") {
+      returnTransferMutation.mutate(selectedTransfer.id, {
+        onSuccess: () => {
+          setIsReturnDialogOpen(false);
+          closeSheet();
+          toast.success("Инструмент возвращен отправителю");
+        },
+      });
+    } else {
+      toast.error("Возврат пока доступен только для инструментов");
+    }
   };
 
   return (
@@ -121,14 +183,21 @@ export function TransferSheet() {
           {selectedTransfer.status === "REJECT" && (
             <TransferReject
               selectedTransfer={selectedTransfer}
-              handleRetransfer={handleRetransfer}
-              handleReturn={handleReturn}
-              handleWriteOff={handleWriteOff}
+              handleRetransfer={() => setIsResendDialogOpen(true)}
+              handleReturn={() => setIsReturnDialogOpen(true)}
+              handleWriteOff={() => setIsWriteOffDialogOpen(true)}
             />
           )}
 
           {selectedTransfer.status === "IN_TRANSIT" && (
-            <TransferInTransit handleCancel={handleCancel} />
+            <TransferInTransit
+              handleCancel={() => setIsCancelDialogOpen(true)}
+              selectedTransfer={selectedTransfer}
+            />
+          )}
+
+          {selectedTransfer.status === "CANCEL" && (
+            <TransferCancel selectedTransfer={selectedTransfer} />
           )}
 
           {selectedTransfer.status === "CONFIRM" && (
@@ -136,6 +205,49 @@ export function TransferSheet() {
           )}
         </div>
       </SheetContent>
+
+      {selectedTransfer.status === "REJECT" && (
+        <div>
+          <ResendTransferDialog
+            setSelectedObjectId={setSelectedObjectId}
+            selectedObjectId={selectedObjectId}
+            handleResend={handleResend}
+            isOpen={isResendDialogOpen}
+            onOpenChange={setIsResendDialogOpen}
+            selectedTransfer={selectedTransfer}
+            type={type}
+          />
+          <WriteOffTransferDialog
+            comment={comment}
+            selectedTransfer={selectedTransfer}
+            setComment={setComment}
+            type={type}
+            isOpen={isWriteOffDialogOpen}
+            onOpenChange={setIsWriteOffDialogOpen}
+            handleWriteOff={handleWriteOff}
+          />
+          <ReturnToSenderDialog
+            handleReturn={handleReturn}
+            isOpen={isReturnDialogOpen}
+            selectedTransfer={selectedTransfer}
+            onOpenChange={setIsReturnDialogOpen}
+            type={type}
+          />
+        </div>
+      )}
+
+      {selectedTransfer.status === "IN_TRANSIT" &&
+        selectedTransfer.rejectMode !== "RETURN_TO_SOURCE" && (
+          <CancelTransferDialog
+            comment={comment}
+            setComment={setComment}
+            handleCancel={handleCancel}
+            isOpen={isCancelDialogOpen}
+            onOpenChange={setIsCancelDialogOpen}
+            selectedTransfer={selectedTransfer}
+            type={type}
+          />
+        )}
     </Sheet>
   );
 }

@@ -12,6 +12,7 @@ import ClothesNotification from "./clothes-notification/clothes-notification";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useUserReturns } from "@/hooks/user/useGetReturns";
 
 type TransferNotification =
   | ({ type: "tool" } & PendingToolTransfer)
@@ -28,6 +29,11 @@ export function NotificationCard() {
     isError,
   } = useUserNotifications();
 
+  const { data: returns = { tools: [], devices: [], clothes: [] } } =
+    useUserReturns();
+
+  console.log(returns);
+
   const allNotifications: TransferNotification[] = [
     ...unconfirmedItems.tools.map((t) => ({ ...t, type: "tool" as const })),
     ...unconfirmedItems.devices.map((d) => ({ ...d, type: "device" as const })),
@@ -42,7 +48,7 @@ export function NotificationCard() {
   );
 
   return (
-    <Tabs defaultValue="important" className="w-[720px] gap-0 ">
+    <Tabs defaultValue="important" className="w-full gap-0 ">
       {/* TabsList СНАРУЖИ — без паддингов и без скролла */}
       <TabsList className="w-full h-[40px] sticky top-0 z-3 bg-accent border border-b-0 rounded-b-none rounded-t-xl">
         <TabsTrigger value="important">
@@ -76,7 +82,7 @@ export function NotificationCard() {
       {/* Только контент в скролле и в карточке */}
       <ScrollArea
         scrollHideDelay={0}
-        className="w-[720px] max-h-[550px] min-h-[550px] bg-accent border border-t-0 rounded-b-xl"
+        className="w-full max-h-[550px] min-h-[550px] bg-accent border border-t-0 rounded-b-xl"
       >
         <div className="bg-accent min-h-full p-2 pr-4">
           {/* Важное */}

@@ -11,8 +11,14 @@ export class UserController {
 
   @Authorization(Roles.FOREMAN)
   @Get('notification')
-  async getFiltered(@Authorized('id') userId: string) {
+  async getNotifications(@Authorized('id') userId: string) {
     return this.userService.getNotifications(userId);
+  }
+
+  @Authorization(Roles.FOREMAN)
+  @Get('notification-return')
+  async getReturns(@Authorized('id') userId: string) {
+    return this.userService.getReturns(userId);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)

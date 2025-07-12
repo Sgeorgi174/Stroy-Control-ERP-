@@ -1,5 +1,6 @@
 export const transferStatusMap = {
   IN_TRANSIT: "В пути",
-  REJECT: "Отклонено",
+  REJECT: "Отказ",
   CONFIRM: "Подтверждено",
+  CANCEL: "Отменено",
 };

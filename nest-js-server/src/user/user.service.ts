@@ -30,6 +30,10 @@ export class UserService {
           where: {
             toObjectId: object.id,
             status: 'IN_TRANSIT',
+            OR: [
+              { rejectMode: null },
+              { rejectMode: { not: 'RETURN_TO_SOURCE' } },
+            ],
           },
           include: {
             tool: {
@@ -157,6 +161,123 @@ export class UserService {
     }
   }
 
+  public async getReturns(userId: string) {
+    try {
+      const user = await this.prismaService.user.findUnique({
+        where: { id: userId },
+        include: { object: true },
+      });
+
+      const object = user?.object;
+
+      if (!object) {
+        throw new NotFoundException('Вы не назначены ни на один объект');
+      }
+      console.log(object);
+
+      return await this.prismaService.$transaction(async (prisma) => {
+        const tools = await prisma.pendingTransfersTools.findMany({
+          where: {
+            toObjectId: object.id,
+            status: 'IN_TRANSIT',
+            rejectMode: 'RETURN_TO_SOURCE',
+          },
+          include: {
+            tool: {
+              select: { name: true, id: true, serialNumber: true },
+            },
+            toObject: {
+              select: {
+                foreman: {
+                  select: { firstName: true, lastName: true, phone: true },
+                },
+                name: true,
+              },
+            },
+            fromObject: {
+              select: {
+                foreman: {
+                  select: { firstName: true, lastName: true, phone: true },
+                },
+                name: true,
+              },
+            },
+          },
+        });
+
+        const devices = await prisma.pendingTransfersDevices.findMany({
+          where: {
+            toObjectId: object.id,
+            status: 'IN_TRANSIT',
+            rejectMode: 'RETURN_TO_SOURCE',
+          },
+          include: {
+            device: {
+              select: { name: true, id: true, serialNumber: true },
+            },
+            toObject: {
+              select: {
+                foreman: {
+                  select: { firstName: true, lastName: true, phone: true },
+                },
+                name: true,
+              },
+            },
+            fromObject: {
+              select: {
+                foreman: {
+                  select: { firstName: true, lastName: true, phone: true },
+                },
+                name: true,
+              },
+            },
+          },
+        });
+
+        const clothes = await prisma.pendingTransfersClothes.findMany({
+          where: {
+            toObjectId: object.id,
+            status: 'IN_TRANSIT',
+            rejectMode: 'RETURN_TO_SOURCE',
+          },
+          include: {
+            clothes: {
+              select: {
+                name: true,
+                season: true,
+                type: true,
+                size: true,
+                id: true,
+              },
+            },
+            toObject: {
+              select: {
+                foreman: {
+                  select: { firstName: true, lastName: true, phone: true },
+                },
+                name: true,
+              },
+            },
+            fromObject: {
+              select: {
+                foreman: {
+                  select: { firstName: true, lastName: true, phone: true },
+                },
+                name: true,
+              },
+            },
+          },
+        });
+
+        return { clothes, devices, tools };
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Не удалось получить уведомления',
+      });
+    }
+  }
+
   public async getAllTransfers(filters: QueryTransfersFilterDto) {
     try {
       const { status, fromObjectId, toObjectId, updatedAt } = filters;
@@ -187,6 +308,7 @@ export class UserService {
             photoUrl: true,
             rejectionComment: true,
             toolId: true,
+            rejectMode: true,
             fromObject: {
               select: {
                 name: true,
@@ -226,6 +348,7 @@ export class UserService {
             photoUrl: true,
             rejectionComment: true,
             deviceId: true,
+            rejectMode: true,
             createdAt: true,
             updatedAt: true,
             fromObject: {
@@ -278,6 +401,7 @@ export class UserService {
             photoUrl: true,
             rejectionComment: true,
             clothesId: true,
+            rejectMode: true,
             fromObject: {
               select: {
                 name: true,

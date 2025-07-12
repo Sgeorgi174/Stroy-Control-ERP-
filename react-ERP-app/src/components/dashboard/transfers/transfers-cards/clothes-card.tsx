@@ -1,9 +1,13 @@
+import { Badge } from "@/components/ui/badge";
 import { BootIcon } from "@/components/ui/boot";
 import { Card, CardContent } from "@/components/ui/card";
 import { transferStatusMap } from "@/constants/transfer-status-map";
 import { formatDate, formatTime } from "@/lib/utils/format-date";
 import { getColorBorder } from "@/lib/utils/gerColorBadge";
-import { getColorStatus } from "@/lib/utils/getColorStatus";
+import {
+  getStatusColor,
+  getStatusIcon,
+} from "@/lib/utils/IconAndColorTransferBadge";
 import { useTransferSheetStore } from "@/stores/transfer-sheet-store";
 import type { PendingClothesTransfer } from "@/types/transfers";
 import {
@@ -98,12 +102,17 @@ export function TransferClothesCard({
               </div>
 
               {/* Status */}
-              <div
-                className={`col-span-2 text-xs p-2 border ${getColorStatus(
-                  transfer.status
-                )} rounded-xl text-center`}
-              >
-                {transferStatusMap[transfer.status]}
+              <div className="w-full flex  flex-col  justify-center gap-2">
+                <div className="flex  items-center gap-2">
+                  <Badge
+                    className={`${getStatusColor(
+                      transfer.status
+                    )} flex items-center gap-1`}
+                  >
+                    {getStatusIcon(transfer.status)}
+                    {transferStatusMap[transfer.status]}
+                  </Badge>
+                </div>
               </div>
             </div>
           </CardContent>

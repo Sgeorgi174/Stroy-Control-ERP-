@@ -22,3 +22,16 @@ export interface TransferToolDto {
 export interface RejectToolDto {
   rejectionComment: string;
 }
+
+export interface ResendToolTransferDto {
+  toObjectId: string;
+}
+
+export interface WirteOffToolInTransferDto {
+  status: ToolStatus;
+  comment: string;
+}
+
+export interface CancelToolTransferDto {
+  rejectionComment: string;
+}
