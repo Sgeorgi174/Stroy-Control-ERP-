@@ -1,11 +1,14 @@
 import { api } from "@/lib/api";
 import type { Device, DeviceStatus } from "@/types/device";
 import type {
+  CancelDeviceTransferDto,
   CreateDeviceDto,
   RejectDeviceDto,
+  ResendDeviceTransferDto,
   TransferDeviceDto,
   UpdateDeviceDto,
   UpdateDeviceStatusDto,
+  WirteOffDeviceInTransferDto,
 } from "@/types/dto/device.dto";
 
 export const getFilteredDevice = async (params: {
@@ -73,6 +76,35 @@ export const rejectDeviceTransfer = async (
   data: RejectDeviceDto
 ) => {
   const res = await api.patch(`/devices/reject/${id}`, data);
+  return res.data;
+};
+
+export const resendDeviceTransfer = async (
+  id: string,
+  data: ResendDeviceTransferDto
+) => {
+  const res = await api.post(`/devices/retransfer/${id}`, data);
+  return res.data;
+};
+
+export const returnDeviceToSource = async (id: string) => {
+  const res = await api.post(`/devices/transfer-return/${id}`);
+  return res.data;
+};
+
+export const cancelDeviceTransfer = async (
+  id: string,
+  data: CancelDeviceTransferDto
+) => {
+  const res = await api.post(`/devices/transfer-cancel/${id}`, data);
+  return res.data;
+};
+
+export const writeOffDeviceInTransfer = async (
+  id: string,
+  data: WirteOffDeviceInTransferDto
+) => {
+  const res = await api.post(`/devices/transfer-write-off/${id}`, data);
   return res.data;
 };
 

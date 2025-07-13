@@ -8,9 +8,7 @@ type DevieNotificationProp = {
   deviceTransfer: PendingDeviceTransfer;
 };
 
-export default function DeviceNotification({
-  deviceTransfer,
-}: DevieNotificationProp) {
+export function DeviceNotification({ deviceTransfer }: DevieNotificationProp) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (

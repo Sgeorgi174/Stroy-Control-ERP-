@@ -24,8 +24,8 @@ import { UserService } from 'src/user/user.service';
 import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { RejectToolTransferDto } from './dto/reject-transfer.dto';
 import { RetransferToolDto } from './dto/retransfer.dto';
-import { WriteOffInTransferDto } from './dto/write-off-in-transit.dto';
-import { CancelToolTransferDto } from './dto/cancel-tool-transfer.dto';
+import { WriteOffToolInTransferDto } from './dto/write-off-in-transit.dto';
+import { CancelToolTransferDto } from './dto/cancel-transfer.dto';
 
 @Controller('tools')
 export class ToolController {
@@ -150,7 +150,7 @@ export class ToolController {
   @Post('transfer-write-off/:id')
   async writeOffInTransfer(
     @Param('id') transferId: string,
-    @Body() dto: WriteOffInTransferDto,
+    @Body() dto: WriteOffToolInTransferDto,
     @Authorized('id') userId: string,
   ) {
     return this.toolService.writeOffInTransfer(transferId, userId, dto);

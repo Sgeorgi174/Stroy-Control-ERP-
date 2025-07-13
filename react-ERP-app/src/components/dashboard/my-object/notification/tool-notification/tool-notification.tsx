@@ -8,9 +8,7 @@ import { useState } from "react";
 import { ToolNotificationCard } from "./tool-notification-card";
 import { ToolTransferDialog } from "./tool-transfer-dialog";
 
-export default function ToolNotification({
-  toolTransfer,
-}: ToolNotificationProp) {
+export function ToolNotification({ toolTransfer }: ToolNotificationProp) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (

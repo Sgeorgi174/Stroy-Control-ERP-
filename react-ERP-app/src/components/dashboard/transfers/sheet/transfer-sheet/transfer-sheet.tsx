@@ -29,27 +29,49 @@ import CancelTransferDialog from "../../dialogs/cancel-transfer-dialog";
 import { useCancelToolTransfer } from "@/hooks/tool/useCancelToolTransfer";
 import toast from "react-hot-toast";
 import { TransferCancel } from "./transfer-cancel";
-import { useResendToolTransfer } from "@/hooks/tool/useResendTransfer";
+import { useResendToolTransfer } from "@/hooks/tool/useResendToolTransfer";
 import {
   getStatusColor,
   getStatusIcon,
 } from "@/lib/utils/IconAndColorTransferBadge";
 import { useWriteOffToolInTransfer } from "@/hooks/tool/useWriteOffToolInTransfer";
 import { useReturnToolToSource } from "@/hooks/tool/useReturnToolToSource";
+import { getColorStatus } from "@/lib/utils/getColorStatus";
+import { rejectModeMap } from "@/constants/rejectModeMap";
+import { useCancelDeviceTransfer } from "@/hooks/device/useCancelDeviceTransfer";
+import { useResendDeviceTransfer } from "@/hooks/device/useResendDeviceTransfer";
+import { useWriteOffDeviceInTransfer } from "@/hooks/device/useWriteOffDeviceInTransfer";
+import { useReturnDeviceToSource } from "@/hooks/device/useReturnDeviceToSource";
 
 export function TransferSheet() {
   const { isOpen, selectedTransfer, type, closeSheet } =
     useTransferSheetStore();
-  const cancelTransferMutation = useCancelToolTransfer(
+  {
+    /* TOOL HOOKS*/
+  }
+  const cancelToolTransferMutation = useCancelToolTransfer(
     selectedTransfer ? selectedTransfer.id : ""
   );
   const resendToolTransferMutation = useResendToolTransfer(
     selectedTransfer ? selectedTransfer.id : ""
   );
-  const writeOffTransferMutation = useWriteOffToolInTransfer(
+  const writeOffToolTransferMutation = useWriteOffToolInTransfer(
     selectedTransfer ? selectedTransfer.id : ""
   );
-  const returnTransferMutation = useReturnToolToSource();
+  const returnToolTransferMutation = useReturnToolToSource();
+  {
+    /* DIVICE HOOKS*/
+  }
+  const cancelDeviceTransferMutation = useCancelDeviceTransfer(
+    selectedTransfer ? selectedTransfer.id : ""
+  );
+  const resendDeviceTransferMutation = useResendDeviceTransfer(
+    selectedTransfer ? selectedTransfer.id : ""
+  );
+  const writeOffDeviceTransferMutation = useWriteOffDeviceInTransfer(
+    selectedTransfer ? selectedTransfer.id : ""
+  );
+  const returnDeviceTransferMutation = useReturnDeviceToSource();
 
   const [isResendDialogOpen, setIsResendDialogOpen] = useState(false);
   const [isWriteOffDialogOpen, setIsWriteOffDialogOpen] = useState(false);
@@ -64,7 +86,7 @@ export function TransferSheet() {
 
   const handleCancel = () => {
     if (type === "tool") {
-      cancelTransferMutation.mutate(
+      cancelToolTransferMutation.mutate(
         { rejectionComment: comment },
         {
           onSuccess: () => {
@@ -73,20 +95,29 @@ export function TransferSheet() {
           },
         }
       );
-    } else {
-      toast.error("Отмена пока доступна только для инструментов");
+    }
+
+    if (type === "device") {
+      cancelDeviceTransferMutation.mutate(
+        { rejectionComment: comment },
+        {
+          onSuccess: () => {
+            setIsCancelDialogOpen(false);
+            closeSheet();
+          },
+        }
+      );
     }
 
     setComment("");
   };
 
   const handleResend = () => {
+    if (!selectedObjectId) {
+      toast.error("Выберите объект для перемещения");
+      return;
+    }
     if (type === "tool") {
-      if (!selectedObjectId) {
-        toast.error("Выберите объект для перемещения");
-        return;
-      }
-
       resendToolTransferMutation.mutate(
         { toObjectId: selectedObjectId }, // <-- правильно
         {
@@ -96,8 +127,18 @@ export function TransferSheet() {
           },
         }
       );
-    } else {
-      toast.error("Переотправка пока доступна только для инструментов");
+    }
+
+    if (type === "device") {
+      resendDeviceTransferMutation.mutate(
+        { toObjectId: selectedObjectId }, // <-- правильно
+        {
+          onSuccess: () => {
+            setIsResendDialogOpen(false);
+            closeSheet();
+          },
+        }
+      );
     }
 
     setSelectedObjectId("");
@@ -105,7 +146,7 @@ export function TransferSheet() {
 
   const handleWriteOff = () => {
     if (type === "tool") {
-      writeOffTransferMutation.mutate(
+      writeOffToolTransferMutation.mutate(
         { status: "WRITTEN_OFF", comment: comment },
         {
           onSuccess: () => {
@@ -114,8 +155,18 @@ export function TransferSheet() {
           },
         }
       );
-    } else {
-      toast.error("Отмена пока доступна только для инструментов");
+    }
+
+    if (type === "device") {
+      writeOffDeviceTransferMutation.mutate(
+        { status: "WRITTEN_OFF", comment: comment },
+        {
+          onSuccess: () => {
+            setIsWriteOffDialogOpen(false);
+            closeSheet();
+          },
+        }
+      );
     }
 
     setComment("");
@@ -123,15 +174,23 @@ export function TransferSheet() {
 
   const handleReturn = () => {
     if (type === "tool") {
-      returnTransferMutation.mutate(selectedTransfer.id, {
+      returnToolTransferMutation.mutate(selectedTransfer.id, {
         onSuccess: () => {
           setIsReturnDialogOpen(false);
           closeSheet();
           toast.success("Инструмент возвращен отправителю");
         },
       });
-    } else {
-      toast.error("Возврат пока доступен только для инструментов");
+    }
+
+    if (type === "device") {
+      returnDeviceTransferMutation.mutate(selectedTransfer.id, {
+        onSuccess: () => {
+          setIsReturnDialogOpen(false);
+          closeSheet();
+          toast.success("Инструмент возвращен отправителю");
+        },
+      });
     }
   };
 
@@ -160,6 +219,15 @@ export function TransferSheet() {
               {getStatusIcon(selectedTransfer.status)}
               {transferStatusMap[selectedTransfer.status]}
             </Badge>
+            {selectedTransfer.rejectMode && (
+              <Badge
+                className={`col-span-2 text-xs bg-transparent text-primary ${getColorStatus(
+                  selectedTransfer.status
+                )} rounded-xl font-medium text-center`}
+              >
+                {rejectModeMap[selectedTransfer.rejectMode]}
+              </Badge>
+            )}
           </div>
         </SheetHeader>
         <div className="space-y-6 mt-3 px-3">

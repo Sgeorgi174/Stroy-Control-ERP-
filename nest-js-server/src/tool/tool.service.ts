@@ -15,8 +15,8 @@ import { GetToolsQueryDto } from './dto/get-tools-query.dto';
 import { buildStatusFilter } from 'src/libs/common/utils/buildStatusFilter';
 import { RejectToolTransferDto } from './dto/reject-transfer.dto';
 import { RetransferToolDto } from './dto/retransfer.dto';
-import { WriteOffInTransferDto } from './dto/write-off-in-transit.dto';
-import { CancelToolTransferDto } from './dto/cancel-tool-transfer.dto';
+import { WriteOffToolInTransferDto } from './dto/write-off-in-transit.dto';
+import { CancelToolTransferDto } from './dto/cancel-transfer.dto';
 
 @Injectable()
 export class ToolService {
@@ -328,7 +328,9 @@ export class ToolService {
         await this.toolHistoryService.create({
           userId,
           toolId: transfer.tool.id,
-          fromObjectId: undefined,
+          fromObjectId: transfer.fromObjectId
+            ? transfer.fromObjectId
+            : undefined,
           toObjectId: dto.toObjectId,
           action: 'TRANSFER',
         });
@@ -364,13 +366,14 @@ export class ToolService {
         await this.toolHistoryService.create({
           userId,
           toolId: transfer.tool.id,
-          fromObjectId: undefined,
+          fromObjectId: transfer.toObjectId,
           toObjectId: transfer.fromObjectId as string,
           action: 'RETURN_TO_SOURCE',
         });
 
         return await prisma.pendingTransfersTools.create({
           data: {
+            fromObjectId: transfer.toObjectId,
             toObjectId: transfer.fromObjectId as string,
             status: 'IN_TRANSIT',
             toolId: transfer.toolId,
@@ -392,7 +395,7 @@ export class ToolService {
   public async writeOffInTransfer(
     recordId: string,
     userId: string,
-    dto: WriteOffInTransferDto,
+    dto: WriteOffToolInTransferDto,
   ) {
     const transfer = await this.getTransferById(recordId);
 
@@ -409,8 +412,6 @@ export class ToolService {
         });
       });
     } catch (error) {
-      console.log(error);
-
       handlePrismaError(error, {
         notFoundMessage: 'Запись не найдена',
         conflictMessage: 'Обновление нарушает уникальность данных',

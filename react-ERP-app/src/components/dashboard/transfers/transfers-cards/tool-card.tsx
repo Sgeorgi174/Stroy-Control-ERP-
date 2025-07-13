@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { rejectModeMap } from "@/constants/rejectModeMap";
 import { transferStatusMap } from "@/constants/transfer-status-map";
 import { formatDate, formatTime } from "@/lib/utils/format-date";
 import { getColorBorder } from "@/lib/utils/gerColorBadge";
@@ -21,12 +22,6 @@ import {
 
 type TransferToolCardProps = {
   transferTools: PendingToolTransfer[];
-};
-
-const rejectModeMap = {
-  RESEND: "Перемещение",
-  RETURN_TO_SOURCE: "Возврат",
-  WRITE_OFF: "Списание",
 };
 
 export function TransferToolCard({ transferTools }: TransferToolCardProps) {
@@ -74,42 +69,28 @@ export function TransferToolCard({ transferTools }: TransferToolCardProps) {
 
               {/* Transfer Route */}
 
-              {transfer.rejectMode === "RETURN_TO_SOURCE" &&
-              transfer.status === "IN_TRANSIT" ? (
-                <div className="col-span-4 flex gap-3 items-center">
-                  <div className="flex items-center gap-1 min-w-0">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-muted-foreground" />
-                      <span className="text-sm text-primary truncate">
-                        Возврат на объект {transfer.toObject.name}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="col-span-4 flex gap-3 items-center">
-                  <div className="flex items-center gap-1 min-w-0">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-muted-foreground" />
-                      <span className="text-sm text-primary truncate">
-                        {transfer.fromObject.name}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex gap-1">
-                    <Minus className="w-3 h-3 text-muted-foreground" />
-                    <Minus className="w-3 h-3 text-muted-foreground" />
-                    <Minus className="w-3 h-3 text-muted-foreground" />
-                    <ArrowRight className="w-3 h-3 text-muted-foreground" />
-                  </div>
-                  <div className="flex items-center gap-1 min-w-0 flex-1">
+              <div className="col-span-4 flex gap-3 items-center">
+                <div className="flex items-center gap-1 min-w-0">
+                  <div className="flex items-center gap-1">
                     <MapPin className="w-3 h-3 text-muted-foreground" />
                     <span className="text-sm text-primary truncate">
-                      {transfer.toObject.name}
+                      {transfer.fromObject.name}
                     </span>
                   </div>
                 </div>
-              )}
+                <div className="flex gap-1">
+                  <Minus className="w-3 h-3 text-muted-foreground" />
+                  <Minus className="w-3 h-3 text-muted-foreground" />
+                  <Minus className="w-3 h-3 text-muted-foreground" />
+                  <ArrowRight className="w-3 h-3 text-muted-foreground" />
+                </div>
+                <div className="flex items-center gap-1 min-w-0 flex-1">
+                  <MapPin className="w-3 h-3 text-muted-foreground" />
+                  <span className="text-sm text-primary truncate">
+                    {transfer.toObject.name}
+                  </span>
+                </div>
+              </div>
 
               <div className="col-span-2">
                 {transfer.rejectMode && transfer.status === "REJECT" && (
@@ -130,6 +111,17 @@ export function TransferToolCard({ transferTools }: TransferToolCardProps) {
                     {"Требуется действие"}
                   </Badge>
                 )}
+
+                {transfer.rejectMode === "RETURN_TO_SOURCE" &&
+                  transfer.status === "IN_TRANSIT" && (
+                    <Badge
+                      className={`col-span-2 text-xs bg-transparent text-primary ${getColorStatus(
+                        transfer.status
+                      )} rounded-xl font-medium text-center`}
+                    >
+                      {rejectModeMap[transfer.rejectMode]}
+                    </Badge>
+                  )}
               </div>
 
               {/* Status */}

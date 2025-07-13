@@ -1,8 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { rejectModeMap } from "@/constants/rejectModeMap";
 import { transferStatusMap } from "@/constants/transfer-status-map";
 import { formatDate, formatTime } from "@/lib/utils/format-date";
 import { getColorBorder } from "@/lib/utils/gerColorBadge";
+import { getColorStatus } from "@/lib/utils/getColorStatus";
 import {
   getStatusColor,
   getStatusIcon,
@@ -39,7 +41,7 @@ export function TransferDeviceCard({
           <CardContent className="p-4">
             <div className="grid grid-cols-12 gap-4 items-center">
               {/* Tool & Serial */}
-              <div className="col-span-3 flex items-center gap-3">
+              <div className="col-span-2 flex items-center gap-3">
                 <div className="w-8 h-8 bg-muted rounded-md flex items-center justify-center flex-shrink-0">
                   <Package className="w-6 h-6 text-primary" />
                 </div>
@@ -66,7 +68,7 @@ export function TransferDeviceCard({
               </div>
 
               {/* Transfer Route */}
-              <div className="col-span-5 flex gap-3 items-center">
+              <div className="col-span-4 flex gap-3 items-center">
                 <div className="flex items-center gap-1 min-w-0">
                   <MapPin className="w-3 h-3 text-muted-foreground" />
                   <span className="text-sm text-primary truncate">
@@ -85,6 +87,38 @@ export function TransferDeviceCard({
                     {transfer.toObject.name}
                   </span>
                 </div>
+              </div>
+
+              <div className="col-span-2">
+                {transfer.rejectMode && transfer.status === "REJECT" && (
+                  <Badge
+                    className={`col-span-2 text-xs bg-transparent text-primary ${getColorStatus(
+                      transfer.status
+                    )} rounded-xl font-medium text-center`}
+                  >
+                    {rejectModeMap[transfer.rejectMode]}
+                  </Badge>
+                )}
+                {!transfer.rejectMode && transfer.status === "REJECT" && (
+                  <Badge
+                    className={`col-span-2 animate-caret-blink text-xs bg-transparent text-primary ${getColorStatus(
+                      transfer.status
+                    )} rounded-xl font-medium text-center`}
+                  >
+                    {"Требуется действие"}
+                  </Badge>
+                )}
+
+                {transfer.rejectMode === "RETURN_TO_SOURCE" &&
+                  transfer.status === "IN_TRANSIT" && (
+                    <Badge
+                      className={`col-span-2 text-xs bg-transparent text-primary ${getColorStatus(
+                        transfer.status
+                      )} rounded-xl font-medium text-center`}
+                    >
+                      {rejectModeMap[transfer.rejectMode]}
+                    </Badge>
+                  )}
               </div>
 
               {/* Status */}

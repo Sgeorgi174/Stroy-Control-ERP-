@@ -173,7 +173,6 @@ export class UserService {
       if (!object) {
         throw new NotFoundException('Вы не назначены ни на один объект');
       }
-      console.log(object);
 
       return await this.prismaService.$transaction(async (prisma) => {
         const tools = await prisma.pendingTransfersTools.findMany({

@@ -1,12 +1,12 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { ToolStatus } from 'generated/prisma';
+import { DeviceStatus } from 'generated/prisma';
 
-export class WriteOffToolInTransferDto {
-  @IsEnum(ToolStatus, {
-    message: `Статус должен быть одним из: ${Object.values(ToolStatus).join(', ')}`,
+export class WriteOffDeviceInTransferDto {
+  @IsEnum(DeviceStatus, {
+    message: `Статус должен быть одним из: ${Object.values(DeviceStatus).join(', ')}`,
   })
   @IsNotEmpty({ message: 'Новый статус обязателен' })
-  status: ToolStatus;
+  status: DeviceStatus;
 
   @IsNotEmpty({ message: 'Коментарий обязателен' })
   @IsString()

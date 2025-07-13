@@ -58,7 +58,7 @@ export function TransferReject({
           </div>
         )}
 
-        <Separator />
+        {!selectedTransfer.rejectMode && <Separator />}
 
         {!selectedTransfer.rejectMode && (
           <div className="space-y-3">

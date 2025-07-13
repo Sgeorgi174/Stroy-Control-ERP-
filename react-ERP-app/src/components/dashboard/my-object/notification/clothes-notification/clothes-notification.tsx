@@ -8,7 +8,7 @@ type ClothesNotificationProp = {
   clothesTransfer: PendingClothesTransfer;
 };
 
-export default function ClothesNotification({
+export function ClothesNotification({
   clothesTransfer,
 }: ClothesNotificationProp) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

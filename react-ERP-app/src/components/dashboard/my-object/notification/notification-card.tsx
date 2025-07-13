@@ -1,14 +1,14 @@
 import { useUserNotifications } from "@/hooks/user/useGetNotification";
 import { useGetStatusObject } from "@/hooks/user/useGetStatusObject";
-import NotificationPanel from "./accept-object-notification/accept-object";
-import ToolNotification from "./tool-notification/tool-notification";
+import { ObjectNotification } from "./accept-object-notification/accept-object";
 import type {
   PendingToolTransfer,
   PendingDeviceTransfer,
   PendingClothesTransfer,
 } from "@/types/transfers";
-import DeviceNotification from "./device-notification/device-notification";
-import ClothesNotification from "./clothes-notification/clothes-notification";
+import { ToolNotification } from "./tool-notification/tool-notification";
+import { DeviceNotification } from "./device-notification/device-notification";
+import { ClothesNotification } from "./clothes-notification/clothes-notification";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -25,12 +25,15 @@ export function NotificationCard() {
 
   const {
     data: unconfirmedItems = { tools: [], devices: [], clothes: [] },
-    isLoading,
-    isError,
+    isLoading: isLoadingTransfers,
+    isError: isErrorTransfers,
   } = useUserNotifications();
 
-  const { data: returns = { tools: [], devices: [], clothes: [] } } =
-    useUserReturns();
+  const {
+    data: returns = { tools: [], devices: [], clothes: [] },
+    isLoading: isLoadingReturns,
+    isError: isErrorReturns,
+  } = useUserReturns();
 
   console.log(returns);
 
@@ -43,7 +46,20 @@ export function NotificationCard() {
     })),
   ];
 
-  const sortedNotifications = allNotifications.sort(
+  const allReturnsNotification: TransferNotification[] = [
+    ...returns.tools.map((t) => ({ ...t, type: "tool" as const })),
+    ...returns.devices.map((d) => ({ ...d, type: "device" as const })),
+    ...returns.clothes.map((c) => ({
+      ...c,
+      type: "clothes" as const,
+    })),
+  ];
+
+  const sortedTransferNotifications = allNotifications.sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
+
+  const sortedReturnsNotifications = allReturnsNotification.sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
 
@@ -64,7 +80,7 @@ export function NotificationCard() {
         >
           Перемещения
           <Badge className="ml-2 rounded-full bg-muted text-muted-foreground">
-            {sortedNotifications.length}
+            {sortedTransferNotifications.length}
           </Badge>
         </TabsTrigger>
 
@@ -87,40 +103,58 @@ export function NotificationCard() {
         <div className="bg-accent min-h-full p-2 pr-4">
           {/* Важное */}
           <TabsContent value="important">
-            {myObject ? (
-              <NotificationPanel
+            {myObject && (
+              <ObjectNotification
                 tools={myObject.tools}
                 devices={myObject.devices}
                 clothes={myObject.clothes}
                 objectId={myObject.id}
               />
-            ) : (
-              <div className="w-full py-6 text-center text-muted-foreground/50">
-                Нет важных уведомлений
-              </div>
             )}
+
+            {!isLoadingReturns &&
+              !isErrorReturns &&
+              sortedReturnsNotifications.map((item) => {
+                const key = `${item.type}-${item.id}`;
+                switch (item.type) {
+                  case "tool":
+                    return <ToolNotification key={key} toolTransfer={item} />;
+                  case "device":
+                    return (
+                      <DeviceNotification key={key} deviceTransfer={item} />
+                    );
+                  case "clothes":
+                    return (
+                      <ClothesNotification key={key} clothesTransfer={item} />
+                    );
+                  default:
+                    return null;
+                }
+              })}
           </TabsContent>
 
           {/* Перемещения */}
           <TabsContent className="flex flex-col gap-3" value="transfers">
-            {isLoading && (
+            {isLoadingTransfers && (
               <div className="w-full py-6 text-center text-muted-foreground/50">
                 Загрузка уведомлений...
               </div>
             )}
-            {isError && (
+            {isErrorTransfers && (
               <div className="w-full py-6 text-center text-red-500">
                 Ошибка при загрузке уведомлений
               </div>
             )}
-            {!isLoading && !isError && sortedNotifications.length === 0 && (
-              <div className="w-full py-6 text-center text-gray-200">
-                Новых уведомлений нет
-              </div>
-            )}
-            {!isLoading &&
-              !isError &&
-              sortedNotifications.map((item) => {
+            {!isLoadingTransfers &&
+              !isErrorTransfers &&
+              sortedTransferNotifications.length === 0 && (
+                <div className="w-full py-6 text-center text-gray-200">
+                  Новых уведомлений нет
+                </div>
+              )}
+            {!isLoadingTransfers &&
+              !isErrorTransfers &&
+              sortedTransferNotifications.map((item) => {
                 const key = `${item.type}-${item.id}`;
                 switch (item.type) {
                   case "tool":

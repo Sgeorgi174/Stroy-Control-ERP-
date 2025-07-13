@@ -26,3 +26,16 @@ export interface UpdateDeviceStatusDto {
 export interface RejectDeviceDto {
   rejectionComment: string;
 }
+
+export interface ResendDeviceTransferDto {
+  toObjectId: string;
+}
+
+export interface WirteOffDeviceInTransferDto {
+  status: DeviceStatus;
+  comment: string;
+}
+
+export interface CancelDeviceTransferDto {
+  rejectionComment: string;
+}

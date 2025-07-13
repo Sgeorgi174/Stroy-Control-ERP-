@@ -40,7 +40,7 @@ type NotificationPanelProp = {
   objectId: string;
 };
 
-export default function NotificationPanel({
+export function ObjectNotification({
   tools,
   devices,
   clothes,

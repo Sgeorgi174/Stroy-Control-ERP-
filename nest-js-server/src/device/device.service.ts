@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -15,6 +14,9 @@ import { DeviceHistoryService } from 'src/device-history/device-history.service'
 import { GetDeviceQueryDto } from './dto/get-device-query.dto';
 import { buildStatusFilter } from 'src/libs/common/utils/buildStatusFilter';
 import { RejectDeviceTransferDto } from './dto/reject-transfer.dto';
+import { RetransferDeviceDto } from './dto/retransfer.dto';
+import { WriteOffDeviceInTransferDto } from './dto/write-off-in-transit.dto';
+import { CancelDeviceTransferDto } from './dto/cancel-transfer.dto';
 
 @Injectable()
 export class DeviceService {
@@ -71,6 +73,18 @@ export class DeviceService {
     });
     if (!device) throw new NotFoundException('Устройство не найдено');
     return device;
+  }
+
+  public async getTransferById(id: string) {
+    const transfer =
+      await this.prismaService.pendingTransfersDevices.findUnique({
+        where: { id },
+        include: { device: true },
+      });
+
+    if (!transfer) throw new NotFoundException('Перемещение не найдено');
+
+    return transfer;
   }
 
   public async getFiltered(query: GetDeviceQueryDto) {
@@ -132,7 +146,7 @@ export class DeviceService {
   }
 
   async changeStatus(id: string, userId: string, dto: UpdateStatusDto) {
-    const { device } = await this.accessObject(id, userId);
+    const device = await this.getById(id);
 
     try {
       return await this.prismaService.$transaction(async (prisma) => {
@@ -216,14 +230,11 @@ export class DeviceService {
   }
 
   public async confirmTransfer(recordId: string, userId: string) {
-    const transfer =
-      await this.prismaService.pendingTransfersDevices.findUnique({
-        where: { id: recordId },
-        include: { device: true },
-      });
+    const transfer = await this.getTransferById(recordId);
 
-    if (!transfer)
-      throw new BadRequestException('Не удалось найти перемещение');
+    if (transfer.status !== 'IN_TRANSIT') {
+      throw new ConflictException('Перемещение уже завершено');
+    }
 
     try {
       return await this.prismaService.$transaction(async (prisma) => {
@@ -267,6 +278,11 @@ export class DeviceService {
     userId: string,
     dto: RejectDeviceTransferDto,
   ) {
+    const transfer = await this.getTransferById(recordId);
+
+    if (transfer.status !== 'IN_TRANSIT') {
+      throw new ConflictException('Перемещение уже завершено');
+    }
     try {
       return this.prismaService.$transaction(async (prisma) => {
         const updatedPendingTransfer =
@@ -292,6 +308,158 @@ export class DeviceService {
         notFoundMessage: 'Запись не найдена',
         conflictMessage: 'Обновление нарушает уникальность данных',
         defaultMessage: 'Не удалось отклонить передачу',
+      });
+    }
+  }
+
+  public async reTransfer(
+    recordId: string,
+    dto: RetransferDeviceDto,
+    userId: string,
+  ) {
+    const transfer = await this.getTransferById(recordId);
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.pendingTransfersDevices.update({
+          where: { id: recordId },
+          data: { rejectMode: 'RESEND' },
+        });
+
+        await this.historyService.create({
+          userId,
+          deviceId: transfer.device.id,
+          fromObjectId: transfer.fromObjectId
+            ? transfer.fromObjectId
+            : undefined,
+          toObjectId: dto.toObjectId,
+          action: 'TRANSFER',
+        });
+
+        return await prisma.pendingTransfersDevices.create({
+          data: {
+            fromObjectId: transfer.fromObjectId,
+            toObjectId: dto.toObjectId,
+            status: 'IN_TRANSIT',
+            deviceId: transfer.deviceId,
+          },
+        });
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось создать новое перемещение',
+      });
+    }
+  }
+
+  public async returnToSource(recordId: string, userId: string) {
+    const transfer = await this.getTransferById(recordId);
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.pendingTransfersDevices.update({
+          where: { id: recordId },
+          data: { rejectMode: 'RETURN_TO_SOURCE' },
+        });
+
+        await this.historyService.create({
+          userId,
+          deviceId: transfer.deviceId,
+          fromObjectId: transfer.toObjectId,
+          toObjectId: transfer.fromObjectId as string,
+          action: 'RETURN_TO_SOURCE',
+        });
+
+        return await prisma.pendingTransfersDevices.create({
+          data: {
+            fromObjectId: transfer.toObjectId,
+            toObjectId: transfer.fromObjectId as string,
+            status: 'IN_TRANSIT',
+            deviceId: transfer.deviceId,
+            rejectMode: 'RETURN_TO_SOURCE',
+            rejectionComment: transfer.rejectionComment,
+            photoUrl: transfer.photoUrl,
+          },
+        });
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось создать новое перемещение',
+      });
+    }
+  }
+
+  public async writeOffInTransfer(
+    recordId: string,
+    userId: string,
+    dto: WriteOffDeviceInTransferDto,
+  ) {
+    const transfer = await this.getTransferById(recordId);
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.pendingTransfersDevices.update({
+          where: { id: recordId },
+          data: { rejectMode: 'WRITE_OFF' },
+        });
+
+        await this.changeStatus(transfer.deviceId, userId, {
+          comment: dto.comment,
+          status: dto.status,
+        });
+      });
+    } catch (error) {
+      console.log(error);
+
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось списать указанный инвентарь',
+      });
+    }
+  }
+
+  public async cancelTransfer(
+    recordId: string,
+    userId: string,
+    dto: CancelDeviceTransferDto,
+  ) {
+    const transfer = await this.getTransferById(recordId);
+    if (transfer.status !== 'IN_TRANSIT') {
+      throw new ConflictException('Нельзя отменить завершённое перемещение');
+    }
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.device.update({
+          where: { id: transfer.deviceId },
+          data: {
+            objectId: transfer.fromObjectId,
+            status: 'ON_OBJECT',
+          },
+        });
+
+        await this.historyService.create({
+          userId,
+          deviceId: transfer.deviceId,
+          fromObjectId: transfer.fromObjectId as string,
+          toObjectId: transfer.toObjectId,
+          action: 'CANCEL',
+        });
+
+        return await prisma.pendingTransfersDevices.update({
+          where: { id: recordId },
+          data: { status: 'CANCEL', rejectionComment: dto.rejectionComment },
+        });
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось отменить перемещение',
       });
     }
   }

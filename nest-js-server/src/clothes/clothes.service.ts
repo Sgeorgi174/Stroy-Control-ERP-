@@ -17,6 +17,9 @@ import { ClothesActions } from 'generated/prisma';
 import { GiveClothingDto } from './dto/give-clothing.dto';
 import { GetClothesQueryDto } from './dto/get-clothes-query.dto';
 import { RejectClothesTransferDto } from './dto/reject-transfer.dto';
+import { RetransferClothesDto } from './dto/retransfer.dto';
+import { WriteOffClothesInTransferDto } from './dto/write-off-in-transit.dto';
+import { CancelClothesTransferDto } from './dto/cancel-transfer.dto';
 
 @Injectable()
 export class ClothesService {
@@ -56,6 +59,18 @@ export class ClothesService {
         notFoundMessage: 'Одежда не найдена',
       });
     }
+  }
+
+  public async getTransferById(id: string) {
+    const transfer =
+      await this.prismaService.pendingTransfersClothes.findUnique({
+        where: { id },
+        include: { clothes: true },
+      });
+
+    if (!transfer) throw new NotFoundException('Перемещение не найдено');
+
+    return transfer;
   }
 
   public async getFiltered(query: GetClothesQueryDto) {
@@ -276,6 +291,163 @@ export class ClothesService {
         notFoundMessage: 'Запись не найдена',
         conflictMessage: 'Обновление нарушает уникальность данных',
         defaultMessage: 'Не удалось отклонить передачу',
+      });
+    }
+  }
+
+  public async reTransfer(
+    recordId: string,
+    dto: RetransferClothesDto,
+    userId: string,
+  ) {
+    const transfer = await this.getTransferById(recordId);
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.pendingTransfersClothes.update({
+          where: { id: recordId },
+          data: { rejectMode: 'RESEND' },
+        });
+
+        await this.clothesHistoryService.create({
+          userId,
+          clothesId: transfer.clothesId,
+          fromObjectId: transfer.fromObjectId
+            ? transfer.fromObjectId
+            : undefined,
+          toObjectId: dto.toObjectId,
+          action: 'TRANSFER',
+          quantity: transfer.quantity,
+        });
+
+        return await prisma.pendingTransfersClothes.create({
+          data: {
+            fromObjectId: transfer.fromObjectId,
+            toObjectId: dto.toObjectId,
+            status: 'IN_TRANSIT',
+            clothesId: transfer.clothesId,
+            quantity: transfer.quantity,
+          },
+        });
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось создать новое перемещение',
+      });
+    }
+  }
+
+  public async returnToSource(recordId: string, userId: string) {
+    const transfer = await this.getTransferById(recordId);
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.pendingTransfersClothes.update({
+          where: { id: recordId },
+          data: { rejectMode: 'RETURN_TO_SOURCE' },
+        });
+
+        await this.clothesHistoryService.create({
+          userId,
+          clothesId: transfer.clothesId,
+          fromObjectId: transfer.toObjectId,
+          toObjectId: transfer.fromObjectId,
+          action: 'RETURN_TO_SOURCE',
+          quantity: transfer.quantity,
+        });
+
+        return await prisma.pendingTransfersClothes.create({
+          data: {
+            fromObjectId: transfer.toObjectId,
+            toObjectId: transfer.fromObjectId,
+            status: 'IN_TRANSIT',
+            clothesId: transfer.clothesId,
+            rejectMode: 'RETURN_TO_SOURCE',
+            rejectionComment: transfer.rejectionComment,
+            photoUrl: transfer.photoUrl,
+            quantity: transfer.quantity,
+          },
+        });
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось создать новое перемещение',
+      });
+    }
+  }
+
+  public async writeOffInTransfer(
+    recordId: string,
+    userId: string,
+    dto: WriteOffClothesInTransferDto,
+  ) {
+    const transfer = await this.getTransferById(recordId);
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.pendingTransfersClothes.update({
+          where: { id: recordId },
+          data: { rejectMode: 'WRITE_OFF' },
+        });
+
+        await this.writeOffClothes(
+          transfer.clothesId,
+          { quantity: transfer.quantity, writeOffComment: dto.comment },
+          userId,
+        );
+      });
+    } catch (error) {
+      console.log(error);
+
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось списать указанный инвентарь',
+      });
+    }
+  }
+
+  public async cancelTransfer(
+    recordId: string,
+    userId: string,
+    dto: CancelClothesTransferDto,
+  ) {
+    const transfer = await this.getTransferById(recordId);
+    if (transfer.status !== 'IN_TRANSIT') {
+      throw new ConflictException('Нельзя отменить завершённое перемещение');
+    }
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        await prisma.clothes.update({
+          where: { id: transfer.clothesId },
+          data: {
+            quantity: { increment: transfer.quantity },
+          },
+        });
+
+        await this.clothesHistoryService.create({
+          userId,
+          clothesId: transfer.clothesId,
+          fromObjectId: transfer.fromObjectId,
+          toObjectId: transfer.toObjectId,
+          action: 'CANCEL',
+          quantity: transfer.quantity,
+        });
+
+        return await prisma.pendingTransfersClothes.update({
+          where: { id: recordId },
+          data: { status: 'CANCEL', rejectionComment: dto.rejectionComment },
+        });
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Запись не найдена',
+        conflictMessage: 'Обновление нарушает уникальность данных',
+        defaultMessage: 'Не удалось отменить перемещение',
       });
     }
   }

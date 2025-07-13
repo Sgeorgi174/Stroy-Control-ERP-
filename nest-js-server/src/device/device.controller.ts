@@ -21,6 +21,9 @@ import { GetToolsQueryDto } from 'src/tool/dto/get-tools-query.dto';
 import { RejectDeviceTransferDto } from './dto/reject-transfer.dto';
 import { UserService } from 'src/user/user.service';
 import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+import { WriteOffDeviceInTransferDto } from './dto/write-off-in-transit.dto';
+import { CancelDeviceTransferDto } from './dto/cancel-transfer.dto';
+import { RetransferDeviceDto } from './dto/retransfer.dto';
 
 @Controller('devices')
 export class DeviceController {
@@ -118,5 +121,46 @@ export class DeviceController {
     );
     await this.telegramBotService.sendRequestTransferPhoto(phone);
     return { success: true };
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('retransfer/:id')
+  async reTransfer(
+    @Param('id') transferId: string,
+    @Body() dto: RetransferDeviceDto,
+    @Authorized('id') userId: string,
+  ) {
+    console.log(transferId, dto, userId);
+
+    return this.deviceService.reTransfer(transferId, dto, userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('transfer-return/:id')
+  async returnToSource(
+    @Param('id') transferId: string,
+    @Authorized('id') userId: string,
+  ) {
+    return this.deviceService.returnToSource(transferId, userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('transfer-cancel/:id')
+  async cancelTransfer(
+    @Param('id') transferId: string,
+    @Body() dto: CancelDeviceTransferDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.deviceService.cancelTransfer(transferId, userId, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('transfer-write-off/:id')
+  async writeOffInTransfer(
+    @Param('id') transferId: string,
+    @Body() dto: WriteOffDeviceInTransferDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.deviceService.writeOffInTransfer(transferId, userId, dto);
   }
 }
