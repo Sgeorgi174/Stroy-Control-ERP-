@@ -14,6 +14,10 @@ import {
   getClothesHistory,
   requestClothesPhotoByTransferId,
   rejectClothesTransfer,
+  resendClothesTransfer,
+  returnClothesToSource,
+  writeOffClothesInTransfer,
+  cancelClothesTransfer,
 } from "@/services/api/clothes.api";
 import type {
   CreateClothesDto,
@@ -24,6 +28,9 @@ import type {
   GiveClothingDto,
   ConfirmTransferClothesDto,
   RejectClotheseDto,
+  ResendClothesTransferDto,
+  WirteOffClothesInTransferDto,
+  CancelClothesTransferDto,
 } from "@/types/dto/clothes.dto";
 import type { ClothesType, Seasons } from "@/types/clothes";
 import type { AppAxiosError } from "@/types/error-response";
@@ -119,6 +126,7 @@ export const useConfirmClothesTransfer = (transferId: string) => {
     onSuccess: () => {
       toast.success(`Перемещение успешно подтверждено`);
       queryClient.invalidateQueries({ queryKey: ["user-notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["user-returns"] });
     },
     onError: (error: AppAxiosError) => {
       const message =
@@ -141,6 +149,79 @@ export const useRejectClothesTransfer = (transferId: string) => {
     onError: (error: AppAxiosError) => {
       const message =
         error?.response?.data?.message || "Не удалось отклонить перемещение";
+      toast.error(message);
+    },
+  });
+};
+
+export const useResendClothesTransfer = (transferId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: ResendClothesTransferDto) =>
+      resendClothesTransfer(transferId, data),
+    onSuccess: () => {
+      toast.success(`Вы успешно переотправили спецодежду`);
+      queryClient.invalidateQueries({ queryKey: ["transfers"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message ||
+        "Не удалось создать новое перемещение";
+      toast.error(message);
+    },
+  });
+};
+
+export const useReturnClothesToSource = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (transferId: string) => returnClothesToSource(transferId),
+    onSuccess: () => {
+      toast.success(`Вы успешно переотправили спецодежду`);
+      queryClient.invalidateQueries({ queryKey: ["transfers"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message ||
+        "Не удалось создать новое перемещение";
+      toast.error(message);
+    },
+  });
+};
+
+export const useWriteOffClothesInTransfer = (transferId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: WirteOffClothesInTransferDto) =>
+      writeOffClothesInTransfer(transferId, data),
+    onSuccess: () => {
+      toast.success(`Вы успешно списали спецодежду`);
+      queryClient.invalidateQueries({ queryKey: ["transfers"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось списать спецодежду";
+      toast.error(message);
+    },
+  });
+};
+
+export const useCancelClothesTransfer = (transferId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CancelClothesTransferDto) =>
+      cancelClothesTransfer(transferId, data),
+    onSuccess: () => {
+      toast.success(`Перемещение успешно отменено`);
+      queryClient.invalidateQueries({ queryKey: ["transfers"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось отменить перемещение";
       toast.error(message);
     },
   });

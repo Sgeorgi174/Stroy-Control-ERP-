@@ -11,6 +11,7 @@ export const useConfirmDeviceTransfer = () => {
     onSuccess: () => {
       toast.success(`Перемещение успешно подтверждено`);
       queryClient.invalidateQueries({ queryKey: ["user-notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["user-returns"] });
     },
     onError: (error: AppAxiosError) => {
       const message =

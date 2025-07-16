@@ -13,6 +13,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useUserReturns } from "@/hooks/user/useGetReturns";
+import { ReturnNotification } from "./return-notification/return-notification";
 
 type TransferNotification =
   | ({ type: "tool" } & PendingToolTransfer)
@@ -116,21 +117,21 @@ export function NotificationCard() {
               !isErrorReturns &&
               sortedReturnsNotifications.map((item) => {
                 const key = `${item.type}-${item.id}`;
-                switch (item.type) {
-                  case "tool":
-                    return <ToolNotification key={key} toolTransfer={item} />;
-                  case "device":
-                    return (
-                      <DeviceNotification key={key} deviceTransfer={item} />
-                    );
-                  case "clothes":
-                    return (
-                      <ClothesNotification key={key} clothesTransfer={item} />
-                    );
-                  default:
-                    return null;
-                }
+                return (
+                  <ReturnNotification
+                    key={key}
+                    returnTransfer={item}
+                    type={item.type}
+                  />
+                );
               })}
+
+            {sortedReturnsNotifications.length === 0 &&
+              !myObject?.isPending && (
+                <div className="w-full text-center py-6 text-muted-foreground/50">
+                  Новых уведомлений нет
+                </div>
+              )}
           </TabsContent>
 
           {/* Перемещения */}
@@ -148,7 +149,7 @@ export function NotificationCard() {
             {!isLoadingTransfers &&
               !isErrorTransfers &&
               sortedTransferNotifications.length === 0 && (
-                <div className="w-full py-6 text-center text-gray-200">
+                <div className="w-full py-6 text-center text-muted-foreground/50">
                   Новых уведомлений нет
                 </div>
               )}

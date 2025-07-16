@@ -82,7 +82,14 @@ export class ClothesService {
         ...(Number(query.size) ? { size: Number(query.size) } : {}),
       },
       include: {
-        inTransit: { where: { status: 'IN_TRANSIT' } },
+        inTransit: {
+          where: {
+            OR: [
+              { status: 'IN_TRANSIT' },
+              { status: 'REJECT', rejectMode: null },
+            ],
+          },
+        },
         storage: {
           select: {
             foreman: {
@@ -394,11 +401,13 @@ export class ClothesService {
           data: { rejectMode: 'WRITE_OFF' },
         });
 
-        await this.writeOffClothes(
-          transfer.clothesId,
-          { quantity: transfer.quantity, writeOffComment: dto.comment },
-          userId,
-        );
+        await this.clothesHistoryService.create({
+          userId: userId,
+          clothesId: transfer.clothesId,
+          quantity: transfer.quantity,
+          action: ClothesActions.WRITTEN_OFF,
+          writeOffComment: dto.comment,
+        });
       });
     } catch (error) {
       console.log(error);
@@ -488,22 +497,24 @@ export class ClothesService {
     }
 
     try {
-      const updated = await this.prismaService.clothes.update({
-        where: { id },
-        data: {
-          quantity: { decrement: dto.quantity },
-        },
-      });
+      return await this.prismaService.$transaction(async (prisma) => {
+        const updated = await prisma.clothes.update({
+          where: { id },
+          data: {
+            quantity: { decrement: dto.quantity },
+          },
+        });
 
-      await this.clothesHistoryService.create({
-        userId: userId,
-        clothesId: id,
-        quantity: dto.quantity,
-        action: ClothesActions.WRITTEN_OFF,
-        writeOffComment: dto.writeOffComment,
-      });
+        await this.clothesHistoryService.create({
+          userId: userId,
+          clothesId: id,
+          quantity: dto.quantity,
+          action: ClothesActions.WRITTEN_OFF,
+          writeOffComment: dto.writeOffComment,
+        });
 
-      return updated;
+        return updated;
+      });
     } catch (error) {
       handlePrismaError(error, {
         defaultMessage: 'Не удалось списать одежду',

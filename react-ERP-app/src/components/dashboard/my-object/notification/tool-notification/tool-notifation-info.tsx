@@ -16,7 +16,7 @@ export function ToolInfo({ tool }: ToolInfoProps) {
           <p className="font-medium text-sm">{tool.name}</p>
         </div>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
-          <span className="font-mono">Серийный номер: {tool.serialNumber}</span>
+          <span>Серийный номер: {tool.serialNumber}</span>
         </div>
       </div>
     </div>

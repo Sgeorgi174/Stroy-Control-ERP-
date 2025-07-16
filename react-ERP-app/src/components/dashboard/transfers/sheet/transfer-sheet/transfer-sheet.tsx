@@ -42,6 +42,12 @@ import { useCancelDeviceTransfer } from "@/hooks/device/useCancelDeviceTransfer"
 import { useResendDeviceTransfer } from "@/hooks/device/useResendDeviceTransfer";
 import { useWriteOffDeviceInTransfer } from "@/hooks/device/useWriteOffDeviceInTransfer";
 import { useReturnDeviceToSource } from "@/hooks/device/useReturnDeviceToSource";
+import {
+  useCancelClothesTransfer,
+  useResendClothesTransfer,
+  useReturnClothesToSource,
+  useWriteOffClothesInTransfer,
+} from "@/hooks/clothes/useClothes";
 
 export function TransferSheet() {
   const { isOpen, selectedTransfer, type, closeSheet } =
@@ -72,6 +78,19 @@ export function TransferSheet() {
     selectedTransfer ? selectedTransfer.id : ""
   );
   const returnDeviceTransferMutation = useReturnDeviceToSource();
+  {
+    /* DIVICE HOOKS*/
+  }
+  const cancelClothesTransferMutation = useCancelClothesTransfer(
+    selectedTransfer ? selectedTransfer.id : ""
+  );
+  const resendClothesTransferMutation = useResendClothesTransfer(
+    selectedTransfer ? selectedTransfer.id : ""
+  );
+  const writeOffClothesTransferMutation = useWriteOffClothesInTransfer(
+    selectedTransfer ? selectedTransfer.id : ""
+  );
+  const returnClothesTransferMutation = useReturnClothesToSource();
 
   const [isResendDialogOpen, setIsResendDialogOpen] = useState(false);
   const [isWriteOffDialogOpen, setIsWriteOffDialogOpen] = useState(false);
@@ -99,6 +118,18 @@ export function TransferSheet() {
 
     if (type === "device") {
       cancelDeviceTransferMutation.mutate(
+        { rejectionComment: comment },
+        {
+          onSuccess: () => {
+            setIsCancelDialogOpen(false);
+            closeSheet();
+          },
+        }
+      );
+    }
+
+    if (type === "clothes") {
+      cancelClothesTransferMutation.mutate(
         { rejectionComment: comment },
         {
           onSuccess: () => {
@@ -141,6 +172,18 @@ export function TransferSheet() {
       );
     }
 
+    if (type === "clothes") {
+      resendClothesTransferMutation.mutate(
+        { toObjectId: selectedObjectId }, // <-- правильно
+        {
+          onSuccess: () => {
+            setIsResendDialogOpen(false);
+            closeSheet();
+          },
+        }
+      );
+    }
+
     setSelectedObjectId("");
   };
 
@@ -169,6 +212,18 @@ export function TransferSheet() {
       );
     }
 
+    if (type === "clothes") {
+      writeOffClothesTransferMutation.mutate(
+        { comment: comment },
+        {
+          onSuccess: () => {
+            setIsWriteOffDialogOpen(false);
+            closeSheet();
+          },
+        }
+      );
+    }
+
     setComment("");
   };
 
@@ -185,6 +240,16 @@ export function TransferSheet() {
 
     if (type === "device") {
       returnDeviceTransferMutation.mutate(selectedTransfer.id, {
+        onSuccess: () => {
+          setIsReturnDialogOpen(false);
+          closeSheet();
+          toast.success("Инструмент возвращен отправителю");
+        },
+      });
+    }
+
+    if (type === "clothes") {
+      returnClothesTransferMutation.mutate(selectedTransfer.id, {
         onSuccess: () => {
           setIsReturnDialogOpen(false);
           closeSheet();

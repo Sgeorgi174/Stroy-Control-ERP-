@@ -5,16 +5,16 @@ import { Shirt } from "lucide-react";
 
 type ClothesInfoProps = {
   clothesTransfer: PendingClothesTransfer;
-  quantity: number;
-  setQuantity: (val: number) => void;
-  isReject: boolean;
+  quantity?: number;
+  setQuantity?: (val: number) => void;
+  isReject?: boolean;
 };
 
 export function ClothesInfo({
   clothesTransfer,
   quantity,
   setQuantity,
-  isReject,
+  isReject = true,
 }: ClothesInfoProps) {
   return (
     <div className="flex justify-between items-center gap-3 p-3 rounded-lg bg-muted">
@@ -56,7 +56,9 @@ export function ClothesInfo({
             pattern="[0-9]*"
             placeholder="0"
             value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
+            onChange={(e) => {
+              if (setQuantity) setQuantity(Number(e.target.value));
+            }}
           />
         </div>
       )}

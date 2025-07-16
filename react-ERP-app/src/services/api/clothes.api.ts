@@ -7,6 +7,9 @@ import type {
   AddClothesDto,
   GiveClothingDto,
   RejectClotheseDto,
+  ResendClothesTransferDto,
+  CancelClothesTransferDto,
+  WirteOffClothesInTransferDto,
 } from "@/types/dto/clothes.dto";
 import type { Clothes, ClothesType, Seasons } from "@/types/clothes";
 
@@ -74,6 +77,35 @@ export const rejectClothesTransfer = async (
   data: RejectClotheseDto
 ) => {
   const res = await api.patch(`/clothes/reject/${id}`, data);
+  return res.data;
+};
+
+export const resendClothesTransfer = async (
+  id: string,
+  data: ResendClothesTransferDto
+) => {
+  const res = await api.post(`/clothes/retransfer/${id}`, data);
+  return res.data;
+};
+
+export const returnClothesToSource = async (id: string) => {
+  const res = await api.post(`/clothes/transfer-return/${id}`);
+  return res.data;
+};
+
+export const cancelClothesTransfer = async (
+  id: string,
+  data: CancelClothesTransferDto
+) => {
+  const res = await api.post(`/clothes/transfer-cancel/${id}`, data);
+  return res.data;
+};
+
+export const writeOffClothesInTransfer = async (
+  id: string,
+  data: WirteOffClothesInTransferDto
+) => {
+  const res = await api.post(`/clothes/transfer-write-off/${id}`, data);
   return res.data;
 };
 

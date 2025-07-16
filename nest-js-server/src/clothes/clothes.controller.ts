@@ -26,6 +26,9 @@ import { GetClothesQueryDto } from './dto/get-clothes-query.dto';
 import { RejectClothesTransferDto } from './dto/reject-transfer.dto';
 import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { UserService } from 'src/user/user.service';
+import { RetransferClothesDto } from './dto/retransfer.dto';
+import { CancelClothesTransferDto } from './dto/cancel-transfer.dto';
+import { WriteOffClothesInTransferDto } from './dto/write-off-in-transit.dto';
 
 @Controller('clothes')
 export class ClothesController {
@@ -102,6 +105,47 @@ export class ClothesController {
     );
     await this.telegramBotService.sendRequestTransferPhoto(phone);
     return { success: true };
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('retransfer/:id')
+  async reTransfer(
+    @Param('id') transferId: string,
+    @Body() dto: RetransferClothesDto,
+    @Authorized('id') userId: string,
+  ) {
+    console.log(transferId, dto, userId);
+
+    return this.clothesService.reTransfer(transferId, dto, userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('transfer-return/:id')
+  async returnToSource(
+    @Param('id') transferId: string,
+    @Authorized('id') userId: string,
+  ) {
+    return this.clothesService.returnToSource(transferId, userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('transfer-cancel/:id')
+  async cancelTransfer(
+    @Param('id') transferId: string,
+    @Body() dto: CancelClothesTransferDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.clothesService.cancelTransfer(transferId, userId, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('transfer-write-off/:id')
+  async writeOffInTransfer(
+    @Param('id') transferId: string,
+    @Body() dto: WriteOffClothesInTransferDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.clothesService.writeOffInTransfer(transferId, userId, dto);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)

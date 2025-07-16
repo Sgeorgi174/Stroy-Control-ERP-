@@ -45,3 +45,15 @@ export interface GiveClothingDto {
 export interface RejectClotheseDto {
   rejectionComment: string;
 }
+
+export interface ResendClothesTransferDto {
+  toObjectId: string;
+}
+
+export interface WirteOffClothesInTransferDto {
+  comment: string;
+}
+
+export interface CancelClothesTransferDto {
+  rejectionComment: string;
+}
