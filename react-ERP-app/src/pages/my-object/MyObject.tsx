@@ -5,14 +5,16 @@ import { Clock } from "@/components/ui/clock";
 
 export function MyObject() {
   return (
-    <div className="flex gap-10 mt-6 justify-center">
+    <div className="grid grid-cols-5 gap-3 mt-6">
       <NotificationCard />
-      <div className="flex flex-col gap-5">
-        <Card className="w-[270px] flex justify-center items-center">
-          <Clock className="font-bold text-6xl" />
+      <div className="col-span-2 flex flex-col gap-5">
+        <Card className="flex justify-center p-2 items-center">
+          <Clock className="font-medium p-2 text-5xl" />
         </Card>
-        <Card className="w-[270px]flex justify-center p-2 items-center">
-          <Calendar01 />
+        <Card className="p-5 shadow-md border rounded-2xl flex justify-center items-center">
+          <div className="w-full max-w-[360px]">
+            <Calendar01 />
+          </div>
         </Card>
       </div>
     </div>

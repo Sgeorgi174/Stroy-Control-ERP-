@@ -28,7 +28,7 @@ export class ClothesHistoryService {
   public async getByClothesId(clothesId: string) {
     try {
       return await this.prismaService.clothesHistory.findMany({
-        where: { clothesId },
+        where: { clothesId, action: { not: 'RETURN_TO_SOURCE' } },
         include: {
           fromObject: { select: { name: true } },
           toObject: { select: { name: true } },

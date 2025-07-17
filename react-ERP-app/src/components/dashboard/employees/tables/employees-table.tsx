@@ -11,6 +11,7 @@ import { SkillsPopover } from "./skills-popover";
 import { EmployeeDropDown } from "../dropdowns/employee-dropdown";
 import { PendingTable } from "../../storage/tables/pending-table";
 import { positionMap } from "@/constants/positionMap";
+import { useEmployeeSheetStore } from "@/stores/employee-sheet-store";
 
 type EmployeesTableProps = {
   employees: Employee[];
@@ -23,12 +24,12 @@ export function EmployeesTable({
   isError,
   isLoading,
 }: EmployeesTableProps) {
+  const { openSheet } = useEmployeeSheetStore();
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>
         <TableHeader className="bg-primary pointer-events-none">
           <TableRow>
-            <TableHead className="w-[30px]"></TableHead>
             <TableHead className="text-secondary font-bold">ФИО</TableHead>
             <TableHead className="text-secondary font-bold">
               Должность
@@ -50,9 +51,12 @@ export function EmployeesTable({
             isLoading={isLoading}
           />
           {employees.map((employee) => (
-            <TableRow key={employee.id}>
-              <TableCell></TableCell>
-              <TableCell className="font-medium">{`${employee.lastName} ${employee.firstName} ${employee.fatherName}`}</TableCell>
+            <TableRow
+              key={employee.id}
+              onClick={() => openSheet("details", employee)}
+              className="cursor-pointer"
+            >
+              <TableCell className="font-medium hover:underline">{`${employee.lastName} ${employee.firstName} ${employee.fatherName}`}</TableCell>
               <TableCell>{positionMap[employee.position]}</TableCell>
               <TableCell>{employee.phoneNumber}</TableCell>
               <TableCell>

@@ -29,7 +29,6 @@ export function ClothesTable({
       <Table>
         <TableHeader className="bg-primary pointer-events-none">
           <TableRow>
-            <TableHead className="w-[30px]"></TableHead>
             <TableHead className=" text-secondary font-bold">
               Наименование
             </TableHead>
@@ -52,12 +51,12 @@ export function ClothesTable({
             data={clothes}
           />
           {clothes.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell></TableCell>
-              <TableCell
-                className="font-medium hover:underline cursor-pointer"
-                onClick={() => openSheet("details", item)}
-              >
+            <TableRow
+              key={item.id}
+              onClick={() => openSheet("details", item)}
+              className="cursor-pointer"
+            >
+              <TableCell className="font-medium hover:underline">
                 {item.name}
               </TableCell>
               <TableCell>{item.size}</TableCell>

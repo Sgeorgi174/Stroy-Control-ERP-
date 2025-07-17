@@ -31,7 +31,6 @@ export function DevicesTable({
       <Table>
         <TableHeader className="bg-primary pointer-events-none">
           <TableRow>
-            <TableHead className="w-[30px]"></TableHead>
             <TableHead className="text-secondary font-bold">
               Серийный №
             </TableHead>
@@ -55,17 +54,15 @@ export function DevicesTable({
             data={devices}
           />
           {devices.map((device) => (
-            <TableRow key={device.id}>
-              <TableCell></TableCell>
+            <TableRow
+              key={device.id}
+              onClick={() => openSheet("details", device)}
+              className="cursor-pointer"
+            >
               <TableCell className="font-medium">
                 {device.serialNumber}
               </TableCell>
-              <TableCell
-                onClick={() => openSheet("details", device)}
-                className="hover:underline cursor-pointer"
-              >
-                {device.name}
-              </TableCell>
+              <TableCell className="hover:underline">{device.name}</TableCell>
               <TableCell>
                 <StatusBadge
                   isAnimate={device.status === "IN_TRANSIT"}

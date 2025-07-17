@@ -11,11 +11,30 @@ export function Clock({ className }: ClockProps) {
   useEffect(() => {
     const updateTime = () => setTime(format(new Date(), "HH:mm"));
 
-    updateTime();
-    const interval = setInterval(updateTime, 60 * 1000);
+    updateTime(); // первая установка сразу
 
-    return () => clearInterval(interval);
+    const now = new Date();
+    const msToNextMinute =
+      (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+
+    const timeout = setTimeout(() => {
+      updateTime();
+      const interval = setInterval(updateTime, 60 * 1000);
+      return () => clearInterval(interval);
+    }, msToNextMinute);
+
+    return () => clearTimeout(timeout);
   }, []);
 
-  return <p className={className}>{time}</p>;
+  const [hours, minutes] = time.split(":");
+
+  return (
+    <p
+      className={`font-medium flex items-center justify-center gap-1 leading-none ${className}`}
+    >
+      <span>{hours}</span>
+      <span className="relative top-[-4px]">:</span>
+      <span>{minutes}</span>
+    </p>
+  );
 }

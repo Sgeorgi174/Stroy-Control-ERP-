@@ -32,7 +32,6 @@ export function ObjectsTable({
       <Table>
         <TableHeader className="bg-primary pointer-events-none">
           <TableRow>
-            <TableHead className="w-[30px]"></TableHead>
             <TableHead className="text-secondary font-bold">
               Наименование
             </TableHead>
@@ -50,12 +49,12 @@ export function ObjectsTable({
             data={objects}
           />
           {objects.map((object) => (
-            <TableRow key={object.id}>
-              <TableCell></TableCell>
-              <TableCell
-                onClick={() => openSheet("details", object)}
-                className="font-medium cursor-pointer hover:underline"
-              >
+            <TableRow
+              key={object.id}
+              onClick={() => openSheet("details", object)}
+              className="cursor-pointer"
+            >
+              <TableCell className="font-medium hover:underline">
                 {object.name}
               </TableCell>
               <TableCell>{`г. ${splitAddress(object).city}, ул. ${

@@ -7,7 +7,8 @@ export type ClothesActions =
   | "TRANSFER"
   | "CONFIRM"
   | "GIVE_TO_EMPLOYEE"
-  | "WRITTEN_OFF";
+  | "WRITTEN_OFF"
+  | "CANCEL";
 
 export type TransferRecord = {
   createdAt: string;

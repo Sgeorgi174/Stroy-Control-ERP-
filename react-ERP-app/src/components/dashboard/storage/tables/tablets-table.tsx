@@ -31,7 +31,6 @@ export function TabletsTable({
       <Table>
         <TableHeader className="bg-primary pointer-events-none">
           <TableRow>
-            <TableHead className="w-[30px]"></TableHead>
             <TableHead className="text-secondary font-bold">
               Серийный №
             </TableHead>
@@ -54,17 +53,15 @@ export function TabletsTable({
             data={tablets}
           />
           {tablets.map((tablet) => (
-            <TableRow key={tablet.id}>
-              <TableCell></TableCell>
+            <TableRow
+              key={tablet.id}
+              onClick={() => openSheet("details", tablet)}
+              className="cursor-pointer"
+            >
               <TableCell className="font-medium">
                 {tablet.serialNumber}
               </TableCell>
-              <TableCell
-                onClick={() => openSheet("details", tablet)}
-                className="hover:underline cursor-pointer"
-              >
-                {tablet.name}
-              </TableCell>
+              <TableCell className="hover:underline">{tablet.name}</TableCell>
               <TableCell>
                 <StatusBadge
                   color={statusMap[tablet.status]?.color}

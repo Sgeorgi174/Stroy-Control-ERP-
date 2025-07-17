@@ -44,7 +44,7 @@ export function ToolsStatusHistory({
 
       {isLoading ? (
         <div className="space-y-3">
-          {[...Array(3)].map((_, i) => (
+          {[...Array(2)].map((_, i) => (
             <div
               key={i}
               className="p-3 bg-muted rounded-lg flex items-center justify-between"
@@ -52,8 +52,6 @@ export function ToolsStatusHistory({
               <div className="flex items-center gap-3">
                 <Skeleton className="w-8 h-8 rounded-full" />
                 <div className="space-y-2">
-                  <Skeleton className="h-4 w-48" />
-                  <Skeleton className="h-4 w-40" />
                   <Skeleton className="h-3 w-32" />
                 </div>
               </div>

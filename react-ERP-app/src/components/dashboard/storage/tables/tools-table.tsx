@@ -27,7 +27,6 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
       <Table>
         <TableHeader className="bg-primary pointer-events-none">
           <TableRow>
-            <TableHead className="w-[30px]"></TableHead>
             <TableHead className="text-secondary font-bold">
               Серийный №
             </TableHead>
@@ -49,15 +48,13 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
         <TableBody>
           <PendingTable isError={isError} isLoading={isLoading} data={tools} />
           {tools.map((tool) => (
-            <TableRow key={tool.id}>
-              <TableCell></TableCell>
+            <TableRow
+              key={tool.id}
+              onClick={() => openSheet("details", tool)}
+              className="cursor-pointer"
+            >
               <TableCell className="font-medium">{tool.serialNumber}</TableCell>
-              <TableCell
-                onClick={() => openSheet("details", tool)}
-                className=" cursor-pointer hover:underline"
-              >
-                {tool.name}
-              </TableCell>
+              <TableCell className=" hover:underline">{tool.name}</TableCell>
               <TableCell>
                 <StatusBadge
                   isAnimate={tool.status === "IN_TRANSIT"}

@@ -26,12 +26,12 @@ export function TransfersFilter() {
 
   return (
     <FilterPanel>
-      <div className="flex w-full justify-between items-center flex-wrap ">
+      <div className="flex w-full justify-between items-center flex-wrap gap-4 ">
         <div className="flex items-center gap-2">
           <DatePicker />
         </div>
-        <TransferStatusForFilter />
         <FromObjectToObjectForFilter objects={objects} />
+        <TransferStatusForFilter />
         {/* <div className="flex gap-8">
           <SearchInput
             searchQuery={localSearch}

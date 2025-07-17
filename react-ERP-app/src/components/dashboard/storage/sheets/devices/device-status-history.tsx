@@ -44,7 +44,7 @@ export function DevicesStatusHistory({
 
       {isLoading ? (
         <div className="space-y-3">
-          {[...Array(3)].map((_, i) => (
+          {[...Array(1)].map((_, i) => (
             <div
               key={i}
               className="p-3 bg-muted rounded-lg flex items-center justify-between"
