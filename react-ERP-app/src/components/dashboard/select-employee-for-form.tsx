@@ -30,7 +30,6 @@ export function EmployeeAutocomplete({
   disabled,
 }: EmployeeAutocompleteProps) {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
 
   const selectedLabel = useMemo(() => {
     const selected = employees.find((e) => e.id === selectedEmployeeId);
@@ -41,21 +40,9 @@ export function EmployeeAutocomplete({
       : "";
   }, [selectedEmployeeId, employees]);
 
-  const filteredEmployees = useMemo(() => {
-    return employees.filter((employee) => {
-      const fullName = `${employee.lastName} ${employee.firstName} ${
-        employee.fatherName ?? ""
-      }`
-        .toLowerCase()
-        .trim();
-      return fullName.includes(query.toLowerCase());
-    });
-  }, [employees, query]);
-
   const handleSelect = (employeeId: string) => {
     onSelectChange(employeeId);
     setOpen(false);
-    setQuery("");
   };
 
   return (
@@ -74,21 +61,18 @@ export function EmployeeAutocomplete({
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0 max-h-60 overflow-auto">
         <Command>
-          <CommandInput
-            placeholder="Поиск..."
-            value={query}
-            onValueChange={setQuery}
-          />
+          <CommandInput placeholder="Поиск..." />
           <CommandEmpty>Совпадений не найдено</CommandEmpty>
           <CommandGroup>
-            {filteredEmployees.map((employee) => {
+            {employees.map((employee) => {
               const fullName = `${employee.lastName} ${employee.firstName} ${
                 employee.fatherName ?? ""
               }`.trim();
+
               return (
                 <CommandItem
                   key={employee.id}
-                  value={employee.id}
+                  value={fullName.toLowerCase()} // используем полное имя для фильтрации
                   onSelect={() => handleSelect(employee.id)}
                 >
                   <Check

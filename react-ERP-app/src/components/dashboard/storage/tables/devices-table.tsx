@@ -85,7 +85,9 @@ export function DevicesTable({
                 {device.storage ? device.storage.name : "-"}
               </TableCell>
               <TableCell>
-                <DeviceDropDown device={device} />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <DeviceDropDown device={device} />
+                </div>
               </TableCell>
             </TableRow>
           ))}

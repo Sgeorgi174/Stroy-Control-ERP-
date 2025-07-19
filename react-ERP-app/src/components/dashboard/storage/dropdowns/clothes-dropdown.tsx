@@ -26,43 +26,71 @@ export function ClothesDropdown({ clothes }: { clothes: Clothes }) {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <EllipsisVertical />
+        <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
+          <button className="hover:bg-accent p-1 rounded cursor-pointer">
+            <EllipsisVertical />
+          </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => openSheet("details", clothes)}>
+        <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("details", clothes);
+            }}
+          >
             Подробнее
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             disabled={clothes.quantity === 0}
-            onClick={() => openSheet("give", clothes)}
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("give", clothes);
+            }}
           >
             Выдать сотруднику
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => openSheet("edit", clothes)}>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("edit", clothes);
+            }}
+          >
             Редактировать
           </DropdownMenuItem>
           <DropdownMenuItem
             disabled={clothes.quantity === 0}
-            onClick={() => openSheet("transfer", clothes)}
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("transfer", clothes);
+            }}
           >
             Переместить
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openSheet("add", clothes)}>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("add", clothes);
+            }}
+          >
             Пополнить
           </DropdownMenuItem>
           <DropdownMenuItem
             disabled={clothes.quantity === 0}
-            onClick={() => openSheet("written_off", clothes)}
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("written_off", clothes);
+            }}
           >
             Списать
           </DropdownMenuItem>
-
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={() => setIsDeleteDialogOpen(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDeleteDialogOpen(true);
+            }}
             variant="destructive"
           >
             Удалить

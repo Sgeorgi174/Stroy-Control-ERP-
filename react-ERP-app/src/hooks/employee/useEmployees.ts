@@ -3,8 +3,9 @@ import type {
   EmployeeType,
   Positions,
   EmployeeStatuses,
+  Employee,
 } from "@/types/employee";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 
 interface FilterParams {
   searchQuery: string;
@@ -15,7 +16,10 @@ interface FilterParams {
   type?: EmployeeType | null;
 }
 
-export const useEmployees = (params: FilterParams, enabled = true) => {
+export const useEmployees = (
+  params: FilterParams,
+  enabled = true
+): UseQueryResult<Employee[], Error> => {
   return useQuery({
     queryKey: ["employees", params],
     queryFn: () => getFilteredEmployees(params),

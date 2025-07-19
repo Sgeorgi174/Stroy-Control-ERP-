@@ -34,37 +34,67 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <EllipsisVertical />
+        {/* Останавливаем всплытие клика на триггере */}
+        <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
+          <button className="hover:bg-accent p-1 rounded cursor-pointer">
+            <EllipsisVertical />
+          </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => openSheet("details", tool)}>
+
+        {/* Останавливаем всплытие клика внутри контента */}
+        <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("details", tool);
+            }}
+          >
             Подробнее
           </DropdownMenuItem>
+
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => openSheet("edit", tool)}>
+
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("edit", tool);
+            }}
+          >
             Редактировать
           </DropdownMenuItem>
+
           <DropdownMenuItem
             disabled={tool.status !== "ON_OBJECT"}
-            onClick={() => openSheet("transfer", tool)}
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("transfer", tool);
+            }}
           >
             Переместить
           </DropdownMenuItem>
+
           <DropdownMenuItem
             disabled={
               tool.status === "IN_TRANSIT" ||
               tool.status === "LOST" ||
               tool.status === "WRITTEN_OFF"
             }
-            onClick={() => openSheet("change status", tool)}
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("change status", tool);
+            }}
           >
             Сменить статус
           </DropdownMenuItem>
+
           <DropdownMenuSeparator />
+
           <DropdownMenuItem
             variant="destructive"
-            onClick={() => setIsDeleteDialogOpen(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDeleteDialogOpen(true);
+            }}
           >
             Удалить
           </DropdownMenuItem>

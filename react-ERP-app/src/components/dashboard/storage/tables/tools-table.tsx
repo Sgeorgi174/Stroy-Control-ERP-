@@ -75,7 +75,9 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
               </TableCell>
               <TableCell>{tool.storage ? tool.storage.name : "-"}</TableCell>
               <TableCell>
-                <ToolsDropDown tool={tool} /> {/* 💡 ВАЖНО */}
+                <div onClick={(e) => e.stopPropagation()}>
+                  <ToolsDropDown tool={tool} />
+                </div>
               </TableCell>
             </TableRow>
           ))}

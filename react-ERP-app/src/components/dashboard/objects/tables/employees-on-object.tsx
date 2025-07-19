@@ -9,6 +9,7 @@ import {
 import type { Employee } from "@/types/employee";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HardHat } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type EmployeesOnObjectTableProps = {
   employees: Employee[];
@@ -38,7 +39,17 @@ export function EmployeesOnObjectTable({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {employees.length > 0 ? (
+        {isLoading ? (
+          <div className="space-y-2">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-8 w-full rounded" />
+            ))}
+          </div>
+        ) : isError ? (
+          <p className="text-center text-sm text-destructive">
+            Ошибка загрузки списка сотрудников.
+          </p>
+        ) : employees.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>

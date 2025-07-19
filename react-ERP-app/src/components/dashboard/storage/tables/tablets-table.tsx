@@ -78,7 +78,9 @@ export function TabletsTable({
                 {tablet.employee ? tablet.employee.phoneNumber : "-"}
               </TableCell>
               <TableCell>
-                <TabletsDropDown tablet={tablet} />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <TabletsDropDown tablet={tablet} />
+                </div>
               </TableCell>
             </TableRow>
           ))}

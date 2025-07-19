@@ -15,4 +15,5 @@ export type Tablet = {
   serialNumber: string;
   status: TabletStatus;
   employee: Employee | null;
+  employeeId: string;
 };

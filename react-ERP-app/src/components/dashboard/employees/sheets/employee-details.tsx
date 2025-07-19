@@ -47,15 +47,15 @@ export function EmployeeDetails({ employee }: EmployeeDetailsProps) {
     <div className="p-5 flex flex-col gap-5">
       <EmployeeDetailsBox employee={employee} />
       <EmployeeSkillsBox employee={employee} />
-      {data && (
-        <EmployeeClothesTable
-          items={data?.items}
-          isLoading={isLoading}
-          isError={isError}
-          handleReduceDebt={handleReduceDebt}
-          handleWriteOffDebt={handleWriteOffDebt}
-        />
-      )}
+
+      <EmployeeClothesTable
+        items={data ? data.items : undefined}
+        isLoading={isLoading}
+        isError={isError}
+        handleReduceDebt={handleReduceDebt}
+        handleWriteOffDebt={handleWriteOffDebt}
+      />
+
       {selectedClothing && (
         <DebtActionDialog
           clothing={selectedClothing}

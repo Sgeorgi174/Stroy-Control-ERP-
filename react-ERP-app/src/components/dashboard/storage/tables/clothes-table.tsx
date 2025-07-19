@@ -69,7 +69,9 @@ export function ClothesTable({
               </TableCell>
               <TableCell>{item.storage.name}</TableCell>
               <TableCell>
-                <ClothesDropdown clothes={item} />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <ClothesDropdown clothes={item} />
+                </div>
               </TableCell>
             </TableRow>
           ))}

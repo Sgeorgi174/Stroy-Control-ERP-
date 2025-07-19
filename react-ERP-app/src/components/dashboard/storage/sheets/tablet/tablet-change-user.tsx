@@ -60,7 +60,7 @@ export function TabletChangeUser({ tablet }: TabletDetailsProps) {
 
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
 
-      <p className="text-center font-medium text-xl mt-5">Перемещение</p>
+      <p className="text-center font-medium text-xl mt-5">Смена пользователя</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="flex justify-between mt-10">
@@ -83,7 +83,9 @@ export function TabletChangeUser({ tablet }: TabletDetailsProps) {
           <div className="flex flex-col gap-2">
             <Label>Новый пользователь *</Label>
             <EmployeeAutocomplete
-              employees={employees}
+              employees={employees.filter(
+                (employee) => employee.id !== tablet.employeeId
+              )}
               onSelectChange={(employeeId) =>
                 setValue("employeeId", employeeId, { shouldValidate: true })
               }

@@ -21,9 +21,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type ToolsTableProps = {
-  items: EmployeeClothingItem[];
+  items: EmployeeClothingItem[] | undefined;
   isLoading: boolean;
   isError: boolean;
   handleWriteOffDebt: (clothing: EmployeeClothingItem) => void;
@@ -46,7 +47,17 @@ export function EmployeeClothesTable({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {items.length > 0 ? (
+        {isLoading ? (
+          <div className="space-y-2">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-8 w-full rounded" />
+            ))}
+          </div>
+        ) : isError ? (
+          <p className="text-sm text-destructive text-center">
+            Ошибка загрузки данных
+          </p>
+        ) : items && items.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>
@@ -63,27 +74,9 @@ export function EmployeeClothesTable({
 
                 return (
                   <TableRow key={clothing.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <span className="text-sm">
-                          {formatDate(clothing.issuedAt)}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <span className="font-medium">
-                          {clothing.clothing.name}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <span className="font-medium">
-                          {clothing.priceWhenIssued}
-                        </span>
-                      </div>
-                    </TableCell>
+                    <TableCell>{formatDate(clothing.issuedAt)}</TableCell>
+                    <TableCell>{clothing.clothing.name}</TableCell>
+                    <TableCell>{clothing.priceWhenIssued}</TableCell>
                     <TableCell>
                       <Badge
                         className={
@@ -125,11 +118,9 @@ export function EmployeeClothesTable({
                           </DropdownMenuContent>
                         </DropdownMenu>
                       ) : (
-                        <div className="flex items-center">
-                          <span className="text-xs text-green-600 font-medium">
-                            Оплачено
-                          </span>
-                        </div>
+                        <span className="text-xs text-green-600 font-medium">
+                          Оплачено
+                        </span>
                       )}
                     </TableCell>
                   </TableRow>
@@ -138,7 +129,9 @@ export function EmployeeClothesTable({
             </TableBody>
           </Table>
         ) : (
-          <p className="text-gray-500 text-sm">Одежда не выдавалась</p>
+          <p className="text-gray-500 text-sm text-center py-8">
+            Одежда не выдавалась
+          </p>
         )}
       </CardContent>
     </Card>

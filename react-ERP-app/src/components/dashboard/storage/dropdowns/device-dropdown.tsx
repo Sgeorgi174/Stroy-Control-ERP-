@@ -28,20 +28,35 @@ export function DeviceDropDown({ device }: DeviceDropDownProps) {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <EllipsisVertical />
+        <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
+          <button className="hover:bg-accent p-1 rounded cursor-pointer">
+            <EllipsisVertical />
+          </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => openSheet("details", device)}>
+        <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("details", device);
+            }}
+          >
             Подробнее
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => openSheet("edit", device)}>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("edit", device);
+            }}
+          >
             Редактировать
           </DropdownMenuItem>
           <DropdownMenuItem
             disabled={device.status !== "ON_OBJECT"}
-            onClick={() => openSheet("transfer", device)}
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("transfer", device);
+            }}
           >
             Переместить
           </DropdownMenuItem>
@@ -51,14 +66,20 @@ export function DeviceDropDown({ device }: DeviceDropDownProps) {
               device.status === "LOST" ||
               device.status === "WRITTEN_OFF"
             }
-            onClick={() => openSheet("change status", device)}
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("change status", device);
+            }}
           >
             Сменить статус
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             variant="destructive"
-            onClick={() => setIsDeleteDialogOpen(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDeleteDialogOpen(true);
+            }}
           >
             Удалить
           </DropdownMenuItem>

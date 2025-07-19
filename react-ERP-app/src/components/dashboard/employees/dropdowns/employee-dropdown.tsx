@@ -14,7 +14,7 @@ import { useState } from "react";
 import { AlertDialogRestore } from "../alert-restore-employee";
 import { useRestoreEmployee } from "@/hooks/employee/useRestoreEmployee";
 import { AlertDialogUnassignFromObject } from "../alert-remove-object";
-import { useUnassignEmployee } from "@/hooks/employee/useUssignEmployee";
+import { useUnassignEmployee } from "@/hooks/employee/useUnassignEmployee";
 
 type EmployeeDropDownProps = { employee: Employee };
 
@@ -23,6 +23,7 @@ export function EmployeeDropDown({ employee }: EmployeeDropDownProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isRestoreDialogOpen, setIsRestoreDialogOpen] = useState(false);
   const [isUnassignDialogOpen, setIsUnassignDialogOpen] = useState(false);
+
   const { mutate: deleteEmployee, isPending: isDeleting } = useDeleteEmployee();
   const { mutate: unassignEmployee, isPending: isTransfer } =
     useUnassignEmployee();
@@ -43,10 +44,10 @@ export function EmployeeDropDown({ employee }: EmployeeDropDownProps) {
   const handleRestore = () => {
     restoreEmployee(employee.id, {
       onSuccess: () => {
-        setIsDeleteDialogOpen(false);
+        setIsRestoreDialogOpen(false); // поправлено: закрываем диалог восстановления, а не удаления
       },
       onError: () => {
-        setIsDeleteDialogOpen(false);
+        setIsRestoreDialogOpen(false);
       },
     });
   };
@@ -54,10 +55,10 @@ export function EmployeeDropDown({ employee }: EmployeeDropDownProps) {
   const handleUnassign = () => {
     unassignEmployee(employee.id, {
       onSuccess: () => {
-        setIsDeleteDialogOpen(false);
+        setIsUnassignDialogOpen(false); // поправлено: закрываем именно диалог отвязки
       },
       onError: () => {
-        setIsDeleteDialogOpen(false);
+        setIsUnassignDialogOpen(false);
       },
     });
   };
@@ -65,50 +66,97 @@ export function EmployeeDropDown({ employee }: EmployeeDropDownProps) {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <EllipsisVertical />
+        {/* Остановка всплытия на триггере */}
+        <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
+          <button className="hover:bg-accent p-1 rounded cursor-pointer">
+            <EllipsisVertical />
+          </button>
         </DropdownMenuTrigger>
+
+        {/* Остановка кликов внутри меню */}
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => openSheet("details", employee)}>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("details", employee);
+            }}
+          >
             Подробнее
           </DropdownMenuItem>
+
           <DropdownMenuSeparator />
+
           {employee.type === "ACTIVE" && (
-            <div>
-              <DropdownMenuItem onClick={() => openSheet("skills", employee)}>
+            <>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openSheet("skills", employee);
+                }}
+              >
                 Навыки
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openSheet("edit", employee)}>
+
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openSheet("edit", employee);
+                }}
+              >
                 Редактировать
               </DropdownMenuItem>
+
               <DropdownMenuItem
-                onClick={() => openSheet("change object", employee)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openSheet("change object", employee);
+                }}
               >
                 {employee.workPlace ? "Сменить объект" : "Назначить на объект"}
               </DropdownMenuItem>
+
               <DropdownMenuItem
                 disabled={employee.objectId === null}
-                onClick={() => setIsUnassignDialogOpen(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsUnassignDialogOpen(true);
+                }}
               >
                 Снять с объекта
               </DropdownMenuItem>
+
               <DropdownMenuSeparator />
+
               <DropdownMenuItem
-                onClick={() => openSheet("archive", employee)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openSheet("archive", employee);
+                }}
                 variant="destructive"
               >
                 Переместить в архив
               </DropdownMenuItem>
-            </div>
+            </>
           )}
+
           {employee.type === "ARCHIVE" && (
-            <DropdownMenuItem onClick={() => setIsRestoreDialogOpen(true)}>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsRestoreDialogOpen(true);
+              }}
+            >
               Восстановить сотрудника
             </DropdownMenuItem>
           )}
+
           <DropdownMenuSeparator />
+
           <DropdownMenuItem
-            onClick={() => setIsDeleteDialogOpen(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDeleteDialogOpen(true);
+            }}
             variant="destructive"
           >
             Удалить

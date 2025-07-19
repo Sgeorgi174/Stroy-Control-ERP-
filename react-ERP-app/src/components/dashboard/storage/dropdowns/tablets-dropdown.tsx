@@ -41,27 +41,47 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <EllipsisVertical />
+        <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
+          <button className="hover:bg-accent p-1 rounded cursor-pointer">
+            <EllipsisVertical />
+          </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => openSheet("details", tablet)}>
+        <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("details", tablet);
+            }}
+          >
             Подробнее
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => openSheet("edit", tablet)}>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("edit", tablet);
+            }}
+          >
             Редактировать
           </DropdownMenuItem>
           <DropdownMenuItem
             disabled={
               tablet.status === "LOST" || tablet.status === "WRITTEN_OFF"
             }
-            onClick={() => openSheet("change user", tablet)}
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("change user", tablet);
+            }}
           >
             {tablet.employee ? "Сменить владельца" : "Выдать планшет"}
           </DropdownMenuItem>
           {tablet.employee && (
-            <DropdownMenuItem onClick={() => setIsReleaseDialogOpen(true)}>
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsReleaseDialogOpen(true);
+              }}
+            >
               Вернуть планшет
             </DropdownMenuItem>
           )}
@@ -69,14 +89,20 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
             disabled={
               tablet.status === "LOST" || tablet.status === "WRITTEN_OFF"
             }
-            onClick={() => openSheet("change status", tablet)}
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("change status", tablet);
+            }}
           >
             Сменить статус
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             variant="destructive"
-            onClick={() => setIsDeleteDialogOpen(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDeleteDialogOpen(true);
+            }}
           >
             Удалить
           </DropdownMenuItem>

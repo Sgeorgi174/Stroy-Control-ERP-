@@ -50,40 +50,83 @@ export function ObjectDropDown({ object }: ObjectDropDownProps) {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <EllipsisVertical />
+        {/* Останавливаем всплытие клика на триггере */}
+        <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
+          <button className="hover:bg-accent p-1 rounded cursor-pointer">
+            <EllipsisVertical />
+          </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => openSheet("details", object)}>
+
+        {/* Останавливаем всплытие клика внутри меню */}
+        <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("details", object);
+            }}
+          >
             Подробнее
           </DropdownMenuItem>
+
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => openSheet("edit", object)}>
+
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("edit", object);
+            }}
+          >
             Редактировать
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openSheet("change foreman", object)}>
+
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("change foreman", object);
+            }}
+          >
             {object.foreman ? "Сменить бригадира" : "Назначить бригадира"}
           </DropdownMenuItem>
+
           <DropdownMenuItem
             disabled={!object.foreman}
-            onClick={() => setIsRemoveDialogOpen(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsRemoveDialogOpen(true);
+            }}
           >
             Снять бригадира
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => openSheet("add employee", object)}>
+
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("add employee", object);
+            }}
+          >
             Добавить сотрудников
           </DropdownMenuItem>
+
           <DropdownMenuSeparator />
+
           <DropdownMenuItem
-            onClick={() => openSheet("close object", object)}
             variant="destructive"
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("close object", object);
+            }}
           >
             Закрыть объект
           </DropdownMenuItem>
+
           <DropdownMenuSeparator />
+
           <DropdownMenuItem
             variant="destructive"
-            onClick={() => setIsDeleteDialogOpen(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDeleteDialogOpen(true);
+            }}
           >
             Удалить
           </DropdownMenuItem>

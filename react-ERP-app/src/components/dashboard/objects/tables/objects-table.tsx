@@ -76,7 +76,9 @@ export function ObjectsTable({
                 ></StatusBadge>
               </TableCell>
               <TableCell>
-                <ObjectDropDown object={object} />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <ObjectDropDown object={object} />
+                </div>
               </TableCell>
             </TableRow>
           ))}

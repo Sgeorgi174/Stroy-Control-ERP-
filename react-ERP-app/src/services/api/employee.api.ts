@@ -27,7 +27,7 @@ export const getFilteredEmployees = async (params: {
   position?: Positions | null;
   type?: EmployeeType | null;
   skillIds?: string;
-}) => {
+}): Promise<Employee[]> => {
   const res = await api.get("/employees/filter", {
     params: {
       searchQuery: params.searchQuery || undefined,

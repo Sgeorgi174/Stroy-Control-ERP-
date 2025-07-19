@@ -81,7 +81,9 @@ export function EmployeesTable({
                 </div>
               </TableCell>
               <TableCell>
-                <EmployeeDropDown employee={employee} />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <EmployeeDropDown employee={employee} />
+                </div>
               </TableCell>
             </TableRow>
           ))}

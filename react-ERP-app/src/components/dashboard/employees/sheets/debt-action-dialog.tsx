@@ -29,12 +29,18 @@ export function DebtActionDialog({
 }: DebtActionDialogProps) {
   const [amount, setAmount] = useState("");
 
+  const parsedAmount = Number.parseFloat(amount);
+  const isAmountValid =
+    amount.trim() !== "" &&
+    !Number.isNaN(parsedAmount) &&
+    parsedAmount > 0 &&
+    parsedAmount <= clothing.debtAmount;
+
   const handleConfirm = () => {
     const numAmount =
-      actionType === "writeoff"
-        ? clothing.debtAmount
-        : Number.parseFloat(amount);
-    if (numAmount > 0) {
+      actionType === "writeoff" ? clothing.debtAmount : parsedAmount;
+
+    if (actionType === "writeoff" || (isAmountValid && parsedAmount > 0)) {
       onConfirm(numAmount);
       setAmount("");
       onOpenChange(false);
@@ -53,19 +59,19 @@ export function DebtActionDialog({
               : "Списание долга"}
           </DialogTitle>
           <DialogDescription>
-            {clothing.clothing.name} - Остаток долга: {clothing.debtAmount}
+            {clothing.clothing.name} — Остаток долга: {clothing.debtAmount}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-muted p-4 rounded-lg">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-500">Цена при выдаче:</span>
+                <span className="text-muted-foreground">Цена при выдаче:</span>
                 <p className="font-medium">{clothing.priceWhenIssued}</p>
               </div>
               <div>
-                <span className="text-gray-500">Всего оплачено:</span>
+                <span className="text-muted-foreground">Всего оплачено:</span>
                 <p className="font-medium">{remainingDebt}</p>
               </div>
             </div>
@@ -77,11 +83,18 @@ export function DebtActionDialog({
               <Input
                 id="amount"
                 type="number"
-                max={remainingDebt}
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0"
+                min={0}
+                max={clothing.debtAmount}
+                className="mt-2"
               />
+              {!isAmountValid && amount && (
+                <p className="text-sm text-red-500 mt-1">
+                  Введите сумму от 1 до {clothing.debtAmount}
+                </p>
+              )}
             </div>
           )}
 
@@ -101,10 +114,7 @@ export function DebtActionDialog({
           </Button>
           <Button
             onClick={handleConfirm}
-            disabled={
-              actionType === "reduce" &&
-              (!amount || Number.parseFloat(amount) <= 0)
-            }
+            disabled={actionType === "reduce" && !isAmountValid}
             variant={actionType === "writeoff" ? "destructive" : "default"}
           >
             {actionType === "reduce" ? "Погасить" : "Списать долг"}
