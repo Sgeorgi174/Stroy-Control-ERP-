@@ -106,7 +106,7 @@ export function ObjectsSheet() {
             {mode === "add" && "Добавление нового объекта"}
             {mode === "edit" && `Редактирвоание объекта`}
             {mode === "details" && `Подробная информация об объекте`}
-            {mode === "change foreman" && `Смена бригадира на объекте`}
+            {mode === "change foreman" && `Смена мастера на объекте`}
             {mode === "add employee" &&
               `Выберите сотрудников для назначения на объект`}
             {mode === "close object" &&

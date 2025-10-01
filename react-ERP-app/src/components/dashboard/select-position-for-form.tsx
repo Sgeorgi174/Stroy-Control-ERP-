@@ -32,7 +32,7 @@ export function PositionSelectForForms({
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Должность</SelectLabel>
-          <SelectItem value="FOREMAN">Бригадир</SelectItem>
+          <SelectItem value="FOREMAN">Мастер</SelectItem>
           <SelectItem value="ELECTRICAN">Электромонтажник</SelectItem>
           <SelectItem value="LABORER">Разнорабочий</SelectItem>
           <SelectItem value="DESIGNER">Проектировщик</SelectItem>

@@ -24,7 +24,7 @@ const tabletSchema = z
   .refine(
     (data) => data.noForeman || (!!data.userId && data.userId.trim() !== ""),
     {
-      message: "Выберите бригадира",
+      message: "Выберите мастера",
       path: ["userId"],
     }
   );
@@ -142,7 +142,7 @@ export function ObjectAdd() {
 
         {/* Сотрудник */}
         <div className="flex flex-col gap-2 mt-10">
-          <Label>Бригадир *</Label>
+          <Label>Мастер *</Label>
           <div className="flex items-center gap-8">
             <ForemanAutocomplete
               disabled={noForeman}
@@ -168,7 +168,7 @@ export function ObjectAdd() {
                   }
                 }}
               />
-              <Label htmlFor="noForeman">Не назначать бригадира</Label>
+              <Label htmlFor="noForeman">Не назначать мастера</Label>
             </div>
           </div>
           {errors.userId && (

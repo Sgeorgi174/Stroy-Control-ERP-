@@ -4,12 +4,14 @@ import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import { useForm } from "react-hook-form";
 import { useObjects } from "@/hooks/object/useObject";
 import { useCreateTool } from "@/hooks/tool/useCreateTool";
+import { useCreateToolBag } from "@/hooks/tool/useCreateToolBag";
+import { useState, useEffect } from "react";
 
-// 1. Схема валидации Zod
 const toolSchema = z.object({
   name: z.string().min(1, "Это поле обязательно"),
   serialNumber: z.string().min(1, "Это поле обязательно"),
@@ -23,7 +25,12 @@ export function ToolsAdd() {
     searchQuery: "",
     status: "OPEN",
   });
+
   const createTool = useCreateTool();
+  const createToolBag = useCreateToolBag();
+
+  const [isBag, setIsBag] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -40,6 +47,15 @@ export function ToolsAdd() {
     },
   });
 
+  // если включили чекбокс – подставляем имя
+  useEffect(() => {
+    if (isBag) {
+      setValue("name", "Сумка расключника");
+    } else {
+      setValue("name", "");
+    }
+  }, [isBag, setValue]);
+
   const { closeSheet } = useToolsSheetStore();
   const selectedObjectId = watch("objectId");
 
@@ -50,7 +66,9 @@ export function ToolsAdd() {
       objectId: data.objectId,
     };
 
-    createTool.mutate(payload, {
+    const mutation = isBag ? createToolBag : createTool;
+
+    mutation.mutate(payload, {
       onSuccess: () => {
         reset();
         closeSheet();
@@ -61,6 +79,16 @@ export function ToolsAdd() {
   return (
     <div className="p-5">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+        {/* Чекбокс */}
+
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="isBag"
+            checked={isBag}
+            onCheckedChange={(checked) => setIsBag(!!checked)}
+          />
+          <Label htmlFor="isBag">Создать сумку расключника</Label>
+        </div>
         {/* Имя */}
         <div className="flex flex-col gap-2 w-[400px]">
           <Label htmlFor="name">Наименование *</Label>
@@ -69,6 +97,7 @@ export function ToolsAdd() {
             type="text"
             placeholder="Введите наименование"
             {...register("name")}
+            readOnly={isBag}
           />
           {errors.name && (
             <p className="text-sm text-red-500">{errors.name.message}</p>
@@ -109,7 +138,7 @@ export function ToolsAdd() {
         {/* Кнопка */}
         <div className="flex justify-center mt-10">
           <Button type="submit" className="w-[300px]">
-            Добавить
+            {isBag ? "Создать сумку" : "Добавить инструмент"}
           </Button>
         </div>
       </form>

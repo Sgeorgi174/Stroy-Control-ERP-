@@ -22,6 +22,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toolStatusMap } from "@/constants/toolStatusMap";
 import type { ToolStatus } from "@/types/tool";
+import { ToolBagEdit } from "./tool-bag-edit";
 
 export function ToolsSheet() {
   const { isOpen, mode, selectedTool, closeSheet } = useToolsSheetStore();
@@ -101,6 +102,7 @@ export function ToolsSheet() {
           <SheetDescription className="text-center text-transparent w-0 h-0">
             {mode === "add" && "Заполните данные о новом инструменте"}
             {mode === "edit" && `Редактирование выбранного инструмента`}
+            {mode === "edit bag" && `Редактирование выбранной сумки`}
             {mode === "transfer" &&
               `Заполните данные о перемещении инструмента`}
             {mode === "details" && `Подробная информация об инструменте`}
@@ -111,6 +113,9 @@ export function ToolsSheet() {
 
         {mode === "add" && <ToolsAdd />}
         {mode === "edit" && selectedTool && <ToolsEdit tool={selectedTool} />}
+        {mode === "edit bag" && selectedTool && (
+          <ToolBagEdit tool={selectedTool} />
+        )}
         {mode === "transfer" && selectedTool && (
           <ToolsTransfer tool={selectedTool} />
         )}

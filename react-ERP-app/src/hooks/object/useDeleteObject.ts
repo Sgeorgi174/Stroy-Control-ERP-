@@ -13,7 +13,7 @@ export const useDeleteObject = () => {
       queryClient.invalidateQueries({ queryKey: ["objects"] });
     },
     onError: (error) => {
-      console.error("Ошибка при удалении планшета:", error);
+      console.error("Ошибка при удалении объекта:", error);
       toast.error("Не удалось удалить объект");
     },
   });

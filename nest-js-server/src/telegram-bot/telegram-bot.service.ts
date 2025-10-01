@@ -20,18 +20,18 @@ export class TelegramBotService {
   }
 
   public async sendOtp(dto: SendOtpDto) {
-    // const telegramUser = await this.prismaService.telegramUser.findUnique({
-    //   where: { phone: dto.phone },
-    // });
+    const telegramUser = await this.prismaService.telegramUser.findUnique({
+      where: { phone: dto.phone },
+    });
 
-    // if (!telegramUser) {
-    //   throw new NotFoundException('Вы не зарегистрированы в боте!');
-    // }
+    if (!telegramUser) {
+      throw new NotFoundException('Вы не зарегистрированы в боте!');
+    }
 
-    // const chatId: number = telegramUser.chatId;
-    // const otp = this.generateOtp();
-    const chatId: number = 836996470;
-    const otp = 666666;
+    const chatId: number = telegramUser.chatId;
+    const otp = this.generateOtp();
+    // const chatId: number = 836996470;
+    // const otp = 666666;
     const otpExpires = new Date(Date.now() + 60 * 1000);
 
     await this.prismaService.verifacationCode.upsert({

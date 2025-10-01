@@ -8,6 +8,8 @@ import type {
   ResendToolTransferDto,
   WirteOffToolInTransferDto,
   CancelToolTransferDto,
+  AddToolBagItemDto,
+  RemoveToolBagItemDto,
 } from "@/types/dto/tool.dto";
 import type { Tool, ToolStatus } from "@/types/tool";
 
@@ -29,13 +31,34 @@ export const getFilteredTools = async (params: {
 
 // Получить инструмент по id
 export const getToolById = async (id: string): Promise<Tool> => {
-  const res = await api.get(`/tools/${id}`);
+  const res = await api.get(`/tools/by-id/${id}`);
   return res.data;
 };
 
 // Создать инструмент
 export const createTool = async (data: CreateToolDto): Promise<Tool> => {
   const res = await api.post("/tools/create", data);
+  return res.data;
+};
+
+export const createToolBag = async (data: CreateToolDto): Promise<Tool> => {
+  const res = await api.post("/tools/create-bag", data);
+  return res.data;
+};
+
+export const addToolBagItem = async (
+  id: string,
+  data: AddToolBagItemDto
+): Promise<Tool> => {
+  const res = await api.put(`/tools/add-bag-item/${id}`, data);
+  return res.data;
+};
+
+export const removeToolBagItem = async (
+  id: string,
+  data: RemoveToolBagItemDto
+): Promise<Tool> => {
+  const res = await api.put(`/tools/remove-bag-item/${id}`, data);
   return res.data;
 };
 

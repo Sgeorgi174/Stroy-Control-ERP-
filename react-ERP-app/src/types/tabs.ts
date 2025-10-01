@@ -8,4 +8,5 @@ export type TabKey =
   | "object"
   | "employee"
   | "my-object"
-  | "transfers";
+  | "transfers"
+  | "admin";

@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { DotIcon, TriangleAlertIcon } from "lucide-react";
+import { CircleCheck, DotIcon, TriangleAlertIcon } from "lucide-react";
 
 type ErrorBoxToCloseObjectProps = {
   hasIncomingUnconfirmedItemsError: boolean;
@@ -21,7 +21,7 @@ export function ErrorBoxToCloseObject({
     <Accordion type="single" collapsible>
       {hasIncomingUnconfirmedItemsError && (
         <AccordionItem value="item-1">
-          <AccordionTrigger className="border p-3 bg-attention">
+          <AccordionTrigger className="border p-3 bg-attention shadow cursor-pointer">
             <div className="flex items-center gap-5">
               <TriangleAlertIcon
                 className="w-[20px]"
@@ -32,7 +32,7 @@ export function ErrorBoxToCloseObject({
               <p className="font-medium">Причина: Не принятый инвентарь</p>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="border rounded-sm mt-2 p-3 bg-attention">
+          <AccordionContent className="border rounded-sm mt-2 p-3 bg-attention shadow cursor-pointer">
             <div className="flex flex-col gap-2">
               <p>Перед закрытием необходимо убедиться, что:</p>
               <div className="flex items-center gap-3">
@@ -53,7 +53,7 @@ export function ErrorBoxToCloseObject({
 
       {hasNotEmptyObjectError && (
         <AccordionItem className="mt-2" value="item-2">
-          <AccordionTrigger className="border p-3 bg-attention">
+          <AccordionTrigger className="border p-3 bg-attention shadow cursor-pointer">
             <div className="flex items-center gap-5">
               <TriangleAlertIcon
                 className="w-[20px]"
@@ -96,7 +96,7 @@ export function ErrorBoxToCloseObject({
 
       {hasOutgoingUnconfirmedTransfersError && (
         <AccordionItem className="mt-2" value="item-3">
-          <AccordionTrigger className="border p-3 bg-attention">
+          <AccordionTrigger className="border p-3 bg-attention shadow cursor-pointer">
             <div className="flex items-center gap-5">
               <TriangleAlertIcon
                 className="w-[20px]"
@@ -123,6 +123,39 @@ export function ErrorBoxToCloseObject({
           </AccordionContent>
         </AccordionItem>
       )}
+      {!hasOutgoingUnconfirmedTransfersError &&
+        !hasNotEmptyObjectError &&
+        !hasIncomingUnconfirmedItemsError && (
+          <AccordionItem className="mt-2" value="item-4">
+            <AccordionTrigger className="border p-3 bg-green-400/40 shadow cursor-pointer">
+              <div className="flex items-center gap-5">
+                <CircleCheck className="w-[20px] " strokeWidth={2.5} />
+                <div>
+                  <p className="font-medium">Объект готов к закрытию</p>
+                </div>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="border rounded-sm mt-2 p-3 bg-green-100">
+              <div className="flex flex-col gap-2 text-sm text-green-900">
+                <p>
+                  Вы выполнили все необходимые условия для закрытия объекта:
+                </p>
+                <div className="flex items-center gap-3">
+                  <DotIcon />
+                  <p>Нет непринятого инвентаря</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <DotIcon />
+                  <p>Нет нераспределённых ресурсов</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <DotIcon />
+                  <p>Нет неподтверждённых перемещений</p>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        )}
     </Accordion>
   );
 }

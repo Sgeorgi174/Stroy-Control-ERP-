@@ -28,7 +28,8 @@ export class TabletHistoryService {
         toEmployee: { select: { firstName: true, lastName: true } },
         changedBy: { select: { firstName: true, lastName: true } },
       },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: 'desc' },
+      take: 6,
     });
   }
 

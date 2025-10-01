@@ -11,11 +11,11 @@ export const useChangeForeman = (id: string) => {
     mutationFn: (data: ChangeForemanDto) => changeForeman(id, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["objects"] });
-      toast.success(`На объекте «${data.name}» успешно изменен бригадир`);
+      toast.success(`На объекте «${data.name}» успешно изменен мастер`);
     },
     onError: (error: AppAxiosError) => {
       const message =
-        error?.response?.data?.message || "Не удалось сменить бригадира";
+        error?.response?.data?.message || "Не удалось сменить мастера";
       toast.error(message);
     },
   });

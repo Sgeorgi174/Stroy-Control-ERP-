@@ -83,6 +83,12 @@ export class ObjectController {
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Patch('close/:id')
+  async closeObject(@Param('id') id: string) {
+    return this.objectService.closeObject(id);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Delete('delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {

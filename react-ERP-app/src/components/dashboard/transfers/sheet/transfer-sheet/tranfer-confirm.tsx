@@ -26,7 +26,7 @@ export function TransferConfirm({ selectedTransfer }: TransferConfirmProps) {
         <div className="bg-green-50 p-4 rounded-lg border border-green-200">
           <p className="text-sm text-green-800">
             Перемещение успешно выполнено. Инвентарь был перемещен на объект{" "}
-            {selectedTransfer.toObject.name} и принят бригадиром.
+            {selectedTransfer.toObject.name} и принят мастером.
           </p>
         </div>
       </CardContent>

@@ -16,7 +16,7 @@ export function TabletDetails({ tablet }: TabletDetailsProps) {
         <p className="font-medium text-xl mt-6">История</p>
 
         <TabletHistory
-          historyRecords={data}
+          historyRecords={data.reverse()}
           isError={isError}
           isLoading={isLoading}
         />

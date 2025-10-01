@@ -21,7 +21,7 @@ type AddEmployeesTableProps = {
 };
 
 const positionMap = {
-  FOREMAN: "Бригадир",
+  FOREMAN: "Мастер",
   ELECTRICAN: "Электромонтажник",
   LABORER: "Разнорабочий",
   DESIGNER: "Проектировщик",
@@ -30,8 +30,6 @@ const positionMap = {
 
 export function AddEmployeesTable({
   employees,
-  isLoading,
-  isError,
   onSelectionChange,
 }: AddEmployeesTableProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);

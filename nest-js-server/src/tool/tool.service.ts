@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -17,6 +18,9 @@ import { RejectToolTransferDto } from './dto/reject-transfer.dto';
 import { RetransferToolDto } from './dto/retransfer.dto';
 import { WriteOffToolInTransferDto } from './dto/write-off-in-transit.dto';
 import { CancelToolTransferDto } from './dto/cancel-transfer.dto';
+import { AddBagItemDto } from './dto/add-bag-item.dto';
+import { BagItem } from 'generated/prisma';
+import { RemoveBagItemDto } from './dto/remove-bag-item';
 
 @Injectable()
 export class ToolService {
@@ -60,10 +64,69 @@ export class ToolService {
     }
   }
 
+  public async createBag(dto: CreateDto) {
+    try {
+      return await this.prismaService.tool.create({
+        data: {
+          name: dto.name,
+          serialNumber: dto.serialNumber,
+          objectId: dto.objectId,
+          isBag: true,
+        },
+        include: { storage: true },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        conflictMessage: 'Инструмент с таким серийным номером уже существует',
+        defaultMessage: 'Ошибка создания инструмента',
+      });
+    }
+  }
+
+  public async addBagItem(toolId: string, dto: AddBagItemDto) {
+    const tool = await this.getById(toolId);
+    if (!tool.isBag) {
+      throw new BadRequestException('Инструмент не является сумкой');
+    }
+    const existingItem: BagItem | undefined = tool.bagItems.find(
+      (item) => item.name === dto.name,
+    );
+    if (existingItem) {
+      return this.prismaService.bagItem.update({
+        where: { id: existingItem.id },
+        data: { quantity: existingItem.quantity + dto.quantity },
+      });
+    }
+    return this.prismaService.bagItem.create({
+      data: { toolId, name: dto.name, quantity: dto.quantity },
+    });
+  }
+
+  public async removeBagItem(itemId: string, dto: RemoveBagItemDto) {
+    const item = await this.prismaService.bagItem.findUnique({
+      where: { id: itemId },
+    });
+
+    if (!item)
+      throw new BadRequestException('Такой инструмент в сумке не найден');
+
+    if (dto.quantity > item.quantity)
+      throw new BadRequestException('Неккоректное удаляемое количество');
+
+    if (dto.quantity === item.quantity) {
+      return this.prismaService.bagItem.delete({ where: { id: itemId } });
+    }
+
+    return this.prismaService.bagItem.update({
+      where: { id: itemId },
+      data: { quantity: { decrement: dto.quantity } },
+    });
+  }
+
   public async getById(id: string) {
     const tool = await this.prismaService.tool.findUnique({
       where: { id },
-      include: { storage: true },
+      include: { storage: true, bagItems: true },
     });
 
     if (!tool) throw new NotFoundException('Инструмент не найден');
@@ -103,6 +166,7 @@ export class ToolService {
           : {}),
       },
       include: {
+        bagItems: true,
         storage: {
           select: {
             foreman: {

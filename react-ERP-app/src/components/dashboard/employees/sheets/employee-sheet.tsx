@@ -64,7 +64,7 @@ const getStatusLabel = (status: EmployeeStatuses) => {
 const getPositionLabel = (position: Positions) => {
   switch (position) {
     case "FOREMAN":
-      return "Бригадир";
+      return "Мастер";
     case "ELECTRICAN":
       return "Электромонтажник";
     case "LABORER":

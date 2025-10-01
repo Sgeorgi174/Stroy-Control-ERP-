@@ -26,6 +26,8 @@ import { RejectToolTransferDto } from './dto/reject-transfer.dto';
 import { RetransferToolDto } from './dto/retransfer.dto';
 import { WriteOffToolInTransferDto } from './dto/write-off-in-transit.dto';
 import { CancelToolTransferDto } from './dto/cancel-transfer.dto';
+import { AddBagItemDto } from './dto/add-bag-item.dto';
+import { RemoveBagItemDto } from './dto/remove-bag-item';
 
 @Controller('tools')
 export class ToolController {
@@ -40,6 +42,25 @@ export class ToolController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateDto) {
     return this.toolService.create(dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('create-bag')
+  @HttpCode(HttpStatus.CREATED)
+  async createBag(@Body() dto: CreateDto) {
+    return this.toolService.createBag(dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Put('add-bag-item/:id')
+  async addBagItem(@Param('id') id: string, @Body() dto: AddBagItemDto) {
+    return this.toolService.addBagItem(id, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Put('remove-bag-item/:id')
+  async removeBagItem(@Param('id') id: string, @Body() dto: RemoveBagItemDto) {
+    return this.toolService.removeBagItem(id, dto);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)

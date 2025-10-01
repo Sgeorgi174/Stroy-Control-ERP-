@@ -60,7 +60,7 @@ export function ForemanAutocomplete({
           className="justify-between w-[300px]"
           disabled={disabled}
         >
-          {selectedLabel || "Выберите бригадира"}
+          {selectedLabel || "Выберите мастера"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

@@ -36,7 +36,7 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
             <TableHead className="text-secondary font-bold w-[150px]">
               Статус
             </TableHead>
-            <TableHead className="text-secondary font-bold">Бригадир</TableHead>
+            <TableHead className="text-secondary font-bold">Мастер</TableHead>
             <TableHead className="text-secondary font-bold">Телефон</TableHead>
             <TableHead className="text-secondary font-bold">
               Место хранения

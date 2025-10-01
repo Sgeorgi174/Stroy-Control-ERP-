@@ -37,7 +37,7 @@ export function ObjectDetailsBox({ object }: ObjectDetailsBoxProps) {
             </div>
 
             <div>
-              <p className="text-sm text-gray-500">Бригадир</p>
+              <p className="text-sm text-gray-500">Мастер</p>
               <p className="font-medium">
                 {object.foreman
                   ? `${object.foreman.lastName} ${object.foreman.firstName}`

@@ -2,14 +2,42 @@ import { useGetObjectByIdToClose } from "@/hooks/object/useGetByIdToClose";
 import { Button } from "@/components/ui/button";
 import { ItemCardtoCloseObject } from "./item-card";
 import { ErrorBoxToCloseObject } from "./error-box-to-close-object";
+import { useNavigate } from "react-router";
+import { useFilterPanelStore } from "@/stores/filter-panel-store";
+import type { TabKey } from "@/types/tabs";
+import { useObjectSheetStore } from "@/stores/objects-sheet-store";
+import { useCloseObject } from "@/hooks/object/useCloseObject";
+import { useState } from "react";
+import { CloseObjectDialog } from "./close-object-dialog";
 
 type CloseObjectProps = {
   objectId: string;
 };
 
 export function CloseObject({ objectId }: CloseObjectProps) {
-  const { data, isLoading, isError } = useGetObjectByIdToClose(objectId);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { data } = useGetObjectByIdToClose(objectId);
+  const closeMutation = useCloseObject();
+  const setActiveTab = useFilterPanelStore((s) => s.setActiveTab);
+  const setSelectedObjectId = useFilterPanelStore((s) => s.setSelectedObjectId);
+  const { closeSheet } = useObjectSheetStore();
+  const navigate = useNavigate();
 
+  const navigateToRoute = (tab: TabKey, route: string) => {
+    setActiveTab(tab);
+    setSelectedObjectId(objectId);
+    navigate(route);
+    closeSheet();
+  };
+
+  const handleConfirmClose = () => {
+    closeMutation.mutate(objectId, {
+      onSuccess: () => {
+        setIsDialogOpen(false);
+        closeSheet();
+      },
+    });
+  };
   const incomingUnconfirmedItems = {
     data: data?.incomingUnconfirmedItems,
     isError:
@@ -48,17 +76,23 @@ export function CloseObject({ objectId }: CloseObjectProps) {
 
       <div className="flex flex-col gap-2 mt-8">
         <ItemCardtoCloseObject
-          handleClick={() => {}}
+          handleClick={() => {
+            navigateToRoute("tool", "/storage");
+          }}
           category="Инструменты"
           quantity={notEmptyObject.data?.tools.length}
         />
         <ItemCardtoCloseObject
-          handleClick={() => {}}
+          handleClick={() => {
+            navigateToRoute("device", "/storage");
+          }}
           category="Оргтехника"
           quantity={notEmptyObject.data?.devices.length}
         />
         <ItemCardtoCloseObject
-          handleClick={() => {}}
+          handleClick={() => {
+            navigateToRoute("clothing", "/storage");
+          }}
           category="Одежда и обувь"
           quantity={notEmptyObject.data?.clothes.reduce(
             (acc, curr) => acc + curr.quantity,
@@ -66,7 +100,9 @@ export function CloseObject({ objectId }: CloseObjectProps) {
           )}
         />
         <ItemCardtoCloseObject
-          handleClick={() => {}}
+          handleClick={() => {
+            navigateToRoute("employee", "/employees");
+          }}
           category="Сотрудники"
           quantity={notEmptyObject.data?.employees.length}
         />
@@ -81,9 +117,16 @@ export function CloseObject({ objectId }: CloseObjectProps) {
           }
           variant={"destructive"}
           className="mt-8 w-[250px]"
+          onClick={() => setIsDialogOpen(true)}
         >
           Закрыть объект
         </Button>
+
+        <CloseObjectDialog
+          open={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onConfirm={handleConfirmClose}
+        />
       </div>
     </div>
   );

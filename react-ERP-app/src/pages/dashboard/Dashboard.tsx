@@ -10,33 +10,57 @@ import type { TabKey } from "@/types/tabs";
 const pathToTabMap: Record<string, TabKey> = {
   "/monitoring": "monitoring",
   "/my-object": "my-object",
-  "/storage": "tool",
   "/objects": "object",
   "/employees": "employee",
   "/transfers": "transfers",
+  "/admin": "admin",
 };
+
+const storageTabs: TabKey[] = [
+  "tool",
+  "device",
+  "tablet",
+  "footwear",
+  "clothing",
+];
 
 export function Dashboard() {
   const location = useLocation();
   const [active, setActive] = useState(location.pathname);
   const { setActiveTab } = useFilterPanelStore();
 
+  useEffect(() => {
+    setActive(location.pathname);
+
+    const tab = pathToTabMap[location.pathname];
+    const currentTab = useFilterPanelStore.getState().activeTab;
+
+    if (location.pathname === "/storage") {
+      const currentTab = useFilterPanelStore.getState().activeTab;
+
+      // ✅ Только если tab вообще ещё не задан
+      if (!storageTabs.includes(currentTab)) {
+        setActiveTab("tool");
+      }
+
+      return;
+    }
+
+    if (tab && tab !== currentTab) {
+      setActiveTab(tab);
+    }
+  }, [location.pathname, setActiveTab]);
+
   const handleClick = () => {
     setActive(location.pathname);
+
     const tab = pathToTabMap[location.pathname];
+    if (location.pathname === "/storage") return;
+
     if (tab) {
       setActiveTab(tab);
     }
   };
-
-  useEffect(() => {
-    setActive(location.pathname);
-    const tab = pathToTabMap[location.pathname];
-
-    if (tab && tab !== useFilterPanelStore.getState().activeTab) {
-      setActiveTab(tab);
-    }
-  }, [location.pathname, setActiveTab]);
 
   return (
     <SidebarProvider>

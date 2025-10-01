@@ -18,4 +18,6 @@ export type Tool = {
   objectId: string;
   storage: Object;
   inTransit: PendingToolTransfer[];
+  isBag: boolean;
+  bagItems: { id: string; name: string; quantity: number }[];
 };

@@ -10,13 +10,15 @@ export function ClothesDetails({ clothes }: { clothes: Clothes }) {
     isLoading,
   } = useGetClothesHistory(clothes.id);
 
+  console.log(clothesHistoryData);
+
   return (
     <>
       <div className="p-5 flex flex-col gap-1">
         <ClothesDetailsBox clothes={clothes} />
         <p className="font-medium text-xl mt-6">История</p>
         <ClothesHistory
-          transferRecords={clothesHistoryData}
+          transferRecords={clothesHistoryData.reverse()}
           isError={isError}
           isLoading={isLoading}
         />

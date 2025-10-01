@@ -55,6 +55,10 @@ export const deleteObject = async (id: string): Promise<void> => {
   await api.delete(`/objects/delete/${id}`);
 };
 
+export const closeObject = async (id: string): Promise<void> => {
+  await api.patch(`/objects/close/${id}`);
+};
+
 export const changeForeman = async (
   id: string,
   dto: ChangeForemanDto

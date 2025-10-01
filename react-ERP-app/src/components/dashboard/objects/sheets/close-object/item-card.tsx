@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { RejectBadge } from "./reject-badge";
 import { AcceptBadge } from "./accept-badge";
-import { Button } from "@/components/ui/button";
 
 type ItemCardtoCloseObjectProps = {
   category: string;
@@ -15,7 +14,10 @@ export function ItemCardtoCloseObject({
   handleClick,
 }: ItemCardtoCloseObjectProps) {
   return (
-    <Card className="flex flex-row items-center justify-between p-3">
+    <Card
+      onClick={handleClick}
+      className="flex flex-row items-center justify-between p-3 cursor-pointer hover:shadow-md"
+    >
       <p className="text-[16px] w-[250px]">
         Категория: <span>{category}</span>
       </p>
@@ -26,13 +28,6 @@ export function ItemCardtoCloseObject({
         <p className="text-[16px]">Статус:</p>
         {quantity !== 0 ? <RejectBadge /> : <AcceptBadge />}
       </div>
-      <Button
-        onClick={handleClick}
-        variant={"outline"}
-        disabled={quantity === 0}
-      >
-        Открыть
-      </Button>
     </Card>
   );
 }

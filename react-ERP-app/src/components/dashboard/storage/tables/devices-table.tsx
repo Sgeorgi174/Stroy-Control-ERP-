@@ -38,7 +38,7 @@ export function DevicesTable({
               Наименование
             </TableHead>
             <TableHead className="text-secondary font-bold">Статус</TableHead>
-            <TableHead className="text-secondary font-bold">Бригадир</TableHead>
+            <TableHead className="text-secondary font-bold">Мастер</TableHead>
             <TableHead className="text-secondary font-bold">Телефон</TableHead>
             <TableHead className="text-secondary font-bold">
               Место хранения

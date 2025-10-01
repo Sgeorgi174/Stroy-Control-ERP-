@@ -10,6 +10,15 @@ export interface UpdateToolDto extends CreateToolDto {
   status?: ToolStatus;
 }
 
+export interface AddToolBagItemDto {
+  name: string;
+  quantity: number;
+}
+
+export interface RemoveToolBagItemDto {
+  quantity: number;
+}
+
 export interface UpdateToolStatusDto {
   status: ToolStatus;
   comment?: string;

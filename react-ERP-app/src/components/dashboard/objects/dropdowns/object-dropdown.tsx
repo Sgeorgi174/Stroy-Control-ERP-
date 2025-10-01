@@ -85,7 +85,7 @@ export function ObjectDropDown({ object }: ObjectDropDownProps) {
               openSheet("change foreman", object);
             }}
           >
-            {object.foreman ? "Сменить бригадира" : "Назначить бригадира"}
+            {object.foreman ? "Сменить мастера" : "Назначить мастера"}
           </DropdownMenuItem>
 
           <DropdownMenuItem
@@ -95,7 +95,7 @@ export function ObjectDropDown({ object }: ObjectDropDownProps) {
               setIsRemoveDialogOpen(true);
             }}
           >
-            Снять бригадира
+            Снять мастера
           </DropdownMenuItem>
 
           <DropdownMenuItem

@@ -35,7 +35,8 @@ export class ClothesHistoryService {
           movedBy: { select: { firstName: true, lastName: true } },
           toEmployee: { select: { lastName: true, firstName: true } },
         },
-        orderBy: { createdAt: 'asc' },
+        orderBy: { createdAt: 'desc' },
+        take: 6,
       });
     } catch (error) {
       console.error(error);

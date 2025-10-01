@@ -101,7 +101,7 @@ export function NotificationCard() {
         scrollHideDelay={0}
         className="w-full h-full bg-accent border border-t-0 rounded-b-xl"
       >
-        <div className="bg-accent min-h-full p-2 pr-4">
+        <div className="bg-accent min-h-[450px] p-2 pr-4">
           {/* Важное */}
           <TabsContent value="important">
             {myObject && (

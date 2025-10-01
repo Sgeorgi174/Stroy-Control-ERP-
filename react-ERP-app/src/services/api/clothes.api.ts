@@ -12,6 +12,7 @@ import type {
   WirteOffClothesInTransferDto,
 } from "@/types/dto/clothes.dto";
 import type { Clothes, ClothesType, Seasons } from "@/types/clothes";
+import type { TransferRecord } from "@/types/historyRecords";
 
 // Получить список одежды с фильтрами
 export const getFilteredClothes = async (params: {
@@ -144,7 +145,9 @@ export const deleteClothes = async (id: string): Promise<void> => {
   await api.delete(`/clothes/delete/${id}`);
 };
 
-export const getClothesHistory = async (id: string): Promise<void> => {
+export const getClothesHistory = async (
+  id: string
+): Promise<TransferRecord[]> => {
   const res = await api.get(`/clothes-history/transfers/${id}`);
   return res.data;
 };

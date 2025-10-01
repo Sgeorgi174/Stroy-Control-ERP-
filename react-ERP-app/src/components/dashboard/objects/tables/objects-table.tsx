@@ -36,7 +36,7 @@ export function ObjectsTable({
               Наименование
             </TableHead>
             <TableHead className="text-secondary font-bold">Адрес</TableHead>
-            <TableHead className="text-secondary font-bold">Бригадир</TableHead>
+            <TableHead className="text-secondary font-bold">Мастер</TableHead>
             <TableHead className="text-secondary font-bold">Телефон</TableHead>
             <TableHead className="text-secondary font-bold">Статус</TableHead>
             <TableHead className="text-secondary font-bold"></TableHead>

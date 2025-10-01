@@ -208,7 +208,7 @@ export class ClothesService {
 
     if (transfer.quantity < dto.quantity) {
       throw new BadRequestException(
-        'Недостаточное количество одежды в перемещении',
+        'Нельзя принять количество, больше чем в перемещении',
       );
     }
 

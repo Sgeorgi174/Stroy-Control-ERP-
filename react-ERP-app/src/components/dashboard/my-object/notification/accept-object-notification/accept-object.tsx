@@ -70,7 +70,7 @@ export function ObjectNotification({
               </div>
               <div className="flex-1 min-w-0">
                 <CardTitle className="text-base font-medium  leading-tight">
-                  Требуется подтверждение нового бригадира
+                  Требуется подтверждение нового мастера
                 </CardTitle>
                 <CardDescription className="text-sm text-muted-foreground mt-1">
                   Вы должны принять объект и весь прикреплённый инвентарь.
@@ -96,7 +96,7 @@ export function ObjectNotification({
             Принятие инвентаря на объекте
           </DialogTitle>
           <DialogDescription>
-            В качестве нового бригадира, пожалуйста, ознакомьтесь со списком
+            В качестве нового мастера, пожалуйста, ознакомьтесь со списком
             инвентаря ниже и подтвердите, что вы принимаете все позиции,
             прикреплённые к объекту.
           </DialogDescription>
@@ -230,7 +230,7 @@ export function ObjectNotification({
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               Я подтверждаю, что получил весь инвентарь и принимаю полную
-              ответственность за указанные позиции в качестве бригадира объекта.
+              ответственность за указанные позиции в качестве мастера объекта.
             </label>
           </div>
 

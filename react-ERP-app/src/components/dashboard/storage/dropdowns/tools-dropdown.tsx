@@ -53,15 +53,27 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
+          {!tool.isBag && (
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                openSheet("edit", tool);
+              }}
+            >
+              Редактировать
+            </DropdownMenuItem>
+          )}
 
-          <DropdownMenuItem
-            onClick={(e) => {
-              e.stopPropagation();
-              openSheet("edit", tool);
-            }}
-          >
-            Редактировать
-          </DropdownMenuItem>
+          {tool.isBag && (
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                openSheet("edit bag", tool);
+              }}
+            >
+              Редактировать сумку
+            </DropdownMenuItem>
+          )}
 
           <DropdownMenuItem
             disabled={tool.status !== "ON_OBJECT"}

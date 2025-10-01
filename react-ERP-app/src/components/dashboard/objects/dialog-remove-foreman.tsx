@@ -31,7 +31,7 @@ export function AlertDialogRemove({
         <AlertDialogHeader>
           <AlertDialogTitle>Подтверждение снятия</AlertDialogTitle>
           <AlertDialogDescription>
-            Вы уверены, что хотите снять бригадира: "
+            Вы уверены, что хотите снять мастера: "
             {`${item.lastName} ${item.firstName}`}" с объекта?
           </AlertDialogDescription>
         </AlertDialogHeader>

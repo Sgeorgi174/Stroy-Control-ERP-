@@ -1,4 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { splitAddress } from "@/lib/utils/splitAddress";
 import type { Tool } from "@/types/tool";
 import { Building, MapPin, Phone, User } from "lucide-react";
@@ -8,6 +16,8 @@ type DetailsBoxProps = {
 };
 
 export function ToolsDetailsBox({ tool }: DetailsBoxProps) {
+  console.log(tool);
+
   return (
     <>
       <Card>
@@ -41,7 +51,7 @@ export function ToolsDetailsBox({ tool }: DetailsBoxProps) {
             </div>
 
             <div className="col-span-2">
-              <p className="text-sm text-muted-foreground">Бригадир</p>
+              <p className="text-sm text-muted-foreground">Мастер</p>
               <div className="flex gap-2 items-center">
                 <User className="w-5 h-5" />
                 <p className="font-medium">
@@ -64,6 +74,45 @@ export function ToolsDetailsBox({ tool }: DetailsBoxProps) {
           </div>
         </CardContent>
       </Card>
+
+      {tool.isBag && (
+        <Card className="mt-3">
+          <CardHeader>
+            <CardTitle className="text-lg">Наполнение сумки</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Инструмент</TableHead>
+                  <TableHead>Количество</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {tool.bagItems ? (
+                  tool.bagItems.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">
+                        {`${item.name}`}
+                      </TableCell>
+                      <TableCell>{item.quantity}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={3}
+                      className="text-center p-4 text-gray-400"
+                    >
+                      Сумка пуста
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
     </>
   );
 }

@@ -30,7 +30,7 @@ export function PositionSelectForFilter() {
         <SelectGroup>
           <SelectLabel>Фильтр по должностям</SelectLabel>
           <SelectItem value="null">Все</SelectItem>
-          <SelectItem value="FOREMAN">Бригадир</SelectItem>
+          <SelectItem value="FOREMAN">Мастер</SelectItem>
           <SelectItem value="ELECTRICAN">Электромонтажник</SelectItem>
           <SelectItem value="LABORER">Разнорабочий</SelectItem>
           <SelectItem value="DESIGNER">Проектировщик</SelectItem>

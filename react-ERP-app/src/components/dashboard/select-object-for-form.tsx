@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type { Object } from "@/types/object";
+import { Badge } from "../ui/badge";
 
 type ObjectSelectProps = {
   objects: Object[];
@@ -41,8 +42,20 @@ export function ObjectSelectForForms({
           <SelectLabel>Объекты</SelectLabel>
           {isEmptyElement && <SelectItem value="none">Не назначать</SelectItem>}
           {objects.map((object) => (
-            <SelectItem key={object.id} value={object.id}>
-              {object.name}
+            <SelectItem
+              disabled={object.isPending}
+              key={object.id}
+              value={object.id}
+            >
+              {object.name}{" "}
+              {object.isPending && (
+                <Badge
+                  variant="outline"
+                  className="text-orange-600/80 border-orange-600/80"
+                >
+                  На паузе
+                </Badge>
+              )}
             </SelectItem>
           ))}
         </SelectGroup>

@@ -14,7 +14,7 @@ import { ObjectDetailsBox } from "./object-details-box";
 type ObjectDetailsProps = { object: Object };
 
 const tabletSchema = z.object({
-  userId: z.string().min(1, "Выбор нового бригадира обязателен"), // Может быть null
+  userId: z.string().min(1, "Выбор нового мастера обязателен"), // Может быть null
 });
 
 type FormData = z.infer<typeof tabletSchema>;
@@ -57,12 +57,12 @@ export function ChangeForeman({ object }: ObjectDetailsProps) {
       <div className="p-5 flex flex-col gap-1">
         <ObjectDetailsBox object={object} />
         <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
-        <p className="text-center font-medium text-xl mt-5">Смена бригадира</p>
+        <p className="text-center font-medium text-xl mt-5">Смена мастера</p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <div className="flex justify-between mt-10">
             <div className="flex flex-col gap-2 ">
-              <Label>Старый бригадир</Label>
+              <Label>Старый мастер</Label>
               <div className="flex items-center gap-8">
                 <Input
                   className="w-[300px]"
@@ -77,7 +77,7 @@ export function ChangeForeman({ object }: ObjectDetailsProps) {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label>Новый бригадир *</Label>
+              <Label>Новый мастер *</Label>
               <div className="flex items-center gap-8">
                 <ForemanAutocomplete
                   foremen={foremen}

@@ -39,7 +39,7 @@ export function DeviceDetailsBox({ device }: DeviceDetailsBoxProps) {
             </div>
 
             <div className="col-span-2">
-              <p className="text-sm text-muted-foreground">Бригадир</p>
+              <p className="text-sm text-muted-foreground">Мастер</p>
               <div className="flex gap-2 items-center">
                 <User className="w-5 h-5" />
                 <p className="font-medium">

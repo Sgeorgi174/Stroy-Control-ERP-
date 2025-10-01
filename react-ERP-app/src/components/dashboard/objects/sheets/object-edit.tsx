@@ -134,7 +134,7 @@ export function ObjectEdit({ object }: ObjectEditProps) {
 
         {/* Сотрудник */}
         <div className="flex flex-col gap-2 mt-10">
-          <Label>Бригадир *</Label>
+          <Label>Мастер *</Label>
 
           <ForemanAutocomplete
             disabled

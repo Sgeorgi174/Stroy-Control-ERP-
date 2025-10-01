@@ -10,11 +10,11 @@ export const useRemoveForeman = (id: string) => {
     mutationFn: () => removeForeman(id),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["objects"] });
-      toast.success(`На объекте «${data.name}» бригадир успешно снят`);
+      toast.success(`На объекте «${data.name}» мастер успешно снят`);
     },
     onError: (error: AppAxiosError) => {
       const message =
-        error?.response?.data?.message || "Не удалось снять бригадира";
+        error?.response?.data?.message || "Не удалось снять мастера";
       toast.error(message);
     },
   });

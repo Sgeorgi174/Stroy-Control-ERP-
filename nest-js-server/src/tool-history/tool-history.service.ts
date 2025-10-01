@@ -39,6 +39,8 @@ export class ToolHistoryService {
           toObject: { select: { name: true } },
           movedBy: { select: { firstName: true, lastName: true } },
         },
+        orderBy: { createdAt: 'desc' },
+        take: 3,
       });
     } catch (error) {
       handlePrismaError(error, {
@@ -54,6 +56,8 @@ export class ToolHistoryService {
         include: {
           changedBy: { select: { firstName: true, lastName: true } },
         },
+        orderBy: { createdAt: 'desc' },
+        take: 3,
       });
     } catch (error) {
       handlePrismaError(error, {

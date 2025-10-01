@@ -1,0 +1,193 @@
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { positionMap } from "@/constants/positionMap";
+import { formatDate } from "@/lib/utils/format-date";
+import type { Employee, Positions } from "@/types/employee";
+
+interface EmployeeSelection {
+  id: string;
+  selected: boolean;
+  workedHours: number | null;
+  firstName: string;
+  lastName: string;
+  position: Positions;
+  task?: string;
+}
+
+interface Step1Props {
+  plannedHours: number;
+  setPlannedHours: (val: number) => void;
+  employees: Employee[];
+  employeeSelections: EmployeeSelection[];
+  setEmployeeSelections: React.Dispatch<
+    React.SetStateAction<EmployeeSelection[]>
+  >;
+}
+
+export default function Step1SelectHours({
+  plannedHours,
+  setPlannedHours,
+  employees,
+  employeeSelections,
+  setEmployeeSelections,
+}: Step1Props) {
+  const hoursOptions = [7, 8, 9, 10, 11, 12];
+  const employeeHoursOptions = [5, 6, 7, 8, 9, 10, 11, 12];
+  const today = new Date();
+  const formattedDate = formatDate(today.toISOString());
+
+  const toggleEmployee = (employee: Employee) => {
+    setEmployeeSelections((prev) => {
+      const exists = prev.find((emp) => emp.id === employee.id);
+      if (exists) {
+        return prev.map((emp) =>
+          emp.id === employee.id
+            ? {
+                ...emp,
+                selected: !emp.selected,
+                workedHours: !emp.selected ? plannedHours : null,
+              }
+            : emp
+        );
+      }
+      return [
+        ...prev,
+        {
+          id: employee.id,
+          selected: true,
+          workedHours: plannedHours || null,
+          firstName: employee.firstName,
+          lastName: employee.lastName,
+          position: employee.position,
+        },
+      ];
+    });
+  };
+
+  const updateEmployeeHours = (id: string, hours: number) => {
+    setEmployeeSelections((prev) =>
+      prev.map((emp) => (emp.id === id ? { ...emp, workedHours: hours } : emp))
+    );
+  };
+
+  return (
+    <div>
+      <div className="bg-muted rounded-xl p-5 mb-5">
+        <p className="text-xl">Информация о смене</p>
+        <div className="flex items-center gap-10 mt-3">
+          <div className="flex items-center gap-3">
+            <p className="font-medium text-blue-500">Дата:</p>
+            <p className="font-medium">{formattedDate}</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <p className="font-medium text-blue-500">Количество часов:</p>
+            <Select
+              value={plannedHours > 0 ? plannedHours.toString() : undefined}
+              onValueChange={(val) => setPlannedHours(Number(val))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Выберите часы" />
+              </SelectTrigger>
+              <SelectContent>
+                {hoursOptions.map((hour) => (
+                  <SelectItem key={hour} value={hour.toString()}>
+                    {hour} ч
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </div>
+
+      {plannedHours > 0 && (
+        <div className="mt-10">
+          <h4 className="font-medium mb-4">Выбор сотрудников</h4>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Выбор</TableHead>
+                <TableHead>Сотрудник</TableHead>
+                <TableHead>Должность</TableHead>
+                <TableHead className="w-[172px]">Часы</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {employees.map((employee) => {
+                const empState = employeeSelections.find(
+                  (e) => e.id === employee.id
+                );
+                const selected = empState?.selected || false;
+                const workedHours = empState?.workedHours ?? null;
+
+                return (
+                  <TableRow
+                    key={employee.id}
+                    className={`${
+                      selected ? "bg-muted" : "bg-transparent"
+                    } h-[53px] hover:bg-muted`}
+                  >
+                    <TableCell>
+                      <Checkbox
+                        checked={selected}
+                        onCheckedChange={() => toggleEmployee(employee)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {employee.firstName} {employee.lastName}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">
+                        {positionMap[employee.position]}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {selected ? (
+                        <Select
+                          value={
+                            workedHours ? workedHours.toString() : undefined
+                          }
+                          onValueChange={(val) =>
+                            updateEmployeeHours(employee.id, Number(val))
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="—" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {employeeHoursOptions.map((hour) => (
+                              <SelectItem key={hour} value={hour.toString()}>
+                                {hour} ч
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <span className="text-gray-400">—</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+    </div>
+  );
+}

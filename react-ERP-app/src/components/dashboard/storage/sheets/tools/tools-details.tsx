@@ -27,13 +27,13 @@ export function ToolsDetails({ tool }: ToolsDetailsProps) {
         <ToolsDetailsBox tool={tool} />
         <p className="font-medium text-xl mt-6">История</p>
         <ToolTransferHistory
-          transferRecords={toolHistoryData}
+          transferRecords={toolHistoryData.reverse()}
           isError={toolHistoryError}
           isLoading={toolHistoryLoading}
         />
         <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
         <ToolsStatusHistory
-          statusChangesRecords={toolStatusChangesData}
+          statusChangesRecords={toolStatusChangesData.reverse()}
           isError={toolStatusChangesError}
           isLoading={toolStatusChangesLoading}
         />

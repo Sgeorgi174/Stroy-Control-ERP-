@@ -27,13 +27,13 @@ export function DeviceDetails({ device }: DeviceDetailsProps) {
         <DeviceTransferHistory
           isError={deviceHistoryError}
           isLoading={deviceHistoryLoading}
-          transferRecords={deviceHistoryData}
+          transferRecords={deviceHistoryData.reverse()}
         />
         <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
         <DevicesStatusHistory
           isError={deviceStatusChangesError}
           isLoading={deviceStatusChangesLoading}
-          statusChangesRecords={deviceStatusChangesData}
+          statusChangesRecords={deviceStatusChangesData.reverse()}
         />
       </div>
     </>

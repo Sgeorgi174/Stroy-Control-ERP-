@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -100,14 +101,14 @@ export class ObjectService {
       return await this.prismaService.$transaction(async (prisma) => {
         const [incomingTools, incomingDevices, incomingClothes] =
           await Promise.all([
-            prisma.tool.findMany({
-              where: { objectId: id, status: 'IN_TRANSIT' },
+            prisma.pendingTransfersTools.findMany({
+              where: { toObjectId: id, status: 'IN_TRANSIT' },
             }),
-            prisma.device.findMany({
-              where: { objectId: id, status: 'IN_TRANSIT' },
+            prisma.pendingTransfersDevices.findMany({
+              where: { toObjectId: id, status: 'IN_TRANSIT' },
             }),
             prisma.pendingTransfersClothes.findMany({
-              where: { toObjectId: id },
+              where: { toObjectId: id, status: 'IN_TRANSIT' },
             }),
           ]);
         const incomingUnconfirmedItems = {
@@ -133,20 +134,20 @@ export class ObjectService {
         };
         const [outgoingTools, outgoingDevices, outgoingClothes] =
           await Promise.all([
-            prisma.tool.findMany({
+            prisma.pendingTransfersTools.findMany({
               where: {
                 status: 'IN_TRANSIT',
-                history: { some: { fromObjectId: id } },
+                fromObjectId: id,
               },
             }),
-            prisma.device.findMany({
+            prisma.pendingTransfersDevices.findMany({
               where: {
                 status: 'IN_TRANSIT',
-                history: { some: { fromObjectId: id } },
+                fromObjectId: id,
               },
             }),
             prisma.pendingTransfersClothes.findMany({
-              where: { fromObjectId: id },
+              where: { fromObjectId: id, status: 'IN_TRANSIT' },
               include: { clothes: true },
             }),
           ]);
@@ -251,6 +252,46 @@ export class ObjectService {
       handlePrismaError(error, {
         conflictMessage: 'Обновление нарушает уникальность объекта',
         defaultMessage: 'Ошибка при обновлении объекта',
+      });
+    }
+  }
+
+  public async closeObject(objectId: string) {
+    const {
+      incomingUnconfirmedItems,
+      notEmptyObject,
+      outgoingUnconfirmedTransfers,
+    } = await this.getByIdToClose(objectId);
+
+    const hasPendingItems =
+      incomingUnconfirmedItems.tools.length > 0 ||
+      incomingUnconfirmedItems.devices.length > 0 ||
+      incomingUnconfirmedItems.clothes.length > 0 ||
+      outgoingUnconfirmedTransfers.tools.length > 0 ||
+      outgoingUnconfirmedTransfers.devices.length > 0 ||
+      outgoingUnconfirmedTransfers.clothes.length > 0 ||
+      notEmptyObject.tools.length > 0 ||
+      notEmptyObject.devices.length > 0 ||
+      notEmptyObject.clothes.length > 0 ||
+      notEmptyObject.employees.length > 0;
+
+    if (hasPendingItems) {
+      throw new ConflictException('На объекте есть не решенные задачи');
+    }
+
+    try {
+      return await this.prismaService.object.update({
+        where: { id: objectId },
+        data: {
+          status: 'CLOSE',
+          userId: null,
+          isPending: true,
+        },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        conflictMessage: 'Обновление нарушает уникальность объекта',
+        defaultMessage: 'Ошибка при закрытии объекта',
       });
     }
   }

@@ -1,16 +1,70 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { TransferType } from 'generated/prisma';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { QueryTransfersFilterDto } from './dto/query-transfer-filter.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  public async create() {}
+  public async create(dto: CreateUserDto) {
+    const isExist = await this.prismaService.user.findUnique({
+      where: { phone: dto.phone },
+    });
 
-  public async update() {}
+    if (isExist)
+      throw new ConflictException(
+        'Пользователь с таким номером уже существует',
+      );
+
+    return await this.prismaService.user.create({
+      data: {
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        phone: dto.phone,
+        role: dto.role,
+      },
+    });
+  }
+
+  public async update(id: string, dto: UpdateUserDto) {
+    const user = await this.prismaService.user.findUnique({
+      where: { id: id },
+    });
+
+    if (!user) throw new NotFoundException('Юзер не найден');
+
+    return await this.prismaService.user.update({
+      where: { id: id },
+      data: {
+        phone: dto.phone,
+        lastName: dto.lastName,
+        firstName: dto.firstName,
+        role: dto.role,
+      },
+    });
+  }
+
+  public async getAllUsers() {
+    return this.prismaService.user.findMany();
+  }
+
+  public async deleteUser(id: string) {
+    const user = await this.prismaService.user.findUnique({
+      where: { id: id },
+    });
+
+    if (!user) throw new NotFoundException('Юзер не найден');
+
+    return this.prismaService.user.delete({ where: { id: id } });
+  }
 
   public async getNotifications(userId: string) {
     try {

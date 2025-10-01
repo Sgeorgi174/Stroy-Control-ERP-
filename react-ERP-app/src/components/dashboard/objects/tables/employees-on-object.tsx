@@ -18,7 +18,7 @@ type EmployeesOnObjectTableProps = {
 };
 
 const positionMap = {
-  FOREMAN: "Бригадир",
+  FOREMAN: "Мастер",
   ELECTRICAN: "Электромонтажник",
   LABORER: "Разнорабочий",
   DESIGNER: "Проектировщик",

@@ -55,7 +55,7 @@ export function ObjectCard({ object }: ObjectCardProps) {
         {object.foreman && (
           <div className="bg-muted p-3 rounded-lg">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Бригадир</p>
+              <p className="text-sm text-muted-foreground">Мастер</p>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <p className="font-medium text-sm break-words">
                   {object.foreman.firstName} {object.foreman.lastName}
