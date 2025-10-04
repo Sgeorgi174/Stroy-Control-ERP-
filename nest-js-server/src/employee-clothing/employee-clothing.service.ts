@@ -61,7 +61,14 @@ export class EmployeeClothingService {
           },
           include: {
             clothing: {
-              select: { name: true, id: true, season: true, size: true },
+              select: {
+                name: true,
+                id: true,
+                season: true,
+                closthingHeight: true,
+                closthingSize: true,
+                footwearSize: true,
+              },
             },
           },
           orderBy: { issuedAt: 'asc' },

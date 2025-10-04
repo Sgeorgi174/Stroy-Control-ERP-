@@ -64,7 +64,9 @@ export class EmployeeService {
                 select: {
                   id: true,
                   name: true,
-                  size: true,
+                  closthingHeight: true,
+                  closthingSize: true,
+                  footwearSize: true,
                   season: true,
                 },
               },
@@ -157,7 +159,9 @@ export class EmployeeService {
               select: {
                 id: true,
                 name: true,
-                size: true,
+                closthingHeight: true,
+                closthingSize: true,
+                footwearSize: true,
                 season: true,
               },
             },

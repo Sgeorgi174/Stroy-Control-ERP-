@@ -29,6 +29,9 @@ import { UserService } from 'src/user/user.service';
 import { RetransferClothesDto } from './dto/retransfer.dto';
 import { CancelClothesTransferDto } from './dto/cancel-transfer.dto';
 import { WriteOffClothesInTransferDto } from './dto/write-off-in-transit.dto';
+import { AddSizeForClothingDto } from './dto/add-size-for-clothing.dto';
+import { AddSizeForFootwearDto } from './dto/add-size-for-footwear.dto';
+import { AddHeightForClothingDto } from './dto/add-height-for-clothing.dto';
 
 @Controller('clothes')
 export class ClothesController {
@@ -43,6 +46,45 @@ export class ClothesController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateDto) {
     return this.clothesService.create(dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('create-size-clothing')
+  @HttpCode(HttpStatus.CREATED)
+  async addSizeForClothing(@Body() dto: AddSizeForClothingDto) {
+    return this.clothesService.addSizeForClothing(dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Delete('remove-size-clothing/:id')
+  async removeSizeForClothing(@Param('id') id: string) {
+    return this.clothesService.removeSizeForClothing(id);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('create-size-footwear')
+  @HttpCode(HttpStatus.CREATED)
+  async addSizeForFootwear(@Body() dto: AddSizeForFootwearDto) {
+    return this.clothesService.addSizeForFootwear(dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Delete('remove-size-footwear/:id')
+  async removeSizeForFootwear(@Param('id') id: string) {
+    return this.clothesService.removeSizeForFootwear(id);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('create-height-clothing')
+  @HttpCode(HttpStatus.CREATED)
+  async addHeightForFootwear(@Body() dto: AddHeightForClothingDto) {
+    return this.clothesService.addHeightForClothing(dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Delete('remove-height-clothing/:id')
+  async removeHeightForFootwear(@Param('id') id: string) {
+    return this.clothesService.removeHeightForClothing(id);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)

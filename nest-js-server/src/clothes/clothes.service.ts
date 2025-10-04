@@ -20,6 +20,9 @@ import { RejectClothesTransferDto } from './dto/reject-transfer.dto';
 import { RetransferClothesDto } from './dto/retransfer.dto';
 import { WriteOffClothesInTransferDto } from './dto/write-off-in-transit.dto';
 import { CancelClothesTransferDto } from './dto/cancel-transfer.dto';
+import { AddSizeForClothingDto } from './dto/add-size-for-clothing.dto';
+import { AddSizeForFootwearDto } from './dto/add-size-for-footwear.dto';
+import { AddHeightForClothingDto } from './dto/add-height-for-clothing.dto';
 
 @Injectable()
 export class ClothesService {
@@ -28,12 +31,102 @@ export class ClothesService {
     private readonly clothesHistoryService: ClothesHistoryService,
   ) {}
 
+  async addSizeForClothing(dto: AddSizeForClothingDto) {
+    try {
+      return await this.prismaService.clothingSize.create({
+        data: {
+          size: dto.size,
+        },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        conflictMessage: 'Такой размер уже существует',
+        defaultMessage: 'Ошибка создания нового размера',
+      });
+    }
+  }
+
+  async removeSizeForClothing(sizeId: string) {
+    try {
+      await this.prismaService.clothingSize.delete({
+        where: { id: sizeId },
+      });
+      return true;
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Размер для удаления не найден',
+        defaultMessage: 'Ошибка при удалении размера',
+      });
+    }
+  }
+
+  async addSizeForFootwear(dto: AddSizeForFootwearDto) {
+    try {
+      return await this.prismaService.footwearSize.create({
+        data: {
+          size: dto.size,
+        },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        conflictMessage: 'Такой размер уже существует',
+        defaultMessage: 'Ошибка создания нового размера',
+      });
+    }
+  }
+
+  async removeSizeForFootwear(sizeId: string) {
+    try {
+      await this.prismaService.footwearSize.delete({
+        where: { id: sizeId },
+      });
+      return true;
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Размер для удаления не найден',
+        defaultMessage: 'Ошибка при удалении размера',
+      });
+    }
+  }
+
+  async addHeightForClothing(dto: AddHeightForClothingDto) {
+    try {
+      return await this.prismaService.clothingHeight.create({
+        data: {
+          height: dto.height,
+        },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        conflictMessage: 'Такая ростовка уже существует',
+        defaultMessage: 'Ошибка создания новой ростовки',
+      });
+    }
+  }
+
+  async removeHeightForClothing(sizeId: string) {
+    try {
+      await this.prismaService.clothingHeight.delete({
+        where: { id: sizeId },
+      });
+      return true;
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Ростовка для удаления не найдена',
+        defaultMessage: 'Ошибка при удалении ростовки',
+      });
+    }
+  }
+
   async create(dto: CreateDto) {
     try {
       return await this.prismaService.clothes.create({
         data: {
           name: dto.name,
-          size: dto.size,
+          closthingSizeId: dto.closthingSizeId,
+          providerId: dto.providerId,
+          closthingHeightId: dto.closthingHeightId,
+          footwearSizeId: dto.footwearSizeId,
           price: dto.price,
           quantity: dto.quantity,
           objectId: dto.objectId,
@@ -114,7 +207,10 @@ export class ClothesService {
         where: { id },
         data: {
           name: dto.name,
-          size: dto.size,
+          closthingSizeId: dto.closthingSizeId,
+          providerId: dto.providerId,
+          closthingHeightId: dto.closthingHeightId,
+          footwearSizeId: dto.footwearSizeId,
           price: dto.price,
           quantity: dto.quantity,
           objectId: dto.objectId,
@@ -238,20 +334,22 @@ export class ClothesService {
 
         const transferedClothes = await this.prismaService.clothes.upsert({
           where: {
-            objectId_name_size_type_season: {
+            objectId_name_type_season: {
               name: transfer.clothes.name,
               objectId: transfer.toObjectId,
               season: transfer.clothes.season,
-              size: transfer.clothes.size,
               type: transfer.clothes.type,
             },
           },
           create: {
             name: transfer.clothes.name,
-            size: transfer.clothes.size,
             type: transfer.clothes.type,
             season: transfer.clothes.season,
-            quantity: dto.quantity,
+            closthingSizeId: transfer.clothes.closthingSizeId,
+            providerId: transfer.clothes.providerId,
+            closthingHeightId: transfer.clothes.closthingHeightId,
+            footwearSizeId: transfer.clothes.footwearSizeId,
+            quantity: transfer.clothes.quantity,
             price: transfer.clothes.price,
             objectId: transfer.toObjectId,
           },

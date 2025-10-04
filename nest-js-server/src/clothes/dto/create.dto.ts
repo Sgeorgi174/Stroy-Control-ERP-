@@ -2,6 +2,7 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsPositive,
   IsString,
 } from 'class-validator';
@@ -14,10 +15,21 @@ export class CreateDto {
   })
   name: string;
 
-  @IsInt({ message: 'Размер должен быть целым числом' })
-  @IsPositive({ message: 'Размер не может быть отрицательным' })
-  @IsNotEmpty({ message: 'Размер обязателен для заполнения' })
-  size: number;
+  @IsString()
+  @IsOptional({ message: 'Размер обязателен для заполнения' })
+  closthingSizeId?: string;
+
+  @IsString()
+  @IsOptional({ message: 'Размер обязателен для заполнения' })
+  closthingHeightId?: string;
+
+  @IsString()
+  @IsOptional({ message: 'Размер обязателен для заполнения' })
+  footwearSizeId?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  providerId: string;
 
   @IsInt({ message: 'Цена должна быть целым числом' })
   @IsPositive({ message: 'Цена не может быть отрицательной' })
