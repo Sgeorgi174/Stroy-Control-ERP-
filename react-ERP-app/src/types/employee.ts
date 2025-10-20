@@ -31,8 +31,9 @@ export type Employee = {
   lastName: string;
   fatherName: string;
   phoneNumber: string;
-  clothingSize: number;
-  footwearSize: number;
+  clothingSize: { id: string; size: string };
+  footwearSize: { id: string; size: string };
+  clothingHeight: { id: string; height: string };
   position: Positions;
   objectId: string;
   workPlace: Object | null;
@@ -40,4 +41,14 @@ export type Employee = {
   skills: Skill[];
   type: EmployeeType;
   archive: ArchiveRecord | null;
+
+  passportSerial: string;
+  passportNumber: string;
+  whereIssued: string;
+  issueDate: string;
+  registrationRegion: string;
+  registrationCity: string;
+  registrationStreet: string;
+  registrationBuild: string;
+  registrationFlat: string | undefined;
 };

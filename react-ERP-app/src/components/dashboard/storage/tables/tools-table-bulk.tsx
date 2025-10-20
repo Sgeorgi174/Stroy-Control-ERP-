@@ -10,8 +10,6 @@ import { ToolsDropDown } from "../dropdowns/tools-dropdown";
 import type { Tool } from "@/types/tool";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import { PendingTable } from "./pending-table";
-import { StatusBadge } from "./status-badge";
-import { statusMap } from "@/constants/statusMap";
 import { formatDate } from "@/lib/utils/format-date";
 import { CommentPopover } from "../comment-popover";
 
@@ -21,7 +19,7 @@ type ToolsTableProps = {
   isError: boolean;
 };
 
-export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
+export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
   const { openSheet } = useToolsSheetStore();
 
   return (
@@ -30,15 +28,11 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
         <TableHeader className="bg-primary pointer-events-none">
           <TableRow>
             <TableHead className="text-secondary font-bold">Дата</TableHead>
-            <TableHead className="text-secondary font-bold">
-              Серийный №
-            </TableHead>
+
             <TableHead className="text-secondary font-bold">
               Наименование
             </TableHead>
-            <TableHead className="text-secondary font-bold w-[150px]">
-              Статус
-            </TableHead>
+            <TableHead className="text-secondary font-bold">Кол-во</TableHead>
             <TableHead className="text-secondary font-bold">Мастер</TableHead>
             <TableHead className="text-secondary font-bold">Телефон</TableHead>
             <TableHead className="text-secondary font-bold">
@@ -62,16 +56,9 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
               <TableCell className="font-medium">
                 {formatDate(tool.createdAt)}
               </TableCell>
-              <TableCell className="font-medium">{tool.serialNumber}</TableCell>
+
               <TableCell className=" hover:underline">{tool.name}</TableCell>
-              <TableCell>
-                <StatusBadge
-                  isAnimate={tool.status === "IN_TRANSIT"}
-                  color={statusMap[tool.status]?.color}
-                  Icon={statusMap[tool.status]?.icon}
-                  text={statusMap[tool.status]?.label}
-                />
-              </TableCell>
+              <TableCell className="font-medium">{tool.quantity}</TableCell>
               <TableCell>
                 {tool.storage && tool.storage.foreman
                   ? `${tool.storage.foreman.lastName} ${tool.storage.foreman.firstName}`

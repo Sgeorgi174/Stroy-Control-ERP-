@@ -65,7 +65,10 @@ export function TranferDetailsCardDialog({
                 {clothesTransfer.clothes.season === "SUMMER" ? "Лето" : "Зима"}
               </span>
               <span className="font-mono">
-                Размер: {clothesTransfer.clothes.size}
+                Размер:{" "}
+                {clothesTransfer.clothes.type === "CLOTHING"
+                  ? clothesTransfer.clothes.closthingSize.size
+                  : clothesTransfer.clothes.footwearSize.size}
               </span>
               <span className="font-mono">
                 Кол-во: {clothesTransfer.quantity}

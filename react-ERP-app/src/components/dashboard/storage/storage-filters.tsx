@@ -12,10 +12,17 @@ import { ItemStatusSelectForFilter } from "../filter-panel/filter-items-select";
 import { useDeviceSheetStore } from "@/stores/device-sheet-store";
 import { useTabletSheetStore } from "@/stores/tablet-sheet-store";
 import { useObjects } from "@/hooks/object/useObject";
-import { useEffect } from "react";
+import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useDebouncedState } from "@/hooks/useDebounceState";
+import { ClothesSettingsDropdown } from "./сlothes-settings-dropdown";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export function StorageFilters() {
+type StorageFiltersProps = {
+  isBulk: boolean;
+  setIsBulk: Dispatch<SetStateAction<boolean>>;
+};
+
+export function StorageFilters({ isBulk, setIsBulk }: StorageFiltersProps) {
   const { activeTab, searchQuery, setSearchQuery } = useFilterPanelStore();
   const [localSearch, setLocalSearch, debouncedSearch] = useDebouncedState(
     searchQuery,
@@ -57,7 +64,25 @@ export function StorageFilters() {
   return (
     <FilterPanel>
       <div className="flex justify-between w-full flex-wrap gap-4">
-        <TypeTabs />
+        <div className="flex gap-4">
+          <TypeTabs />
+
+          {activeTab === "tool" && (
+            <Tabs
+              value={isBulk ? "true" : "false"}
+              onValueChange={(val) => setIsBulk(val === "true")}
+              className="w-[400px]"
+            >
+              <TabsList>
+                <TabsTrigger value="false">Одиночные</TabsTrigger>
+                <TabsTrigger value="true">Групповые</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          )}
+          {(activeTab === "clothing" || activeTab === "footwear") && (
+            <ClothesSettingsDropdown />
+          )}
+        </div>
         {activeTab !== "tablet" && (
           <div className="flex items-center gap-2">
             <p className="font-medium">Объект:</p>

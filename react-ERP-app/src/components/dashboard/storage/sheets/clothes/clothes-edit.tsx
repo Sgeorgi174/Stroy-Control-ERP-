@@ -84,7 +84,6 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
           <div className="flex flex-col gap-2">
             <Label htmlFor="name">Наименование</Label>
             <Input
-              disabled
               className="w-[300px]"
               id="name"
               type="text"

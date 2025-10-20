@@ -38,8 +38,16 @@ export function ClothesInfo({
               {clothesTransfer.clothes.season === "SUMMER" ? "Лето" : "Зима"}
             </span>
             <span className="font-mono">
-              Размер: {clothesTransfer.clothes.size}
+              Размер:{" "}
+              {clothesTransfer.clothes.type === "CLOTHING"
+                ? clothesTransfer.clothes.closthingSize.size
+                : clothesTransfer.clothes.footwearSize.size}
             </span>
+            {clothesTransfer.clothes.type === "CLOTHING" && (
+              <span className="font-mono">
+                Ростовка: {clothesTransfer.clothes.closthingHeight.height}
+              </span>
+            )}
             <span className="font-mono">
               Кол-во: {clothesTransfer.quantity}
             </span>

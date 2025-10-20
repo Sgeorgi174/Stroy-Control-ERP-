@@ -12,8 +12,12 @@ import { useTools } from "@/hooks/tool/useTools";
 import { useDevices } from "@/hooks/device/useDevices";
 import { useClothes } from "@/hooks/clothes/useClothes";
 import { useTablets } from "@/hooks/tablet/useTablet";
+import { useState } from "react";
+import { ToolsTableBulk } from "@/components/dashboard/storage/tables/tools-table-bulk";
 
 export function Storage() {
+  const [isBulk, setIsBulk] = useState(false);
+
   const {
     activeTab,
     searchQuery,
@@ -32,6 +36,7 @@ export function Storage() {
       searchQuery,
       objectId: selectedObjectId,
       status: selectedItemStatus,
+      isBulk: isBulk,
     },
     activeTab === "tool"
   );
@@ -75,9 +80,11 @@ export function Storage() {
     activeTab === "tablet"
   );
 
+  console.log(isBulk);
+
   return (
     <div>
-      <StorageFilters />
+      <StorageFilters isBulk={isBulk} setIsBulk={setIsBulk} />
 
       {activeTab === "tablet" && (
         <div>
@@ -91,9 +98,20 @@ export function Storage() {
         </div>
       )}
 
-      {activeTab === "tool" && (
+      {activeTab === "tool" && !isBulk && (
         <>
           <ToolsTable
+            tools={tools}
+            isLoading={toolsLoading}
+            isError={toolsError}
+          />
+          <ToolsSheet />
+        </>
+      )}
+
+      {activeTab === "tool" && isBulk && (
+        <>
+          <ToolsTableBulk
             tools={tools}
             isLoading={toolsLoading}
             isError={toolsError}

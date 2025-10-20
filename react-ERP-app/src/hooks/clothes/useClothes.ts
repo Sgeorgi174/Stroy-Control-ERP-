@@ -18,6 +18,19 @@ import {
   returnClothesToSource,
   writeOffClothesInTransfer,
   cancelClothesTransfer,
+  getClothingSizes,
+  createClothingSize,
+  deleteClothingSize,
+  getClothingHeights,
+  createClothingHeight,
+  deleteClothingHeight,
+  getFootwearSizes,
+  createFootwearSize,
+  deleteFootwearSize,
+  createProvider,
+  updateProvider,
+  deleteProvider,
+  getAllProviders,
 } from "@/services/api/clothes.api";
 import type {
   CreateClothesDto,
@@ -39,7 +52,7 @@ import type { AppAxiosError } from "@/types/error-response";
 export const useClothes = (
   params: {
     type: ClothesType;
-    searchQuery: string;
+    searchQuery?: string;
     objectId?: string | null;
     season?: Seasons | null;
   },
@@ -320,5 +333,198 @@ export const useGetClothesHistory = (clothesId: string) => {
   return useQuery({
     queryKey: ["clothes-history", clothesId],
     queryFn: () => getClothesHistory(clothesId),
+  });
+};
+
+// ===== CLOTHING SIZES =====
+
+export const useClothingSizes = () => {
+  return useQuery({
+    queryKey: ["clothing-sizes"],
+    queryFn: () => getClothingSizes(),
+  });
+};
+
+export const useCreateClothingSize = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { size: string }) => createClothingSize(data),
+    onSuccess: () => {
+      toast.success("Размер одежды успешно создан");
+      queryClient.invalidateQueries({ queryKey: ["clothing-sizes"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось создать размер одежды";
+      toast.error(message);
+    },
+  });
+};
+
+export const useDeleteClothingSize = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteClothingSize(id),
+    onSuccess: () => {
+      toast.success("Размер одежды успешно удалён");
+      queryClient.invalidateQueries({ queryKey: ["clothing-sizes"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось удалить размер одежды";
+      toast.error(message);
+    },
+  });
+};
+
+// ===== CLOTHING HEIGHTS =====
+
+export const useClothingHeights = () => {
+  return useQuery({
+    queryKey: ["clothing-heights"],
+    queryFn: () => getClothingHeights(),
+  });
+};
+
+export const useCreateClothingHeight = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { height: string }) => createClothingHeight(data),
+    onSuccess: () => {
+      toast.success("Ростовка успешно создана");
+      queryClient.invalidateQueries({ queryKey: ["clothing-heights"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось создать ростовку";
+      toast.error(message);
+    },
+  });
+};
+
+export const useDeleteClothingHeight = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteClothingHeight(id),
+    onSuccess: () => {
+      toast.success("Ростовка успешно удалена");
+      queryClient.invalidateQueries({ queryKey: ["clothing-heights"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось удалить ростовку";
+      toast.error(message);
+    },
+  });
+};
+
+// ===== FOOTWEAR SIZES =====
+
+export const useFootwearSizes = () => {
+  return useQuery({
+    queryKey: ["footwear-sizes"],
+    queryFn: () => getFootwearSizes(),
+  });
+};
+
+export const useCreateFootwearSize = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { size: string }) => createFootwearSize(data),
+    onSuccess: () => {
+      toast.success("Размер обуви успешно создан");
+      queryClient.invalidateQueries({ queryKey: ["footwear-sizes"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось создать размер обуви";
+      toast.error(message);
+    },
+  });
+};
+
+export const useDeleteFootwearSize = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteFootwearSize(id),
+    onSuccess: () => {
+      toast.success("Размер обуви успешно удалён");
+      queryClient.invalidateQueries({ queryKey: ["footwear-sizes"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось удалить размер обуви";
+      toast.error(message);
+    },
+  });
+};
+
+// ===== PROVIDERS =====
+
+// Получение всех поставщиков
+export const useProviders = () => {
+  return useQuery({
+    queryKey: ["providers"],
+    queryFn: () => getAllProviders(),
+  });
+};
+
+// Создание поставщика
+export const useCreateProvider = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { name: string }) => createProvider(data),
+    onSuccess: () => {
+      toast.success("Поставщик успешно создан");
+      queryClient.invalidateQueries({ queryKey: ["providers"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось создать поставщика";
+      toast.error(message);
+    },
+  });
+};
+
+// Обновление поставщика
+export const useUpdateProvider = (providerId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { name: string }) => updateProvider(providerId, data),
+    onSuccess: () => {
+      toast.success("Поставщик успешно обновлён");
+      queryClient.invalidateQueries({ queryKey: ["providers"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось обновить поставщика";
+      toast.error(message);
+    },
+  });
+};
+
+// Удаление поставщика
+export const useDeleteProvider = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (providerId: string) => deleteProvider(providerId),
+    onSuccess: () => {
+      toast.success("Поставщик успешно удалён");
+      queryClient.invalidateQueries({ queryKey: ["providers"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось удалить поставщика";
+      toast.error(message);
+    },
   });
 };

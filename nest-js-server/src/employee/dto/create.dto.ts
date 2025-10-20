@@ -1,10 +1,8 @@
 import {
   IsEnum,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
-  Min,
   IsPhoneNumber,
   IsArray,
 } from 'class-validator';
@@ -28,15 +26,17 @@ export class CreateDto {
   @IsPhoneNumber('RU', { message: 'Некорректный формат телефона' })
   phoneNumber: string;
 
-  @IsInt({ message: 'Размер одежды должен быть целым числом' })
-  @Min(0, { message: 'Размер одежды не может быть отрицательным' })
-  @IsNotEmpty({ message: 'Размер одежды обязателен для заполнения' })
-  clothingSize: number;
+  @IsString()
+  @IsOptional({ message: 'Размер обязателен для заполнения' })
+  closthingSizeId?: string;
 
-  @IsInt({ message: 'Размер обуви должен быть целым числом' })
-  @Min(0, { message: 'Размер обуви не может быть отрицательным' })
-  @IsNotEmpty({ message: 'Размер обуви обязателен для заполнения' })
-  footwearSize: number;
+  @IsString()
+  @IsOptional({ message: 'Размер обязателен для заполнения' })
+  closthingHeightId?: string;
+
+  @IsString()
+  @IsOptional({ message: 'Размер обязателен для заполнения' })
+  footwearSizeId?: string;
 
   @IsEnum(Position, {
     message: `Должность должна быть одним из: ${Object.values(Position).join(', ')}`,
@@ -50,4 +50,40 @@ export class CreateDto {
 
   @IsArray()
   skillIds?: string[];
+
+  @IsString()
+  @IsNotEmpty()
+  passportSerial: string;
+
+  @IsString()
+  @IsNotEmpty()
+  passportNumber: string;
+
+  @IsString()
+  @IsNotEmpty()
+  whereIssued: string;
+
+  @IsString()
+  @IsNotEmpty()
+  issueDate: string;
+
+  @IsString()
+  @IsNotEmpty()
+  registrationRegion: string;
+
+  @IsString()
+  @IsNotEmpty()
+  registrationCity: string;
+
+  @IsString()
+  @IsNotEmpty()
+  registrationStreet: string;
+
+  @IsString()
+  @IsNotEmpty()
+  registrationBuild: string;
+
+  @IsString()
+  @IsOptional()
+  registrationFlat: string;
 }

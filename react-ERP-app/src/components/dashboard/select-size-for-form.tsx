@@ -7,12 +7,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { clothisngSizes, shoesSizes } from "@/constants/sizes";
+import { useClothingSizes, useFootwearSizes } from "@/hooks/clothes/useClothes";
 import { cn } from "@/lib/utils";
 
 type SizeSelectProps = {
-  selectedSize: number;
-  onSelectChange: (size: number) => void;
+  selectedSize: string | undefined;
+  onSelectChange: (size: string) => void;
   type: "CLOTHING" | "FOOTWEAR";
   className?: string;
   disabled?: boolean;
@@ -25,18 +25,15 @@ export function SizeSelectForForms({
   className,
   disabled = false,
 }: SizeSelectProps) {
-  const currentSizesList = type === "CLOTHING" ? clothisngSizes : shoesSizes;
-
-  // Выбираем первый размер из списка, если вдруг selectedSize не совпадает
-  const validSelectedSize = currentSizesList.includes(selectedSize.toString())
-    ? selectedSize
-    : Number(currentSizesList[0]);
+  const { data: clothesSizes = [] } = useClothingSizes();
+  const { data: footwearSizes = [] } = useFootwearSizes();
+  const currentSizesList = type === "CLOTHING" ? clothesSizes : footwearSizes;
 
   return (
     <Select
       disabled={disabled}
-      value={validSelectedSize.toString()}
-      onValueChange={(value) => onSelectChange(Number(value))}
+      value={selectedSize}
+      onValueChange={(value) => onSelectChange(value)}
     >
       <SelectTrigger className={cn("w-[200px]", className ? className : "")}>
         <SelectValue placeholder="Размер" />
@@ -45,8 +42,8 @@ export function SizeSelectForForms({
         <SelectGroup>
           <SelectLabel>Размер</SelectLabel>
           {currentSizesList.map((size) => (
-            <SelectItem key={size} value={size.toString()}>
-              {size}
+            <SelectItem key={size.id} value={size.id}>
+              {size.size}
             </SelectItem>
           ))}
         </SelectGroup>

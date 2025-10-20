@@ -23,6 +23,8 @@ import { CancelClothesTransferDto } from './dto/cancel-transfer.dto';
 import { AddSizeForClothingDto } from './dto/add-size-for-clothing.dto';
 import { AddSizeForFootwearDto } from './dto/add-size-for-footwear.dto';
 import { AddHeightForClothingDto } from './dto/add-height-for-clothing.dto';
+import { AddProviderDto } from './dto/add-provider.dto';
+import { UpdateProviderDto } from './dto/update-provider.dto';
 
 @Injectable()
 export class ClothesService {
@@ -30,6 +32,20 @@ export class ClothesService {
     private readonly prismaService: PrismaService,
     private readonly clothesHistoryService: ClothesHistoryService,
   ) {}
+
+  async getSizesForClothing() {
+    try {
+      return await this.prismaService.$queryRaw<{ id: number; size: string }[]>`
+      SELECT * FROM "ClothingSize"
+      ORDER BY CAST(split_part(size, '-', 1) AS INTEGER) ASC
+    `;
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'ID с размером не найден',
+        defaultMessage: 'Ошибка получения размеров',
+      });
+    }
+  }
 
   async addSizeForClothing(dto: AddSizeForClothingDto) {
     try {
@@ -60,6 +76,20 @@ export class ClothesService {
     }
   }
 
+  async getSizesForFootwear() {
+    try {
+      return await this.prismaService.$queryRaw<{ id: number; size: string }[]>`
+      SELECT * FROM "FootwearSize"
+      ORDER BY CAST(size AS INTEGER) ASC
+    `;
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'ID с размером не найден',
+        defaultMessage: 'Ошибка получения размеров',
+      });
+    }
+  }
+
   async addSizeForFootwear(dto: AddSizeForFootwearDto) {
     try {
       return await this.prismaService.footwearSize.create({
@@ -85,6 +115,22 @@ export class ClothesService {
       handlePrismaError(error, {
         notFoundMessage: 'Размер для удаления не найден',
         defaultMessage: 'Ошибка при удалении размера',
+      });
+    }
+  }
+
+  async getHeightForClothing() {
+    try {
+      return await this.prismaService.$queryRaw<
+        { id: number; height: string }[]
+      >`
+      SELECT * FROM "ClothingHeight"
+      ORDER BY CAST(split_part(height, '-', 1) AS INTEGER) ASC
+    `;
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'ID с ростовкой не найден',
+        defaultMessage: 'Ошибка получения ростовок',
       });
     }
   }
@@ -173,8 +219,15 @@ export class ClothesService {
         ...(query.objectId === 'all' ? {} : { objectId: query.objectId }),
         ...(query.season ? { season: query.season } : {}),
         ...(Number(query.size) ? { size: Number(query.size) } : {}),
+        ...(query.search
+          ? { name: { contains: query.search, mode: 'insensitive' } }
+          : {}), // ✅ поиск по имени
       },
       include: {
+        closthingHeight: true,
+        closthingSize: true,
+        footwearSize: true,
+        provider: true,
         inTransit: {
           where: {
             OR: [
@@ -690,6 +743,66 @@ export class ClothesService {
       handlePrismaError(error, {
         notFoundMessage: 'Одежда для удаления не найдена',
         defaultMessage: 'Ошибка при удалении одежды',
+      });
+    }
+  }
+
+  // ====== PROVIDERS ======
+
+  async getAllProviders() {
+    try {
+      return await this.prismaService.provider.findMany({
+        orderBy: { name: 'asc' },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка получения списка поставщиков',
+      });
+    }
+  }
+
+  async addProvider(dto: AddProviderDto) {
+    try {
+      return await this.prismaService.provider.create({
+        data: { name: dto.name },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        conflictMessage: 'Поставщик с таким названием уже существует',
+        defaultMessage: 'Ошибка при создании поставщика',
+      });
+    }
+  }
+
+  async updateProvider(id: string, dto: UpdateProviderDto) {
+    try {
+      await this.prismaService.provider.findUniqueOrThrow({
+        where: { id },
+      });
+
+      return await this.prismaService.provider.update({
+        where: { id },
+        data: { name: dto.name },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Поставщик для обновления не найден',
+        conflictMessage: 'Поставщик с таким именем уже существует',
+        defaultMessage: 'Ошибка обновления поставщика',
+      });
+    }
+  }
+
+  async removeProvider(id: string) {
+    try {
+      await this.prismaService.provider.delete({
+        where: { id },
+      });
+      return true;
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Поставщик для удаления не найден',
+        defaultMessage: 'Ошибка при удалении поставщика',
       });
     }
   }

@@ -33,6 +33,9 @@ export function ClothesTable({
               Наименование
             </TableHead>
             <TableHead className="text-secondary font-bold ">Размер</TableHead>
+            <TableHead className="text-secondary font-bold ">
+              Ростовка
+            </TableHead>
             <TableHead className="text-secondary font-bold ">Сезон</TableHead>
             <TableHead className="text-secondary font-bold ">
               В наличии
@@ -59,7 +62,14 @@ export function ClothesTable({
               <TableCell className="font-medium hover:underline">
                 {item.name}
               </TableCell>
-              <TableCell>{item.size}</TableCell>
+              <TableCell>
+                {item.type === "CLOTHING"
+                  ? item.closthingSize.size
+                  : item.footwearSize.size}
+              </TableCell>
+              <TableCell>
+                {item.type === "CLOTHING" ? item.closthingHeight.height : "-"}
+              </TableCell>
               <TableCell>
                 {item.season === "SUMMER" ? "Лето" : "Зима"}
               </TableCell>

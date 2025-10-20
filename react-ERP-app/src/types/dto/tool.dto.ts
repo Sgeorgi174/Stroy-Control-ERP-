@@ -2,8 +2,10 @@ import type { ToolStatus } from "../tool";
 
 export interface CreateToolDto {
   name: string;
-  serialNumber: string;
+  serialNumber?: string;
   objectId: string;
+  isBulk?: boolean;
+  quantity?: number;
 }
 
 export interface UpdateToolDto extends CreateToolDto {
@@ -43,4 +45,17 @@ export interface WirteOffToolInTransferDto {
 
 export interface CancelToolTransferDto {
   rejectionComment: string;
+}
+
+export interface AddToolCommentDto {
+  comment: string;
+}
+
+export interface AddQuantityTool {
+  quantity: number;
+}
+
+export interface WriteOffQuantityTool {
+  quantity: number;
+  comment: string;
 }

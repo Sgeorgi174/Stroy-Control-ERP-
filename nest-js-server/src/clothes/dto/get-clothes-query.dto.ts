@@ -17,4 +17,8 @@ export class GetClothesQueryDto {
   @IsOptional()
   @IsString()
   size?: string;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
 }

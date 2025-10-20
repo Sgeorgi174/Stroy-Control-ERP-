@@ -65,11 +65,11 @@ export function EmployeeSkillsEdit({ employee }: EmployeeSkillsEditProps) {
               {availableSkills.map((skill) => (
                 <div
                   key={skill.id}
-                  className="group flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition-all duration-200"
+                  className="group flex items-center justify-between p-3 border border-gray-200 rounded-lg "
                 >
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <Award className="w-4 h-4 text-gray-400 group-hover:text-green-600 flex-shrink-0" />
-                    <span className="text-sm font-medium text-gray-900 truncate">
+                    <span className="text-sm font-medium  truncate">
                       {skill.skill}
                     </span>
                   </div>
@@ -122,11 +122,11 @@ export function EmployeeSkillsEdit({ employee }: EmployeeSkillsEditProps) {
               {currentEmployee.skills.map((skill) => (
                 <div
                   key={skill.id}
-                  className="group flex items-center justify-between p-3 border border-blue-200 rounded-lg bg-blue-50 hover:border-red-300 hover:bg-red-50 transition-all duration-200"
+                  className="group flex items-center justify-between p-3 border border-blue-200 rounded-lg bg-blue-50 "
                 >
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <Award className="w-4 h-4 text-blue-600 group-hover:text-red-600 flex-shrink-0" />
-                    <span className="text-sm font-medium text-blue-900 group-hover:text-red-900 truncate">
+                    <Award className="w-4 h-4 text-blue-600 hover:text-red-600 flex-shrink-0" />
+                    <span className="text-sm font-medium text-blue-900 ">
                       {skill.skill}
                     </span>
                   </div>
@@ -135,7 +135,7 @@ export function EmployeeSkillsEdit({ employee }: EmployeeSkillsEditProps) {
                     disabled={isAnyLoading}
                     variant="ghost"
                     size="sm"
-                    className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-700"
+                    className="h-8 w-8 p-0 text-red-700 hover:bg-red-100 "
                     onClick={() => handleDeleteSkill(skill.id)}
                   >
                     {isAnyLoading ? (

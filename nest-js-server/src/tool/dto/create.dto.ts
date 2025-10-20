@@ -1,4 +1,11 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { ToolStatus } from 'generated/prisma';
 
 export class CreateDto {
@@ -13,8 +20,16 @@ export class CreateDto {
   status?: ToolStatus;
 
   @IsString({ message: 'Серийный номер должен быть строкой' })
-  @IsNotEmpty({ message: 'Серийный номер обязателен для заполнения.' })
+  @IsOptional()
   serialNumber: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  isBulk: boolean;
+
+  @IsNumber()
+  @IsOptional()
+  quantity: number;
 
   @IsString({ message: 'object_id должен быть строкой' })
   @IsOptional()

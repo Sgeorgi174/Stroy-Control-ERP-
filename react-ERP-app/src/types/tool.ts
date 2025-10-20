@@ -20,4 +20,7 @@ export type Tool = {
   inTransit: PendingToolTransfer[];
   isBag: boolean;
   bagItems: { id: string; name: string; quantity: number }[];
+  comment: string | undefined;
+  isBulk: boolean;
+  quantity: number;
 };

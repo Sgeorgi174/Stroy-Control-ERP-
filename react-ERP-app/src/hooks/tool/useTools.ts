@@ -6,6 +6,7 @@ type Params = {
   searchQuery: string;
   objectId?: string | null;
   status?: ToolStatus | null;
+  isBulk: boolean;
 };
 
 export const useTools = (params: Params, enabled = true) => {

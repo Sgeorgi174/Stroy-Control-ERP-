@@ -21,6 +21,9 @@ import { CancelToolTransferDto } from './dto/cancel-transfer.dto';
 import { AddBagItemDto } from './dto/add-bag-item.dto';
 import { BagItem } from 'generated/prisma';
 import { RemoveBagItemDto } from './dto/remove-bag-item';
+import { AddToolCommentDto } from './dto/add-tool-comment.dto';
+import { AddQuantityToolDto } from './dto/add-quantity-tool.dto';
+import { WriteOffQuantityDto } from './dto/write-off-quantity-tool.dto';
 
 @Injectable()
 export class ToolService {
@@ -51,8 +54,10 @@ export class ToolService {
       return await this.prismaService.tool.create({
         data: {
           name: dto.name,
-          serialNumber: dto.serialNumber,
+          serialNumber: dto.serialNumber ? dto.serialNumber : undefined,
           objectId: dto.objectId,
+          isBulk: dto.isBulk,
+          quantity: dto.quantity ? dto.quantity : undefined,
         },
         include: { storage: true },
       });
@@ -60,6 +65,87 @@ export class ToolService {
       handlePrismaError(error, {
         conflictMessage: 'Инструмент с таким серийным номером уже существует',
         defaultMessage: 'Ошибка создания инструмента',
+      });
+    }
+  }
+
+  public async addQuantity(
+    toolId: string,
+    userId: string,
+    dto: AddQuantityToolDto,
+  ) {
+    const tool = await this.getById(toolId);
+
+    if (!tool.isBulk)
+      throw new BadRequestException(
+        'Добавление количества возможно только для пакетных инструментов',
+      );
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        const updatedTool = await prisma.tool.update({
+          where: { id: toolId },
+          data: { quantity: { increment: dto.quantity } },
+          include: { storage: true },
+        });
+
+        await this.toolHistoryService.create({
+          action: 'ADD',
+          toolId,
+          userId,
+          fromObjectId: tool.objectId ?? undefined,
+          toObjectId: tool.objectId!,
+        });
+
+        return updatedTool;
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Инструмент не найден',
+        defaultMessage: 'Не удалось добавить количество инструмента',
+      });
+    }
+  }
+
+  public async writeOffQuantity(
+    toolId: string,
+    userId: string,
+    dto: WriteOffQuantityDto,
+  ) {
+    const tool = await this.getById(toolId);
+
+    if (!tool.isBulk)
+      throw new BadRequestException(
+        'Списание количества возможно только для пакетных инструментов',
+      );
+
+    if (dto.quantity > tool.quantity)
+      throw new BadRequestException(
+        'Нельзя списать больше, чем имеется на складе',
+      );
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        const updatedTool = await prisma.tool.update({
+          where: { id: toolId },
+          data: { quantity: { decrement: dto.quantity } },
+          include: { storage: true },
+        });
+
+        await this.toolHistoryService.create({
+          action: 'WRITE_OFF',
+          toolId,
+          userId,
+          fromObjectId: tool.objectId ?? undefined,
+          toObjectId: tool.objectId!,
+        });
+
+        return updatedTool;
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Инструмент не найден',
+        defaultMessage: 'Не удалось списать инструмент',
       });
     }
   }
@@ -150,6 +236,7 @@ export class ToolService {
     const tools = await this.prismaService.tool.findMany({
       where: {
         ...(query.objectId === 'all' ? {} : { objectId: query.objectId }),
+        ...(query.isBulk === 'true' ? { isBulk: true } : { isBulk: false }),
         ...statusFilter,
         ...(query.searchQuery
           ? {
@@ -521,6 +608,51 @@ export class ToolService {
         notFoundMessage: 'Запись не найдена',
         conflictMessage: 'Обновление нарушает уникальность данных',
         defaultMessage: 'Не удалось отменить перемещение',
+      });
+    }
+  }
+
+  public async addComment(toolId: string, dto: AddToolCommentDto) {
+    await this.getById(toolId);
+    try {
+      return await this.prismaService.tool.update({
+        where: { id: toolId },
+        data: { comment: dto.comment },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Инструмент не найден',
+        defaultMessage: 'Не удалось добавить коментарий',
+      });
+    }
+  }
+
+  public async updateComment(toolId: string, dto: AddToolCommentDto) {
+    await this.getById(toolId);
+    try {
+      return await this.prismaService.tool.update({
+        where: { id: toolId },
+        data: { comment: dto.comment },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Инструмент не найден',
+        defaultMessage: 'Не удалось обновить коментарий',
+      });
+    }
+  }
+
+  public async deleteComment(toolId: string) {
+    await this.getById(toolId);
+    try {
+      return await this.prismaService.tool.update({
+        where: { id: toolId },
+        data: { comment: '' },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Инструмент не найден',
+        defaultMessage: 'Не удалось удалить коментарий',
       });
     }
   }

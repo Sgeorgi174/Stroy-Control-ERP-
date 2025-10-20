@@ -5,11 +5,22 @@ export type CreateEmployeeDto = {
   lastName: string;
   fatherName?: string;
   phoneNumber: string;
-  clothingSize: number;
-  footwearSize: number;
+  clothingSizeId: string;
+  footwearSizeId: string;
+  clothingHeightId: string;
   position: Positions;
   objectId?: string;
   skillIds?: string[];
+
+  passportSerial: string;
+  passportNumber: string;
+  whereIssued: string;
+  issueDate: string;
+  registrationRegion: string;
+  registrationCity: string;
+  registrationStreet: string;
+  registrationBuild: string;
+  registrationFlat: string | undefined;
 };
 
 export type UpdateEmployeeDto = {
@@ -21,6 +32,16 @@ export type UpdateEmployeeDto = {
   footwearSize: number;
   position: Positions;
   objectId?: string;
+
+  passportSerial: string;
+  passportNumber: string;
+  whereIssued: string;
+  issueDate: string;
+  registrationRegion: string;
+  registrationCity: string;
+  registrationStreet: string;
+  registrationBuild: string;
+  registrationFlat: string | undefined;
 };
 
 export type TransferEmployeeDto = {

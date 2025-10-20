@@ -16,7 +16,7 @@ import type { TransferRecord } from "@/types/historyRecords";
 
 // Получить список одежды с фильтрами
 export const getFilteredClothes = async (params: {
-  searchQuery: string;
+  searchQuery?: string;
   objectId?: string | null;
   season?: Seasons | null;
   type: ClothesType;
@@ -24,11 +24,12 @@ export const getFilteredClothes = async (params: {
   const res = await api.get("/clothes/filter", {
     params: {
       type: params.type,
-      size: params.searchQuery || undefined,
+      search: params.searchQuery || undefined, // ✅ исправлено
       objectId: params.objectId || undefined,
       season: params.season || undefined,
     },
   });
+
   return res.data;
 };
 
@@ -150,4 +151,93 @@ export const getClothesHistory = async (
 ): Promise<TransferRecord[]> => {
   const res = await api.get(`/clothes-history/transfers/${id}`);
   return res.data;
+};
+
+// ===== CLOTHING SIZES =====
+
+// Получить все размеры одежды
+export const getClothingSizes = async (): Promise<
+  { id: string; size: string }[]
+> => {
+  const res = await api.get("/clothes/sizes-clothing");
+  return res.data;
+};
+
+// Создать новый размер одежды
+export const createClothingSize = async (data: { size: string }) => {
+  const res = await api.post("/clothes/create-size-clothing", data);
+  return res.data;
+};
+
+// Удалить размер одежды
+export const deleteClothingSize = async (id: string) => {
+  const res = await api.delete(`/clothes/remove-size-clothing/${id}`);
+  return res.data;
+};
+
+// ===== CLOTHING HEIGHTS =====
+
+// Получить все ростовки одежды
+export const getClothingHeights = async (): Promise<
+  { id: string; height: string }[]
+> => {
+  const res = await api.get("/clothes/height-clothing");
+  return res.data;
+};
+
+// Создать новую ростовку одежды
+export const createClothingHeight = async (data: { height: string }) => {
+  const res = await api.post("/clothes/create-height-clothing", data);
+  return res.data;
+};
+
+// Удалить ростовку одежды
+export const deleteClothingHeight = async (id: string) => {
+  const res = await api.delete(`/clothes/remove-height-clothing/${id}`);
+  return res.data;
+};
+
+// ===== FOOTWEAR SIZES =====
+
+// Получить все размеры обуви
+export const getFootwearSizes = async (): Promise<
+  { id: string; size: string }[]
+> => {
+  const res = await api.get("/clothes/sizes-footwear");
+  return res.data;
+};
+
+// Создать новый размер обуви
+export const createFootwearSize = async (data: { size: string }) => {
+  const res = await api.post("/clothes/create-size-footwear", data);
+  return res.data;
+};
+
+// Удалить размер обуви
+export const deleteFootwearSize = async (id: string) => {
+  const res = await api.delete(`/clothes/remove-size-footwear/${id}`);
+  return res.data;
+};
+
+// ===== PROVIDERS =====
+
+export const getAllProviders = async (): Promise<
+  { id: string; name: string }[]
+> => {
+  const res = await api.get("/clothes/providers");
+  return res.data;
+};
+
+export const createProvider = async (data: { name: string }) => {
+  const res = await api.post("/clothes/create-provider", data);
+  return res.data;
+};
+
+export const updateProvider = async (id: string, data: { name: string }) => {
+  const res = await api.put(`/clothes/update-provider/${id}`, data);
+  return res.data;
+};
+
+export const deleteProvider = async (id: string) => {
+  await api.delete(`/clothes/remove-provider/${id}`);
 };

@@ -10,6 +10,9 @@ import type {
   CancelToolTransferDto,
   AddToolBagItemDto,
   RemoveToolBagItemDto,
+  AddToolCommentDto,
+  AddQuantityTool,
+  WriteOffQuantityTool,
 } from "@/types/dto/tool.dto";
 import type { Tool, ToolStatus } from "@/types/tool";
 
@@ -18,12 +21,14 @@ export const getFilteredTools = async (params: {
   searchQuery: string;
   objectId?: string | null;
   status?: ToolStatus | null;
+  isBulk: boolean;
 }) => {
   const res = await api.get("/tools/filter", {
     params: {
       searchQuery: params.searchQuery || undefined,
       objectId: params.objectId || undefined,
       status: params.status || undefined,
+      isBulk: params.isBulk,
     },
   });
   return res.data;
@@ -38,6 +43,22 @@ export const getToolById = async (id: string): Promise<Tool> => {
 // Создать инструмент
 export const createTool = async (data: CreateToolDto): Promise<Tool> => {
   const res = await api.post("/tools/create", data);
+  return res.data;
+};
+
+export const addQuantityTool = async (
+  id: string,
+  data: AddQuantityTool
+): Promise<Tool> => {
+  const res = await api.patch(`/tools/add/${id}`, data);
+  return res.data;
+};
+
+export const writeOffQuantityTool = async (
+  id: string,
+  data: WriteOffQuantityTool
+): Promise<Tool> => {
+  const res = await api.patch(`/tools/write-off/${id}`, data);
   return res.data;
 };
 
@@ -147,5 +168,26 @@ export const getToolStatusChangesHistory = async (
   id: string
 ): Promise<void> => {
   const res = await api.get(`/tool-history/statuses/${id}`);
+  return res.data;
+};
+
+export const addToolComment = async (
+  id: string,
+  data: AddToolCommentDto
+): Promise<Tool> => {
+  const res = await api.put(`/tools/add-comment/${id}`, data);
+  return res.data;
+};
+
+export const updateToolComment = async (
+  id: string,
+  data: AddToolCommentDto
+): Promise<Tool> => {
+  const res = await api.put(`/tools/update-comment/${id}`, data);
+  return res.data;
+};
+
+export const deleteToolComment = async (id: string): Promise<Tool> => {
+  const res = await api.put(`/tools/delete-comment/${id}`);
   return res.data;
 };

@@ -33,8 +33,20 @@ export function ClothesTransferDetails({
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Размер</p>
-            <p className="font-medium">{clothesTransfer.clothes.size}</p>
+            <p className="font-medium">
+              {clothesTransfer.clothes.type === "CLOTHING"
+                ? clothesTransfer.clothes.closthingSize.size
+                : clothesTransfer.clothes.footwearSize.size}
+            </p>
           </div>
+          {clothesTransfer.clothes.type === "CLOTHING" && (
+            <div>
+              <p className="text-sm text-muted-foreground">Ростовка</p>
+              <p className="font-medium">
+                {clothesTransfer.clothes.closthingHeight.height}
+              </p>
+            </div>
+          )}
           <div>
             <p className="text-sm text-muted-foreground">Количество</p>
             <p className="font-medium">{clothesTransfer.quantity}</p>

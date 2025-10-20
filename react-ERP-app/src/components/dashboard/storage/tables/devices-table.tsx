@@ -12,6 +12,7 @@ import { useDeviceSheetStore } from "@/stores/device-sheet-store";
 import { PendingTable } from "./pending-table";
 import { StatusBadge } from "./status-badge";
 import { statusMap } from "@/constants/statusMap";
+import { formatDate } from "@/lib/utils/format-date";
 
 type DeviceTableProps = {
   devices: Device[];
@@ -31,6 +32,7 @@ export function DevicesTable({
       <Table>
         <TableHeader className="bg-primary pointer-events-none">
           <TableRow>
+            <TableHead className="text-secondary font-bold">Дата</TableHead>
             <TableHead className="text-secondary font-bold">
               Серийный №
             </TableHead>
@@ -59,6 +61,9 @@ export function DevicesTable({
               onClick={() => openSheet("details", device)}
               className="cursor-pointer"
             >
+              <TableCell className="font-medium">
+                {formatDate(device.createdAt)}
+              </TableCell>
               <TableCell className="font-medium">
                 {device.serialNumber}
               </TableCell>

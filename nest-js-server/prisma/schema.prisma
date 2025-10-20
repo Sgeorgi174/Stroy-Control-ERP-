@@ -138,13 +138,18 @@ model Tool {
 
   name         String
   status       ToolStatus @default(ON_OBJECT)
-  serialNumber String     @unique @map("serial_number")
+  serialNumber String?    @unique @map("serial_number")
 
   isBag    Boolean   @default(false)
   bagItems BagItem[]
 
+  isBulk   Boolean @default(false)
+  quantity Int     @default(1)
+
   storage  Object? @relation(fields: [objectId], references: [id])
   objectId String? @map("object_id")
+
+  comment String?
 
   inTransit       PendingTransfersTools[]
   history         ToolHistory[]
@@ -221,6 +226,8 @@ enum ToolActions {
   REJECT
   CANCEL
   RETURN_TO_SOURCE
+  ADD
+  WRITE_OFF
 }
 
 model ToolStatusHistory {
@@ -373,8 +380,9 @@ model ClothingSize {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  size    String    @unique
-  clothes Clothes[]
+  size      String     @unique
+  clothes   Clothes[]
+  employees Employee[]
 }
 
 model ClothingHeight {
@@ -382,8 +390,9 @@ model ClothingHeight {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  height  String    @unique
-  clothes Clothes[]
+  height    String     @unique
+  clothes   Clothes[]
+  employees Employee[]
 }
 
 model FootwearSize {
@@ -391,8 +400,9 @@ model FootwearSize {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  size    String    @unique
-  clothes Clothes[]
+  size      String     @unique
+  clothes   Clothes[]
+  employees Employee[]
 }
 
 model Provider {
@@ -530,12 +540,28 @@ model Employee {
 
   type employeeType @default(ACTIVE)
 
-  firstName    String  @map("first_name")
-  lastName     String  @map("last_name")
-  fatherName   String? @map("father_name")
-  phoneNumber  String  @unique @map("phone_number")
-  clothingSize Int?    @map("clothing_size")
-  footwearSize Int?    @map("footwear_size")
+  firstName          String  @map("first_name")
+  lastName           String  @map("last_name")
+  fatherName         String? @map("father_name")
+  phoneNumber        String  @unique @map("phone_number")
+  passportSerial     String
+  passportNumber     String
+  whereIssued        String
+  issueDate          String
+  registrationRegion String
+  registrationCity   String
+  registrationStreet String
+  registrationBuild  String
+  registrationFlat   String?
+
+  closthingSize   ClothingSize? @relation(fields: [closthingSizeId], references: [id])
+  closthingSizeId String?       @map("clothing_size_id")
+
+  closthingHeight   ClothingHeight? @relation(fields: [closthingHeightId], references: [id])
+  closthingHeightId String?         @map("clothing_height_id")
+
+  footwearSize   FootwearSize? @relation(fields: [footwearSizeId], references: [id])
+  footwearSizeId String?       @map("footwear_size_id")
 
   status Statuses @default(OK)
 

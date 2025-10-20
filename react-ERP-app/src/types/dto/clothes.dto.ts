@@ -4,7 +4,10 @@ export interface CreateClothesDto {
   name: string;
   season: Seasons;
   quantity: number;
-  size: number;
+  closthingSizeId: string | undefined;
+  footwearSizeId: string | undefined;
+  closthingHeightId: string | undefined;
+  providerId: string;
   type: ClothesType;
   objectId: string;
   price: number;
@@ -14,7 +17,10 @@ export interface UpdateClothesDto {
   name: string;
   season: Seasons;
   quantity: number;
-  size: number;
+  closthingSizeId: string | undefined;
+  footwearSizeId: string | undefined;
+  closthingHeightId: string | undefined;
+  providerId: string;
   type: ClothesType;
   objectId: string;
   price: number;

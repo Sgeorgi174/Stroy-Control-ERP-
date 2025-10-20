@@ -13,4 +13,8 @@ export class GetToolsQueryDto {
   @IsOptional()
   @IsString()
   searchQuery?: string;
+
+  @IsOptional()
+  @IsString()
+  isBulk?: string;
 }

@@ -11,7 +11,10 @@ export type Clothes = {
   type: ClothesType;
   season: Seasons;
   name: string;
-  size: number;
+  closthingHeight: { id: string; height: string };
+  closthingSize: { id: string; size: string };
+  footwearSize: { id: string; size: string };
+  provider: { id: string; name: string };
   price: number;
   quantity: number;
   inTransit: PendingClothesTransfer[];

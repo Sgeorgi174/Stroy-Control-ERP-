@@ -28,6 +28,9 @@ import { WriteOffToolInTransferDto } from './dto/write-off-in-transit.dto';
 import { CancelToolTransferDto } from './dto/cancel-transfer.dto';
 import { AddBagItemDto } from './dto/add-bag-item.dto';
 import { RemoveBagItemDto } from './dto/remove-bag-item';
+import { AddToolCommentDto } from './dto/add-tool-comment.dto';
+import { AddQuantityToolDto } from './dto/add-quantity-tool.dto';
+import { WriteOffQuantityDto } from './dto/write-off-quantity-tool.dto';
 
 @Controller('tools')
 export class ToolController {
@@ -42,6 +45,26 @@ export class ToolController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateDto) {
     return this.toolService.create(dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Patch('/add/:id')
+  addQuantity(
+    @Param('id') id: string,
+    @Body() dto: AddQuantityToolDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.toolService.addQuantity(id, userId, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Patch('/write-off/:id')
+  writeOffQuantity(
+    @Param('id') id: string,
+    @Body() dto: WriteOffQuantityDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.toolService.writeOffQuantity(id, userId, dto);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
@@ -79,6 +102,30 @@ export class ToolController {
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateDto) {
     return this.toolService.update(id, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Put('add-comment/:id')
+  async addToolComment(
+    @Param('id') id: string,
+    @Body() dto: AddToolCommentDto,
+  ) {
+    return this.toolService.addComment(id, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Put('update-comment/:id')
+  async updateToolComment(
+    @Param('id') id: string,
+    @Body() dto: AddToolCommentDto,
+  ) {
+    return this.toolService.updateComment(id, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Put('delete-comment/:id')
+  async deleteToolComment(@Param('id') id: string) {
+    return this.toolService.deleteComment(id);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)

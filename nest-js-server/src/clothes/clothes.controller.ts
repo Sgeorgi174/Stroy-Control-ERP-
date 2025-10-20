@@ -32,6 +32,8 @@ import { WriteOffClothesInTransferDto } from './dto/write-off-in-transit.dto';
 import { AddSizeForClothingDto } from './dto/add-size-for-clothing.dto';
 import { AddSizeForFootwearDto } from './dto/add-size-for-footwear.dto';
 import { AddHeightForClothingDto } from './dto/add-height-for-clothing.dto';
+import { AddProviderDto } from './dto/add-provider.dto';
+import { UpdateProviderDto } from './dto/update-provider.dto';
 
 @Controller('clothes')
 export class ClothesController {
@@ -46,6 +48,24 @@ export class ClothesController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateDto) {
     return this.clothesService.create(dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Get('sizes-clothing')
+  async getSizesForClothing() {
+    return this.clothesService.getSizesForClothing();
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Get('sizes-footwear')
+  async getSizesForFootwear() {
+    return this.clothesService.getSizesForFootwear();
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Get('height-clothing')
+  async getHeightForClothing() {
+    return this.clothesService.getHeightForClothing();
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)
@@ -85,6 +105,35 @@ export class ClothesController {
   @Delete('remove-height-clothing/:id')
   async removeHeightForFootwear(@Param('id') id: string) {
     return this.clothesService.removeHeightForClothing(id);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Get('providers')
+  async getAllProviders() {
+    return this.clothesService.getAllProviders();
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Post('create-provider')
+  @HttpCode(HttpStatus.CREATED)
+  async addProvider(@Body() dto: AddProviderDto) {
+    return this.clothesService.addProvider(dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Put('update-provider/:id')
+  async updateProvider(
+    @Param('id') id: string,
+    @Body() dto: UpdateProviderDto,
+  ) {
+    return this.clothesService.updateProvider(id, dto);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Delete('remove-provider/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async removeProvider(@Param('id') id: string) {
+    return this.clothesService.removeProvider(id);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)

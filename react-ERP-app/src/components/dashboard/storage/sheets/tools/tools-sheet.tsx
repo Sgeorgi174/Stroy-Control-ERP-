@@ -81,9 +81,15 @@ export function ToolsSheet() {
                   </div>
                   <div className="flex flex-col items-start">
                     <p>{selectedTool?.name}</p>
-                    <p className="text-lg text-muted-foreground">
-                      Серийный: {selectedTool?.serialNumber}
-                    </p>
+                    {selectedTool?.isBulk ? (
+                      <p className="text-lg text-muted-foreground">
+                        Количество: {selectedTool?.quantity}
+                      </p>
+                    ) : (
+                      <p className="text-lg text-muted-foreground">
+                        Серийный: {selectedTool?.serialNumber}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="w-full flex justify-start mt-5">

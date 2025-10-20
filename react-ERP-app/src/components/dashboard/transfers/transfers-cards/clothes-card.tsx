@@ -56,8 +56,16 @@ export function TransferClothesCard({
                   </p>
                   <div className="flex flex-col gap-1">
                     <p className="text-xs text-muted-foreground font-mono">
-                      Размер: {transfer.clothes.size}
+                      Размер:{" "}
+                      {transfer.clothes.type === "CLOTHING"
+                        ? transfer.clothes.closthingSize.size
+                        : transfer.clothes.footwearSize.size}
                     </p>
+                    {transfer.clothes.type === "CLOTHING" && (
+                      <p className="text-xs text-muted-foreground font-mono">
+                        Ростовка: {transfer.clothes.closthingHeight.height}
+                      </p>
+                    )}
                     <p className="text-xs text-muted-foreground font-mono">
                       Сезон:{" "}
                       {transfer.clothes.season === "SUMMER" ? "Лето" : "Зима"}

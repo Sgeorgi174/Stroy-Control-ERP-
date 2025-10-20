@@ -1,10 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import type { Resolver } from "react-hook-form";
 import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import { useForm } from "react-hook-form";
 import { useObjects } from "@/hooks/object/useObject";
@@ -12,11 +14,34 @@ import { useCreateTool } from "@/hooks/tool/useCreateTool";
 import { useCreateToolBag } from "@/hooks/tool/useCreateToolBag";
 import { useState, useEffect } from "react";
 
-const toolSchema = z.object({
-  name: z.string().min(1, "Это поле обязательно"),
-  serialNumber: z.string().min(1, "Это поле обязательно"),
-  objectId: z.string().min(1, "Выберите объект"),
-});
+// ✅ Единая схема, которая учитывает оба варианта (штучный / групповой)
+const toolSchema = z
+  .object({
+    name: z.string().min(1, "Это поле обязательно"),
+    objectId: z.string().min(1, "Выберите объект"),
+    isBulk: z.boolean().default(false),
+    serialNumber: z.string().optional(),
+    quantity: z.number().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.isBulk) {
+      if (!data.quantity || data.quantity < 1) {
+        ctx.addIssue({
+          path: ["quantity"],
+          message: "Введите количество (минимум 1)",
+          code: z.ZodIssueCode.custom,
+        });
+      }
+    } else {
+      if (!data.serialNumber || data.serialNumber.trim().length === 0) {
+        ctx.addIssue({
+          path: ["serialNumber"],
+          message: "Серийный номер обязателен",
+          code: z.ZodIssueCode.custom,
+        });
+      }
+    }
+  });
 
 type FormData = z.infer<typeof toolSchema>;
 
@@ -39,15 +64,19 @@ export function ToolsAdd() {
     reset,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(toolSchema),
+    resolver: zodResolver(toolSchema) as unknown as Resolver<FormData>, // ✅ фикс ошибки типов
     defaultValues: {
       name: "",
       serialNumber: "",
       objectId: objects[0]?.id ?? "",
+      isBulk: false,
+      quantity: undefined,
     },
   });
 
-  // если включили чекбокс – подставляем имя
+  const isBulk = watch("isBulk");
+
+  // Автоимя для сумки
   useEffect(() => {
     if (isBag) {
       setValue("name", "Сумка расключника");
@@ -62,8 +91,11 @@ export function ToolsAdd() {
   const onSubmit = (data: FormData) => {
     const payload = {
       name: data.name.trim(),
-      serialNumber: data.serialNumber.trim(),
       objectId: data.objectId,
+      isBulk: data.isBulk,
+      ...(data.isBulk
+        ? { quantity: data.quantity }
+        : { serialNumber: data.serialNumber?.trim() }),
     };
 
     const mutation = isBag ? createToolBag : createTool;
@@ -78,17 +110,31 @@ export function ToolsAdd() {
 
   return (
     <div className="p-5">
+      {/* 🔹 Переключатель типа инструмента */}
+      <Tabs
+        value={isBulk ? "true" : "false"}
+        onValueChange={(val) => setValue("isBulk", val === "true")}
+        className="mb-6 w-[400px]"
+      >
+        <TabsList>
+          <TabsTrigger value="false">Штучный</TabsTrigger>
+          <TabsTrigger value="true">Групповой</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {/* Чекбокс */}
+        {!isBulk && (
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="isBag"
+              checked={isBag}
+              onCheckedChange={(checked) => setIsBag(!!checked)}
+            />
+            <Label htmlFor="isBag">Создать сумку расключника</Label>
+          </div>
+        )}
 
-        <div className="flex items-center gap-2">
-          <Checkbox
-            id="isBag"
-            checked={isBag}
-            onCheckedChange={(checked) => setIsBag(!!checked)}
-          />
-          <Label htmlFor="isBag">Создать сумку расключника</Label>
-        </div>
         {/* Имя */}
         <div className="flex flex-col gap-2 w-[400px]">
           <Label htmlFor="name">Наименование *</Label>
@@ -104,21 +150,36 @@ export function ToolsAdd() {
           )}
         </div>
 
-        {/* Серийник */}
-        <div className="flex flex-col gap-2 w-[400px]">
-          <Label htmlFor="serialNumber">Серийный № *</Label>
-          <Input
-            id="serialNumber"
-            placeholder="Введите серийный номер"
-            type="text"
-            {...register("serialNumber")}
-          />
-          {errors.serialNumber && (
-            <p className="text-sm text-red-500">
-              {errors.serialNumber.message}
-            </p>
-          )}
-        </div>
+        {/* Серийник или количество */}
+        {!isBulk ? (
+          <div className="flex flex-col gap-2 w-[400px]">
+            <Label htmlFor="serialNumber">Серийный № *</Label>
+            <Input
+              id="serialNumber"
+              placeholder="Введите серийный номер"
+              type="text"
+              {...register("serialNumber")}
+            />
+            {errors.serialNumber && (
+              <p className="text-sm text-red-500">
+                {errors.serialNumber.message}
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2 w-[400px]">
+            <Label htmlFor="quantity">Количество *</Label>
+            <Input
+              id="quantity"
+              type="number"
+              placeholder="Введите количество"
+              {...register("quantity", { valueAsNumber: true })}
+            />
+            {errors.quantity && (
+              <p className="text-sm text-red-500">{errors.quantity.message}</p>
+            )}
+          </div>
+        )}
 
         {/* Объект */}
         <div className="flex flex-col gap-2">

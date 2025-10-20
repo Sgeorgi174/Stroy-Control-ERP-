@@ -55,9 +55,9 @@ export function ToolsDetailsBox({ tool }: DetailsBoxProps) {
               <div className="flex gap-2 items-center">
                 <User className="w-5 h-5" />
                 <p className="font-medium">
-                  {tool.storage
+                  {tool.storage && tool.storage.foreman
                     ? `${tool.storage.foreman?.lastName} ${tool.storage.foreman?.firstName}`
-                    : "-"}
+                    : "Не назначен"}
                 </p>
               </div>
             </div>
@@ -67,7 +67,9 @@ export function ToolsDetailsBox({ tool }: DetailsBoxProps) {
               <div className="flex gap-2 items-center">
                 <Phone className="w-5 h-5" />
                 <p className="font-medium">
-                  {tool.storage ? tool.storage.foreman?.phone : "-"}
+                  {tool.storage && tool.storage.foreman
+                    ? tool.storage.foreman?.phone
+                    : "-"}
                 </p>
               </div>
             </div>

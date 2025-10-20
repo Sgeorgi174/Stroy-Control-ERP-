@@ -43,9 +43,9 @@ export function DeviceDetailsBox({ device }: DeviceDetailsBoxProps) {
               <div className="flex gap-2 items-center">
                 <User className="w-5 h-5" />
                 <p className="font-medium">
-                  {device.storage
+                  {device.storage && device.storage.foreman
                     ? `${device.storage.foreman?.lastName} ${device.storage.foreman?.firstName}`
-                    : "-"}
+                    : "Не назначен"}
                 </p>
               </div>
             </div>
@@ -55,7 +55,9 @@ export function DeviceDetailsBox({ device }: DeviceDetailsBoxProps) {
               <div className="flex gap-2 items-center">
                 <Phone className="w-5 h-5" />
                 <p className="font-medium">
-                  {device.storage ? device.storage.foreman?.phone : "-"}
+                  {device.storage && device.storage.foreman
+                    ? device.storage.foreman?.phone
+                    : "-"}
                 </p>
               </div>
             </div>
