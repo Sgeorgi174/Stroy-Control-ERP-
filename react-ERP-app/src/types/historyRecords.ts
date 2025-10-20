@@ -26,6 +26,7 @@ export type TransferRecord = {
   toEmployee: Employee;
   emploeyeeId: string;
   writeOffComment: string;
+  comment: string;
 };
 
 export type StatusChangesRecord = {

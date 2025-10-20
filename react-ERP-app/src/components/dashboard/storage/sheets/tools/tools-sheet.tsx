@@ -23,6 +23,8 @@ import { Badge } from "@/components/ui/badge";
 import { toolStatusMap } from "@/constants/toolStatusMap";
 import type { ToolStatus } from "@/types/tool";
 import { ToolBagEdit } from "./tool-bag-edit";
+import { ToolAddQuantity } from "./tool-add-quantity";
+import { ToolWriteOffQuantity } from "./tool-write-off-quantity";
 
 export function ToolsSheet() {
   const { isOpen, mode, selectedTool, closeSheet } = useToolsSheetStore();
@@ -119,6 +121,13 @@ export function ToolsSheet() {
 
         {mode === "add" && <ToolsAdd />}
         {mode === "edit" && selectedTool && <ToolsEdit tool={selectedTool} />}
+        {mode === "add qunatity" && selectedTool && (
+          <ToolAddQuantity tool={selectedTool} />
+        )}
+
+        {mode === "write off" && selectedTool && (
+          <ToolWriteOffQuantity tool={selectedTool} />
+        )}
         {mode === "edit bag" && selectedTool && (
           <ToolBagEdit tool={selectedTool} />
         )}

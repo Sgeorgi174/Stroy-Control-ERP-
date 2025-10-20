@@ -95,6 +95,7 @@ export class ToolService {
           userId,
           fromObjectId: tool.objectId ?? undefined,
           toObjectId: tool.objectId!,
+          quantity: dto.quantity,
         });
 
         return updatedTool;
@@ -133,11 +134,13 @@ export class ToolService {
         });
 
         await this.toolHistoryService.create({
-          action: 'WRITE_OFF',
+          action: 'WRITTEN_OFF',
           toolId,
           userId,
           fromObjectId: tool.objectId ?? undefined,
           toObjectId: tool.objectId!,
+          comment: dto.comment,
+          quantity: dto.quantity,
         });
 
         return updatedTool;

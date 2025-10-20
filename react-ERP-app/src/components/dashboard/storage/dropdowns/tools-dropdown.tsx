@@ -77,6 +77,30 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
             </DropdownMenuItem>
           )}
 
+          {tool.isBulk && (
+            <DropdownMenuItem
+              disabled={tool.status !== "ON_OBJECT"}
+              onClick={(e) => {
+                e.stopPropagation();
+                openSheet("add qunatity", tool);
+              }}
+            >
+              Пополнить
+            </DropdownMenuItem>
+          )}
+
+          {tool.isBulk && (
+            <DropdownMenuItem
+              disabled={tool.status !== "ON_OBJECT"}
+              onClick={(e) => {
+                e.stopPropagation();
+                openSheet("write off", tool);
+              }}
+            >
+              Списать
+            </DropdownMenuItem>
+          )}
+
           {!tool.isBulk && (
             <DropdownMenuItem
               disabled={tool.status !== "ON_OBJECT"}

@@ -9,6 +9,8 @@ type ToolsSheetState = {
     | "edit"
     | "details"
     | "change status"
+    | "add qunatity"
+    | "write off"
     | "edit bag"
     | null;
   selectedTool: Tool | null;

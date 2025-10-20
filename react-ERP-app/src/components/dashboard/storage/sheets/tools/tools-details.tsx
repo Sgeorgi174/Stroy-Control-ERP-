@@ -4,6 +4,7 @@ import { useGetToolHistory } from "@/hooks/tool/useGetToolHistory";
 import { useGetToolStatusChanges } from "@/hooks/tool/useGetToolStatusChanges";
 import { ToolTransferHistory } from "./tool-tranfer-history";
 import { ToolsStatusHistory } from "./tool-status-history";
+import { ToolQuantityHistory } from "./tool-quantity-history";
 
 type ToolsDetailsProps = {
   tool: Tool;
@@ -26,17 +27,27 @@ export function ToolsDetails({ tool }: ToolsDetailsProps) {
       <div className="p-5 flex flex-col gap-1">
         <ToolsDetailsBox tool={tool} />
         <p className="font-medium text-xl mt-6">История</p>
-        <ToolTransferHistory
-          transferRecords={toolHistoryData.reverse()}
-          isError={toolHistoryError}
-          isLoading={toolHistoryLoading}
-        />
+        {!tool.isBulk ? (
+          <ToolTransferHistory
+            transferRecords={toolHistoryData.reverse()}
+            isError={toolHistoryError}
+            isLoading={toolHistoryLoading}
+          />
+        ) : (
+          <ToolQuantityHistory
+            transferRecords={toolHistoryData.reverse()}
+            isError={toolHistoryError}
+            isLoading={toolHistoryLoading}
+          />
+        )}
         <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
-        <ToolsStatusHistory
-          statusChangesRecords={toolStatusChangesData.reverse()}
-          isError={toolStatusChangesError}
-          isLoading={toolStatusChangesLoading}
-        />
+        {!tool.isBulk && (
+          <ToolsStatusHistory
+            statusChangesRecords={toolStatusChangesData.reverse()}
+            isError={toolStatusChangesError}
+            isLoading={toolStatusChangesLoading}
+          />
+        )}
       </div>
     </>
   );

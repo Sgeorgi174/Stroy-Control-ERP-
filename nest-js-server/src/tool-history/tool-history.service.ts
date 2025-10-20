@@ -16,6 +16,8 @@ export class ToolHistoryService {
           fromObjectId: dto.fromObjectId ? dto.fromObjectId : undefined,
           toObjectId: dto.toObjectId,
           action: dto.action,
+          comment: dto.comment,
+          quantity: dto.quantity,
         },
         include: {
           fromObject: { select: { name: true } },
@@ -33,7 +35,14 @@ export class ToolHistoryService {
   public async getTransfersByToolId(toolId: string) {
     try {
       return await this.prismaService.toolHistory.findMany({
-        where: { toolId, action: 'CONFIRM' },
+        where: {
+          toolId,
+          OR: [
+            { action: 'CONFIRM' },
+            { action: 'ADD' },
+            { action: 'WRITTEN_OFF' },
+          ],
+        },
         include: {
           fromObject: { select: { name: true } },
           toObject: { select: { name: true } },

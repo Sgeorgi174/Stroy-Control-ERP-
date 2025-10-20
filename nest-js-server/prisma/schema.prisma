@@ -218,6 +218,10 @@ model ToolHistory {
 
   toObject   Object @relation(fields: [toObjectId], references: [id], name: "tool_to_object_fk")
   toObjectId String
+
+  comment String?
+
+  quantity Int?
 }
 
 enum ToolActions {
@@ -227,7 +231,7 @@ enum ToolActions {
   CANCEL
   RETURN_TO_SOURCE
   ADD
-  WRITE_OFF
+  WRITTEN_OFF
 }
 
 model ToolStatusHistory {

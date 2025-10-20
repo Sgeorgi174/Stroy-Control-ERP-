@@ -1,4 +1,11 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { ToolActions } from 'generated/prisma';
 
 export class CreateDto {
@@ -21,4 +28,12 @@ export class CreateDto {
   @IsEnum(ToolActions)
   @IsNotEmpty()
   action: ToolActions;
+
+  @IsString()
+  @IsOptional()
+  comment?: string;
+
+  @IsNumber()
+  @IsOptional()
+  quantity?: number;
 }

@@ -21,7 +21,7 @@ const toolSchema = z
     objectId: z.string().min(1, "Выберите объект"),
     isBulk: z.boolean().default(false),
     serialNumber: z.string().optional(),
-    quantity: z.number().optional(),
+    quantity: z.number({ message: "Количество обязательно" }).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.isBulk) {
