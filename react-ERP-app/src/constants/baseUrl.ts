@@ -1,3 +1,1 @@
-// export const baseUrl = "https://stroy-server.ru.tuna.am";
-
-export const baseUrl = "http://localhost:4000";
+export const baseUrl = "http://92.51.23.45";

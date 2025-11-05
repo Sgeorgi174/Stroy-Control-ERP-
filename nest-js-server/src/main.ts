@@ -51,8 +51,7 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: config.getOrThrow<string>('ALLOWED_ORIGIN'), //тут адрес локальной разработки
-    // origin: 'https://stroy-control.ru.tuna.am', //адрес тунеля tuna am
+    origin: config.getOrThrow<string>('ALLOWED_ORIGIN'),
     credentials: true,
     exposedHeaders: ['set-cookie'],
   });
