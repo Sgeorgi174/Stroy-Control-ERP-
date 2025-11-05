@@ -4,9 +4,9 @@ export interface CreateClothesDto {
   name: string;
   season: Seasons;
   quantity: number;
-  closthingSizeId: string | undefined;
+  clothingSizeId: string | undefined;
   footwearSizeId: string | undefined;
-  closthingHeightId: string | undefined;
+  clothingHeightId: string | undefined;
   providerId: string;
   type: ClothesType;
   objectId: string;
@@ -17,9 +17,9 @@ export interface UpdateClothesDto {
   name: string;
   season: Seasons;
   quantity: number;
-  closthingSizeId: string | undefined;
+  clothingSizeId: string | undefined;
   footwearSizeId: string | undefined;
-  closthingHeightId: string | undefined;
+  clothingHeightId: string | undefined;
   providerId: string;
   type: ClothesType;
   objectId: string;
@@ -46,6 +46,13 @@ export interface AddClothesDto {
 
 export interface GiveClothingDto {
   employeeId: string;
+}
+
+export interface ReturnFromEmployeeDto {
+  employeeId: string;
+  objectId: string;
+  clothesId: string;
+  employeeClothingId: string;
 }
 
 export interface RejectClotheseDto {

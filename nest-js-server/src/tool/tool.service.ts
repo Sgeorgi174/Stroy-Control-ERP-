@@ -58,6 +58,7 @@ export class ToolService {
           objectId: dto.objectId,
           isBulk: dto.isBulk,
           quantity: dto.quantity ? dto.quantity : undefined,
+          description: dto.description ?? undefined,
         },
         include: { storage: true },
       });
@@ -103,7 +104,7 @@ export class ToolService {
     } catch (error) {
       handlePrismaError(error, {
         notFoundMessage: 'Инструмент не найден',
-        defaultMessage: 'Не удалось добавить количество инструмента',
+        defaultMessage: 'Не удалось добавить инструмент',
       });
     }
   }
@@ -282,6 +283,7 @@ export class ToolService {
           status: dto.status ?? 'ON_OBJECT',
           serialNumber: dto.serialNumber,
           objectId: dto.objectId,
+          description: dto.description ?? undefined,
         },
         include: { storage: true },
       });

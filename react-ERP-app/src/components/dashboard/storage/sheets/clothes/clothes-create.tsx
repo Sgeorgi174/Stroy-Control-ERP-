@@ -93,9 +93,9 @@ export function ClothesCreate() {
       await createClothesMutation.mutateAsync({
         name: data.name.trim(),
         objectId: data.objectId,
-        closthingHeightId:
+        clothingHeightId:
           activeTab === "clothing" ? data.clothingHeightId : undefined,
-        closthingSizeId:
+        clothingSizeId:
           activeTab === "clothing" ? data.clothingSizeId : undefined,
         footwearSizeId:
           activeTab === "footwear" ? data.footwearSizeId : undefined,

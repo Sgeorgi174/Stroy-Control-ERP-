@@ -12,7 +12,7 @@ import { useTools } from "@/hooks/tool/useTools";
 import { useDevices } from "@/hooks/device/useDevices";
 import { useClothes } from "@/hooks/clothes/useClothes";
 import { useTablets } from "@/hooks/tablet/useTablet";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ToolsTableBulk } from "@/components/dashboard/storage/tables/tools-table-bulk";
 
 export function Storage() {
@@ -80,7 +80,26 @@ export function Storage() {
     activeTab === "tablet"
   );
 
-  console.log(isBulk);
+  const sortedClothes = useMemo(() => {
+    return [...clothes].sort((a, b) => {
+      let aSize = 0;
+      let bSize = 0;
+
+      if (activeTab === "clothing") {
+        // clothingSize.size — строка вроде "48-50" → берём первый размер
+        aSize = parseInt(a.clothingSize?.size?.split("-")[0] ?? "0");
+        bSize = parseInt(b.clothingSize?.size?.split("-")[0] ?? "0");
+      }
+
+      if (activeTab === "footwear") {
+        // footwearSize.size — строка вроде "42" → просто преобразуем в число
+        aSize = parseInt(a.footwearSize?.size ?? "0");
+        bSize = parseInt(b.footwearSize?.size ?? "0");
+      }
+
+      return aSize - bSize;
+    });
+  }, [clothes, activeTab]);
 
   return (
     <div>
@@ -134,7 +153,7 @@ export function Storage() {
       {(activeTab === "clothing" || activeTab === "footwear") && (
         <div>
           <ClothesTable
-            clothes={clothes}
+            clothes={sortedClothes}
             isLoading={clothesLoading}
             isError={clothesError}
           />

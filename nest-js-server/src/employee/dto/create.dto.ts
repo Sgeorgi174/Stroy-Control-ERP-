@@ -6,7 +6,7 @@ import {
   IsPhoneNumber,
   IsArray,
 } from 'class-validator';
-import { Position } from 'generated/prisma';
+import { Countries, Position } from 'generated/prisma';
 
 export class CreateDto {
   @IsString({ message: 'Имя должно быть строкой' })
@@ -28,11 +28,11 @@ export class CreateDto {
 
   @IsString()
   @IsOptional({ message: 'Размер обязателен для заполнения' })
-  closthingSizeId?: string;
+  clothingSizeId?: string;
 
   @IsString()
   @IsOptional({ message: 'Размер обязателен для заполнения' })
-  closthingHeightId?: string;
+  clothingHeightId?: string;
 
   @IsString()
   @IsOptional({ message: 'Размер обязателен для заполнения' })
@@ -50,6 +50,12 @@ export class CreateDto {
 
   @IsArray()
   skillIds?: string[];
+
+  @IsEnum(Countries, {
+    message: `Страна должна быть одним из: ${Object.values(Countries).join(', ')}`,
+  })
+  @IsNotEmpty({ message: 'Страна должна быть указана' })
+  country: Countries;
 
   @IsString()
   @IsNotEmpty()

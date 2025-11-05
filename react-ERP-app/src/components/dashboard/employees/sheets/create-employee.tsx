@@ -15,6 +15,7 @@ import { useSkill } from "@/hooks/skill/useSkill";
 import { Checkbox } from "@/components/ui/checkbox";
 import { HeightSelectForForms } from "../../select-height-for-form";
 import { DatePicker } from "@/components/ui/date-picker";
+import { SelectCountry } from "../select-country";
 
 const employeeSchema = z.object({
   firstName: z.string().min(1, "Это поле обязательно"),
@@ -37,6 +38,9 @@ const employeeSchema = z.object({
     ["FOREMAN", "ELECTRICAN", "LABORER", "DESIGNER", "ENGINEER"],
     { message: "Выберите должность" }
   ),
+  country: z.enum(["RU", "KZ", "KG", "TJ", "BY"], {
+    message: "Выберите страну",
+  }),
   objectId: z.string().min(1, { message: "Выберите объект" }),
   skillIds: z.array(z.string()).optional(),
 });
@@ -71,6 +75,7 @@ export function EmployeeCreate() {
       position: undefined,
       objectId: "",
       skillIds: [],
+      country: "RU",
     },
   });
 
@@ -82,9 +87,12 @@ export function EmployeeCreate() {
   const selectedFootwearSize = watch("footwearSizeId");
   const selectedClothingHeight = watch("clothingHeightId");
   const selectedSkillIds = watch("skillIds");
+  const selectedCountry = watch("country");
 
   const onSubmit = async (data: FormData) => {
     try {
+      console.log(data);
+
       await createEmployeeMutation.mutateAsync({
         firstName: data.firstName.trim(),
         lastName: data.lastName.trim(),
@@ -105,6 +113,7 @@ export function EmployeeCreate() {
         registrationStreet: data.registrationStreet,
         registrationBuild: data.registrationBuild,
         registrationFlat: data.registrationFlat,
+        country: data.country,
       });
 
       reset();
@@ -279,13 +288,48 @@ export function EmployeeCreate() {
 
           <div className="flex justify-between">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="passportSerial">Серия</Label>
+              <Label htmlFor="passportSerial">Гражданство</Label>
+              <SelectCountry
+                selectedCountry={selectedCountry}
+                onSelectChange={(country) => setValue("country", country)}
+              />
+              {errors.country && (
+                <p className="text-sm text-red-500">{errors.country.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex justify-between">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="passportSerial">
+                {selectedCountry === "RU" ? "Серия" : "Код"}
+              </Label>
               <Input
                 className="w-[300px]"
-                placeholder="1234"
+                placeholder={
+                  selectedCountry === "RU" ? "1234" : "KZT / KGZ / TJK"
+                }
                 id="passportSerial"
                 type="text"
-                {...register("passportSerial")}
+                value={
+                  selectedCountry === "RU"
+                    ? watch("passportSerial")
+                    : selectedCountry === "KZ"
+                    ? "KZT"
+                    : selectedCountry === "KG"
+                    ? "KGZ"
+                    : selectedCountry === "TJ"
+                    ? "TJK"
+                    : watch("passportSerial")
+                }
+                readOnly={selectedCountry !== "RU"}
+                onChange={(e) => {
+                  if (selectedCountry === "RU") {
+                    setValue("passportSerial", e.target.value, {
+                      shouldValidate: true,
+                    });
+                  }
+                }}
               />
               {errors.passportSerial && (
                 <p className="text-sm text-red-500">
@@ -331,12 +375,8 @@ export function EmployeeCreate() {
             <div className="flex flex-col gap-2">
               <Label htmlFor="issueDate">Дата выдачи</Label>
               <DatePicker
-                selected={
-                  watch("issueDate") ? new Date(watch("issueDate")) : undefined
-                }
-                onSelect={(date) =>
-                  setValue("issueDate", date?.toISOString().split("T")[0] || "")
-                }
+                selected={watch("issueDate") || undefined} // передаём строку напрямую
+                onSelect={(dateStr) => setValue("issueDate", dateStr || "")}
               />
               {errors.issueDate && (
                 <p className="text-sm text-red-500">

@@ -63,7 +63,7 @@ model TelegramUser {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   phone                      String        @unique
-  chatId                     Int           @unique
+  chatId                     String        @unique
   photoRequestedTransferId   String?
   photoRequestedTransferType TransferType?
 }
@@ -139,6 +139,7 @@ model Tool {
   name         String
   status       ToolStatus @default(ON_OBJECT)
   serialNumber String?    @unique @map("serial_number")
+  description  String?
 
   isBag    Boolean   @default(false)
   bagItems BagItem[]
@@ -354,11 +355,11 @@ model Clothes {
 
   name String
 
-  closthingSize   ClothingSize? @relation(fields: [closthingSizeId], references: [id])
-  closthingSizeId String?       @map("clothing_size_id")
+  clothingSize   ClothingSize? @relation(fields: [clothingSizeId], references: [id])
+  clothingSizeId String?       @map("clothing_size_id")
 
-  closthingHeight   ClothingHeight? @relation(fields: [closthingHeightId], references: [id])
-  closthingHeightId String?         @map("clothing_height_id")
+  clothingHeight   ClothingHeight? @relation(fields: [clothingHeightId], references: [id])
+  clothingHeightId String?         @map("clothing_height_id")
 
   footwearSize   FootwearSize? @relation(fields: [footwearSizeId], references: [id])
   footwearSizeId String?       @map("footwear_size_id")
@@ -376,7 +377,7 @@ model Clothes {
   history         ClothesHistory[]
   inTransit       PendingTransfersClothes[]
 
-  @@unique([objectId, name, type, season], name: "objectId_name_type_season")
+  @@unique([objectId, name, type, season, clothingHeightId, clothingSizeId, footwearSizeId], name: "objectId_name_type_season_clothingHeightId_clothingSizeId_footwearSizeId")
 }
 
 model ClothingSize {
@@ -483,6 +484,7 @@ enum ClothesActions {
   TRANSFER
   CONFIRM
   GIVE_TO_EMPLOYEE
+  RETURN_FROM_EMPLOYEE
   WRITTEN_OFF
   CANCEL
   RETURN_TO_SOURCE
@@ -544,10 +546,11 @@ model Employee {
 
   type employeeType @default(ACTIVE)
 
-  firstName          String  @map("first_name")
-  lastName           String  @map("last_name")
-  fatherName         String? @map("father_name")
-  phoneNumber        String  @unique @map("phone_number")
+  firstName          String    @map("first_name")
+  lastName           String    @map("last_name")
+  fatherName         String?   @map("father_name")
+  phoneNumber        String    @unique @map("phone_number")
+  country            Countries @default(RU)
   passportSerial     String
   passportNumber     String
   whereIssued        String
@@ -558,11 +561,11 @@ model Employee {
   registrationBuild  String
   registrationFlat   String?
 
-  closthingSize   ClothingSize? @relation(fields: [closthingSizeId], references: [id])
-  closthingSizeId String?       @map("clothing_size_id")
+  clothingSize   ClothingSize? @relation(fields: [clothingSizeId], references: [id])
+  clothingSizeId String?       @map("clothing_size_id")
 
-  closthingHeight   ClothingHeight? @relation(fields: [closthingHeightId], references: [id])
-  closthingHeightId String?         @map("clothing_height_id")
+  clothingHeight   ClothingHeight? @relation(fields: [clothingHeightId], references: [id])
+  clothingHeightId String?         @map("clothing_height_id")
 
   footwearSize   FootwearSize? @relation(fields: [footwearSizeId], references: [id])
   footwearSizeId String?       @map("footwear_size_id")
@@ -584,12 +587,20 @@ model Employee {
   fromTabletHistories TabletHistory[] @relation("tablet_from_employee_fk")
   toTabletHistories   TabletHistory[] @relation("tablet_to_employee_fk")
 
-  @@unique([firstName, lastName, phoneNumber], name: "employee_identity_unique")
+  @@unique([passportSerial, passportNumber], name: "employee_identity_unique")
 }
 
 enum employeeType {
   ACTIVE
   ARCHIVE
+}
+
+enum Countries {
+  RU
+  KZ
+  TJ
+  KG
+  BY
 }
 
 enum Statuses {

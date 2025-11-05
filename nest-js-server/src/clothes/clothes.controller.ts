@@ -34,6 +34,7 @@ import { AddSizeForFootwearDto } from './dto/add-size-for-footwear.dto';
 import { AddHeightForClothingDto } from './dto/add-height-for-clothing.dto';
 import { AddProviderDto } from './dto/add-provider.dto';
 import { UpdateProviderDto } from './dto/update-provider.dto';
+import { ReturnFromEmployeeDto } from './dto/return-from-employee.dto';
 
 @Controller('clothes')
 export class ClothesController {
@@ -267,6 +268,15 @@ export class ClothesController {
     @Authorized('id') userId: string,
   ) {
     return this.clothesService.giveToEmployee(id, dto, userId);
+  }
+
+  @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
+  @Patch('return')
+  async returnFromEmployee(
+    @Body() dto: ReturnFromEmployeeDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.clothesService.returnFromEmployee(dto, userId);
   }
 
   @Authorization(Roles.OWNER, Roles.FOREMAN)

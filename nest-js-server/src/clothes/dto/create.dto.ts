@@ -17,11 +17,11 @@ export class CreateDto {
 
   @IsString()
   @IsOptional({ message: 'Размер обязателен для заполнения' })
-  closthingSizeId?: string;
+  clothingSizeId?: string;
 
   @IsString()
   @IsOptional({ message: 'Размер обязателен для заполнения' })
-  closthingHeightId?: string;
+  clothingHeightId?: string;
 
   @IsString()
   @IsOptional({ message: 'Размер обязателен для заполнения' })

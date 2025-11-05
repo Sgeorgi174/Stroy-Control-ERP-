@@ -23,7 +23,7 @@ export function ClothesDetailsBox({ clothes }: ClothesDetailsBoxProps) {
               <div className="flex gap-2 items-center">
                 <p className="font-medium">
                   {clothes.type === "CLOTHING"
-                    ? clothes.closthingSize.size
+                    ? clothes.clothingSize.size
                     : clothes.footwearSize.size}
                 </p>
               </div>
@@ -33,9 +33,7 @@ export function ClothesDetailsBox({ clothes }: ClothesDetailsBoxProps) {
               <div className="col-span-1">
                 <p className="text-sm text-muted-foreground">Ростовка</p>
                 <div className="flex gap-2 items-center">
-                  <p className="font-medium">
-                    {clothes.closthingHeight.height}
-                  </p>
+                  <p className="font-medium">{clothes.clothingHeight.height}</p>
                 </div>
               </div>
             )}

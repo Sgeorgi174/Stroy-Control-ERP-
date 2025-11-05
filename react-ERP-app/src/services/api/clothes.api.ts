@@ -10,6 +10,7 @@ import type {
   ResendClothesTransferDto,
   CancelClothesTransferDto,
   WirteOffClothesInTransferDto,
+  ReturnFromEmployeeDto,
 } from "@/types/dto/clothes.dto";
 import type { Clothes, ClothesType, Seasons } from "@/types/clothes";
 import type { TransferRecord } from "@/types/historyRecords";
@@ -138,6 +139,13 @@ export const giveClothes = async (
   data: GiveClothingDto
 ): Promise<Clothes> => {
   const res = await api.patch(`/clothes/give/${id}`, data);
+  return res.data;
+};
+
+export const returnFromEmployee = async (
+  data: ReturnFromEmployeeDto
+): Promise<Clothes> => {
+  const res = await api.patch(`/clothes/return`, data);
   return res.data;
 };
 

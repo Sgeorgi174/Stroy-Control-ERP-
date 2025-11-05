@@ -7,6 +7,7 @@ export type ClothesActions =
   | "TRANSFER"
   | "CONFIRM"
   | "GIVE_TO_EMPLOYEE"
+  | "RETURN_FROM_EMPLOYEE"
   | "WRITTEN_OFF"
   | "CANCEL";
 

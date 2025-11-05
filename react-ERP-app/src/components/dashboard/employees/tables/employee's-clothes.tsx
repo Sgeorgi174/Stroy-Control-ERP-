@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableBody,
@@ -7,7 +9,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { EmployeeClothingItem } from "@/types/employeesClothing";
-
 import { formatDate } from "@/lib/utils/format-date";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +23,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useObjects } from "@/hooks/object/useObject";
+import { useReturnFromEmployee } from "@/hooks/clothes/useClothes";
+import { ReturnClothingDialog } from "../return-clothing-dialog";
 
 type ToolsTableProps = {
   items: EmployeeClothingItem[] | undefined;
@@ -38,6 +42,19 @@ export function EmployeeClothesTable({
   handleReduceDebt,
   handleWriteOffDebt,
 }: ToolsTableProps) {
+  const objectsQuery = useObjects({ searchQuery: "", status: "OPEN" });
+  const objects = objectsQuery.data || [];
+  const returnMutation = useReturnFromEmployee();
+
+  const handleReturn = (dto: {
+    clothesId: string;
+    employeeClothingId: string;
+    employeeId: string;
+    objectId: string;
+  }) => {
+    returnMutation.mutate(dto);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -88,7 +105,7 @@ export function EmployeeClothesTable({
                         {remainingDebt}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="flex items-center gap-2">
                       {remainingDebt > 0 ? (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -122,6 +139,14 @@ export function EmployeeClothesTable({
                           Оплачено
                         </span>
                       )}
+
+                      <ReturnClothingDialog
+                        clothingId={clothing.clothing.id}
+                        employeeClothingId={clothing.id}
+                        employeeId={clothing.employeeId}
+                        objects={objects}
+                        onReturn={handleReturn}
+                      />
                     </TableCell>
                   </TableRow>
                 );

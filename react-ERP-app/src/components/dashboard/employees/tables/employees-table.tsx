@@ -63,7 +63,9 @@ export function EmployeesTable({
                 {employee.workPlace ? employee.workPlace.name : "На назначен"}
               </TableCell>
               <TableCell className="w-[150px]">
-                <SkillsPopover skills={employee.skills} />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <SkillsPopover skills={employee.skills} />
+                </div>
               </TableCell>
               <TableCell>
                 <div className="flex items-center justify-center gap-2">

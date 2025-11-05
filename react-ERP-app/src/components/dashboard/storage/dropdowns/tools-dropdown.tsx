@@ -101,7 +101,7 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
             </DropdownMenuItem>
           )}
 
-          {!tool.isBulk && (
+          {
             <DropdownMenuItem
               disabled={tool.status !== "ON_OBJECT"}
               onClick={(e) => {
@@ -111,7 +111,7 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
             >
               Переместить
             </DropdownMenuItem>
-          )}
+          }
 
           {!tool.isBulk && (
             <DropdownMenuItem

@@ -11,6 +11,8 @@ export type Positions =
 
 export type EmployeeType = "ACTIVE" | "ARCHIVE";
 
+export type Countries = "RU" | "KZ" | "TJ" | "KG" | "BY";
+
 export type Skill = {
   id: string;
   skill: string;
@@ -41,7 +43,7 @@ export type Employee = {
   skills: Skill[];
   type: EmployeeType;
   archive: ArchiveRecord | null;
-
+  country: Countries;
   passportSerial: string;
   passportNumber: string;
   whereIssued: string;

@@ -25,6 +25,7 @@ const actionMap = {
   GIVE_TO_EMPLOYEE: "Выдача сотруднику",
   WRITTEN_OFF: "Списание",
   CANCEL: "Отмена перемещения",
+  RETURN_FROM_EMPLOYEE: "Возврат от сотрудника",
 };
 
 const getActionIcon = (action: ClothesActions) => {
@@ -47,6 +48,8 @@ export function ClothesHistory({
   isError,
   isLoading,
 }: ClothesHistoryProps) {
+  console.log(transferRecords);
+
   return (
     <div className="space-y-6 mt-4">
       <div>
@@ -130,7 +133,8 @@ export function ClothesHistory({
                     </div>
                   </div>
                 </div>
-                {history.action === "WRITTEN_OFF" && (
+                {(history.action === "WRITTEN_OFF" ||
+                  history.action === "RETURN_FROM_EMPLOYEE") && (
                   <CommentPopover comment={history.writeOffComment} />
                 )}
               </div>

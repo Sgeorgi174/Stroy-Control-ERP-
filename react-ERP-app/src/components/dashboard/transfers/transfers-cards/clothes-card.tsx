@@ -63,7 +63,7 @@ export function TransferClothesCard({
                     </p>
                     {transfer.clothes.type === "CLOTHING" && (
                       <p className="text-xs text-muted-foreground font-mono">
-                        Ростовка: {transfer.clothes.closthingHeight.height}
+                        Ростовка: {transfer.clothes.clothingHeight.height}
                       </p>
                     )}
                     <p className="text-xs text-muted-foreground font-mono">

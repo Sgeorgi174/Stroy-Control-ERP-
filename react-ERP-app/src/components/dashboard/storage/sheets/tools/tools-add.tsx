@@ -21,6 +21,7 @@ const toolSchema = z
     objectId: z.string().min(1, "Выберите объект"),
     isBulk: z.boolean().default(false),
     serialNumber: z.string().optional(),
+    description: z.string().optional(),
     quantity: z.number({ message: "Количество обязательно" }).optional(),
   })
   .superRefine((data, ctx) => {
@@ -71,6 +72,7 @@ export function ToolsAdd() {
       objectId: objects[0]?.id ?? "",
       isBulk: false,
       quantity: undefined,
+      description: "",
     },
   });
 
@@ -92,6 +94,7 @@ export function ToolsAdd() {
     const payload = {
       name: data.name.trim(),
       objectId: data.objectId,
+      description: data.description,
       isBulk: data.isBulk,
       ...(data.isBulk
         ? { quantity: data.quantity }
@@ -108,6 +111,18 @@ export function ToolsAdd() {
     });
   };
 
+  useEffect(() => {
+    if (isBulk) {
+      // Групповой: очищаем серийный номер, ставим quantity по умолчанию
+      setValue("serialNumber", "");
+      setValue("quantity", 1);
+    } else {
+      // Одиночный: очищаем quantity
+      setValue("quantity", undefined);
+      setValue("serialNumber", "");
+    }
+  }, [isBulk, setValue]);
+
   return (
     <div className="p-5">
       {/* 🔹 Переключатель типа инструмента */}
@@ -117,7 +132,7 @@ export function ToolsAdd() {
         className="mb-6 w-[400px]"
       >
         <TabsList>
-          <TabsTrigger value="false">Штучный</TabsTrigger>
+          <TabsTrigger value="false">Одиночный</TabsTrigger>
           <TabsTrigger value="true">Групповой</TabsTrigger>
         </TabsList>
       </Tabs>
@@ -180,6 +195,19 @@ export function ToolsAdd() {
             )}
           </div>
         )}
+
+        <div className="flex flex-col gap-2 w-[400px]">
+          <Label htmlFor="description">Описание \ Детали</Label>
+          <Input
+            id="description"
+            type="text"
+            placeholder="Укажите детали или описание"
+            {...register("description")}
+          />
+          {errors.description && (
+            <p className="text-sm text-red-500">{errors.description.message}</p>
+          )}
+        </div>
 
         {/* Объект */}
         <div className="flex flex-col gap-2">

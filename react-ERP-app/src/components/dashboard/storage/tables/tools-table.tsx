@@ -36,11 +36,12 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
             <TableHead className="text-secondary font-bold">
               Наименование
             </TableHead>
+            <TableHead className="text-secondary font-bold">Описание</TableHead>
             <TableHead className="text-secondary font-bold w-[150px]">
               Статус
             </TableHead>
             <TableHead className="text-secondary font-bold">Мастер</TableHead>
-            <TableHead className="text-secondary font-bold">Телефон</TableHead>
+
             <TableHead className="text-secondary font-bold">
               Место хранения
             </TableHead>
@@ -64,6 +65,9 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
               </TableCell>
               <TableCell className="font-medium">{tool.serialNumber}</TableCell>
               <TableCell className=" hover:underline">{tool.name}</TableCell>
+              <TableCell className=" hover:underline">
+                {tool.description ?? ""}
+              </TableCell>
               <TableCell>
                 <StatusBadge
                   isAnimate={tool.status === "IN_TRANSIT"}
@@ -76,11 +80,6 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
                 {tool.storage && tool.storage.foreman
                   ? `${tool.storage.foreman.lastName} ${tool.storage.foreman.firstName}`
                   : "Не назначен"}
-              </TableCell>
-              <TableCell>
-                {tool.storage && tool.storage.foreman
-                  ? tool.storage.foreman.phone
-                  : "-"}
               </TableCell>
               <TableCell>{tool.storage ? tool.storage.name : "-"}</TableCell>
               <TableCell>

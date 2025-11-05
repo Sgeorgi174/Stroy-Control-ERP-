@@ -25,6 +25,7 @@ import { AddSizeForFootwearDto } from './dto/add-size-for-footwear.dto';
 import { AddHeightForClothingDto } from './dto/add-height-for-clothing.dto';
 import { AddProviderDto } from './dto/add-provider.dto';
 import { UpdateProviderDto } from './dto/update-provider.dto';
+import { ReturnFromEmployeeDto } from './dto/return-from-employee.dto';
 
 @Injectable()
 export class ClothesService {
@@ -166,24 +167,47 @@ export class ClothesService {
 
   async create(dto: CreateDto) {
     try {
+      const existing = await this.prismaService.clothes.findFirst({
+        where: {
+          objectId: dto.objectId,
+          name: dto.name,
+          type: dto.type,
+          season: dto.season,
+          clothingSizeId: dto.clothingSizeId ?? null,
+          clothingHeightId: dto.clothingHeightId ?? null,
+          footwearSizeId: dto.footwearSizeId ?? null,
+        },
+      });
+
+      if (existing) {
+        // Если такая одежда уже есть — просто увеличиваем количество
+        return await this.prismaService.clothes.update({
+          where: { id: existing.id },
+          data: {
+            quantity: { increment: dto.quantity },
+          },
+        });
+      }
+
+      // Если нет — создаём новую запись
       return await this.prismaService.clothes.create({
         data: {
           name: dto.name,
-          closthingSizeId: dto.closthingSizeId,
-          providerId: dto.providerId,
-          closthingHeightId: dto.closthingHeightId,
-          footwearSizeId: dto.footwearSizeId,
-          price: dto.price,
-          quantity: dto.quantity,
-          objectId: dto.objectId,
           type: dto.type,
           season: dto.season,
+          clothingSizeId: dto.clothingSizeId ?? null,
+          clothingHeightId: dto.clothingHeightId ?? null,
+          footwearSizeId: dto.footwearSizeId ?? null,
+          price: dto.price,
+          quantity: dto.quantity,
+          providerId: dto.providerId,
+          objectId: dto.objectId,
         },
       });
     } catch (error) {
       handlePrismaError(error, {
-        conflictMessage: 'Одежда с таким набором параметров уже существует',
-        defaultMessage: 'Ошибка создания новой одежды',
+        conflictMessage: 'Ошибка при добавлении одежды',
+        defaultMessage: 'Не удалось выполнить операцию',
       });
     }
   }
@@ -224,8 +248,8 @@ export class ClothesService {
           : {}), // ✅ поиск по имени
       },
       include: {
-        closthingHeight: true,
-        closthingSize: true,
+        clothingHeight: true,
+        clothingSize: true,
         footwearSize: true,
         provider: true,
         inTransit: {
@@ -260,9 +284,9 @@ export class ClothesService {
         where: { id },
         data: {
           name: dto.name,
-          closthingSizeId: dto.closthingSizeId,
+          clothingSizeId: dto.clothingSizeId,
           providerId: dto.providerId,
-          closthingHeightId: dto.closthingHeightId,
+          clothingHeightId: dto.clothingHeightId,
           footwearSizeId: dto.footwearSizeId,
           price: dto.price,
           quantity: dto.quantity,
@@ -387,20 +411,24 @@ export class ClothesService {
 
         const transferedClothes = await this.prismaService.clothes.upsert({
           where: {
-            objectId_name_type_season: {
-              name: transfer.clothes.name,
-              objectId: transfer.toObjectId,
-              season: transfer.clothes.season,
-              type: transfer.clothes.type,
-            },
+            objectId_name_type_season_clothingHeightId_clothingSizeId_footwearSizeId:
+              {
+                name: transfer.clothes.name,
+                objectId: transfer.toObjectId,
+                season: transfer.clothes.season,
+                type: transfer.clothes.type,
+                clothingSizeId: transfer.clothes.clothingSizeId as string,
+                clothingHeightId: transfer.clothes.clothingHeightId as string,
+                footwearSizeId: transfer.clothes.footwearSizeId as string,
+              },
           },
           create: {
             name: transfer.clothes.name,
             type: transfer.clothes.type,
             season: transfer.clothes.season,
-            closthingSizeId: transfer.clothes.closthingSizeId,
+            clothingSizeId: transfer.clothes.clothingSizeId,
             providerId: transfer.clothes.providerId,
-            closthingHeightId: transfer.clothes.closthingHeightId,
+            clothingHeightId: transfer.clothes.clothingHeightId,
             footwearSizeId: transfer.clothes.footwearSizeId,
             quantity: transfer.clothes.quantity,
             price: transfer.clothes.price,
@@ -725,6 +753,78 @@ export class ClothesService {
         return updated;
       });
     } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Одежда не найдена',
+        conflictMessage: 'Ошибка при выдаче одежды',
+        defaultMessage: 'Не удалось выдать одежду сотруднику',
+      });
+    }
+  }
+
+  async returnFromEmployee(dto: ReturnFromEmployeeDto, userId: string) {
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        const clothing = await prisma.clothes.findUnique({
+          where: { id: dto.clothesId },
+        });
+
+        if (!clothing) {
+          throw new NotFoundException('Одежда не найдена');
+        }
+
+        const employee = await prisma.employee.findUnique({
+          where: { id: dto.employeeId },
+        });
+
+        if (!employee) {
+          throw new NotFoundException('Сотрудник не найден');
+        }
+
+        // Логируем в историю
+        await prisma.clothesHistory.create({
+          data: {
+            clothesId: dto.clothesId,
+            userId: userId,
+            quantity: 1,
+            action: 'RETURN_FROM_EMPLOYEE',
+            employeeId: dto.employeeId,
+            fromObjectId: clothing.objectId,
+            writeOffComment: `Возврат от сотрудника ${employee.lastName} ${employee.firstName}`,
+          },
+        });
+
+        // Удаляем запись у сотрудника
+        await prisma.employeeClothing.delete({
+          where: { id: dto.employeeClothingId },
+        });
+
+        if (clothing.objectId === dto.objectId) {
+          return await prisma.clothes.update({
+            where: { id: clothing.id },
+            data: {
+              quantity: { increment: 1 },
+            },
+          });
+        } else {
+          return await prisma.clothes.create({
+            data: {
+              name: clothing.name,
+              type: clothing.type,
+              season: clothing.season,
+              clothingSizeId: clothing.clothingSizeId ?? null,
+              clothingHeightId: clothing.clothingHeightId ?? null,
+              footwearSizeId: clothing.footwearSizeId ?? null,
+              price: clothing.price,
+              quantity: 1,
+              providerId: clothing.providerId,
+              objectId: dto.objectId,
+            },
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error);
+
       handlePrismaError(error, {
         notFoundMessage: 'Одежда не найдена',
         conflictMessage: 'Ошибка при выдаче одежды',

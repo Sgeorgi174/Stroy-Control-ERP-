@@ -43,7 +43,7 @@ export function ClothesTransferDetails({
             <div>
               <p className="text-sm text-muted-foreground">Ростовка</p>
               <p className="font-medium">
-                {clothesTransfer.clothes.closthingHeight.height}
+                {clothesTransfer.clothes.clothingHeight.height}
               </p>
             </div>
           )}

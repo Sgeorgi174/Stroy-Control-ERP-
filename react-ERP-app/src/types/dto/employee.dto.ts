@@ -1,4 +1,4 @@
-import type { Positions } from "../employee";
+import type { Countries, Positions } from "../employee";
 
 export type CreateEmployeeDto = {
   firstName: string;
@@ -11,7 +11,7 @@ export type CreateEmployeeDto = {
   position: Positions;
   objectId?: string;
   skillIds?: string[];
-
+  country: Countries;
   passportSerial: string;
   passportNumber: string;
   whereIssued: string;
@@ -32,7 +32,7 @@ export type UpdateEmployeeDto = {
   footwearSize: number;
   position: Positions;
   objectId?: string;
-
+  country: Countries;
   passportSerial: string;
   passportNumber: string;
   whereIssued: string;

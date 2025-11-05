@@ -12,6 +12,8 @@ import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import { PendingTable } from "./pending-table";
 import { formatDate } from "@/lib/utils/format-date";
 import { CommentPopover } from "../comment-popover";
+import { StatusBadge } from "./status-badge";
+import { statusMap } from "@/constants/statusMap";
 
 type ToolsTableProps = {
   tools: Tool[];
@@ -33,8 +35,10 @@ export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
               Наименование
             </TableHead>
             <TableHead className="text-secondary font-bold">Кол-во</TableHead>
+            <TableHead className="text-secondary font-bold">Описание</TableHead>
+            <TableHead className="text-secondary font-bold">Статус</TableHead>
             <TableHead className="text-secondary font-bold">Мастер</TableHead>
-            <TableHead className="text-secondary font-bold">Телефон</TableHead>
+
             <TableHead className="text-secondary font-bold">
               Место хранения
             </TableHead>
@@ -59,16 +63,23 @@ export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
 
               <TableCell className=" hover:underline">{tool.name}</TableCell>
               <TableCell className="font-medium">{tool.quantity}</TableCell>
+              <TableCell className=" hover:underline">
+                {tool.description ?? ""}
+              </TableCell>
+              <TableCell>
+                <StatusBadge
+                  isAnimate={tool.status === "IN_TRANSIT"}
+                  color={statusMap[tool.status]?.color}
+                  Icon={statusMap[tool.status]?.icon}
+                  text={statusMap[tool.status]?.label}
+                />
+              </TableCell>
               <TableCell>
                 {tool.storage && tool.storage.foreman
                   ? `${tool.storage.foreman.lastName} ${tool.storage.foreman.firstName}`
                   : "Не назначен"}
               </TableCell>
-              <TableCell>
-                {tool.storage && tool.storage.foreman
-                  ? tool.storage.foreman.phone
-                  : "-"}
-              </TableCell>
+
               <TableCell>{tool.storage ? tool.storage.name : "-"}</TableCell>
               <TableCell>
                 {tool.comment ? (

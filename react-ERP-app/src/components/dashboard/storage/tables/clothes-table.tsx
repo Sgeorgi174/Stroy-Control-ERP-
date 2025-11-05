@@ -22,6 +22,8 @@ export function ClothesTable({
   isLoading,
   isError,
 }: ClothesTableProps) {
+  console.log(clothes);
+
   const { openSheet } = useClothesSheetStore();
 
   return (
@@ -64,11 +66,11 @@ export function ClothesTable({
               </TableCell>
               <TableCell>
                 {item.type === "CLOTHING"
-                  ? item.closthingSize.size
+                  ? item.clothingSize.size
                   : item.footwearSize.size}
               </TableCell>
               <TableCell>
-                {item.type === "CLOTHING" ? item.closthingHeight.height : "-"}
+                {item.type === "CLOTHING" ? item.clothingHeight.height : "-"}
               </TableCell>
               <TableCell>
                 {item.season === "SUMMER" ? "Лето" : "Зима"}

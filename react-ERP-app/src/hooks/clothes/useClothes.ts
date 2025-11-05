@@ -31,6 +31,7 @@ import {
   updateProvider,
   deleteProvider,
   getAllProviders,
+  returnFromEmployee,
 } from "@/services/api/clothes.api";
 import type {
   CreateClothesDto,
@@ -44,6 +45,7 @@ import type {
   ResendClothesTransferDto,
   WirteOffClothesInTransferDto,
   CancelClothesTransferDto,
+  ReturnFromEmployeeDto,
 } from "@/types/dto/clothes.dto";
 import type { ClothesType, Seasons } from "@/types/clothes";
 import type { AppAxiosError } from "@/types/error-response";
@@ -307,6 +309,24 @@ export const useGiveClothes = (clothesId: string) => {
     onError: (error: AppAxiosError) => {
       const message =
         error?.response?.data?.message || "Не удалось выдать одежду";
+      toast.error(message);
+    },
+  });
+};
+
+// Выдача одежды
+export const useReturnFromEmployee = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: ReturnFromEmployeeDto) => returnFromEmployee(data),
+    onSuccess: () => {
+      toast.success("Одежда успешно возвращена");
+      queryClient.invalidateQueries({ queryKey: ["clothes"] });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось вернуть одежду";
       toast.error(message);
     },
   });

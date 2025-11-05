@@ -45,7 +45,7 @@ export function ClothesInfo({
             </span>
             {clothesTransfer.clothes.type === "CLOTHING" && (
               <span className="font-mono">
-                Ростовка: {clothesTransfer.clothes.closthingHeight.height}
+                Ростовка: {clothesTransfer.clothes.clothingHeight.height}
               </span>
             )}
             <span className="font-mono">

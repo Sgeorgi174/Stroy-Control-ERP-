@@ -15,6 +15,7 @@ export type Tool = {
   name: string;
   status: ToolStatus;
   serialNumber: string;
+  description: string;
   objectId: string;
   storage: Object;
   inTransit: PendingToolTransfer[];

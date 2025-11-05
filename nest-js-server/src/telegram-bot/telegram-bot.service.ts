@@ -28,7 +28,7 @@ export class TelegramBotService {
       throw new NotFoundException('Вы не зарегистрированы в боте!');
     }
 
-    const chatId: number = telegramUser.chatId;
+    const chatId: string = telegramUser.chatId;
     const otp = this.generateOtp();
     // const chatId: number = 836996470;
     // const otp = 666666;
@@ -70,7 +70,7 @@ export class TelegramBotService {
       throw new NotFoundException('Вы не зарегистрированы в боте!');
     }
 
-    const chatId: number = telegramUser.chatId;
+    const chatId: string = telegramUser.chatId;
 
     try {
       await this.bot.telegram.sendMessage(

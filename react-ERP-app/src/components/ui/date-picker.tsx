@@ -1,6 +1,3 @@
-"use client";
-
-import * as React from "react";
 import { CalendarIcon } from "lucide-react";
 import {
   Popover,
@@ -11,15 +8,31 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
+import { useState } from "react";
 
 export function DatePicker({
   selected,
   onSelect,
 }: {
-  selected?: Date;
-  onSelect?: (date: Date | undefined) => void;
+  selected?: string; // теперь это строка 'yyyy-MM-dd'
+  onSelect?: (date: string | undefined) => void;
 }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+
+  // Конвертим выбранную строку в Date для отображения в календаре
+  const selectedDate = selected ? new Date(selected + "T00:00") : undefined;
+
+  const handleSelect = (date: Date | undefined) => {
+    if (!date) return setOpen(false);
+
+    // Формируем строку yyyy-MM-dd из локальной даты
+    const localDateStr = `${date.getFullYear()}-${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+    onSelect?.(localDateStr);
+    setOpen(false);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -31,8 +44,8 @@ export function DatePicker({
           }`}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {selected
-            ? format(selected, "dd MMMM yyyy", { locale: ru })
+          {selectedDate
+            ? format(selectedDate, "dd MMMM yyyy", { locale: ru })
             : "Выберите дату"}
         </Button>
       </PopoverTrigger>
@@ -40,15 +53,16 @@ export function DatePicker({
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
-          selected={selected}
-          onSelect={(date) => {
-            onSelect?.(date);
-            setOpen(false);
-          }}
+          selected={selectedDate}
+          onSelect={handleSelect}
           locale={ru}
-          weekStartsOn={1} // Понедельник — первый день недели
-          captionLayout="dropdown" // Добавляет выбор месяца и года
+          weekStartsOn={1} // Пн — первый день недели
+          captionLayout="dropdown" // Выбор месяца и года
           initialFocus
+          classNames={{
+            months_dropdown: "bg-muted",
+            years_dropdown: "bg-muted",
+          }}
         />
       </PopoverContent>
     </Popover>
