@@ -29,7 +29,13 @@ export const router = createBrowserRouter([
           {
             element: (
               <RoleBasedRoute
-                allowedRoles={["OWNER", "ACCOUNTANT", "FOREMAN", "MASTER"]}
+                allowedRoles={[
+                  "OWNER",
+                  "ACCOUNTANT",
+                  "FOREMAN",
+                  "MASTER",
+                  "ADMIN",
+                ]}
               />
             ),
             children: [
@@ -43,14 +49,22 @@ export const router = createBrowserRouter([
           {
             element: (
               <RoleBasedRoute
-                allowedRoles={["OWNER", "FOREMAN", "ACCOUNTANT", "MASTER"]}
+                allowedRoles={[
+                  "OWNER",
+                  "FOREMAN",
+                  "ACCOUNTANT",
+                  "MASTER",
+                  "ADMIN",
+                ]}
               />
             ),
             children: [{ path: "/storage", element: <Storage /> }],
           },
           {
             element: (
-              <RoleBasedRoute allowedRoles={["FOREMAN", "ACCOUNTANT"]} />
+              <RoleBasedRoute
+                allowedRoles={["FOREMAN", "ACCOUNTANT", "ADMIN"]}
+              />
             ),
             children: [{ path: "/my-object", element: <MyObject /> }],
           },
