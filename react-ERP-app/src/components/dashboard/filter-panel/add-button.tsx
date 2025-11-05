@@ -10,6 +10,9 @@ const tabLabels = {
   "my-object": "",
   tablet: "Планшет",
   device: "Орг. Технику",
+  monitoring: "",
+  transfers: "",
+  admin: "",
 };
 
 type AddButtonProps = {

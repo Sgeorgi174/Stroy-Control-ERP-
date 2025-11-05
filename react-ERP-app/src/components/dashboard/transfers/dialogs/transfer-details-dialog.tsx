@@ -67,7 +67,7 @@ export function TranferDetailsCardDialog({
               <span className="font-mono">
                 Размер:{" "}
                 {clothesTransfer.clothes.type === "CLOTHING"
-                  ? clothesTransfer.clothes.closthingSize.size
+                  ? clothesTransfer.clothes.clothingSize.size
                   : clothesTransfer.clothes.footwearSize.size}
               </span>
               <span className="font-mono">

@@ -1,5 +1,5 @@
 import type { Clothes } from "./clothes";
-import type { ClothesTransfer } from "./transfers";
+import type { PendingClothesTransfer } from "./transfers";
 import type { Device } from "./device";
 import type { Employee } from "./employee";
 import type { Tool } from "./tool";
@@ -8,7 +8,7 @@ export type ObjectToCloseResponse = {
   incomingUnconfirmedItems: {
     tools: Tool[];
     devices: Device[];
-    clothes: ClothesTransfer[];
+    clothes: PendingClothesTransfer[];
   };
   notEmptyObject: {
     tools: Tool[];
@@ -19,6 +19,6 @@ export type ObjectToCloseResponse = {
   outgoingUnconfirmedTransfers: {
     tools: Tool[];
     devices: Device[];
-    clothes: ClothesTransfer[]; // clothes включены через include
+    clothes: PendingClothesTransfer[]; // clothes включены через include
   };
 };

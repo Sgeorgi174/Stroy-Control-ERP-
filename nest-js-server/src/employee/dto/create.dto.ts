@@ -49,6 +49,7 @@ export class CreateDto {
   objectId?: string;
 
   @IsArray()
+  @IsOptional()
   skillIds?: string[];
 
   @IsEnum(Countries, {

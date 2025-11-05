@@ -51,7 +51,6 @@ export function LoginForm({
   } = useForm<PhoneForm>();
 
   const {
-    register: registerOtp,
     handleSubmit: handleSubmitOtp,
     setValue: setOtpValue,
     watch: watchOtp,
@@ -70,16 +69,16 @@ export function LoginForm({
       await sendOtp(data);
       setPhoneValue(data.phone);
       setStep("otp");
-    } catch (e) {
-      // toast уже в хуке
+    } catch (error) {
+      console.log(error);
     }
   };
 
   const onSubmitOtp = async (data: OtpForm) => {
     try {
       await verifyOtp({ phone: phoneValue, otp: +data.otp });
-    } catch (e) {
-      // toast уже в хуке
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -88,8 +87,8 @@ export function LoginForm({
       setOtpValue("otp", "");
       await sendOtp(data);
       setCooldown(30); // 30 секунд ожидания
-    } catch (e) {
-      // toast уже в хуке
+    } catch (error) {
+      console.log(error);
     }
   };
 

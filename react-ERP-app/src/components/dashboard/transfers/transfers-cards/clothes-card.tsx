@@ -58,7 +58,7 @@ export function TransferClothesCard({
                     <p className="text-xs text-muted-foreground font-mono">
                       Размер:{" "}
                       {transfer.clothes.type === "CLOTHING"
-                        ? transfer.clothes.closthingSize.size
+                        ? transfer.clothes.clothingSize.size
                         : transfer.clothes.footwearSize.size}
                     </p>
                     {transfer.clothes.type === "CLOTHING" && (

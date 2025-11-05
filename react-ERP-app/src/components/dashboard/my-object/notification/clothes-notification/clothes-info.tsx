@@ -40,7 +40,7 @@ export function ClothesInfo({
             <span className="font-mono">
               Размер:{" "}
               {clothesTransfer.clothes.type === "CLOTHING"
-                ? clothesTransfer.clothes.closthingSize.size
+                ? clothesTransfer.clothes.clothingSize.size
                 : clothesTransfer.clothes.footwearSize.size}
             </span>
             {clothesTransfer.clothes.type === "CLOTHING" && (

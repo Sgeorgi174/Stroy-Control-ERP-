@@ -194,7 +194,10 @@ export function ObjectNotification({
                               Сезон: {item.season}
                             </span>
                             <span className="font-mono">
-                              Размер: {item.size}
+                              Размер:{" "}
+                              {item.type === "CLOTHING"
+                                ? item.clothingSize.size
+                                : item.footwearSize.size}
                             </span>
                             <span className="font-mono">
                               Кол-во: {item.quantity}

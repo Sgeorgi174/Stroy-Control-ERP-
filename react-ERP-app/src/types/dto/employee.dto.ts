@@ -28,8 +28,9 @@ export type UpdateEmployeeDto = {
   lastName: string;
   fatherName?: string;
   phoneNumber: string;
-  clothingSize: number;
-  footwearSize: number;
+  clothingSizeId: string;
+  footwearSizeId: string;
+  clothingHeightId: string;
   position: Positions;
   objectId?: string;
   country: Countries;

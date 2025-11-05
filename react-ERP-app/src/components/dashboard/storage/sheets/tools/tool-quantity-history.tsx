@@ -25,6 +25,7 @@ const actionMap = {
   GIVE_TO_EMPLOYEE: "Выдача сотруднику",
   WRITTEN_OFF: "Списание",
   CANCEL: "Отмена перемещения",
+  RETURN_FROM_EMPLOYEE: "Возврат от сотрудника",
 };
 
 const getActionIcon = (action: ClothesActions) => {

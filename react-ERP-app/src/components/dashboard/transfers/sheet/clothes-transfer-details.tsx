@@ -35,7 +35,7 @@ export function ClothesTransferDetails({
             <p className="text-sm text-muted-foreground">Размер</p>
             <p className="font-medium">
               {clothesTransfer.clothes.type === "CLOTHING"
-                ? clothesTransfer.clothes.closthingSize.size
+                ? clothesTransfer.clothes.clothingSize.size
                 : clothesTransfer.clothes.footwearSize.size}
             </p>
           </div>
