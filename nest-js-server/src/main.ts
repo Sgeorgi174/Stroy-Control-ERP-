@@ -26,6 +26,8 @@ async function bootstrap() {
     }),
   );
 
+  app.setGlobalPrefix('api');
+
   app.use(
     session({
       secret: config.getOrThrow<string>('SESSION_SECRET'),
