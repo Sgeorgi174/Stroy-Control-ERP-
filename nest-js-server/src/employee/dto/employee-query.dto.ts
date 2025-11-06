@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsOptional, IsEnum, IsString, IsArray } from 'class-validator';
-import { employeeType, Position, Statuses } from 'generated/prisma';
+import { employeeType, Statuses } from 'generated/prisma';
 
 export class GetEmployeeQueryDto {
   @IsOptional()
@@ -16,8 +16,8 @@ export class GetEmployeeQueryDto {
   searchQuery?: string;
 
   @IsOptional()
-  @IsEnum(Position)
-  position?: Position;
+  @IsString()
+  position?: string;
 
   @IsOptional()
   @IsEnum(employeeType)

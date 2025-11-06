@@ -16,6 +16,20 @@ type PositionSelectProps = {
   className?: string;
 };
 
+const positions: string[] = [
+  "Мастер СМР",
+  "Электромонтажник",
+  "Разнорабочий",
+  "Кладовщик",
+  "Сварщик",
+  "Расключник",
+  "Помошник руководителя",
+  "Инженер",
+  "Начальник участка",
+  "Бригадир",
+  "Не назначен",
+];
+
 export function PositionSelectForForms({
   selectedPosition,
   onSelectChange,
@@ -32,11 +46,11 @@ export function PositionSelectForForms({
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Должность</SelectLabel>
-          <SelectItem value="FOREMAN">Мастер</SelectItem>
-          <SelectItem value="ELECTRICAN">Электромонтажник</SelectItem>
-          <SelectItem value="LABORER">Разнорабочий</SelectItem>
-          <SelectItem value="DESIGNER">Проектировщик</SelectItem>
-          <SelectItem value="ENGINEER">Инженер</SelectItem>
+          {positions.map((position) => (
+            <SelectItem value={position} key={position}>
+              {position}
+            </SelectItem>
+          ))}
         </SelectGroup>
       </SelectContent>
     </Select>

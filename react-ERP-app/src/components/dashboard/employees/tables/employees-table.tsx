@@ -10,7 +10,6 @@ import type { Employee } from "@/types/employee";
 import { SkillsPopover } from "./skills-popover";
 import { EmployeeDropDown } from "../dropdowns/employee-dropdown";
 import { PendingTable } from "../../storage/tables/pending-table";
-import { positionMap } from "@/constants/positionMap";
 import { useEmployeeSheetStore } from "@/stores/employee-sheet-store";
 
 type EmployeesTableProps = {
@@ -57,7 +56,7 @@ export function EmployeesTable({
               className="cursor-pointer"
             >
               <TableCell className="font-medium hover:underline">{`${employee.lastName} ${employee.firstName} ${employee.fatherName}`}</TableCell>
-              <TableCell>{positionMap[employee.position]}</TableCell>
+              <TableCell>{employee.position}</TableCell>
               <TableCell>{employee.phoneNumber}</TableCell>
               <TableCell>
                 {employee.workPlace ? employee.workPlace.name : "На назначен"}

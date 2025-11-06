@@ -3,11 +3,17 @@ import type { User } from "./user";
 
 export type EmployeeStatuses = "OK" | "WARNING" | "OVERDUE" | "INACTIVE";
 export type Positions =
-  | "FOREMAN"
-  | "ELECTRICAN"
-  | "LABORER"
-  | "DESIGNER"
-  | "ENGINEER";
+  | "Мастер СМР"
+  | "Электромонтажник"
+  | "Разнорабочий"
+  | "Кладовщик"
+  | "Сварщик"
+  | "Расключник"
+  | "Помошник руководителя"
+  | "Инженер"
+  | "Начальник участка"
+  | "Бригадир"
+  | "Не назначен";
 
 export type EmployeeType = "ACTIVE" | "ARCHIVE";
 

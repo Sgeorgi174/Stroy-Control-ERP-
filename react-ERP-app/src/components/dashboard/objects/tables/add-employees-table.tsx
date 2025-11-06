@@ -20,14 +20,6 @@ type AddEmployeesTableProps = {
   onSelectionChange?: (selectedIds: string[]) => void;
 };
 
-const positionMap = {
-  FOREMAN: "Мастер",
-  ELECTRICAN: "Электромонтажник",
-  LABORER: "Разнорабочий",
-  DESIGNER: "Проектировщик",
-  ENGINEER: "Инженер",
-};
-
 export function AddEmployeesTable({
   employees,
   onSelectionChange,
@@ -83,7 +75,7 @@ export function AddEmployeesTable({
                     <TableCell className="font-medium">
                       {employee.firstName} {employee.lastName}
                     </TableCell>
-                    <TableCell>{positionMap[employee.position]}</TableCell>
+                    <TableCell>{employee.position}</TableCell>
                     <TableCell>{employee.phoneNumber}</TableCell>
                   </TableRow>
                 );

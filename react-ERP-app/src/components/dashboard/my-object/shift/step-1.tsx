@@ -15,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { positionMap } from "@/constants/positionMap";
 import { formatDate } from "@/lib/utils/format-date";
 import type { Employee, Positions } from "@/types/employee";
 
@@ -152,9 +151,7 @@ export default function Step1SelectHours({
                       {employee.firstName} {employee.lastName}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">
-                        {positionMap[employee.position]}
-                      </Badge>
+                      <Badge variant="outline">{employee.position}</Badge>
                     </TableCell>
                     <TableCell>
                       {selected ? (

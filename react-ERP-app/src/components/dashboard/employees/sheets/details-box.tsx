@@ -1,6 +1,5 @@
 import { BootIcon } from "@/components/ui/boot";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { positionMap } from "@/constants/positionMap";
 import { formatDate } from "@/lib/utils/format-date";
 import type { Employee } from "@/types/employee";
 import {
@@ -51,7 +50,7 @@ export function EmployeeDetailsBox({ employee }: EmployeeDetailsBoxProps) {
               <p className="text-sm text-muted-foreground">Должность</p>
               <div className="flex items-center gap-1">
                 <HardHat className="w-3 h-3 text-muted-foreground" />
-                <p className="font-medium">{positionMap[employee.position]}</p>
+                <p className="font-medium">{employee.position}</p>
               </div>
             </div>
             <div>

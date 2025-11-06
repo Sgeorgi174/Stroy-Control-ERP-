@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { positionMap } from "@/constants/positionMap";
 import type { Tablet } from "@/types/tablet";
 import { Contact, Phone, User } from "lucide-react";
 
@@ -33,9 +32,7 @@ export function TabletDetailsBox({ tablet }: TabletDetailsProps) {
               <div className="flex gap-2 items-center">
                 <Contact className="w-5 h-5" />
                 <p className="font-medium">
-                  {tablet.employee
-                    ? positionMap[tablet.employee.position]
-                    : "-"}
+                  {tablet.employee ? tablet.employee.position : "-"}
                 </p>
               </div>
             </div>

@@ -7,7 +7,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { positionMap } from "@/constants/positionMap";
 import type { Positions } from "@/types/employee";
 import { Badge } from "@/components/ui/badge";
 
@@ -70,7 +69,7 @@ export default function Step2AssignTasks({
                 {emp.firstName} {emp.lastName}
               </TableCell>
               <TableCell>
-                {<Badge variant="outline">{positionMap[emp.position]}</Badge>}
+                {<Badge variant="outline">{emp.position}</Badge>}
               </TableCell>
               <TableCell>{emp.workedHours ?? "—"}</TableCell>
               <TableCell>

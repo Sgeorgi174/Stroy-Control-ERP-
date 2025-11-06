@@ -1,1 +1,1 @@
-export const baseUrl = window.location.origin;
+export const baseUrl = "http://stroy-control74.ru";

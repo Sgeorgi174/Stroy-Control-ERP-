@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { positionMap } from "@/constants/positionMap";
 import type { Positions } from "@/types/employee";
 
 interface EmployeeSelection {
@@ -72,7 +71,7 @@ export default function Step3AbsenceReason({
                 {emp.firstName} {emp.lastName}
               </TableCell>
               <TableCell>
-                {<Badge variant="outline">{positionMap[emp.position]}</Badge>}
+                {<Badge variant="outline">{emp.position}</Badge>}
               </TableCell>
               <TableCell>
                 <Input

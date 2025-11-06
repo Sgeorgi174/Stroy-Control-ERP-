@@ -10,6 +10,20 @@ import {
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
 import type { Positions } from "@/types/employee";
 
+const positions: string[] = [
+  "Мастер СМР",
+  "Электромонтажник",
+  "Разнорабочий",
+  "Кладовщик",
+  "Сварщик",
+  "Расключник",
+  "Помошник руководителя",
+  "Инженер",
+  "Начальник участка",
+  "Бригадир",
+  "Не назначен",
+];
+
 export function PositionSelectForFilter() {
   const { selectedEmployeePosition, setSetelectedEmployeePosition } =
     useFilterPanelStore();
@@ -23,18 +37,18 @@ export function PositionSelectForFilter() {
         )
       }
     >
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-[220px]">
         <SelectValue placeholder="Должность" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Фильтр по должностям</SelectLabel>
           <SelectItem value="null">Все</SelectItem>
-          <SelectItem value="FOREMAN">Мастер</SelectItem>
-          <SelectItem value="ELECTRICAN">Электромонтажник</SelectItem>
-          <SelectItem value="LABORER">Разнорабочий</SelectItem>
-          <SelectItem value="DESIGNER">Проектировщик</SelectItem>
-          <SelectItem value="ENGINEER">Инженер</SelectItem>
+          {positions.map((position) => (
+            <SelectItem value={position} key={position}>
+              {position}
+            </SelectItem>
+          ))}
         </SelectGroup>
       </SelectContent>
     </Select>

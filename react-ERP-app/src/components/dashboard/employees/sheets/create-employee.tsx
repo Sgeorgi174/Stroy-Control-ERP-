@@ -16,6 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { HeightSelectForForms } from "../../select-height-for-form";
 import { DatePicker } from "@/components/ui/date-picker";
 import { SelectCountry } from "../select-country";
+import type { Positions } from "@/types/employee";
 
 const employeeSchema = z.object({
   firstName: z.string().min(1, "Это поле обязательно"),
@@ -34,10 +35,7 @@ const employeeSchema = z.object({
   registrationStreet: z.string().min(1, "Это поле обязательно"),
   registrationBuild: z.string().min(1, "Это поле обязательно"),
   registrationFlat: z.string(),
-  position: z.enum(
-    ["FOREMAN", "ELECTRICAN", "LABORER", "DESIGNER", "ENGINEER"],
-    { message: "Выберите должность" }
-  ),
+  position: z.string(),
   country: z.enum(["RU", "KZ", "KG", "TJ", "BY"], {
     message: "Выберите страну",
   }),
@@ -100,7 +98,7 @@ export function EmployeeCreate() {
         clothingSizeId: data.clothingSizeId,
         footwearSizeId: data.footwearSizeId,
         clothingHeightId: data.clothingHeightId,
-        position: data.position,
+        position: data.position as Positions,
         objectId: data.objectId === "none" ? undefined : data.objectId,
         phoneNumber: data.phoneNumber,
         skillIds: data.skillIds || [],
@@ -199,7 +197,7 @@ export function EmployeeCreate() {
             <Label htmlFor="position">Должность</Label>
             <PositionSelectForForms
               className="w-[300px]"
-              selectedPosition={selectedPosition}
+              selectedPosition={selectedPosition as Positions}
               onSelectChange={(position) => setValue("position", position)}
             />
             {errors.position && (

@@ -572,7 +572,7 @@ model Employee {
 
   status Statuses @default(OK)
 
-  position Position
+  position String
 
   clothing       EmployeeClothing[]
   clothesHistory ClothesHistory[]
@@ -608,14 +608,6 @@ enum Statuses {
   WARNING // 🟡 Есть моменты, требующие внимания (например, срок подходит)
   OVERDUE // 🔴 Нарушены сроки (просрочено что-то)
   INACTIVE
-}
-
-enum Position {
-  FOREMAN //бригадир
-  ELECTRICAN //электромонтажник
-  LABORER //разнорабочий
-  DESIGNER // проектировщик
-  ENGINEER // инженер
 }
 
 model Skill {

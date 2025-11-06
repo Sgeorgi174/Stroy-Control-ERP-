@@ -6,7 +6,7 @@ import {
   IsPhoneNumber,
   IsArray,
 } from 'class-validator';
-import { Countries, Position } from 'generated/prisma';
+import { Countries } from 'generated/prisma';
 
 export class CreateDto {
   @IsString({ message: 'Имя должно быть строкой' })
@@ -38,11 +38,9 @@ export class CreateDto {
   @IsOptional({ message: 'Размер обязателен для заполнения' })
   footwearSizeId?: string;
 
-  @IsEnum(Position, {
-    message: `Должность должна быть одним из: ${Object.values(Position).join(', ')}`,
-  })
+  @IsString()
   @IsNotEmpty({ message: 'Должность должна быть указана' })
-  position: Position;
+  position: string;
 
   @IsString({ message: 'ID объекта должен быть строкой' })
   @IsOptional()

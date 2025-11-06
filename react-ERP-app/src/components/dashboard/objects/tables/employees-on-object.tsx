@@ -17,14 +17,6 @@ type EmployeesOnObjectTableProps = {
   isError: boolean;
 };
 
-const positionMap = {
-  FOREMAN: "Мастер",
-  ELECTRICAN: "Электромонтажник",
-  LABORER: "Разнорабочий",
-  DESIGNER: "Проектировщик",
-  ENGINEER: "Инженер",
-};
-
 export function EmployeesOnObjectTable({
   employees,
   isLoading,
@@ -65,7 +57,7 @@ export function EmployeesOnObjectTable({
                   <TableCell className="font-medium">
                     {employee.firstName} {employee.lastName}
                   </TableCell>
-                  <TableCell>{positionMap[employee.position]}</TableCell>
+                  <TableCell>{employee.position}</TableCell>
                   <TableCell>{employee.phoneNumber}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
