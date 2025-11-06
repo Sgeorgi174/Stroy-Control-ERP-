@@ -13,7 +13,7 @@ import { HeightSelectForForms } from "../../select-height-for-form";
 import { DatePicker } from "@/components/ui/date-picker";
 import { SelectCountry } from "../select-country";
 import { useUpdateEmployee } from "@/hooks/employee/useUpdateEmployee";
-import type { Employee } from "@/types/employee";
+import type { Employee, Positions } from "@/types/employee";
 import { useEffect } from "react";
 
 const employeeSchema = z.object({
@@ -33,10 +33,7 @@ const employeeSchema = z.object({
   registrationStreet: z.string().min(1, "Это поле обязательно"),
   registrationBuild: z.string().min(1, "Это поле обязательно"),
   registrationFlat: z.string(),
-  position: z.enum(
-    ["FOREMAN", "ELECTRICAN", "LABORER", "DESIGNER", "ENGINEER"],
-    { message: "Выберите должность" }
-  ),
+  position: z.string(),
   country: z.enum(["RU", "KZ", "KG", "TJ", "BY"], {
     message: "Выберите страну",
   }),
@@ -122,7 +119,7 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
         clothingSizeId: data.clothingSizeId,
         footwearSizeId: data.footwearSizeId,
         clothingHeightId: data.clothingHeightId,
-        position: data.position,
+        position: data.position as Positions,
         objectId: data.objectId === "none" ? undefined : data.objectId,
         phoneNumber: data.phoneNumber,
         passportSerial: data.passportSerial,
@@ -220,7 +217,7 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
             <Label htmlFor="position">Должность</Label>
             <PositionSelectForForms
               className="w-[300px]"
-              selectedPosition={selectedPosition}
+              selectedPosition={selectedPosition as Positions}
               onSelectChange={(position) => setValue("position", position)}
             />
             {errors.position && (

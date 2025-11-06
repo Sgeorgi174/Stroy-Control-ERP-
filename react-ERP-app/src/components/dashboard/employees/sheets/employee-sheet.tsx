@@ -12,7 +12,7 @@ import { EmployeeDetails } from "./employee-details";
 import { EmployeeChangeObject } from "./change-object";
 import { EmployeeSkillsEdit } from "./employee-skills";
 import { EmployeeArchive } from "./archive-employee";
-import type { EmployeeStatuses, Positions } from "@/types/employee";
+import type { EmployeeStatuses } from "@/types/employee";
 import { User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -61,23 +61,6 @@ const getStatusLabel = (status: EmployeeStatuses) => {
   }
 };
 
-const getPositionLabel = (position: Positions) => {
-  switch (position) {
-    case "FOREMAN":
-      return "Мастер";
-    case "ELECTRICAN":
-      return "Электромонтажник";
-    case "LABORER":
-      return "Разнорабочий";
-    case "DESIGNER":
-      return "Проектировщик";
-    case "ENGINEER":
-      return "Инженер";
-    default:
-      return position;
-  }
-};
-
 export function EmployeeSheet() {
   const { isOpen, mode, selectedEmployee, closeSheet } =
     useEmployeeSheetStore();
@@ -106,8 +89,7 @@ export function EmployeeSheet() {
                       {selectedEmployee?.fatherName}
                     </p>
                     <p className="text-lg text-muted-foreground">
-                      {selectedEmployee &&
-                        getPositionLabel(selectedEmployee.position)}
+                      {selectedEmployee && selectedEmployee.position}
                     </p>
                   </div>
                 </div>
