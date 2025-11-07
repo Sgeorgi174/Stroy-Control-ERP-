@@ -74,6 +74,7 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
       objectId: employee.objectId,
       country: employee.country,
       passportNumber: employee.passportNumber,
+      passportSerial: employee.passportSerial,
       whereIssued: employee.whereIssued,
       issueDate: employee.issueDate,
       registrationRegion: employee.registrationRegion,
