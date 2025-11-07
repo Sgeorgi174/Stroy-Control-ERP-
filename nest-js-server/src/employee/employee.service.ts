@@ -210,6 +210,15 @@ export class EmployeeService {
           footwearSizeId: dto.footwearSizeId,
           position: dto.position,
           objectId: dto.objectId ?? null,
+          passportSerial: dto.passportSerial,
+          passportNumber: dto.passportNumber,
+          whereIssued: dto.whereIssued,
+          issueDate: dto.issueDate,
+          registrationRegion: dto.registrationRegion,
+          registrationCity: dto.registrationCity,
+          registrationStreet: dto.registrationStreet,
+          registrationBuild: dto.registrationBuild,
+          registrationFlat: dto.registrationFlat ?? undefined,
         },
       });
     } catch (error) {
