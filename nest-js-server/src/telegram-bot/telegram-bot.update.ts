@@ -52,6 +52,9 @@ export class TelegramBotUpdate {
 
     const user = await this.prismaService.user.findUnique({ where: { phone } });
 
+    console.log(user);
+    console.log(phone);
+
     if (!user) {
       await ctx.reply('У вас нет доступа к этому боту ⚠️');
       return;
