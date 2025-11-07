@@ -1,1 +1,1 @@
-export const baseUrl = "http://stroy-control74.ru/api";
+export const baseUrl = "https://stroy-control74.ru/api";
