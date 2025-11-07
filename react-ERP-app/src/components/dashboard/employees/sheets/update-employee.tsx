@@ -430,7 +430,7 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="registrationCity">Город</Label>
+              <Label htmlFor="registrationCity">Населенный пункт</Label>
               <Input
                 className="w-[300px]"
                 placeholder="Москва"

@@ -148,7 +148,7 @@ export function EmployeeDetailsBox({ employee }: EmployeeDetailsBoxProps) {
               </div>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Город</p>
+              <p className="text-sm text-muted-foreground">Населенный пункт</p>
               <div className="flex items-center gap-1">
                 <p className="font-medium">{employee.registrationCity}</p>
               </div>
