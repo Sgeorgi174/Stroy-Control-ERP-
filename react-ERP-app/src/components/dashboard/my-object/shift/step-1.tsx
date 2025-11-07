@@ -117,72 +117,76 @@ export default function Step1SelectHours({
       {plannedHours > 0 && (
         <div className="mt-10">
           <h4 className="font-medium mb-4">Выбор сотрудников</h4>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Выбор</TableHead>
-                <TableHead>Сотрудник</TableHead>
-                <TableHead>Должность</TableHead>
-                <TableHead className="w-[172px]">Часы</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {employees.map((employee) => {
-                const empState = employeeSelections.find(
-                  (e) => e.id === employee.id
-                );
-                const selected = empState?.selected || false;
-                const workedHours = empState?.workedHours ?? null;
 
-                return (
-                  <TableRow
-                    key={employee.id}
-                    className={`${
-                      selected ? "bg-muted" : "bg-transparent"
-                    } h-[53px] hover:bg-muted`}
-                  >
-                    <TableCell>
-                      <Checkbox
-                        checked={selected}
-                        onCheckedChange={() => toggleEmployee(employee)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {employee.firstName} {employee.lastName}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{employee.position}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      {selected ? (
-                        <Select
-                          value={
-                            workedHours ? workedHours.toString() : undefined
-                          }
-                          onValueChange={(val) =>
-                            updateEmployeeHours(employee.id, Number(val))
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="—" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {employeeHoursOptions.map((hour) => (
-                              <SelectItem key={hour} value={hour.toString()}>
-                                {hour} ч
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+          {/* ✅ Добавляем контейнер со скроллом */}
+          <div className="max-h-[500px] overflow-y-auto rounded-md border">
+            <Table>
+              <TableHeader className="sticky top-0 bg-background z-10">
+                <TableRow>
+                  <TableHead>Выбор</TableHead>
+                  <TableHead>Сотрудник</TableHead>
+                  <TableHead>Должность</TableHead>
+                  <TableHead className="w-[172px]">Часы</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {employees.map((employee) => {
+                  const empState = employeeSelections.find(
+                    (e) => e.id === employee.id
+                  );
+                  const selected = empState?.selected || false;
+                  const workedHours = empState?.workedHours ?? null;
+
+                  return (
+                    <TableRow
+                      key={employee.id}
+                      className={`${
+                        selected ? "bg-muted" : "bg-transparent"
+                      } h-[53px] hover:bg-muted`}
+                    >
+                      <TableCell>
+                        <Checkbox
+                          checked={selected}
+                          onCheckedChange={() => toggleEmployee(employee)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {employee.firstName} {employee.lastName}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{employee.position}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        {selected ? (
+                          <Select
+                            value={
+                              workedHours ? workedHours.toString() : undefined
+                            }
+                            onValueChange={(val) =>
+                              updateEmployeeHours(employee.id, Number(val))
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="—" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {employeeHoursOptions.map((hour) => (
+                                <SelectItem key={hour} value={hour.toString()}>
+                                  {hour} ч
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       )}
     </div>
