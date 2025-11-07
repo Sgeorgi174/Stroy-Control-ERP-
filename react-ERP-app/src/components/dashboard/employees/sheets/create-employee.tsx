@@ -286,10 +286,30 @@ export function EmployeeCreate() {
 
           <div className="flex justify-between">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="passportSerial">Гражданство</Label>
+              <Label htmlFor="country">Гражданство</Label>
               <SelectCountry
                 selectedCountry={selectedCountry}
-                onSelectChange={(country) => setValue("country", country)}
+                onSelectChange={(country) => {
+                  setValue("country", country, { shouldValidate: true });
+
+                  // автоматически подставляем код паспорта для нероссийских стран
+                  if (country !== "RU") {
+                    const code =
+                      country === "KZ"
+                        ? "KZT"
+                        : country === "KG"
+                        ? "KGZ"
+                        : country === "TJ"
+                        ? "TJK"
+                        : country === "BY"
+                        ? "BYN"
+                        : "";
+                    setValue("passportSerial", code, { shouldValidate: true });
+                  } else {
+                    // если выбрана Россия — очищаем поле для ручного ввода
+                    setValue("passportSerial", "", { shouldValidate: true });
+                  }
+                }}
               />
               {errors.country && (
                 <p className="text-sm text-red-500">{errors.country.message}</p>
@@ -309,6 +329,8 @@ export function EmployeeCreate() {
                 }
                 id="passportSerial"
                 type="text"
+                readOnly={selectedCountry !== "RU"}
+                {...register("passportSerial")}
                 value={
                   selectedCountry === "RU"
                     ? watch("passportSerial")
@@ -318,9 +340,10 @@ export function EmployeeCreate() {
                     ? "KGZ"
                     : selectedCountry === "TJ"
                     ? "TJK"
-                    : watch("passportSerial")
+                    : selectedCountry === "BY"
+                    ? "BYN"
+                    : ""
                 }
-                readOnly={selectedCountry !== "RU"}
                 onChange={(e) => {
                   if (selectedCountry === "RU") {
                     setValue("passportSerial", e.target.value, {
@@ -373,8 +396,10 @@ export function EmployeeCreate() {
             <div className="flex flex-col gap-2">
               <Label htmlFor="issueDate">Дата выдачи</Label>
               <DatePicker
-                selected={watch("issueDate") || undefined} // передаём строку напрямую
-                onSelect={(dateStr) => setValue("issueDate", dateStr || "")}
+                selected={watch("issueDate") || undefined}
+                onSelect={(dateStr) =>
+                  setValue("issueDate", dateStr || "", { shouldValidate: true })
+                }
               />
               {errors.issueDate && (
                 <p className="text-sm text-red-500">
