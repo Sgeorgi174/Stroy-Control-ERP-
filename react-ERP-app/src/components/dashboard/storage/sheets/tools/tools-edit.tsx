@@ -68,7 +68,7 @@ export function ToolsEdit({ tool }: ToolEditProps) {
     defaultValues: {
       name: tool.name,
       serialNumber: tool.serialNumber ?? "",
-      objectId: objects[0]?.id ?? "",
+      objectId: tool.objectId,
       isBulk: tool.isBulk,
       quantity: tool.quantity ?? undefined,
       description: tool.description ?? "",
