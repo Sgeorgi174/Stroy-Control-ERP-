@@ -14,6 +14,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Наименование обязательно"),
   serialNumber: z.string().min(1, "Серийный номер обязателен"),
   objectId: z.string().min(1, "Место хранения обязательно"),
+  description: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -40,6 +41,7 @@ export function ToolsEdit({ tool }: ToolsEditProps) {
       name: tool.name,
       serialNumber: tool.serialNumber,
       objectId: tool.objectId || "",
+      description: tool.description || "",
     },
     resolver: zodResolver(formSchema),
   });
@@ -58,6 +60,7 @@ export function ToolsEdit({ tool }: ToolsEditProps) {
         serialNumber: data.serialNumber.trim(),
         objectId: data.objectId,
         isBulk: tool.isBulk,
+        description: data.description ?? "",
       },
       {
         onSuccess: () => {
@@ -86,6 +89,19 @@ export function ToolsEdit({ tool }: ToolsEditProps) {
             <p className="text-sm text-red-500">
               {errors.serialNumber.message}
             </p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2 w-[400px]">
+          <Label htmlFor="description">Описание \ Детали</Label>
+          <Input
+            id="description"
+            type="text"
+            placeholder="Укажите детали или описание"
+            {...register("description")}
+          />
+          {errors.description && (
+            <p className="text-sm text-red-500">{errors.description.message}</p>
           )}
         </div>
 
