@@ -91,7 +91,6 @@ export function ToolsEdit({ tool }: ToolsEditProps) {
         <div className="flex flex-col gap-2">
           <Label>Место хранения *</Label>
           <ObjectSelectForForms
-            disabled
             selectedObjectId={selectedObjectId}
             onSelectChange={(id) => {
               if (id) setValue("objectId", id);
