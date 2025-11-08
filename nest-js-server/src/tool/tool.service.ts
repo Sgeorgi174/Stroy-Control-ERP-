@@ -284,6 +284,7 @@ export class ToolService {
           serialNumber: dto.serialNumber,
           objectId: dto.objectId,
           description: dto.description ?? undefined,
+          quantity: dto.quantity ?? undefined,
         },
         include: { storage: true },
       });
