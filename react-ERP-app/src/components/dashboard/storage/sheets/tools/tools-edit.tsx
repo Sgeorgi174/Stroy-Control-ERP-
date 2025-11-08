@@ -57,6 +57,7 @@ export function ToolsEdit({ tool }: ToolsEditProps) {
         name: data.name.trim(),
         serialNumber: data.serialNumber.trim(),
         objectId: data.objectId,
+        isBulk: tool.isBulk,
       },
       {
         onSuccess: () => {
