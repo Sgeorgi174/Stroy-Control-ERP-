@@ -16,6 +16,8 @@ export function ClothesInfo({
   setQuantity,
   isReject = true,
 }: ClothesInfoProps) {
+  console.log(clothesTransfer);
+
   return (
     <div className="flex justify-between items-center gap-3 p-3 rounded-lg bg-muted">
       <div className="flex gap-4 items-center">

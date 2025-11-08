@@ -56,6 +56,8 @@ export function NotificationCard() {
     })),
   ];
 
+  console.log(allNotifications);
+
   const sortedTransferNotifications = allNotifications.sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
