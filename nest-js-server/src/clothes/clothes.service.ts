@@ -409,49 +409,53 @@ export class ClothesService {
           });
         }
 
-        const transferedClothes = await this.prismaService.clothes.upsert({
-          where: {
-            objectId_name_type_season_clothingHeightId_clothingSizeId_footwearSizeId:
-              {
-                name: transfer.clothes.name,
-                objectId: transfer.toObjectId,
-                season: transfer.clothes.season,
-                type: transfer.clothes.type,
-                clothingSizeId: transfer.clothes.clothingSizeId as string,
-                clothingHeightId: transfer.clothes.clothingHeightId as string,
-                footwearSizeId: transfer.clothes.footwearSizeId as string,
-              },
-          },
-          create: {
-            name: transfer.clothes.name,
-            type: transfer.clothes.type,
-            season: transfer.clothes.season,
-            clothingSizeId: transfer.clothes.clothingSizeId,
-            providerId: transfer.clothes.providerId,
-            clothingHeightId: transfer.clothes.clothingHeightId,
-            footwearSizeId: transfer.clothes.footwearSizeId,
-            quantity: transfer.clothes.quantity,
-            price: transfer.clothes.price,
-            objectId: transfer.toObjectId,
-          },
-          update: {
-            quantity: { increment: dto.quantity },
-          },
-        });
-
         // Записываем в историю
         await this.clothesHistoryService.create({
           userId: userId,
-          clothesId: transferedClothes.id,
+          clothesId: transfer.clothes.id,
           quantity: dto.quantity,
           action: 'CONFIRM',
           fromObjectId: transfer.fromObjectId,
           toObjectId: transfer.toObjectId,
         });
 
-        return {
-          success: true,
-        };
+        const existing = await this.prismaService.clothes.findFirst({
+          where: {
+            objectId: transfer.toObjectId,
+            name: transfer.clothes.name,
+            type: transfer.clothes.type,
+            season: transfer.clothes.season,
+            clothingSizeId: transfer.clothes.clothingSizeId ?? null,
+            clothingHeightId: transfer.clothes.clothingHeightId ?? null,
+            footwearSizeId: transfer.clothes.footwearSizeId ?? null,
+          },
+        });
+
+        if (existing) {
+          // Если такая одежда уже есть — просто увеличиваем количество
+          return await this.prismaService.clothes.update({
+            where: { id: existing.id },
+            data: {
+              quantity: { increment: dto.quantity },
+            },
+          });
+        }
+
+        // Если нет — создаём новую запись
+        return await this.prismaService.clothes.create({
+          data: {
+            name: transfer.clothes.name,
+            type: transfer.clothes.type,
+            season: transfer.clothes.season,
+            clothingSizeId: transfer.clothes.clothingSizeId ?? null,
+            clothingHeightId: transfer.clothes.clothingHeightId ?? null,
+            footwearSizeId: transfer.clothes.footwearSizeId ?? null,
+            price: transfer.clothes.price,
+            quantity: transfer.clothes.quantity,
+            providerId: transfer.clothes.providerId,
+            objectId: transfer.toObjectId,
+          },
+        });
       });
     } catch (error) {
       handlePrismaError(error, {

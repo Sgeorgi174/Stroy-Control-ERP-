@@ -151,10 +151,11 @@ export class UserService {
                 name: true,
                 season: true,
                 type: true,
+                id: true,
                 clothingHeight: true,
                 clothingSize: true,
                 footwearSize: true,
-                id: true,
+                createdAt: true,
               },
             },
             toObject: {
@@ -199,7 +200,18 @@ export class UserService {
       const object = await this.prismaService.object.findUnique({
         where: { userId, isPending: true },
         include: {
-          clothes: true,
+          clothes: {
+            select: {
+              id: true,
+              name: true,
+              quantity: true,
+              type: true,
+              season: true,
+              clothingSize: true,
+              clothingHeight: true,
+              footwearSize: true,
+            },
+          },
           devices: { where: { status: { not: 'IN_TRANSIT' } } },
           employees: true,
           tools: { where: { status: { not: 'IN_TRANSIT' } } },

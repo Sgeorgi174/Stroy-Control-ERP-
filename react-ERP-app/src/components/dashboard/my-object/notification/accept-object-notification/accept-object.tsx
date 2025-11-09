@@ -50,6 +50,8 @@ export function ObjectNotification({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { mutate: activateObject, isPending } = useActivateObject();
 
+  console.log(clothes);
+
   const handleConfirm = () => {
     activateObject(objectId, {
       onSuccess: () => {
@@ -191,7 +193,8 @@ export function ObjectNotification({
                           </div>
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
                             <span className="font-mono">
-                              Сезон: {item.season}
+                              Сезон:{" "}
+                              {item.season === "SUMMER" ? "Лето" : "Зима"}
                             </span>
                             <span className="font-mono">
                               Размер:{" "}
@@ -199,6 +202,11 @@ export function ObjectNotification({
                                 ? item.clothingSize.size
                                 : item.footwearSize.size}
                             </span>
+                            {item.type === "CLOTHING" && (
+                              <span className="font-mono">
+                                Ростовка: {item.clothingHeight.height}
+                              </span>
+                            )}
                             <span className="font-mono">
                               Кол-во: {item.quantity}
                             </span>
