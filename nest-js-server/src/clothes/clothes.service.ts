@@ -410,14 +410,6 @@ export class ClothesService {
         }
 
         // Записываем в историю
-        await this.clothesHistoryService.create({
-          userId: userId,
-          clothesId: transfer.clothes.id,
-          quantity: dto.quantity,
-          action: 'CONFIRM',
-          fromObjectId: transfer.fromObjectId,
-          toObjectId: transfer.toObjectId,
-        });
 
         const existing = await this.prismaService.clothes.findFirst({
           where: {
@@ -433,6 +425,15 @@ export class ClothesService {
 
         if (existing) {
           // Если такая одежда уже есть — просто увеличиваем количество
+          await this.clothesHistoryService.create({
+            userId: userId,
+            clothesId: existing.id,
+            quantity: dto.quantity,
+            action: 'CONFIRM',
+            fromObjectId: transfer.fromObjectId,
+            toObjectId: transfer.toObjectId,
+          });
+
           return await this.prismaService.clothes.update({
             where: { id: existing.id },
             data: {
@@ -442,7 +443,7 @@ export class ClothesService {
         }
 
         // Если нет — создаём новую запись
-        return await this.prismaService.clothes.create({
+        const updatedClothes = await this.prismaService.clothes.create({
           data: {
             name: transfer.clothes.name,
             type: transfer.clothes.type,
@@ -456,6 +457,17 @@ export class ClothesService {
             objectId: transfer.toObjectId,
           },
         });
+
+        await this.clothesHistoryService.create({
+          userId: userId,
+          clothesId: updatedClothes.id,
+          quantity: dto.quantity,
+          action: 'CONFIRM',
+          fromObjectId: transfer.fromObjectId,
+          toObjectId: transfer.toObjectId,
+        });
+
+        return updatedClothes;
       });
     } catch (error) {
       handlePrismaError(error, {
