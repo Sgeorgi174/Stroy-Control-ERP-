@@ -41,10 +41,9 @@ export function ClothesInfo({
             </span>
             <span className="font-mono">
               Размер:{" "}
-              {/* {clothesTransfer.clothes.type === "CLOTHING"
+              {clothesTransfer.clothes.type === "CLOTHING"
                 ? clothesTransfer.clothes.clothingSize.size
-                : clothesTransfer.clothes.footwearSize.size} */}
-              45
+                : clothesTransfer.clothes.footwearSize.size}
             </span>
             {clothesTransfer.clothes.type === "CLOTHING" && (
               <span className="font-mono">
