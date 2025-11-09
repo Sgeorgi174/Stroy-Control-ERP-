@@ -1,6 +1,9 @@
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ModeToggle } from "./mode-toggle";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Button } from "../ui/button";
+import { Archive } from "lucide-react";
 
 type PageHeaderProps = {
   location: string;
@@ -33,6 +36,33 @@ export function PageHeader({ location }: PageHeaderProps) {
             "Неизвестный раздел"}
         </h1>
         <div className="ml-auto flex items-center gap-2"></div>
+        {location === "/storage" && (
+          <Popover>
+            <PopoverTrigger className="ml-5" asChild>
+              <Button variant="outline">
+                <Archive />
+                Заметка для серийных номеров
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+              <p>
+                <span className="font-medium">ПР</span> - Пресс
+              </p>
+              <p>
+                <span className="font-medium">ЭР</span> - Электроинструмент
+              </p>
+              <p>
+                <span className="font-medium">ТР</span> - Трещотка
+              </p>
+              <p>
+                <span className="font-medium">ИН</span> - Прочий инвентарь
+              </p>
+              <p>
+                <span className="font-medium">ОР</span> - Бытовка и орг. техника
+              </p>
+            </PopoverContent>
+          </Popover>
+        )}
       </div>
 
       <ModeToggle />
