@@ -546,6 +546,8 @@ model Employee {
 
   type employeeType @default(ACTIVE)
 
+  dob String @default("2007-02-02")
+
   firstName          String    @map("first_name")
   lastName           String    @map("last_name")
   fatherName         String?   @map("father_name")
@@ -601,6 +603,7 @@ enum Countries {
   TJ
   KG
   BY
+  AZ
 }
 
 enum Statuses {

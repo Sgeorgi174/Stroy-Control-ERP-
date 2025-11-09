@@ -40,6 +40,7 @@ export function SelectCountry({
           <SelectItem value="KZ">Казахстан</SelectItem>
           <SelectItem value="TJ">Таджикистан</SelectItem>
           <SelectItem value="KG">Кыргызстан</SelectItem>
+          <SelectItem value="AZ">Азербайджан</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>

@@ -21,6 +21,7 @@ export type CreateEmployeeDto = {
   registrationStreet: string;
   registrationBuild: string;
   registrationFlat: string | undefined;
+  dob: string;
 };
 
 export type UpdateEmployeeDto = {
@@ -43,6 +44,7 @@ export type UpdateEmployeeDto = {
   registrationStreet: string;
   registrationBuild: string;
   registrationFlat: string | undefined;
+  dob: string;
 };
 
 export type TransferEmployeeDto = {

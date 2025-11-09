@@ -47,6 +47,13 @@ export function EmployeeDetailsBox({ employee }: EmployeeDetailsBoxProps) {
               </div>
             </div>
             <div>
+              <p className="text-sm text-muted-foreground">Дата рождения</p>
+              <div className="flex items-center gap-1">
+                <HardHat className="w-3 h-3 text-muted-foreground" />
+                <p className="font-medium">{formatDate(employee.dob)}</p>
+              </div>
+            </div>
+            <div>
               <p className="text-sm text-muted-foreground">Должность</p>
               <div className="flex items-center gap-1">
                 <HardHat className="w-3 h-3 text-muted-foreground" />

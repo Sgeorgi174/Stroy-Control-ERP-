@@ -27,6 +27,7 @@ const employeeSchema = z.object({
   passportSerial: z.string().min(1, "Это поле обязательно"),
   passportNumber: z.string().min(1, "Это поле обязательно"),
   whereIssued: z.string().min(1, "Это поле обязательно"),
+  dob: z.string().min(1, "Это поле обязательно"),
   issueDate: z.string().min(1, "Это поле обязательно"),
   registrationRegion: z.string().min(1, "Это поле обязательно"),
   registrationCity: z.string().min(1, "Это поле обязательно"),
@@ -34,7 +35,7 @@ const employeeSchema = z.object({
   registrationBuild: z.string().min(1, "Это поле обязательно"),
   registrationFlat: z.string(),
   position: z.string(),
-  country: z.enum(["RU", "KZ", "KG", "TJ", "BY"], {
+  country: z.enum(["RU", "KZ", "KG", "TJ", "BY", "AZ"], {
     message: "Выберите страну",
   }),
   objectId: z.string().min(1, { message: "Выберите объект" }),
@@ -82,6 +83,7 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
       registrationStreet: employee.registrationStreet,
       registrationBuild: employee.registrationBuild,
       registrationFlat: employee.registrationFlat,
+      dob: employee.dob,
     },
   });
 
@@ -101,6 +103,8 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
           ? "KZT"
           : selectedCountry === "KG"
           ? "KGZ"
+          : selectedCountry === "AZ"
+          ? "AZE"
           : selectedCountry === "TJ"
           ? "TJK"
           : selectedCountry === "BY"
@@ -110,6 +114,12 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
       setValue("passportSerial", code, { shouldValidate: true });
     }
   }, [selectedCountry, setValue]);
+
+  useEffect(() => {
+    if (employee.country) {
+      setValue("country", employee.country);
+    }
+  }, [employee.country, setValue]);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -133,6 +143,7 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
         registrationBuild: data.registrationBuild,
         registrationFlat: data.registrationFlat,
         country: data.country,
+        dob: data.dob,
       });
 
       reset();
@@ -195,6 +206,21 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
           </div>
 
           <div className="flex flex-col gap-2">
+            <Label htmlFor="dob">Дата рождения</Label>
+            <DatePicker
+              selected={watch("dob") || undefined}
+              onSelect={(dateStr) =>
+                setValue("dob", dateStr || "", { shouldValidate: true })
+              }
+            />
+            {errors.dob && (
+              <p className="text-sm text-red-500">{errors.dob.message}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-between">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="phoneNumber">Номер телефона</Label>
             <Input
               className="w-[300px]"
@@ -209,11 +235,7 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
               </p>
             )}
           </div>
-        </div>
 
-        <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
-
-        <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <Label htmlFor="position">Должность</Label>
             <PositionSelectForForms
@@ -225,7 +247,11 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
               <p className="text-sm text-red-500">{errors.position.message}</p>
             )}
           </div>
+        </div>
 
+        <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
+
+        <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <Label htmlFor="objectId">Объект</Label>
             <ObjectSelectForForms
@@ -243,6 +269,23 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
             />
             {errors.objectId && (
               <p className="text-sm text-red-500">{errors.objectId.message}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="footwearSize">Размер обуви</Label>
+            <SizeSelectForForms
+              className="w-[300px]"
+              onSelectChange={(footwearSize) =>
+                setValue("footwearSizeId", footwearSize)
+              }
+              selectedSize={selectedFootwearSize}
+              type="FOOTWEAR"
+            />
+            {errors.footwearSizeId && (
+              <p className="text-sm text-red-500">
+                {errors.footwearSizeId.message}
+              </p>
             )}
           </div>
         </div>
@@ -275,25 +318,6 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
             {errors.clothingHeightId && (
               <p className="text-sm text-red-500">
                 {errors.clothingHeightId.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="footwearSize">Размер обуви</Label>
-            <SizeSelectForForms
-              className="w-[300px]"
-              onSelectChange={(footwearSize) =>
-                setValue("footwearSizeId", footwearSize)
-              }
-              selectedSize={selectedFootwearSize}
-              type="FOOTWEAR"
-            />
-            {errors.footwearSizeId && (
-              <p className="text-sm text-red-500">
-                {errors.footwearSizeId.message}
               </p>
             )}
           </div>
@@ -337,6 +361,8 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
                     ? "KZT"
                     : selectedCountry === "KG"
                     ? "KGZ"
+                    : selectedCountry === "AZ"
+                    ? "AZE"
                     : selectedCountry === "TJ"
                     ? "TJK"
                     : watch("passportSerial")

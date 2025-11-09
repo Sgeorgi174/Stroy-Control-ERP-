@@ -42,6 +42,10 @@ export class CreateDto {
   @IsNotEmpty({ message: 'Должность должна быть указана' })
   position: string;
 
+  @IsString()
+  @IsNotEmpty()
+  dob: string;
+
   @IsString({ message: 'ID объекта должен быть строкой' })
   @IsOptional()
   objectId?: string;

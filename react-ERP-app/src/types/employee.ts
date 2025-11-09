@@ -17,7 +17,7 @@ export type Positions =
 
 export type EmployeeType = "ACTIVE" | "ARCHIVE";
 
-export type Countries = "RU" | "KZ" | "TJ" | "KG" | "BY";
+export type Countries = "RU" | "KZ" | "TJ" | "KG" | "BY" | "AZ";
 
 export type Skill = {
   id: string;
@@ -44,6 +44,7 @@ export type Employee = {
   clothingHeight: { id: string; height: string };
   position: Positions;
   objectId: string;
+  dob: string;
   workPlace: Object | null;
   status: EmployeeStatuses;
   skills: Skill[];

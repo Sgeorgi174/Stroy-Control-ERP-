@@ -27,6 +27,7 @@ export class EmployeeService {
           footwearSizeId: dto.footwearSizeId,
           position: dto.position,
           country: dto.country,
+          dob: dto.dob,
           passportSerial: dto.passportSerial,
           passportNumber: dto.passportNumber,
           whereIssued: dto.whereIssued,
@@ -219,6 +220,8 @@ export class EmployeeService {
           registrationStreet: dto.registrationStreet,
           registrationBuild: dto.registrationBuild,
           registrationFlat: dto.registrationFlat ?? undefined,
+          dob: dto.dob,
+          country: dto.country,
         },
       });
     } catch (error) {
