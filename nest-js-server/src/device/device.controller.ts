@@ -33,37 +33,77 @@ export class DeviceController {
     private readonly telegramBotService: TelegramBotService,
   ) {}
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('create')
-  create(@Body() dto: CreateDto) {
-    return this.deviceService.create(dto);
+  create(@Body() dto: CreateDto, @Authorized('role') userRole: Roles) {
+    return this.deviceService.create(dto, userRole);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('all')
   getAll() {
     return this.deviceService.getAll();
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('filter')
   async getFiltered(@Query() query: GetToolsQueryDto) {
     return this.deviceService.getFiltered(query);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('by-id/:id')
   getById(@Param('id') id: string) {
     return this.deviceService.getById(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Put('update/:id')
   update(@Param('id') id: string, @Body() dto: UpdateDto) {
     return this.deviceService.update(id, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Patch('transfer/:id')
   transfer(
     @Param('id') id: string,
@@ -73,7 +113,13 @@ export class DeviceController {
     return this.deviceService.transfer(id, dto, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Patch('status/:id')
   changeStatus(
     @Param('id') id: string,
@@ -83,7 +129,14 @@ export class DeviceController {
     return this.deviceService.changeStatus(id, userId, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Patch('confirm/:id')
   async confirmTransfer(
     @Param('id') id: string,
@@ -92,7 +145,14 @@ export class DeviceController {
     return this.deviceService.confirmTransfer(id, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Patch('reject/:id')
   async rejectTransfer(
     @Param('id') id: string,
@@ -102,13 +162,26 @@ export class DeviceController {
     return this.deviceService.rejectTransfer(id, userId, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Delete('delete/:id')
   delete(@Param('id') id: string) {
     return this.deviceService.delete(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Post('request-photo-transfer/:id')
   async rejectToolTransfer(
     @Param('id') transferId: string,
@@ -123,7 +196,13 @@ export class DeviceController {
     return { success: true };
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('retransfer/:id')
   async reTransfer(
     @Param('id') transferId: string,
@@ -135,7 +214,13 @@ export class DeviceController {
     return this.deviceService.reTransfer(transferId, dto, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('transfer-return/:id')
   async returnToSource(
     @Param('id') transferId: string,
@@ -144,7 +229,13 @@ export class DeviceController {
     return this.deviceService.returnToSource(transferId, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('transfer-cancel/:id')
   async cancelTransfer(
     @Param('id') transferId: string,
@@ -154,7 +245,13 @@ export class DeviceController {
     return this.deviceService.cancelTransfer(transferId, userId, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('transfer-write-off/:id')
   async writeOffInTransfer(
     @Param('id') transferId: string,

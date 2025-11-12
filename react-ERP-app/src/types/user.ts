@@ -1,6 +1,13 @@
 import type { Object } from "./object";
 
-export type Role = "OWNER" | "MASTER" | "ACCOUNTANT" | "FOREMAN" | "ADMIN";
+export type Role =
+  | "OWNER"
+  | "MASTER"
+  | "ACCOUNTANT"
+  | "FOREMAN"
+  | "ADMIN"
+  | "ASSISTANT_MANAGER"
+  | "HR";
 
 export type User = {
   id: string;

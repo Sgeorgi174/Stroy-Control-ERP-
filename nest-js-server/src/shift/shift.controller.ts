@@ -21,25 +21,56 @@ import { UpdateShiftDto } from './dto/updateShift.dto';
 export class ShiftController {
   constructor(private readonly shiftService: ShiftService) {}
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateShiftDto, @Authorized('id') userId: string) {
     return this.shiftService.createShift(dto, userId);
   }
 
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('filter')
   async getShiftsWithFilters(@Query() query: GetShiftsFilterDto) {
     return this.shiftService.getShiftsWithFilters(query);
   }
 
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('get-by-object/:id')
   async getShiftsByObject(@Param() objectId: string) {
     return this.shiftService.getShiftsByObject(objectId);
   }
 
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateShiftDto) {

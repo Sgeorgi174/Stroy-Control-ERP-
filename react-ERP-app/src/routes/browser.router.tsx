@@ -10,8 +10,6 @@ import { MyObject } from "@/pages/my-object/MyObject";
 import { NotFound } from "@/pages/not-found/NotFound";
 import { Transfers } from "@/pages/transfers/Transfers";
 import { Monitoring } from "@/pages/monitoring/Monitoring";
-import { RoleBasedRoute } from "./role-based.route";
-import { RoleRedirect } from "./role-redirect.route";
 import { AdminPanelPage } from "@/pages/admin-panel/Admin-panel";
 
 export const router = createBrowserRouter([
@@ -22,54 +20,17 @@ export const router = createBrowserRouter([
         path: "/",
         element: <Dashboard />,
         children: [
-          {
-            index: true,
-            element: <RoleRedirect />,
-          },
-          {
-            element: (
-              <RoleBasedRoute
-                allowedRoles={[
-                  "OWNER",
-                  "ACCOUNTANT",
-                  "FOREMAN",
-                  "MASTER",
-                  "ADMIN",
-                ]}
-              />
-            ),
-            children: [
-              { path: "/monitoring", element: <Monitoring /> },
-              { path: "/employees", element: <Employees /> },
-              { path: "/objects", element: <Objects /> },
-              { path: "/transfers", element: <Transfers /> },
-              { path: "/admin", element: <AdminPanelPage /> },
-            ],
-          },
-          {
-            element: (
-              <RoleBasedRoute
-                allowedRoles={[
-                  "OWNER",
-                  "FOREMAN",
-                  "ACCOUNTANT",
-                  "MASTER",
-                  "ADMIN",
-                ]}
-              />
-            ),
-            children: [{ path: "/storage", element: <Storage /> }],
-          },
-          {
-            element: (
-              <RoleBasedRoute
-                allowedRoles={["FOREMAN", "ACCOUNTANT", "ADMIN"]}
-              />
-            ),
-            children: [{ path: "/my-object", element: <MyObject /> }],
-          },
+          { path: "/monitoring", element: <Monitoring /> },
+          { path: "/employees", element: <Employees /> },
+          { path: "/objects", element: <Objects /> },
+          { path: "/transfers", element: <Transfers /> },
+          { path: "/storage", element: <Storage /> },
+          { path: "/admin", element: <AdminPanelPage /> },
+          { path: "/my-object", element: <MyObject /> },
         ],
       },
+
+      // 🔑 Авторизация и ошибки
       { path: "/login", element: <Auth /> },
       { path: "*", element: <NotFound /> },
     ],

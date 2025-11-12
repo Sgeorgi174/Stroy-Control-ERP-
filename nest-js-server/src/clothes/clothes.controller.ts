@@ -44,84 +44,166 @@ export class ClothesController {
     private readonly telegramBotService: TelegramBotService,
   ) {}
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() dto: CreateDto) {
-    return this.clothesService.create(dto);
+  async create(@Body() dto: CreateDto, @Authorized('role') userRole: Roles) {
+    return this.clothesService.create(dto, userRole);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.OWNER,
+    Roles.MASTER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('sizes-clothing')
   async getSizesForClothing() {
     return this.clothesService.getSizesForClothing();
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.OWNER,
+    Roles.MASTER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('sizes-footwear')
   async getSizesForFootwear() {
     return this.clothesService.getSizesForFootwear();
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.OWNER,
+    Roles.MASTER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('height-clothing')
   async getHeightForClothing() {
     return this.clothesService.getHeightForClothing();
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('create-size-clothing')
   @HttpCode(HttpStatus.CREATED)
   async addSizeForClothing(@Body() dto: AddSizeForClothingDto) {
     return this.clothesService.addSizeForClothing(dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Delete('remove-size-clothing/:id')
   async removeSizeForClothing(@Param('id') id: string) {
     return this.clothesService.removeSizeForClothing(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('create-size-footwear')
   @HttpCode(HttpStatus.CREATED)
   async addSizeForFootwear(@Body() dto: AddSizeForFootwearDto) {
     return this.clothesService.addSizeForFootwear(dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Delete('remove-size-footwear/:id')
   async removeSizeForFootwear(@Param('id') id: string) {
     return this.clothesService.removeSizeForFootwear(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('create-height-clothing')
   @HttpCode(HttpStatus.CREATED)
   async addHeightForFootwear(@Body() dto: AddHeightForClothingDto) {
     return this.clothesService.addHeightForClothing(dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Delete('remove-height-clothing/:id')
   async removeHeightForFootwear(@Param('id') id: string) {
     return this.clothesService.removeHeightForClothing(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.OWNER,
+    Roles.MASTER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('providers')
   async getAllProviders() {
     return this.clothesService.getAllProviders();
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('create-provider')
   @HttpCode(HttpStatus.CREATED)
   async addProvider(@Body() dto: AddProviderDto) {
     return this.clothesService.addProvider(dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Put('update-provider/:id')
   async updateProvider(
     @Param('id') id: string,
@@ -130,32 +212,65 @@ export class ClothesController {
     return this.clothesService.updateProvider(id, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Delete('remove-provider/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeProvider(@Param('id') id: string) {
     return this.clothesService.removeProvider(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.OWNER,
+    Roles.MASTER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('filter')
   async getFiltered(@Query() query: GetClothesQueryDto) {
     return this.clothesService.getFiltered(query);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.OWNER,
+    Roles.MASTER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('by-id/:id')
   async getById(@Param('id') id: string) {
     return this.clothesService.getById(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateDto) {
     return this.clothesService.update(id, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
+  @Authorization(
+    Roles.OWNER,
+    Roles.MASTER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Patch('transfer/:id')
   async transfer(
     @Param('id') id: string,
@@ -165,7 +280,14 @@ export class ClothesController {
     return this.clothesService.transfer(id, dto, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
+  @Authorization(
+    Roles.OWNER,
+    Roles.MASTER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Patch('confirm/:id')
   async confirmTransfer(
     @Param('id') id: string,
@@ -175,7 +297,14 @@ export class ClothesController {
     return this.clothesService.confirmTransfer(id, dto, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.OWNER,
+    Roles.MASTER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Patch('reject/:id')
   async rejectTransfer(
     @Param('id') id: string,
@@ -184,7 +313,14 @@ export class ClothesController {
     return this.clothesService.rejectTransfer(id, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.OWNER,
+    Roles.MASTER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Post('request-photo-transfer/:id')
   async rejectToolTransfer(
     @Param('id') transferId: string,
@@ -199,7 +335,13 @@ export class ClothesController {
     return { success: true };
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('retransfer/:id')
   async reTransfer(
     @Param('id') transferId: string,
@@ -211,7 +353,13 @@ export class ClothesController {
     return this.clothesService.reTransfer(transferId, dto, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('transfer-return/:id')
   async returnToSource(
     @Param('id') transferId: string,
@@ -220,7 +368,13 @@ export class ClothesController {
     return this.clothesService.returnToSource(transferId, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('transfer-cancel/:id')
   async cancelTransfer(
     @Param('id') transferId: string,
@@ -230,7 +384,13 @@ export class ClothesController {
     return this.clothesService.cancelTransfer(transferId, userId, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('transfer-write-off/:id')
   async writeOffInTransfer(
     @Param('id') transferId: string,
@@ -240,7 +400,13 @@ export class ClothesController {
     return this.clothesService.writeOffInTransfer(transferId, userId, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Patch('add/:id')
   async addClothes(
     @Param('id') id: string,
@@ -250,7 +416,13 @@ export class ClothesController {
     return this.clothesService.addClothes(id, dto, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Patch('write-off/:id')
   async writeOffClothes(
     @Param('id') id: string,
@@ -260,7 +432,14 @@ export class ClothesController {
     return this.clothesService.writeOffClothes(id, dto, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Patch('give/:id')
   async giveToEmployee(
     @Param('id') id: string,
@@ -270,7 +449,13 @@ export class ClothesController {
     return this.clothesService.giveToEmployee(id, dto, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN, Roles.MASTER)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Patch('return')
   async returnFromEmployee(
     @Body() dto: ReturnFromEmployeeDto,
@@ -279,7 +464,13 @@ export class ClothesController {
     return this.clothesService.returnFromEmployee(dto, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Delete('delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {

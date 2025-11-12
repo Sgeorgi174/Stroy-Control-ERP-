@@ -19,6 +19,7 @@ import { TabletHistoryModule } from './tablet-history/tablet-history.module';
 import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
 import { SkillModule } from './skill/skill.module';
 import { ShiftModule } from './shift/shift.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ShiftModule } from './shift/shift.module';
         token: configService.getOrThrow<string>('TELEGRAM_BOT_TOKEN'),
       }),
     }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     AuthModule,
     UserModule,

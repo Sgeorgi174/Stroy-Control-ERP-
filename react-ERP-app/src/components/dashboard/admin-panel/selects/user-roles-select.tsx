@@ -13,7 +13,9 @@ const userRoles = [
   { id: "2", value: "MASTER", label: "Старший мастер" },
   { id: "3", value: "ACCOUNTANT", label: "Бухгалтер" },
   { id: "4", value: "FOREMAN", label: "Мастер" },
-  { id: "5", value: "ADMIN", label: "Адмиин" },
+  { id: "5", value: "ADMIN", label: "Админ" },
+  { id: "6", value: "ASSISTANT_MANAGER", label: "Помошник руководителя" },
+  { id: "7", value: "HR", label: "HR" },
 ];
 
 type UserRolesSelectProps = {

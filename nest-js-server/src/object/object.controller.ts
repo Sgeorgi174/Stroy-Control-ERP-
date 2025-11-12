@@ -24,56 +24,114 @@ import { ChangeForemanDto } from './dto/changeForeman.dto';
 export class ObjectController {
   constructor(private readonly objectService: ObjectService) {}
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateDto) {
     return this.objectService.create(dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('filter')
   async getFiltered(@Query() query: GetObjectQueryDto) {
     return this.objectService.getFiltered(query);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Get('close-object/:id')
   async getByIdToClose(@Param('id') id: string) {
     return this.objectService.getByIdToClose(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('by-id/:id')
   async getById(@Param('id') id: string) {
     return this.objectService.getByIdToClose(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('user')
   async getByUserId(@Authorized('id') userId: string) {
     return this.objectService.getByUserId(userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateDto) {
     return this.objectService.update(id, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Patch('change-foreman/:id')
   async changeForeman(@Param('id') id: string, @Body() dto: ChangeForemanDto) {
     return this.objectService.changeForeman(id, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Patch('remove-foreman/:id')
   async removeForeman(@Param('id') id: string) {
     return this.objectService.removeForeman(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Patch('activate/:id')
   async activateObject(
     @Param('id') id: string,
@@ -82,13 +140,25 @@ export class ObjectController {
     return this.objectService.activateObject(id, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Patch('close/:id')
   async closeObject(@Param('id') id: string) {
     return this.objectService.closeObject(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Delete('delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {

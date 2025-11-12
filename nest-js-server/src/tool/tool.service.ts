@@ -19,7 +19,7 @@ import { RetransferToolDto } from './dto/retransfer.dto';
 import { WriteOffToolInTransferDto } from './dto/write-off-in-transit.dto';
 import { CancelToolTransferDto } from './dto/cancel-transfer.dto';
 import { AddBagItemDto } from './dto/add-bag-item.dto';
-import { BagItem } from 'generated/prisma';
+import { BagItem, Roles } from 'generated/prisma';
 import { RemoveBagItemDto } from './dto/remove-bag-item';
 import { AddToolCommentDto } from './dto/add-tool-comment.dto';
 import { AddQuantityToolDto } from './dto/add-quantity-tool.dto';
@@ -49,7 +49,12 @@ export class ToolService {
     return { user, tool };
   }
 
-  public async create(dto: CreateDto) {
+  public async create(dto: CreateDto, userRole: Roles) {
+    const object = await this.prismaService.object.findUnique({
+      where: { id: dto.objectId },
+    });
+    if (userRole !== 'ACCOUNTANT' && object?.name === 'Главный склад')
+      throw new ForbiddenException('У вас нет доступа к этому складу');
     try {
       return await this.prismaService.tool.create({
         data: {
@@ -154,7 +159,12 @@ export class ToolService {
     }
   }
 
-  public async createBag(dto: CreateDto) {
+  public async createBag(dto: CreateDto, userRole: Roles) {
+    const object = await this.prismaService.object.findUnique({
+      where: { id: dto.objectId },
+    });
+    if (userRole !== 'ACCOUNTANT' && object?.name === 'Главный склад')
+      throw new ForbiddenException('У вас нет доступа к этому складу');
     try {
       return await this.prismaService.tool.create({
         data: {

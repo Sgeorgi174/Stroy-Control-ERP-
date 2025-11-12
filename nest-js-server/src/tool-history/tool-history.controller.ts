@@ -7,19 +7,39 @@ import { Authorization } from 'src/auth/decorators/auth.decorator';
 export class ToolHistoryController {
   constructor(private readonly toolHistoryService: ToolHistoryService) {}
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('transfers/:id')
   async getTransferByToolId(@Param('id') id: string) {
     return this.toolHistoryService.getTransfersByToolId(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('statuses/:id')
   async getStatusChangesByToolId(@Param('id') id: string) {
     return this.toolHistoryService.getStatusChangesByToolId(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Delete('delete/:id')
   async delete(@Param('id') id: string) {
     return this.toolHistoryService.delete(id);

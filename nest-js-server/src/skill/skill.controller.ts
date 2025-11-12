@@ -17,25 +17,50 @@ import { Roles } from 'generated/prisma';
 export class SkillController {
   constructor(private readonly skillService: SkillService) {}
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('all')
   async getAll() {
     return await this.skillService.getAll();
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('create')
   async create(@Body() dto: CreateSkillDto) {
     return await this.skillService.create(dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateSkillDto) {
     return await this.skillService.update(id, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Delete('delete/:id')
   async delete(@Param('id') id: string) {
     return await this.skillService.delete(id);

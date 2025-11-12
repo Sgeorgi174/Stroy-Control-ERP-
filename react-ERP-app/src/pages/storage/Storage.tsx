@@ -14,9 +14,12 @@ import { useClothes } from "@/hooks/clothes/useClothes";
 import { useTablets } from "@/hooks/tablet/useTablet";
 import { useMemo, useState } from "react";
 import { ToolsTableBulk } from "@/components/dashboard/storage/tables/tools-table-bulk";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 export function Storage() {
   const [isBulk, setIsBulk] = useState(false);
+
+  const { data: user } = useAuth();
 
   const {
     activeTab,
@@ -100,6 +103,15 @@ export function Storage() {
       return aSize - bSize;
     });
   }, [clothes, activeTab]);
+
+  if (user?.role === "FOREMAN" && !user?.objectId)
+    return (
+      <div className="flex w-full h-full items-center justify-center">
+        <p className="font-bold text-3xl">
+          Доступ закрыт. Вы не назначены ни на один объект.
+        </p>
+      </div>
+    );
 
   return (
     <div>

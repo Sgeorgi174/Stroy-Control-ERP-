@@ -25,32 +25,64 @@ import { GetTabletsQueryDto } from './dto/get-tablet-query.dto';
 export class TabletController {
   constructor(private readonly tabletService: TabletService) {}
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   create(@Body() dto: CreateTabletDto) {
     return this.tabletService.create(dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('filter')
   async getFiltered(@Query() query: GetTabletsQueryDto) {
     return this.tabletService.getFiltered(query);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('by-id/:id')
   getById(@Param('id') id: string) {
     return this.tabletService.getById(id);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Put('update/:id')
   update(@Param('id') id: string, @Body() dto: UpdateTabletDto) {
     return this.tabletService.update(id, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Patch('status/:id')
   updateStatus(
     @Param('id') id: string,
@@ -60,7 +92,13 @@ export class TabletController {
     return this.tabletService.changeStatus(id, userId, dto);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Patch('transfer/:id')
   transfer(
     @Param('id') id: string,
@@ -70,13 +108,25 @@ export class TabletController {
     return this.tabletService.transfer(id, dto, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Patch('release/:id')
   release(@Param('id') id: string, @Authorized('id') userId: string) {
     return this.tabletService.release(id, userId);
   }
 
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
   @Delete('delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   delete(@Param('id') id: string) {

@@ -69,7 +69,7 @@ export function ToolsAdd() {
     defaultValues: {
       name: "",
       serialNumber: "",
-      objectId: objects[0]?.id ?? "",
+      objectId: "",
       isBulk: false,
       quantity: undefined,
       description: "",

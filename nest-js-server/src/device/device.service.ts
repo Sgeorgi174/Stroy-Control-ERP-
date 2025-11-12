@@ -17,6 +17,7 @@ import { RejectDeviceTransferDto } from './dto/reject-transfer.dto';
 import { RetransferDeviceDto } from './dto/retransfer.dto';
 import { WriteOffDeviceInTransferDto } from './dto/write-off-in-transit.dto';
 import { CancelDeviceTransferDto } from './dto/cancel-transfer.dto';
+import { Roles } from 'generated/prisma';
 
 @Injectable()
 export class DeviceService {
@@ -43,7 +44,12 @@ export class DeviceService {
     return { user, device };
   }
 
-  async create(dto: CreateDto) {
+  async create(dto: CreateDto, userRole: Roles) {
+    const object = await this.prismaService.object.findUnique({
+      where: { id: dto.objectId },
+    });
+    if (userRole !== 'ACCOUNTANT' && object?.name === 'Главный склад')
+      throw new ForbiddenException('У вас нет доступа к этому складу');
     try {
       return await this.prismaService.device.create({
         data: {

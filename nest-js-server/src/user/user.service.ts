@@ -188,7 +188,15 @@ export class UserService {
 
   public async getFreeForemen() {
     const foremen = await this.prismaService.user.findMany({
-      where: { role: 'FOREMAN', object: null },
+      where: {
+        OR: [
+          { role: 'FOREMAN', object: null },
+          { role: 'ACCOUNTANT', object: null },
+          { role: 'ASSISTANT_MANAGER', object: null },
+          { role: 'MASTER', object: null },
+          { role: 'ADMIN', object: null },
+        ],
+      },
       orderBy: { lastName: 'asc' },
     });
 

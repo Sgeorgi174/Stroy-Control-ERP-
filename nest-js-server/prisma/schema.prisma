@@ -42,6 +42,8 @@ enum Roles {
   ACCOUNTANT
   FOREMAN
   ADMIN
+  ASSISTANT_MANAGER
+  HR
 }
 
 model VerifacationCode {
@@ -563,6 +565,8 @@ model Employee {
   registrationBuild  String
   registrationFlat   String?
 
+  warnings EmployeeWarning[]
+
   clothingSize   ClothingSize? @relation(fields: [clothingSizeId], references: [id])
   clothingSizeId String?       @map("clothing_size_id")
 
@@ -590,6 +594,27 @@ model Employee {
   toTabletHistories   TabletHistory[] @relation("tablet_to_employee_fk")
 
   @@unique([passportSerial, passportNumber], name: "employee_identity_unique")
+}
+
+model EmployeeWarning {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  warningType EmployeeWarningType
+  message     String
+
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+}
+
+enum EmployeeWarningType {
+  CLOTHING_SUMMER
+  CLOTHING_WINTER
+  FOOTWEAR_SUMMER
+  FOOTWEAR_WINTER
+  PASSPORT
 }
 
 enum employeeType {

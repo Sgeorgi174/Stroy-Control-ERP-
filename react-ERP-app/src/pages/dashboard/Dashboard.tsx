@@ -1,11 +1,11 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { Outlet, useLocation } from "react-router";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { Separator } from "@radix-ui/react-separator";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
 import type { TabKey } from "@/types/tabs";
+import { AppSidebar } from "@/components/dashboard/app-sidebar";
 
 const pathToTabMap: Record<string, TabKey> = {
   "/monitoring": "monitoring",
@@ -26,45 +26,24 @@ const storageTabs: TabKey[] = [
 
 export function Dashboard() {
   const location = useLocation();
-  const [active, setActive] = useState(location.pathname);
   const { setActiveTab } = useFilterPanelStore();
 
   useEffect(() => {
-    setActive(location.pathname);
-
-    const tab = pathToTabMap[location.pathname];
-    const currentTab = useFilterPanelStore.getState().activeTab;
-
     if (location.pathname === "/storage") {
-      const currentTab = useFilterPanelStore.getState().activeTab;
-
-      // ✅ Только если tab вообще ещё не задан
-      if (!storageTabs.includes(currentTab)) {
+      if (!storageTabs.includes(useFilterPanelStore.getState().activeTab)) {
         setActiveTab("tool");
       }
-
-      return;
-    }
-
-    if (tab && tab !== currentTab) {
-      setActiveTab(tab);
+    } else {
+      const tab = pathToTabMap[location.pathname];
+      if (tab) setActiveTab(tab);
     }
   }, [location.pathname, setActiveTab]);
 
-  const handleClick = () => {
-    setActive(location.pathname);
-
-    const tab = pathToTabMap[location.pathname];
-    if (location.pathname === "/storage") return;
-
-    if (tab) {
-      setActiveTab(tab);
-    }
-  };
+  console.log(location.pathname);
 
   return (
     <SidebarProvider>
-      <AppSidebar active={active} handleClick={handleClick} />
+      <AppSidebar />
       <SidebarInset className="p-3">
         <PageHeader location={location.pathname} />
         <Separator

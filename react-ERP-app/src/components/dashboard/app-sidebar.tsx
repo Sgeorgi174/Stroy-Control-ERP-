@@ -22,7 +22,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useAuthStore } from "@/stores/auth/auth.store";
 import { Button } from "../ui/button";
 import {
@@ -38,58 +38,69 @@ const sidebarItems = [
     url: "/monitoring",
     tab: "monitoring",
     icon: Blocks,
-    roles: ["OWNER", "ACCOUNTANT", "FOREMAN", "MASTER"],
+    roles: ["OWNER", "ACCOUNTANT", "MASTER", "ADMIN", "ASSISTANT_MANAGER"],
   },
   {
     title: "Мой объект",
     url: "/my-object",
     tab: "my-object",
     icon: HardHat,
-    roles: ["OWNER", "ACCOUNTANT", "FOREMAN", "MASTER"],
+    roles: ["ACCOUNTANT", "FOREMAN", "MASTER", "ADMIN", "ASSISTANT_MANAGER"],
   },
   {
     title: "Склад",
     url: "/storage",
     tab: "tool",
     icon: Store,
-    roles: ["OWNER", "ACCOUNTANT", "FOREMAN", "MASTER"],
+    roles: [
+      "OWNER",
+      "ACCOUNTANT",
+      "FOREMAN",
+      "MASTER",
+      "ASSISTANT_MANAGER",
+      "ADMIN",
+    ],
   },
   {
     title: "Перемещения",
     url: "/transfers",
     tab: "transfers",
     icon: Truck,
-    roles: ["OWNER", "ACCOUNTANT", "FOREMAN", "MASTER"],
+    roles: ["OWNER", "ACCOUNTANT", "MASTER", "ASSISTANT_MANAGER", "ADMIN"],
   },
   {
     title: "Объекты",
     url: "/objects",
     tab: "object",
     icon: Building,
-    roles: ["OWNER", "ACCOUNTANT", "FOREMAN", "MASTER"],
+    roles: ["OWNER", "ACCOUNTANT", "MASTER", "ASSISTANT_MANAGER", "ADMIN"],
   },
   {
     title: "Сотрудники",
     url: "/employees",
     tab: "employee",
     icon: Users,
-    roles: ["OWNER", "ACCOUNTANT", "FOREMAN", "MASTER"],
+    roles: ["OWNER", "ACCOUNTANT", "MASTER", "ASSISTANT_MANAGER", "ADMIN"],
   },
   {
     title: "Админ-панель",
     url: "/admin",
     tab: "admin",
     icon: Shield,
-    roles: ["OWNER", "ACCOUNTANT", "FOREMAN", "MASTER"],
+    roles: [
+      "OWNER",
+      "ACCOUNTANT",
+      "FOREMAN",
+      "MASTER",
+      "ASSISTANT_MANAGER",
+      "ADMIN",
+    ],
   },
 ];
 
-type AppSidebarProps = {
-  active: string;
-  handleClick: () => void;
-};
-export function AppSidebar({ active, handleClick }: AppSidebarProps) {
+export function AppSidebar() {
   const user = useAuthStore((s) => s.user);
+  const location = useLocation();
 
   if (!user) return null;
 
@@ -111,8 +122,7 @@ export function AppSidebar({ active, handleClick }: AppSidebarProps) {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       size="lg"
-                      onClick={handleClick}
-                      isActive={item.url === active}
+                      isActive={item.url === location.pathname}
                       asChild
                     >
                       <Link to={item.url} className="flex items-center gap-4">
@@ -126,6 +136,7 @@ export function AppSidebar({ active, handleClick }: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
         <div>
           <Accordion type="single" collapsible className="w-full">
@@ -150,6 +161,7 @@ export function AppSidebar({ active, handleClick }: AppSidebarProps) {
             </AccordionItem>
           </Accordion>
         </div>
+
         <div className="border rounded-xl p-5 mt-2">
           <div className="flex items-center justify-between">
             <div>

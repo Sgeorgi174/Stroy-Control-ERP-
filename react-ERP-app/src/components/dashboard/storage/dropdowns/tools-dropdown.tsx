@@ -57,7 +57,33 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
 
           <DropdownMenuSeparator />
 
-          {!tool.isBag ? (
+          {tool.isBag && (
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>Редактировать</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openSheet("edit", tool);
+                    }}
+                  >
+                    Сумку
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openSheet("edit bag", tool);
+                    }}
+                  >
+                    Наполнение сумки
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          )}
+
+          {!tool.isBag && (
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
@@ -65,15 +91,6 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
               }}
             >
               Редактировать
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                openSheet("edit bag", tool);
-              }}
-            >
-              Редактировать сумку
             </DropdownMenuItem>
           )}
 

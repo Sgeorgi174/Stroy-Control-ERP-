@@ -49,16 +49,13 @@ export function PageHeader({ location }: PageHeaderProps) {
                 <span className="font-medium">ПР</span> - Пресс
               </p>
               <p>
-                <span className="font-medium">ЭР</span> - Электроинструмент
-              </p>
-              <p>
-                <span className="font-medium">ТР</span> - Трещотка
+                <span className="font-medium">ЭИ</span> - Электроинструмент
               </p>
               <p>
                 <span className="font-medium">ИН</span> - Прочий инвентарь
               </p>
               <p>
-                <span className="font-medium">ОР</span> - Бытовка и орг. техника
+                <span className="font-medium">ОР</span> - Бытовая и орг. техника
               </p>
             </PopoverContent>
           </Popover>

@@ -12,7 +12,7 @@ const TABS: {
   },
   {
     key: "device",
-    label: "Орг. Техника",
+    label: "Быт. Инвентарь",
   },
   {
     key: "tablet",

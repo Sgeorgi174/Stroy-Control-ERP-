@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -13,7 +14,7 @@ import { ClothesHistoryService } from 'src/clothes-history/clothes-history.servi
 import { handlePrismaError } from '../libs/common/utils/prisma-error.util';
 import { AddDto } from './dto/add.dto';
 import { WriteOffDto } from './dto/write-off.dto';
-import { ClothesActions } from 'generated/prisma';
+import { ClothesActions, Roles } from 'generated/prisma';
 import { GiveClothingDto } from './dto/give-clothing.dto';
 import { GetClothesQueryDto } from './dto/get-clothes-query.dto';
 import { RejectClothesTransferDto } from './dto/reject-transfer.dto';
@@ -165,7 +166,12 @@ export class ClothesService {
     }
   }
 
-  async create(dto: CreateDto) {
+  async create(dto: CreateDto, userRole: Roles) {
+    const object = await this.prismaService.object.findUnique({
+      where: { id: dto.objectId },
+    });
+    if (userRole !== 'ACCOUNTANT' && object?.name === 'Главный склад')
+      throw new ForbiddenException('У вас нет доступа к этому складу');
     try {
       const existing = await this.prismaService.clothes.findFirst({
         where: {

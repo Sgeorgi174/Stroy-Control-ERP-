@@ -51,6 +51,15 @@ export function MyObject() {
     0
   );
 
+  if (!user?.objectId)
+    return (
+      <div className="flex w-full h-full items-center justify-center">
+        <p className="font-bold text-3xl">
+          Доступ закрыт. Вы не назначены ни на один объект.
+        </p>
+      </div>
+    );
+
   return (
     <div>
       <div className="grid grid-cols-5 gap-3 mt-6">
