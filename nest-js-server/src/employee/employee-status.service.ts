@@ -1,6 +1,6 @@
 // employee-status.service.ts
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EmployeeClothingCheckService } from './employee-clothing-check.service';
 import { EmployeePassportCheckService } from './employee-passport-check.service';
@@ -16,7 +16,7 @@ export class EmployeeStatusService {
     private readonly passportCheck: EmployeePassportCheckService,
   ) {}
 
-  @Cron('0 * * * * *', { timeZone: 'Europe/Moscow' })
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, { timeZone: 'Europe/Moscow' })
   async updateEmployeeStatuses() {
     this.logger.log('Начинаем проверку статусов сотрудников');
 
