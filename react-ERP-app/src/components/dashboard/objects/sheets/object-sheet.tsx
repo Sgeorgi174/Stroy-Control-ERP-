@@ -55,7 +55,7 @@ export function ObjectsSheet() {
   return (
     <Sheet open={isOpen} onOpenChange={closeSheet}>
       <SheetContent
-        className="w-[700px] sm:max-w-[1000px]"
+        className="w-[700px] sm:max-w-[1000px] overflow-auto"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
         onOpenAutoFocus={(event) => event.preventDefault()}

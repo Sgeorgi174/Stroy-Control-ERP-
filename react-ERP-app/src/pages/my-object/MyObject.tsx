@@ -51,7 +51,9 @@ export function MyObject() {
     0
   );
 
-  if (!user?.objectId)
+  console.log(user);
+
+  if (!user?.object?.id)
     return (
       <div className="flex w-full h-full items-center justify-center">
         <p className="font-bold text-3xl">
