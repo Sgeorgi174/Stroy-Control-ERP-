@@ -61,7 +61,7 @@ export function EmployeeChangeObject({ employee }: EmployeeChangeObjectProps) {
 
   return (
     <div className="p-5 flex flex-col gap-1">
-      <EmployeeDetailsBox employee={employee} />
+      <EmployeeDetailsBox isWarning={false} employee={employee} />
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
       <EmployeeSkillsBox employee={employee} />
       <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
