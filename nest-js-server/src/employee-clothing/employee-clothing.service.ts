@@ -9,6 +9,7 @@ import { IssueClothingDto } from './dto/issue-clothing.dto';
 import { EmployeeClothing } from 'generated/prisma';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { ChangeDebtDto } from './dto/change-debt.dto';
+import { UpdateIssuedClothingDto } from './dto/update-issued-clothing.dto';
 
 @Injectable()
 export class EmployeeClothingService {
@@ -68,6 +69,7 @@ export class EmployeeClothingService {
                 clothingHeight: true,
                 clothingSize: true,
                 footwearSize: true,
+                type: true,
               },
             },
           },
@@ -116,6 +118,48 @@ export class EmployeeClothingService {
       console.error(error);
       throw new InternalServerErrorException(
         'Ошибка при изменении задолженности',
+      );
+    }
+  }
+
+  async updateIssuedClothing(recordId: string, dto: UpdateIssuedClothingDto) {
+    try {
+      const existing = await this.prismaService.employeeClothing.findUnique({
+        where: { id: recordId },
+      });
+
+      if (!existing) throw new NotFoundException('Запись не найдена');
+
+      const updated = await this.prismaService.employeeClothing.update({
+        where: { id: recordId },
+        data: {
+          priceWhenIssued: dto.priceWhenIssued,
+          debtAmount: dto.debtAmount,
+          issuedAt: dto.issuedAt ? new Date(dto.issuedAt) : existing.issuedAt,
+          clothing: {
+            update: {
+              clothingSizeId: dto.clothingSizeId ?? undefined,
+              clothingHeightId: dto.clothingHeightId ?? undefined,
+              footwearSizeId: dto.footwearSizeId ?? undefined,
+            },
+          },
+        },
+        include: {
+          clothing: {
+            include: {
+              clothingSize: true,
+              clothingHeight: true,
+              footwearSize: true,
+            },
+          },
+        },
+      });
+
+      return updated;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(
+        'Ошибка при обновлении выданной одежды',
       );
     }
   }

@@ -4,6 +4,7 @@ import { IssueClothingDto } from './dto/issue-clothing.dto';
 import { ChangeDebtDto } from './dto/change-debt.dto';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
 import { Roles } from 'generated/prisma';
+import { UpdateIssuedClothingDto } from './dto/update-issued-clothing.dto';
 
 @Controller('employee-clothing')
 export class EmployeeClothingController {
@@ -52,5 +53,20 @@ export class EmployeeClothingController {
     @Body() dto: ChangeDebtDto,
   ) {
     return this.employeeClothingService.changeDebt(recordId, dto);
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
+  @Patch('update/:recordId')
+  async updateIssuedClothing(
+    @Param('recordId') recordId: string,
+    @Body() dto: UpdateIssuedClothingDto,
+  ) {
+    return this.employeeClothingService.updateIssuedClothing(recordId, dto);
   }
 }

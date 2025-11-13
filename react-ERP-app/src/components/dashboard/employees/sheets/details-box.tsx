@@ -12,9 +12,12 @@ import {
   User,
 } from "lucide-react";
 
-type EmployeeDetailsBoxProps = { employee: Employee };
+type EmployeeDetailsBoxProps = { employee: Employee; isWarning: boolean };
 
-export function EmployeeDetailsBox({ employee }: EmployeeDetailsBoxProps) {
+export function EmployeeDetailsBox({
+  employee,
+  isWarning,
+}: EmployeeDetailsBoxProps) {
   const fullName = [employee.lastName, employee.firstName, employee.fatherName]
     .filter(Boolean)
     .join(" ");
@@ -100,7 +103,7 @@ export function EmployeeDetailsBox({ employee }: EmployeeDetailsBoxProps) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className={`${isWarning ? "bg-yellow-300/10" : ""}`}>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <FileText className="w-5 h-5" />

@@ -323,6 +323,7 @@ export const useReturnFromEmployee = () => {
     onSuccess: () => {
       toast.success("Одежда успешно возвращена");
       queryClient.invalidateQueries({ queryKey: ["clothes"] });
+      queryClient.invalidateQueries({ queryKey: ["employee-clothing"] });
     },
     onError: (error: AppAxiosError) => {
       const message =

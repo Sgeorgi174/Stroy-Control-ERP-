@@ -68,7 +68,7 @@ export function EmployeeSheet() {
   return (
     <Sheet open={isOpen} onOpenChange={closeSheet}>
       <SheetContent
-        className="w-[810px] sm:max-w-[810px] overflow-auto"
+        className="w-[900px] sm:max-w-[900px] overflow-auto"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
         onOpenAutoFocus={(event) => event.preventDefault()}

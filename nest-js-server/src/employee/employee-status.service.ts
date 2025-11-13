@@ -1,76 +1,152 @@
-// src/employees/employee-status.service.ts
-import { Injectable } from '@nestjs/common';
-// import { Cron } from '@nestjs/schedule';
-// import { ClothesType, Season } from 'generated/prisma';
+// employee-status.service.ts
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { PrismaService } from 'src/prisma/prisma.service';
-
-// type StatusesType = 'OK' | 'WARNING' | 'OVERDUE' | 'INACTIVE';
+import { EmployeeClothingCheckService } from './employee-clothing-check.service';
+import { EmployeePassportCheckService } from './employee-passport-check.service';
+import { Statuses, EmployeeWarningType } from 'generated/prisma';
 
 @Injectable()
 export class EmployeeStatusService {
-  constructor(private readonly prisma: PrismaService) {}
+  private readonly logger = new Logger(EmployeeStatusService.name);
 
-  //   @Cron('0 * * * * *', {
-  //     timeZone: 'Europe/Moscow',
-  //   })
-  //   async updateEmployeeStatuses() {
-  //     console.log('Начинаем проверку статусов сотрудников');
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly clothingCheck: EmployeeClothingCheckService,
+    private readonly passportCheck: EmployeePassportCheckService,
+  ) {}
 
-  //     const employees = await this.prisma.employee.findMany({
-  //       where: { type: 'ACTIVE' },
-  //       include: {
-  //         clothing: {
-  //           where: { isReturned: false },
-  //           include: {
-  //             clothing: true,
-  //           },
-  //         },
-  //       },
-  //     });
+  @Cron('0 * * * * *', { timeZone: 'Europe/Moscow' })
+  async updateEmployeeStatuses() {
+    this.logger.log('Начинаем проверку статусов сотрудников');
 
-  //     const now = new Date();
+    const employees = await this.prisma.employee.findMany({
+      where: { type: 'ACTIVE' },
+      include: {
+        clothing: { where: { isReturned: false }, include: { clothing: true } },
+      },
+    });
 
-  //     for (const employee of employees) {
-  //       let status: StatusesType = 'OK';
+    for (const employee of employees) {
+      let status: Statuses = Statuses.OK;
+      const warningsRows: {
+        employeeId: string;
+        warningType: EmployeeWarningType;
+        message: string;
+      }[] = [];
 
-  //       const latestByTypeSeason: Record<string, Date> = {};
+      const clothingResult = this.clothingCheck.check(employee);
+      const passportResult = this.passportCheck.check(employee);
 
-  //       for (const ec of employee.clothing) {
-  //         const key = `${ec.clothing.type}-${ec.clothing.season}`;
-  //         if (!latestByTypeSeason[key] || ec.issuedAt > latestByTypeSeason[key]) {
-  //           latestByTypeSeason[key] = ec.issuedAt;
-  //         }
-  //       }
+      // Выбираем наихудший статус
+      status = [
+        Statuses.OK,
+        clothingResult.status,
+        passportResult.status,
+      ].includes(Statuses.OVERDUE)
+        ? Statuses.OVERDUE
+        : clothingResult.status === Statuses.WARNING ||
+            passportResult.status === Statuses.WARNING
+          ? Statuses.WARNING
+          : Statuses.OK;
 
-  //       // Проверяем сроки для спецовки
-  //       for (const [key, issuedAt] of Object.entries(latestByTypeSeason)) {
-  //         const [type, season] = key.split('-') as [ClothesType, Season];
-  //         const expiryDate = new Date(issuedAt);
+      warningsRows.push(...clothingResult.warnings, ...passportResult.warnings);
 
-  //         if (type === ClothesType.CLOTHING) {
-  //           expiryDate.setFullYear(
-  //             expiryDate.getFullYear() + (season === Season.SUMMER ? 1 : 2),
-  //           );
-  //         } else if (type === ClothesType.FOOTWEAR) {
-  //           expiryDate.setFullYear(expiryDate.getFullYear() + 1);
-  //         }
+      // Атомарно обновляем статус и предупреждения
+      await this.prisma.$transaction(async (prisma) => {
+        await prisma.employee.update({
+          where: { id: employee.id },
+          data: { status },
+        });
 
-  //         const diffDays =
-  //           (expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+        // Удаляем старые предупреждения по спецовке и паспорту
+        await prisma.employeeWarning.deleteMany({
+          where: {
+            employeeId: employee.id,
+            warningType: {
+              in: [
+                EmployeeWarningType.CLOTHING_SUMMER,
+                EmployeeWarningType.CLOTHING_WINTER,
+                EmployeeWarningType.FOOTWEAR_SUMMER,
+                EmployeeWarningType.FOOTWEAR_WINTER,
+                EmployeeWarningType.PASSPORT,
+              ],
+            },
+          },
+        });
 
-  //         if (diffDays < 0) {
-  //           status = 'OVERDUE';
-  //         } else if (diffDays <= 14 && status !== 'OVERDUE') {
-  //           status = 'WARNING';
-  //         }
-  //       }
+        if (warningsRows.length > 0) {
+          await prisma.employeeWarning.createMany({ data: warningsRows });
+        }
+      });
+    }
 
-  //       await this.prisma.employee.update({
-  //         where: { id: employee.id },
-  //         data: { status },
-  //       });
-  //     }
+    this.logger.log('Проверка статусов сотрудников завершена');
+  }
 
-  //     console.log('Проверка статусов сотрудников завершена');
-  //   }
+  /** 🔹 Проверка статуса одного сотрудника */
+  async updateEmployeeStatusById(employeeId: string) {
+    const employee = await this.prisma.employee.findUnique({
+      where: { id: employeeId },
+      include: {
+        clothing: { where: { isReturned: false }, include: { clothing: true } },
+      },
+    });
+
+    if (!employee) return null;
+
+    let status: Statuses = Statuses.OK;
+    const warningsRows: {
+      employeeId: string;
+      warningType: EmployeeWarningType;
+      message: string;
+    }[] = [];
+
+    const clothingResult = this.clothingCheck.check(employee);
+    const passportResult = this.passportCheck.check(employee);
+
+    // Определяем наихудший статус
+    if (
+      [clothingResult.status, passportResult.status].includes(Statuses.OVERDUE)
+    ) {
+      status = Statuses.OVERDUE;
+    } else if (
+      [clothingResult.status, passportResult.status].includes(Statuses.WARNING)
+    ) {
+      status = Statuses.WARNING;
+    }
+
+    warningsRows.push(...clothingResult.warnings, ...passportResult.warnings);
+
+    await this.prisma.$transaction(async (tx) => {
+      // Обновляем статус
+      await tx.employee.update({
+        where: { id: employee.id },
+        data: { status },
+      });
+
+      // Удаляем старые предупреждения по clothing и паспорту
+      await tx.employeeWarning.deleteMany({
+        where: {
+          employeeId: employee.id,
+          warningType: {
+            in: [
+              EmployeeWarningType.CLOTHING_SUMMER,
+              EmployeeWarningType.CLOTHING_WINTER,
+              EmployeeWarningType.FOOTWEAR_SUMMER,
+              EmployeeWarningType.FOOTWEAR_WINTER,
+              EmployeeWarningType.PASSPORT,
+            ],
+          },
+        },
+      });
+
+      // Добавляем новые предупреждения
+      if (warningsRows.length > 0) {
+        await tx.employeeWarning.createMany({ data: warningsRows });
+      }
+    });
+
+    return { status, warnings: warningsRows };
+  }
 }

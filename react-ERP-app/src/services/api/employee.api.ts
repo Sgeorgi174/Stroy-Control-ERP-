@@ -18,6 +18,7 @@ import type {
 import type {
   EmployeeClothing,
   EmployeeClothingItem,
+  UpdateIssuedClothingDto,
 } from "@/types/employeesClothing";
 
 export const getFilteredEmployees = async (params: {
@@ -123,4 +124,15 @@ export const changeEmployeeDebt = async (
 
 export const deleteEmployee = async (id: string): Promise<void> => {
   await api.delete(`/employees/delete/${id}`);
+};
+
+export const updateIssuedClothing = async (
+  id: string,
+  data: UpdateIssuedClothingDto
+): Promise<EmployeeClothingItem> => {
+  const res = await api.patch<EmployeeClothingItem>(
+    `/employee-clothing/update/${id}`,
+    data
+  );
+  return res.data;
 };

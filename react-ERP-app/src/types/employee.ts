@@ -1,3 +1,4 @@
+import type { EmployeeClothingItem } from "./employeesClothing";
 import type { Object } from "./object";
 import type { User } from "./user";
 
@@ -31,6 +32,18 @@ export type ArchiveRecord = {
   changedBy: User;
 };
 
+export type EmployeeWarning = {
+  id: string;
+  warningType:
+    | "CLOTHING_SUMMER"
+    | "CLOTHING_WINTER"
+    | "FOOTWEAR_SUMMER"
+    | "FOOTWEAR_WINTER"
+    | "PASSPORT";
+  message: string;
+  employeeId: string;
+};
+
 export type Employee = {
   id: string;
   createdAt: string;
@@ -45,6 +58,7 @@ export type Employee = {
   position: Positions;
   objectId: string;
   dob: string;
+  clothing: EmployeeClothingItem[];
   workPlace: Object | null;
   status: EmployeeStatuses;
   skills: Skill[];
@@ -60,4 +74,5 @@ export type Employee = {
   registrationStreet: string;
   registrationBuild: string;
   registrationFlat: string | undefined;
+  warnings: EmployeeWarning[];
 };

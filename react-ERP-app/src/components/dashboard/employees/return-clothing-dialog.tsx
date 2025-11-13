@@ -5,7 +5,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +17,8 @@ import {
 import type { Object } from "@/types/object";
 
 type ReturnClothingDialogProps = {
+  open: boolean;
+  setOpen: (id: string | null) => void;
   clothingId: string;
   employeeClothingId: string;
   employeeId: string;
@@ -31,38 +32,40 @@ type ReturnClothingDialogProps = {
 };
 
 export function ReturnClothingDialog({
+  open,
+  setOpen,
   clothingId,
   employeeClothingId,
   employeeId,
   objects,
   onReturn,
 }: ReturnClothingDialogProps) {
-  const [open, setOpen] = React.useState(false);
   const [selectedObject, setSelectedObject] = React.useState<
     string | undefined
   >(undefined);
 
   const handleConfirm = () => {
     if (!selectedObject) return;
+
     onReturn({
       clothesId: clothingId,
       employeeClothingId,
       employeeId,
       objectId: selectedObject,
     });
-    setOpen(false);
+
+    // Закрываем диалог и сбрасываем выбор
+    setOpen(null);
+    setSelectedObject(undefined);
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="h-8 p-2">Возврат</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && setOpen(null)}>
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
           <DialogTitle>Выберите объект для возврата</DialogTitle>
         </DialogHeader>
-        <Select onValueChange={setSelectedObject} defaultValue={selectedObject}>
+        <Select onValueChange={setSelectedObject} value={selectedObject}>
           <SelectTrigger>
             <SelectValue placeholder="Выберите объект" />
           </SelectTrigger>

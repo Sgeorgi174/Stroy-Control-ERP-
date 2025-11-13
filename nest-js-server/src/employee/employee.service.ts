@@ -9,10 +9,14 @@ import { AssignEmployeesDto } from './dto/assign-employees.dto';
 import { AddSkillsDto } from './dto/add-skill.dto';
 import { RemoveSkillsDto } from './dto/remove-skill.dto';
 import { ArchiveDto } from './dto/archive-employee.dto';
+import { EmployeeStatusService } from './employee-status.service';
 
 @Injectable()
 export class EmployeeService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly employeeStatus: EmployeeStatusService,
+  ) {}
 
   public async create(dto: CreateDto) {
     try {
@@ -66,6 +70,7 @@ export class EmployeeService {
         include: {
           workPlace: { select: { name: true, address: true, id: true } },
           archive: { select: { id: true, comment: true, archivedAt: true } },
+          warnings: true,
           clothing: {
             select: {
               id: true,
@@ -152,6 +157,7 @@ export class EmployeeService {
         clothingHeight: true,
         clothingSize: true,
         footwearSize: true,
+        warnings: true,
         skills: { select: { skill: true, id: true } },
         workPlace: { select: { name: true, address: true, id: true } },
         archive: {
@@ -178,6 +184,7 @@ export class EmployeeService {
                 clothingSize: true,
                 footwearSize: true,
                 season: true,
+                type: true,
               },
             },
           },
@@ -199,7 +206,7 @@ export class EmployeeService {
 
   public async update(id: string, dto: UpdateDto) {
     try {
-      return await this.prismaService.employee.update({
+      const updatedEmployee = await this.prismaService.employee.update({
         where: { id },
         data: {
           firstName: dto.firstName,
@@ -224,6 +231,10 @@ export class EmployeeService {
           country: dto.country,
         },
       });
+
+      await this.employeeStatus.updateEmployeeStatusById(id);
+
+      return updatedEmployee;
     } catch (error) {
       console.error(error);
       handlePrismaError(error, {

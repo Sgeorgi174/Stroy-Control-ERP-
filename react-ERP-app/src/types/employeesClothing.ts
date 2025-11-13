@@ -15,3 +15,12 @@ export type EmployeeClothingItem = {
   isReturned: boolean;
   clothing: Clothes;
 };
+
+export interface UpdateIssuedClothingDto {
+  priceWhenIssued: number;
+  debtAmount: number;
+  issuedAt: string;
+  clothingSizeId?: string | null;
+  clothingHeightId?: string | null;
+  footwearSizeId?: string | null;
+}

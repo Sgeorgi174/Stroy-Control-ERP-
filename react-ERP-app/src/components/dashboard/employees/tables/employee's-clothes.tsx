@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import {
   Table,
   TableBody,
@@ -12,7 +13,7 @@ import type { EmployeeClothingItem } from "@/types/employeesClothing";
 import { formatDate } from "@/lib/utils/format-date";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Minus, MoreHorizontal, Shirt, X } from "lucide-react";
+import { Minus, MoreHorizontal, Shirt, Undo2, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -31,6 +32,7 @@ type ToolsTableProps = {
   items: EmployeeClothingItem[] | undefined;
   isLoading: boolean;
   isError: boolean;
+  isWarning: boolean;
   handleWriteOffDebt: (clothing: EmployeeClothingItem) => void;
   handleReduceDebt: (clothing: EmployeeClothingItem) => void;
 };
@@ -39,6 +41,7 @@ export function EmployeeClothesTable({
   items,
   isLoading,
   isError,
+  isWarning,
   handleReduceDebt,
   handleWriteOffDebt,
 }: ToolsTableProps) {
@@ -55,8 +58,11 @@ export function EmployeeClothesTable({
     returnMutation.mutate(dto);
   };
 
+  // Состояние для открытия диалога по каждому элементу одежды
+  const [openDialogId, setOpenDialogId] = React.useState<string | null>(null);
+
   return (
-    <Card>
+    <Card className={`${isWarning ? "bg-yellow-300/10" : ""}`}>
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <Shirt className="w-5 h-5" />
@@ -79,7 +85,9 @@ export function EmployeeClothesTable({
             <TableHeader>
               <TableRow>
                 <TableHead>Дата выдачи</TableHead>
-                <TableHead>Одежда</TableHead>
+                <TableHead>Наименование</TableHead>
+                <TableHead>Размер</TableHead>
+                <TableHead>Ростовка</TableHead>
                 <TableHead>Цена</TableHead>
                 <TableHead>Остаток долга</TableHead>
                 <TableHead>Действия</TableHead>
@@ -88,11 +96,24 @@ export function EmployeeClothesTable({
             <TableBody>
               {items.map((clothing) => {
                 const remainingDebt = clothing.debtAmount;
+                const isDialogOpen = openDialogId === clothing.id;
 
                 return (
                   <TableRow key={clothing.id}>
                     <TableCell>{formatDate(clothing.issuedAt)}</TableCell>
                     <TableCell>{clothing.clothing.name}</TableCell>
+                    <TableCell>
+                      {" "}
+                      {clothing.clothing.type === "CLOTHING"
+                        ? clothing.clothing.clothingSize.size
+                        : clothing.clothing.footwearSize.size}
+                    </TableCell>
+                    <TableCell>
+                      {" "}
+                      {clothing.clothing.type === "CLOTHING"
+                        ? clothing.clothing.clothingHeight.height
+                        : ""}
+                    </TableCell>
                     <TableCell>{clothing.priceWhenIssued}</TableCell>
                     <TableCell>
                       <Badge
@@ -132,6 +153,16 @@ export function EmployeeClothesTable({
                               <X className="mr-2 h-4 w-4" />
                               Списать долг
                             </DropdownMenuItem>
+                            <DropdownMenuItem
+                              disabled={clothing.isReturned}
+                              onClick={(e) => {
+                                e.preventDefault(); // не закрываем дропдаун
+                                setOpenDialogId(clothing.id);
+                              }}
+                            >
+                              <Undo2 className="mr-2 h-4 w-4" />
+                              Возврат
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       ) : (
@@ -140,7 +171,10 @@ export function EmployeeClothesTable({
                         </span>
                       )}
 
+                      {/* Диалог возврата */}
                       <ReturnClothingDialog
+                        open={isDialogOpen}
+                        setOpen={setOpenDialogId}
                         clothingId={clothing.clothing.id}
                         employeeClothingId={clothing.id}
                         employeeId={clothing.employeeId}

@@ -27,12 +27,14 @@ import { AddHeightForClothingDto } from './dto/add-height-for-clothing.dto';
 import { AddProviderDto } from './dto/add-provider.dto';
 import { UpdateProviderDto } from './dto/update-provider.dto';
 import { ReturnFromEmployeeDto } from './dto/return-from-employee.dto';
+import { EmployeeStatusService } from 'src/employee/employee-status.service';
 
 @Injectable()
 export class ClothesService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly clothesHistoryService: ClothesHistoryService,
+    private readonly employeeStatus: EmployeeStatusService,
   ) {}
 
   async getSizesForClothing() {
@@ -729,51 +731,56 @@ export class ClothesService {
     userId: string,
   ) {
     try {
-      return await this.prismaService.$transaction(async (prisma) => {
-        const clothing = await prisma.clothes.findUnique({
-          where: { id: clothingId },
-        });
+      const updatedTrasaction = await this.prismaService.$transaction(
+        async (prisma) => {
+          const clothing = await prisma.clothes.findUnique({
+            where: { id: clothingId },
+          });
 
-        if (!clothing) {
-          throw new NotFoundException('Одежда не найдена');
-        }
+          if (!clothing) {
+            throw new NotFoundException('Одежда не найдена');
+          }
 
-        if (clothing.quantity < 1) {
-          throw new ConflictException('Недостаточно одежды на складе');
-        }
+          if (clothing.quantity < 1) {
+            throw new ConflictException('Недостаточно одежды на складе');
+          }
 
-        // Уменьшаем количество на складе
-        const updated = await prisma.clothes.update({
-          where: { id: clothingId },
-          data: {
-            quantity: { decrement: 1 },
-          },
-        });
+          // Уменьшаем количество на складе
+          const updated = await prisma.clothes.update({
+            where: { id: clothingId },
+            data: {
+              quantity: { decrement: 1 },
+            },
+          });
 
-        // Создаём запись выдачи сотруднику
-        await prisma.employeeClothing.create({
-          data: {
-            clothingId,
-            employeeId: dto.employeeId,
-            priceWhenIssued: clothing.price,
-            debtAmount: clothing.price,
-          },
-        });
+          // Создаём запись выдачи сотруднику
+          await prisma.employeeClothing.create({
+            data: {
+              clothingId,
+              employeeId: dto.employeeId,
+              priceWhenIssued: clothing.price,
+              debtAmount: clothing.price,
+            },
+          });
 
-        // Логируем в историю
-        await prisma.clothesHistory.create({
-          data: {
-            clothesId: clothingId,
-            userId: userId,
-            quantity: 1,
-            action: 'GIVE_TO_EMPLOYEE',
-            employeeId: dto.employeeId,
-            fromObjectId: clothing.objectId,
-          },
-        });
+          // Логируем в историю
+          await prisma.clothesHistory.create({
+            data: {
+              clothesId: clothingId,
+              userId: userId,
+              quantity: 1,
+              action: 'GIVE_TO_EMPLOYEE',
+              employeeId: dto.employeeId,
+              fromObjectId: clothing.objectId,
+            },
+          });
 
-        return updated;
-      });
+          return updated;
+        },
+      );
+      await this.employeeStatus.updateEmployeeStatusById(dto.employeeId);
+
+      return updatedTrasaction;
     } catch (error) {
       handlePrismaError(error, {
         notFoundMessage: 'Одежда не найдена',

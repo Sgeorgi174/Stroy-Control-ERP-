@@ -7,6 +7,7 @@ import { useState } from "react";
 import type { EmployeeClothingItem } from "@/types/employeesClothing";
 import { DebtActionDialog } from "./debt-action-dialog";
 import { useChangeEmployeeDebt } from "@/hooks/employee/useChangeEmployeeDebt";
+import { EmployeeWarningBox } from "./warning-box";
 
 type EmployeeDetailsProps = { employee: Employee };
 
@@ -31,6 +32,19 @@ export function EmployeeDetails({ employee }: EmployeeDetailsProps) {
     }
   };
 
+  const isClothingWarning = employee.warnings.some((w) =>
+    [
+      "CLOTHING_SUMMER",
+      "CLOTHING_WINTER",
+      "FOOTWEAR_SUMMER",
+      "FOOTWEAR_WINTER",
+    ].includes(w.warningType)
+  );
+
+  const isPassportWarning = employee.warnings.some((w) =>
+    ["PASSPORT"].includes(w.warningType)
+  );
+
   const handleReduceDebt = (clothing: EmployeeClothingItem) => {
     setSelectedClothing(clothing);
     setDialogType("reduce");
@@ -43,12 +57,18 @@ export function EmployeeDetails({ employee }: EmployeeDetailsProps) {
     setIsDialogOpen(true);
   };
 
+  console.log(data);
+
   return (
     <div className="p-5 flex flex-col gap-5">
-      <EmployeeDetailsBox employee={employee} />
+      {employee.warnings.length !== 0 && (
+        <EmployeeWarningBox employee={employee} />
+      )}
+      <EmployeeDetailsBox employee={employee} isWarning={isPassportWarning} />
       <EmployeeSkillsBox employee={employee} />
 
       <EmployeeClothesTable
+        isWarning={isClothingWarning}
         items={data ? data.items : undefined}
         isLoading={isLoading}
         isError={isError}
