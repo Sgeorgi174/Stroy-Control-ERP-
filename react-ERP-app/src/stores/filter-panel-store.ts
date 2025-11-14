@@ -35,8 +35,8 @@ type TabState = {
   selectedEmployeeType: "ACTIVE" | "ARCHIVE";
   setSetelectedEmployeeType: (type: "ACTIVE" | "ARCHIVE") => void;
 
-  selectedEmployeeStatus: EmployeeStatuses;
-  setSetelectedEmployeeStatus: (status: EmployeeStatuses) => void;
+  selectedEmployeeStatus: EmployeeStatuses | null;
+  setSetelectedEmployeeStatus: (status: EmployeeStatuses | null) => void;
 
   selectedTransferStatus: PendingStatus | null;
   setSelectedTransferStatus: (status: PendingStatus | null) => void;
@@ -86,7 +86,7 @@ export const useFilterPanelStore = create<TabState>((set, get) => ({
   selectedEmployeeType: "ACTIVE",
   setSetelectedEmployeeType: (type) => set({ selectedEmployeeType: type }),
 
-  selectedEmployeeStatus: "OK",
+  selectedEmployeeStatus: null,
   setSetelectedEmployeeStatus: (status) =>
     set({ selectedEmployeeStatus: status }),
 

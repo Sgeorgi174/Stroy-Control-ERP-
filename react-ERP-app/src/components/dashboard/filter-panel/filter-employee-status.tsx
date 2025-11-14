@@ -16,26 +16,35 @@ export function EmployeeStatusForFilter() {
 
   return (
     <Select
-      value={selectedEmployeeStatus}
-      onValueChange={(value) =>
-        setSetelectedEmployeeStatus(value as EmployeeStatuses)
-      }
+      value={selectedEmployeeStatus ?? "ALL"}
+      onValueChange={(value) => {
+        if (value === "ALL") {
+          setSetelectedEmployeeStatus(null); // <--- здесь ключевое
+        } else {
+          setSetelectedEmployeeStatus(value as EmployeeStatuses);
+        }
+      }}
     >
       <SelectTrigger className="w-[80px]">
         <SelectValue placeholder="Статус" />
       </SelectTrigger>
+
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Фильтр по статусу</SelectLabel>
-          <SelectItem value="null">Все</SelectItem>
+
+          <SelectItem value="ALL">Все</SelectItem>
+
           <SelectItem value="OK">
-            <span className="h-3 w-3 rounded-full text-center glow-green"></span>
+            <span className="h-3 w-3 rounded-full glow-green"></span>
           </SelectItem>
+
           <SelectItem value="WARNING">
-            <span className="h-3 w-3 rounded-full text-center glow-yellow"></span>
+            <span className="h-3 w-3 rounded-full glow-yellow"></span>
           </SelectItem>
+
           <SelectItem value="OVERDUE">
-            <span className="h-3 w-3 rounded-full text-center glow-red"></span>
+            <span className="h-3 w-3 rounded-full glow-red"></span>
           </SelectItem>
         </SelectGroup>
       </SelectContent>
