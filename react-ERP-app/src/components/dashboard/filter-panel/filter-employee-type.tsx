@@ -10,16 +10,22 @@ import {
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
 
 export function EmployeeTypeForFilter() {
-  const { selectedEmployeeType, setSetelectedEmployeeType } =
-    useFilterPanelStore();
+  const {
+    selectedEmployeeType,
+    setSetelectedEmployeeType,
+    resetEmployeeFilters,
+  } = useFilterPanelStore();
+
+  const handleChange = (value: "ACTIVE" | "ARCHIVE") => {
+    setSetelectedEmployeeType(value);
+
+    if (value === "ARCHIVE") {
+      resetEmployeeFilters();
+    }
+  };
 
   return (
-    <Select
-      value={selectedEmployeeType}
-      onValueChange={(value) =>
-        setSetelectedEmployeeType(value as "ACTIVE" | "ARCHIVE")
-      }
-    >
+    <Select value={selectedEmployeeType} onValueChange={handleChange}>
       <SelectTrigger className="w-[150px]">
         <SelectValue placeholder="Сотрудники" />
       </SelectTrigger>

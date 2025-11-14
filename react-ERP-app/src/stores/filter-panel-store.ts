@@ -55,6 +55,7 @@ type TabState = {
   toggleSkill: (skillId: string) => void;
 
   resetFilters: () => void;
+  resetEmployeeFilters: () => void;
 };
 
 export const useFilterPanelStore = create<TabState>((set, get) => ({
@@ -128,5 +129,14 @@ export const useFilterPanelStore = create<TabState>((set, get) => ({
       selectedTransferDate: new Date(),
       fromObjectId: "all",
       toObjectId: "all",
+    }),
+
+  resetEmployeeFilters: () =>
+    set({
+      searchQuery: "",
+      selectedObjectId: "all",
+      selectedEmployeePosition: null,
+      selectedEmployeeStatus: null,
+      selectedSkills: [],
     }),
 }));
