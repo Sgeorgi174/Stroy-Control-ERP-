@@ -460,7 +460,7 @@ export class ClothesService {
             clothingHeightId: transfer.clothes.clothingHeightId ?? null,
             footwearSizeId: transfer.clothes.footwearSizeId ?? null,
             price: transfer.clothes.price,
-            quantity: transfer.clothes.quantity,
+            quantity: dto.quantity,
             providerId: transfer.clothes.providerId,
             objectId: transfer.toObjectId,
           },
@@ -835,7 +835,30 @@ export class ClothesService {
             },
           });
         } else {
-          return await prisma.clothes.create({
+          const existing = await prisma.clothes.findFirst({
+            where: {
+              objectId: dto.objectId,
+              name: clothing.name,
+              type: clothing.type,
+              season: clothing.season,
+              clothingSizeId: clothing.clothingSizeId ?? null,
+              clothingHeightId: clothing.clothingHeightId ?? null,
+              footwearSizeId: clothing.footwearSizeId ?? null,
+            },
+          });
+
+          if (existing) {
+            // Если такая одежда уже есть — просто увеличиваем количество
+            return await this.prismaService.clothes.update({
+              where: { id: existing.id },
+              data: {
+                quantity: { increment: 1 },
+              },
+            });
+          }
+
+          // Если нет — создаём новую запись
+          return await this.prismaService.clothes.create({
             data: {
               name: clothing.name,
               type: clothing.type,
