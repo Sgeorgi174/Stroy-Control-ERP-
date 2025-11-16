@@ -27,7 +27,7 @@ const baseSchema = z.object({
     .min(1, { message: "Цена должна быть больше 0" }),
   quantity: z
     .number({ invalid_type_error: "Введите количество" })
-    .min(0, { message: "Количество должно быть больше 0" }),
+    .min(1, { message: "Количество должно быть больше 0" }),
   type: z.enum(["CLOTHING", "FOOTWEAR"], { message: "Выберите тип одежды" }),
   season: z.enum(["WINTER", "SUMMER"], { message: "Выберите сезон" }),
 });
