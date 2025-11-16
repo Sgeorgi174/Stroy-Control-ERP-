@@ -140,8 +140,8 @@ export class EmployeeClothingService {
       const updated = await this.prismaService.employeeClothing.update({
         where: { id: recordId },
         data: {
-          priceWhenIssued: dto.priceWhenIssued,
-          debtAmount: dto.debtAmount,
+          priceWhenIssued: new Decimal(dto.priceWhenIssued),
+          debtAmount: new Decimal(dto.debtAmount),
           issuedAt: dto.issuedAt ? new Date(dto.issuedAt) : existing.issuedAt,
           clothing: {
             update: {
