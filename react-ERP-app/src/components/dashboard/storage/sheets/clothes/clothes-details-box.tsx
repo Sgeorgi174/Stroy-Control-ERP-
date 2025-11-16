@@ -11,6 +11,13 @@ export function ClothesDetailsBox({ clothes }: ClothesDetailsBoxProps) {
       <Card>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-4 items-start gap-y-5 gap-x-4">
+            <div className="col-span-4">
+              <p className="text-sm text-muted-foreground">Поставщик</p>
+              <div className="flex gap-1 items-center">
+                <p className="font-medium">{clothes.provider.name}</p>
+              </div>
+            </div>
+
             <div className="col-span-1">
               <p className="text-sm text-muted-foreground">Кол-во</p>
               <div className="flex gap-2 items-center">

@@ -46,6 +46,9 @@ export function ClothesTable({
             <TableHead className="text-secondary font-bold">
               Место хранения
             </TableHead>
+            <TableHead className="text-secondary font-bold">
+              Поставщик
+            </TableHead>
             <TableHead className="text-secondary font-bold"></TableHead>
           </TableRow>
         </TableHeader>
@@ -80,6 +83,7 @@ export function ClothesTable({
                 {item.inTransit.reduce((acc, curr) => acc + curr.quantity, 0)}
               </TableCell>
               <TableCell>{item.storage.name}</TableCell>
+              <TableCell>{item.provider.name}</TableCell>
               <TableCell>
                 <div onClick={(e) => e.stopPropagation()}>
                   <ClothesDropdown clothes={item} />
