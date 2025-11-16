@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class ChangeDebtDto {
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  debt: number;
+  debt: string;
 }

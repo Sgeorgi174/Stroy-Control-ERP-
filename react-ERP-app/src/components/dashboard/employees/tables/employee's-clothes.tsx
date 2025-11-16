@@ -118,7 +118,7 @@ export function EmployeeClothesTable({
                     <TableCell>
                       <Badge
                         className={
-                          remainingDebt > 0
+                          Number(remainingDebt) > 0
                             ? "bg-red-100 text-red-800"
                             : "bg-green-100 text-green-800"
                         }
@@ -127,7 +127,7 @@ export function EmployeeClothesTable({
                       </Badge>
                     </TableCell>
                     <TableCell className="flex items-center gap-2">
-                      {remainingDebt > 0 ? (
+                      {Number(remainingDebt) > 0 ? (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button

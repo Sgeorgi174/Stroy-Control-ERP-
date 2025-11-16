@@ -11,14 +11,14 @@ export type EmployeeClothingItem = {
   clothingId: string;
   issuedAt: string; // исправлено
   priceWhenIssued: number;
-  debtAmount: number;
+  debtAmount: string;
   isReturned: boolean;
   clothing: Clothes;
 };
 
 export interface UpdateIssuedClothingDto {
   priceWhenIssued: number;
-  debtAmount: number;
+  debtAmount: string;
   issuedAt: string;
   clothingSizeId?: string | null;
   clothingHeightId?: string | null;

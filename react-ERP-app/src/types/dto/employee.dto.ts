@@ -69,5 +69,5 @@ export type ArchiveDto = {
 };
 
 export type ChangeDebtDto = {
-  debt: number;
+  debt: string;
 };

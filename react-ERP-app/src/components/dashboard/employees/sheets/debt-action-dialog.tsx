@@ -16,7 +16,7 @@ interface DebtActionDialogProps {
   clothing: EmployeeClothingItem;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: (amount: number) => void;
+  onConfirm: (amount: string) => void;
   actionType: "reduce" | "writeoff";
 }
 
@@ -34,20 +34,25 @@ export function DebtActionDialog({
     amount.trim() !== "" &&
     !Number.isNaN(parsedAmount) &&
     parsedAmount > 0 &&
-    parsedAmount <= clothing.debtAmount;
+    parsedAmount <= Number(clothing.debtAmount);
 
   const handleConfirm = () => {
     const numAmount =
-      actionType === "writeoff" ? clothing.debtAmount : parsedAmount;
+      actionType === "writeoff" ? Number(clothing.debtAmount) : parsedAmount;
 
     if (actionType === "writeoff" || (isAmountValid && parsedAmount > 0)) {
-      onConfirm(numAmount);
+      onConfirm(String(numAmount));
       setAmount("");
       onOpenChange(false);
     }
   };
 
-  const remainingDebt = clothing.priceWhenIssued - clothing.debtAmount;
+  // Округляем до одного знака после запятой
+  const priceIssued = Math.round(Number(clothing.priceWhenIssued) * 10) / 10;
+  const remainingDebt =
+    Math.round(
+      (Number(clothing.priceWhenIssued) - Number(clothing.debtAmount)) * 10
+    ) / 10;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -59,7 +64,7 @@ export function DebtActionDialog({
               : "Списание долга"}
           </DialogTitle>
           <DialogDescription>
-            {clothing.clothing.name} — Остаток долга: {clothing.debtAmount}
+            {clothing.clothing.name} — Остаток долга: {remainingDebt.toFixed(1)}
           </DialogDescription>
         </DialogHeader>
 
@@ -68,11 +73,11 @@ export function DebtActionDialog({
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-muted-foreground">Цена при выдаче:</span>
-                <p className="font-medium">{clothing.priceWhenIssued}</p>
+                <p className="font-medium">{priceIssued.toFixed(1)}</p>
               </div>
               <div>
                 <span className="text-muted-foreground">Всего оплачено:</span>
-                <p className="font-medium">{remainingDebt}</p>
+                <p className="font-medium">{remainingDebt.toFixed(1)}</p>
               </div>
             </div>
           </div>
@@ -102,7 +107,8 @@ export function DebtActionDialog({
             <div className="bg-red-50 p-4 rounded-lg border border-red-200">
               <p className="text-sm text-red-800">
                 Вы собираетесь списать весь оставшийся долг в размере{" "}
-                {clothing.debtAmount}. Это действие нельзя отменить.
+                {Number(clothing.debtAmount).toFixed(1)}. Это действие нельзя
+                отменить.
               </p>
             </div>
           )}

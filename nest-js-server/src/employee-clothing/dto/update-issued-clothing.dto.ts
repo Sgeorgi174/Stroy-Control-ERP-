@@ -1,11 +1,11 @@
-import { IsNumber, IsOptional, IsString, IsDateString } from 'class-validator';
+import { IsString, IsOptional, IsDateString } from 'class-validator';
 
 export class UpdateIssuedClothingDto {
-  @IsNumber()
-  priceWhenIssued: number;
+  @IsString()
+  priceWhenIssued: string;
 
-  @IsNumber()
-  debtAmount: number;
+  @IsString()
+  debtAmount: string;
 
   @IsDateString()
   issuedAt: string;

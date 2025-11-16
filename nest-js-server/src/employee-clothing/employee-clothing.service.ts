@@ -93,25 +93,19 @@ export class EmployeeClothingService {
 
   async changeDebt(recordId: string, dto: ChangeDebtDto) {
     try {
-      if (dto.debt <= 0) {
+      const deduction = new Decimal(dto.debt);
+      if (deduction.lte(0)) {
         throw new BadRequestException('Сумма списания должна быть больше 0');
       }
 
       const employeeClothingRec =
         await this.prismaService.employeeClothing.findFirstOrThrow({
-          where: {
-            id: recordId,
-            isReturned: false,
-          },
+          where: { id: recordId, isReturned: false },
         });
 
       const currentDebt = new Decimal(employeeClothingRec.debtAmount);
-      const deduction = new Decimal(dto.debt);
-
       const newDebt = currentDebt.minus(deduction);
-
       const newDebtFixed = newDebt.isNegative() ? new Decimal(0) : newDebt;
-
       const isReturned = newDebtFixed.eq(0);
 
       return await this.prismaService.employeeClothing.update({

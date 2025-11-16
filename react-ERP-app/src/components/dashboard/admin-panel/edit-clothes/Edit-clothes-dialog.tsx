@@ -24,7 +24,7 @@ type ClothingItem = {
   id: string;
   priceWhenIssued: number;
   issuedAt: string;
-  debtAmount: number;
+  debtAmount: string;
   clothing: {
     id: string;
     name: string;
@@ -40,7 +40,7 @@ type Props = {
   onSave: (updated: {
     id: string;
     priceWhenIssued: number;
-    debtAmount: number;
+    debtAmount: string;
     issuedAt: string;
     clothingSizeId?: string | null;
     clothingHeightId?: string | null;
@@ -145,7 +145,7 @@ export function EditIssuedClothingDialog({ clothingItem, onSave }: Props) {
             <Input
               type="number"
               value={debtAmount}
-              onChange={(e) => setDebtAmount(Number(e.target.value))}
+              onChange={(e) => setDebtAmount(e.target.value)}
               className="w-[200px]"
             />
           </div>

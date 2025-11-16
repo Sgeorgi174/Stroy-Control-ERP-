@@ -22,7 +22,7 @@ export function EmployeeDetails({ employee }: EmployeeDetailsProps) {
     selectedClothing ? selectedClothing.id : ""
   );
 
-  const handleConfirmAction = (amount: number) => {
+  const handleConfirmAction = (amount: string) => {
     if (!selectedClothing) return;
 
     if (dialogType === "reduce") {
