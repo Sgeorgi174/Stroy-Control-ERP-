@@ -674,8 +674,8 @@ model EmployeeClothing {
   clothingId String  @map("clothing_id")
 
   issuedAt        DateTime @default(now()) @map("issued_at")
-  priceWhenIssued Int      @map("price_when_issued")
-  debtAmount      Int      @map("debt_amount ")
+  priceWhenIssued Decimal  @map("price_when_issued") @db.Decimal(10, 2)
+  debtAmount      Decimal  @map("debt_amount ") @db.Decimal(10, 2)
   isReturned      Boolean  @default(false) @map("is_returned ")
 }
 

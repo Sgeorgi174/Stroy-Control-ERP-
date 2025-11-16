@@ -6,10 +6,10 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { IssueClothingDto } from './dto/issue-clothing.dto';
-import { EmployeeClothing } from 'generated/prisma';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { ChangeDebtDto } from './dto/change-debt.dto';
 import { UpdateIssuedClothingDto } from './dto/update-issued-clothing.dto';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class EmployeeClothingService {
@@ -55,30 +55,32 @@ export class EmployeeClothingService {
 
   async getEmployeeDebtDetails(employeeId: string) {
     try {
-      const items: EmployeeClothing[] =
-        await this.prismaService.employeeClothing.findMany({
-          where: {
-            employeeId,
-          },
-          include: {
-            clothing: {
-              select: {
-                name: true,
-                id: true,
-                season: true,
-                clothingHeight: true,
-                clothingSize: true,
-                footwearSize: true,
-                type: true,
-              },
+      const items = await this.prismaService.employeeClothing.findMany({
+        where: { employeeId },
+        include: {
+          clothing: {
+            select: {
+              name: true,
+              id: true,
+              season: true,
+              clothingHeight: true,
+              clothingSize: true,
+              footwearSize: true,
+              type: true,
             },
           },
-          orderBy: { issuedAt: 'asc' },
-        });
+        },
+        orderBy: { issuedAt: 'asc' },
+      });
 
-      const totalDebt: number = items.reduce((sum, item) => {
-        return sum + (item.debtAmount ?? 0);
-      }, 0);
+      // сумма всех Decimal → Decimal
+      const totalDebtDecimal = items.reduce(
+        (sum, item) => sum.plus(item.debtAmount ?? 0),
+        new Decimal(0),
+      );
+
+      // если нужно вернуть number, делаем toNumber()
+      const totalDebt = totalDebtDecimal.toNumber();
 
       return { items, totalDebt };
     } catch (error) {
@@ -99,18 +101,23 @@ export class EmployeeClothingService {
         await this.prismaService.employeeClothing.findFirstOrThrow({
           where: {
             id: recordId,
-            isReturned: false, // работаем только с незакрытыми долгами
+            isReturned: false,
           },
         });
 
-      const currentDebt = employeeClothingRec.debtAmount;
-      const newDebt = Math.max(0, currentDebt - dto.debt); // не позволим уйти в минус
-      const isReturned = newDebt === 0;
+      const currentDebt = new Decimal(employeeClothingRec.debtAmount);
+      const deduction = new Decimal(dto.debt);
+
+      const newDebt = currentDebt.minus(deduction);
+
+      const newDebtFixed = newDebt.isNegative() ? new Decimal(0) : newDebt;
+
+      const isReturned = newDebtFixed.eq(0);
 
       return await this.prismaService.employeeClothing.update({
         where: { id: recordId },
         data: {
-          debtAmount: newDebt,
+          debtAmount: newDebtFixed,
           isReturned,
         },
       });

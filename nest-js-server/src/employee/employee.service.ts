@@ -10,6 +10,7 @@ import { AddSkillsDto } from './dto/add-skill.dto';
 import { RemoveSkillsDto } from './dto/remove-skill.dto';
 import { ArchiveDto } from './dto/archive-employee.dto';
 import { EmployeeStatusService } from './employee-status.service';
+import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class EmployeeService {
@@ -351,7 +352,12 @@ export class EmployeeService {
   public async archiveEmployee(id: string, dto: ArchiveDto, userId: string) {
     const employee = await this.getById(id);
 
-    if (employee.clothing.filter((item) => item.debtAmount > 0).length > 0)
+    // Проверка долгов — теперь Decimal
+    const hasDebt = employee.clothing.some((item) =>
+      new Decimal(item.debtAmount).gt(0),
+    );
+
+    if (hasDebt)
       throw new BadRequestException(
         'Архивация не возможна. У сотрудника есть непогашенный долг',
       );
