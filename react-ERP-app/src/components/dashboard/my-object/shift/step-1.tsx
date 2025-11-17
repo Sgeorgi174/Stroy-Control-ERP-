@@ -101,7 +101,7 @@ export default function Step1SelectHours({
               value={plannedHours > 0 ? plannedHours.toString() : undefined}
               onValueChange={(val) => setPlannedHours(Number(val))}
             >
-              <SelectTrigger className="w-[120px]">
+              <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Выберите часы" />
               </SelectTrigger>
               <SelectContent>
