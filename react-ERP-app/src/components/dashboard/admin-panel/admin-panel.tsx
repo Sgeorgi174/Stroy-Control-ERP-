@@ -27,6 +27,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { GenerateEmployees } from "./generate-employees";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 type AdminPanelProps = {
   users: User[];
@@ -64,6 +66,8 @@ export function AdminPanel({
     skillIds: "",
     type: "ACTIVE",
   });
+
+  const { data: user } = useAuth();
   return (
     <>
       <Card className="mt-6">
@@ -125,6 +129,12 @@ export function AdminPanel({
           </Table>
         </CardContent>
       </Card>
+
+      {user?.role === "ADMIN" && (
+        <div className="mt-6">
+          <GenerateEmployees objectId="908eeaf5-1deb-496a-a411-f2281e7c1543" />
+        </div>
+      )}
 
       <div className="mt-10">
         <p className="text-2xl font-medium">Редактирование спецовки</p>

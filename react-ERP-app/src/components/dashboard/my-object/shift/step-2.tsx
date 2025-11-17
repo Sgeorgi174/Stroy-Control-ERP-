@@ -9,7 +9,6 @@ import {
 import { Input } from "@/components/ui/input";
 import type { Positions } from "@/types/employee";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 interface EmployeeSelection {
   id: string;
@@ -32,7 +31,6 @@ interface Step2AssignTasksProps {
 export default function Step2AssignTasks({
   employeeSelections,
   setEmployeeSelections,
-  onNext,
 }: Step2AssignTasksProps) {
   const handleTaskChange = (id: string, value: string) => {
     setEmployeeSelections((prev) =>
@@ -87,10 +85,6 @@ export default function Step2AssignTasks({
             ))}
           </TableBody>
         </Table>
-      </div>
-
-      <div className="mt-4 flex justify-end border-t pt-4 bg-background sticky bottom-0">
-        <Button onClick={onNext}>Далее</Button>
       </div>
     </div>
   );

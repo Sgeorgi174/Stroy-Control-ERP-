@@ -16,12 +16,14 @@ import { useState } from "react";
 import { AlertDialogDelete } from "../../alert-dialog-delete";
 import { useDeleteTool } from "@/hooks/tool/useDeleteTool";
 import { ToolCommentDialog } from "../tool-comment-dialog";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 type ToolDropDownProps = { tool: Tool };
 
 export function ToolsDropDown({ tool }: ToolDropDownProps) {
   const { openSheet } = useToolsSheetStore();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const { data: user } = useAuth();
 
   const [commentDialog, setCommentDialog] = useState<{
     type: "add" | "edit" | "delete" | null;
@@ -35,6 +37,9 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
       onError: () => setIsDeleteDialogOpen(false),
     });
   };
+  console.log(tool);
+
+  const hasComment = Boolean(tool.comment && tool.comment.trim().length > 0);
 
   return (
     <>
@@ -63,6 +68,7 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
               <DropdownMenuSubContent>
                 <DropdownMenuGroup>
                   <DropdownMenuItem
+                    disabled={user?.role === "FOREMAN"}
                     onClick={(e) => {
                       e.stopPropagation();
                       openSheet("edit", tool);
@@ -71,6 +77,7 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
                     Сумку
                   </DropdownMenuItem>
                   <DropdownMenuItem
+                    disabled={user?.role === "FOREMAN"}
                     onClick={(e) => {
                       e.stopPropagation();
                       openSheet("edit bag", tool);
@@ -85,6 +92,7 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
 
           {!tool.isBag && (
             <DropdownMenuItem
+              disabled={user?.role === "FOREMAN"}
               onClick={(e) => {
                 e.stopPropagation();
                 openSheet("edit", tool);
@@ -96,7 +104,7 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
 
           {tool.isBulk && (
             <DropdownMenuItem
-              disabled={tool.status !== "ON_OBJECT"}
+              disabled={tool.status !== "ON_OBJECT" || user?.role === "FOREMAN"}
               onClick={(e) => {
                 e.stopPropagation();
                 openSheet("add qunatity", tool);
@@ -108,7 +116,7 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
 
           {tool.isBulk && (
             <DropdownMenuItem
-              disabled={tool.status !== "ON_OBJECT"}
+              disabled={tool.status !== "ON_OBJECT" || user?.role === "FOREMAN"}
               onClick={(e) => {
                 e.stopPropagation();
                 openSheet("write off", tool);
@@ -120,7 +128,10 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
 
           {
             <DropdownMenuItem
-              disabled={tool.status !== "ON_OBJECT"}
+              disabled={
+                tool.status !== "ON_OBJECT" ||
+                (user?.role === "FOREMAN" && user?.object?.id !== tool.objectId)
+              }
               onClick={(e) => {
                 e.stopPropagation();
                 openSheet("transfer", tool);
@@ -135,7 +146,8 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
               disabled={
                 tool.status === "IN_TRANSIT" ||
                 tool.status === "LOST" ||
-                tool.status === "WRITTEN_OFF"
+                tool.status === "WRITTEN_OFF" ||
+                user?.role === "FOREMAN"
               }
               onClick={(e) => {
                 e.stopPropagation();
@@ -154,6 +166,7 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
             <DropdownMenuSubContent>
               <DropdownMenuGroup>
                 <DropdownMenuItem
+                  disabled={user?.role === "FOREMAN" || hasComment}
                   onClick={(e) => {
                     e.stopPropagation();
                     setCommentDialog({ type: "add" });
@@ -161,8 +174,9 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
                 >
                   Добавить
                 </DropdownMenuItem>
+
                 <DropdownMenuItem
-                  disabled={tool.comment ? false : true}
+                  disabled={user?.role === "FOREMAN" || !hasComment}
                   onClick={(e) => {
                     e.stopPropagation();
                     setCommentDialog({ type: "edit" });
@@ -170,8 +184,9 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
                 >
                   Редактировать
                 </DropdownMenuItem>
+
                 <DropdownMenuItem
-                  disabled={tool.comment ? false : true}
+                  disabled={user?.role === "FOREMAN" || !hasComment}
                   onClick={(e) => {
                     e.stopPropagation();
                     setCommentDialog({ type: "delete" });
@@ -186,6 +201,7 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
           <DropdownMenuSeparator />
 
           <DropdownMenuItem
+            disabled={user?.role === "FOREMAN"}
             variant="destructive"
             onClick={(e) => {
               e.stopPropagation();

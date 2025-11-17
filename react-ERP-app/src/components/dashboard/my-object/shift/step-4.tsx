@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import type { Positions } from "@/types/employee";
 
 interface EmployeeSelection {
@@ -27,7 +26,6 @@ interface Step4SummaryProps {
 
 export default function Step4Summary({
   employeeSelections,
-  onFinish,
 }: Step4SummaryProps) {
   const selectedEmployees = employeeSelections.filter((e) => e.selected);
   const absentEmployees = employeeSelections.filter((e) => !e.selected);
@@ -90,10 +88,6 @@ export default function Step4Summary({
             </Table>
           )}
         </div>
-      </div>
-
-      <div className="mt-4 flex justify-end border-t pt-4 bg-background sticky bottom-0">
-        <Button onClick={onFinish}>Завершить</Button>
       </div>
     </div>
   );

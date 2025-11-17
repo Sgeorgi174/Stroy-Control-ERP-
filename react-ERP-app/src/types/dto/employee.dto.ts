@@ -1,4 +1,9 @@
-import type { Countries, Positions } from "../employee";
+import type {
+  Countries,
+  EmployeeStatuses,
+  EmployeeType,
+  Positions,
+} from "../employee";
 
 export type CreateEmployeeDto = {
   firstName: string;
@@ -22,6 +27,8 @@ export type CreateEmployeeDto = {
   registrationBuild: string;
   registrationFlat: string | undefined;
   dob: string;
+  type?: EmployeeType;
+  status?: EmployeeStatuses;
 };
 
 export type UpdateEmployeeDto = {

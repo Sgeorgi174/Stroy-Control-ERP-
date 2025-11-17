@@ -15,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils/format-date";
 import type { Employee, Positions } from "@/types/employee";
 
@@ -46,7 +45,6 @@ export default function Step1SelectHours({
   employees,
   employeeSelections,
   setEmployeeSelections,
-  onNext,
 }: Step1Props) {
   const hoursOptions = [7, 8, 9, 10, 11, 12];
   const employeeHoursOptions = [5, 6, 7, 8, 9, 10, 11, 12];
@@ -121,8 +119,6 @@ export default function Step1SelectHours({
       {plannedHours > 0 && (
         <>
           <div className="flex-1 overflow-y-auto rounded-md border p-3">
-            <h4 className="font-medium mb-4">Выбор сотрудников</h4>
-
             <Table>
               <TableHeader className="sticky top-0 bg-background z-10">
                 <TableRow>
@@ -189,11 +185,6 @@ export default function Step1SelectHours({
                 })}
               </TableBody>
             </Table>
-          </div>
-
-          {/* фиксированная панель снизу */}
-          <div className="mt-4 flex justify-end border-t pt-4 bg-background sticky bottom-0">
-            <Button onClick={onNext}>Далее</Button>
           </div>
         </>
       )}

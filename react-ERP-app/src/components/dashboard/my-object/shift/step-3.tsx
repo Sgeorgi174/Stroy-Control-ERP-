@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import type { Positions } from "@/types/employee";
 
 interface EmployeeSelection {
@@ -33,7 +32,6 @@ interface Step3AbsenceReasonProps {
 export default function Step3AbsenceReason({
   employeeSelections,
   setEmployeeSelections,
-  onNext,
 }: Step3AbsenceReasonProps) {
   const absentEmployees = employeeSelections.filter((emp) => !emp.selected);
 
@@ -90,10 +88,6 @@ export default function Step3AbsenceReason({
             ))}
           </TableBody>
         </Table>
-      </div>
-
-      <div className="mt-4 flex justify-end border-t pt-4 bg-background sticky bottom-0">
-        <Button onClick={onNext}>Далее</Button>
       </div>
     </div>
   );
