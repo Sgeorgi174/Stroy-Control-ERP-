@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Image, LoaderCircle } from "lucide-react";
 import type { PendingClothesTransfer } from "@/types/transfers";
-import { baseUrl } from "@/constants/baseUrl";
+import { photoUrl } from "@/constants/baseUrl";
 import { useGetClothesTransferPhoto } from "@/hooks/user/useGetClothesTransferPhoto";
 import { useRequestClothesPhoto } from "@/hooks/clothes/useClothes";
 
@@ -53,7 +53,7 @@ export const ClothesPhotoSection = ({
         {hasPhoto && !isPoolingPhoto ? (
           <img
             className="w-full rounded-md"
-            src={`${baseUrl}${currentPhotoUrl}?t=${Date.now()}`}
+            src={`${photoUrl}${currentPhotoUrl}?t=${Date.now()}`}
             alt="Фото инструмента"
           />
         ) : isPoolingPhoto ? (

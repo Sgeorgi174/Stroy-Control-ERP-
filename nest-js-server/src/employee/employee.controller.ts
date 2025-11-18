@@ -48,6 +48,7 @@ export class EmployeeController {
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
+    Roles.HR,
   )
   @Get('filter')
   async getFiltered(@Query() query: GetEmployeeQueryDto) {
@@ -60,6 +61,7 @@ export class EmployeeController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+    Roles.HR,
   )
   @Get('by-id/:id')
   async getById(@Param('id') id: string) {
@@ -72,6 +74,7 @@ export class EmployeeController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+    Roles.HR,
   )
   @Get('free-employees')
   async getFreeEmployees() {
@@ -84,6 +87,7 @@ export class EmployeeController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+    Roles.HR,
   )
   @Post('assign')
   async assignEmployeesToObject(@Body() dto: AssignEmployeesDto) {
@@ -96,6 +100,7 @@ export class EmployeeController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+    Roles.HR,
   )
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateDto) {
@@ -108,6 +113,7 @@ export class EmployeeController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+    Roles.HR,
   )
   @Patch('transfer/:id')
   async transfer(@Param('id') id: string, @Body() dto: TransferEmployeeDto) {
@@ -120,6 +126,7 @@ export class EmployeeController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+    Roles.HR,
   )
   @Patch('unassign/:id')
   async unassignFromObject(@Param('id') id: string) {
@@ -132,6 +139,7 @@ export class EmployeeController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+    Roles.HR,
   )
   @Post('add-skills/:id')
   async addSkills(@Param('id') employeeId: string, @Body() dto: AddSkillsDto) {
@@ -144,6 +152,7 @@ export class EmployeeController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+    Roles.HR,
   )
   @Patch('remove-skill/:id')
   async removeSkill(
@@ -159,6 +168,7 @@ export class EmployeeController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+    Roles.HR,
   )
   @Patch('archive/:id')
   async archiveEmployee(
@@ -175,6 +185,7 @@ export class EmployeeController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+    Roles.HR,
   )
   @Patch('restore/:id')
   async restoreEmployee(@Param('id') id: string) {
@@ -187,6 +198,7 @@ export class EmployeeController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+    Roles.HR,
   )
   @Delete('delete/:id')
   @HttpCode(HttpStatus.NO_CONTENT)

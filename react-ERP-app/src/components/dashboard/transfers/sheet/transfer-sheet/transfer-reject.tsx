@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { baseUrl } from "@/constants/baseUrl";
+import { photoUrl } from "@/constants/baseUrl";
 import type {
   PendingClothesTransfer,
   PendingDeviceTransfer,
@@ -49,7 +49,8 @@ export function TransferReject({
             <div className="bg-muted p-4 rounded-lg">
               <img
                 src={
-                  `${baseUrl}${selectedTransfer.photoUrl}` || "/placeholder.svg"
+                  `${photoUrl}${selectedTransfer.photoUrl}` ||
+                  "/placeholder.svg"
                 }
                 alt="Rejection evidence"
                 className="max-w-full h-auto rounded-md"

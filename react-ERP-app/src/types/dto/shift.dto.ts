@@ -16,8 +16,28 @@ export interface CreateShiftDto {
   employees: ShiftEmployeeDto[];
 }
 
+export interface CreateShiftTemplateDto {
+  name: string;
+
+  plannedHours: number;
+
+  objectId: string;
+
+  employees: ShiftEmployeeDto[];
+}
+
 export interface UpdateShiftDto extends CreateShiftDto {
   updatedReason: string;
+}
+
+export interface UpdateShiftTemplateDto {
+  name: string;
+
+  plannedHours: number;
+
+  objectId: string;
+
+  employees: ShiftEmployeeDto[];
 }
 
 export interface GetShiftsFilterDto {

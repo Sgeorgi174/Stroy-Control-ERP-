@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Image, LoaderCircle } from "lucide-react";
 import type { PendingDeviceTransfer } from "@/types/transfers";
-import { baseUrl } from "@/constants/baseUrl";
+import { photoUrl } from "@/constants/baseUrl";
 import { useRequestDevicePhoto } from "@/hooks/device/useRequestDevicePhoto";
 import { useGetDeviceTransferPhoto } from "@/hooks/user/useGetDeviceTransferPhoto";
 
@@ -51,7 +51,7 @@ export const DevicePhotoSection = ({
         {hasPhoto && !isPoolingPhoto ? (
           <img
             className="w-full rounded-md"
-            src={`${baseUrl}${currentPhotoUrl}?t=${Date.now()}`}
+            src={`${photoUrl}${currentPhotoUrl}?t=${Date.now()}`}
             alt="Фото инструмента"
           />
         ) : isPoolingPhoto ? (

@@ -42,6 +42,7 @@ export class ShiftController {
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
+    Roles.HR,
   )
   @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('filter')
@@ -56,6 +57,7 @@ export class ShiftController {
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
+    Roles.HR,
   )
   @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Get('get-by-object/:id')
@@ -70,8 +72,8 @@ export class ShiftController {
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
+    Roles.HR,
   )
-  @Authorization(Roles.OWNER, Roles.FOREMAN)
   @Put('update/:id')
   async update(@Param('id') id: string, @Body() dto: UpdateShiftDto) {
     return this.shiftService.updateShift(id, dto);

@@ -34,6 +34,7 @@ export class EmployeeClothingController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+    Roles.HR,
   )
   @Get('debt/:id')
   async getDebtDetails(@Param('id') employeeId: string) {

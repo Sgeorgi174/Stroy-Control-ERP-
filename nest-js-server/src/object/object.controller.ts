@@ -44,6 +44,7 @@ export class ObjectController {
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
+    Roles.HR,
   )
   @Get('filter')
   async getFiltered(@Query() query: GetObjectQueryDto) {
@@ -69,6 +70,7 @@ export class ObjectController {
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
+    Roles.HR,
   )
   @Get('by-id/:id')
   async getById(@Param('id') id: string) {
@@ -82,6 +84,7 @@ export class ObjectController {
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
+    Roles.HR,
   )
   @Get('user')
   async getByUserId(@Authorized('id') userId: string) {

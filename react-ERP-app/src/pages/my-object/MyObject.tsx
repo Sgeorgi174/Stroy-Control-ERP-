@@ -16,9 +16,18 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { startOfDay, endOfDay } from "date-fns";
+import { ShiftTemplateCreateDialog } from "@/components/dashboard/my-object/shift/create-shift-template";
+import { useShiftTemplatesByObject } from "@/hooks/shift-template/useShiftTemplate";
+import { ShiftTemplatePreviewDialog } from "@/components/dashboard/my-object/shift/shift-template-preview";
 
 export function MyObject() {
   const { data: user } = useAuth();
+  const objectId = user?.object?.id;
+
+  const { data: shiftTemplates = [] } = useShiftTemplatesByObject(
+    objectId,
+    !!objectId // enabled = true только если objectId существует
+  );
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
@@ -51,8 +60,6 @@ export function MyObject() {
     0
   );
 
-  console.log(user);
-
   if (!user?.object?.id)
     return (
       <div className="flex w-full h-full items-center justify-center">
@@ -70,22 +77,35 @@ export function MyObject() {
           <Card className="flex justify-center p-2 items-center">
             <Clock className="font-medium p-2 text-5xl" />
           </Card>
-          <Card className="p-5 shadow-md border rounded-2xl h-full flex justify-center items-center">
-            <div className="w-full flex justify-center items-center max-w-[360px]">
-              <Calendar01
-                selectedDate={selectedDate}
-                onSelectDate={setSelectedDate}
-                shiftDates={shiftDates}
-              />
-            </div>
-          </Card>
+
+          <Calendar01
+            selectedDate={selectedDate}
+            onSelectDate={setSelectedDate}
+            shiftDates={shiftDates}
+          />
         </div>
       </div>
 
       <div className="p-5 shadow-md border rounded-2xl flex flex-col mt-8">
-        <div className="flex items-center gap-2">
-          <Users size={30} />
-          <p className="font-bold text-3xl">Управление сменой</p>
+        <div className="flex justify-between">
+          <div className="flex items-center gap-2">
+            <Users size={30} />
+            <p className="font-bold text-3xl">Управление сменой</p>
+          </div>
+          <div>
+            {shiftTemplates && shiftTemplates?.length < 1 && (
+              <ShiftTemplateCreateDialog
+                objectId={user?.object?.id || "none"}
+              />
+            )}
+            {shiftTemplates &&
+              shiftTemplates.map((shiftTemplate) => (
+                <ShiftTemplatePreviewDialog
+                  key={shiftTemplate.id}
+                  template={shiftTemplate}
+                />
+              ))}
+          </div>
         </div>
 
         {!todayShift ? (
@@ -95,7 +115,10 @@ export function MyObject() {
             <p className="text-muted-foreground">
               Нажмите "Открыть смену", чтобы назначить сотрудников на эту дату
             </p>
-            <ShiftOpenDialog objectId={user?.object?.id || "none"} />
+            <ShiftOpenDialog
+              objectId={user?.object?.id || "none"}
+              shiftTemplates={shiftTemplates}
+            />
           </div>
         ) : (
           <div className="mt-6 flex flex-col gap-6">

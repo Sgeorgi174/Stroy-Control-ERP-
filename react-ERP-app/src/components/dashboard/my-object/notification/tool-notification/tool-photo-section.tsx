@@ -4,7 +4,7 @@ import { Image, LoaderCircle } from "lucide-react";
 import { useRequestToolPhoto } from "@/hooks/tool/useRequestToolPhoto";
 import { useGetToolTransferPhoto } from "@/hooks/user/useGetToolTransferPhoto";
 import type { PendingToolTransfer } from "@/types/transfers";
-import { baseUrl } from "@/constants/baseUrl";
+import { photoUrl } from "@/constants/baseUrl";
 
 interface ToolPhotoSectionProps {
   toolTransfer: PendingToolTransfer;
@@ -48,7 +48,7 @@ export const ToolPhotoSection = ({ toolTransfer }: ToolPhotoSectionProps) => {
         {hasPhoto && !isPoolingPhoto ? (
           <img
             className="w-full rounded-md"
-            src={`${baseUrl}${currentPhotoUrl}?t=${Date.now()}`}
+            src={`${photoUrl}${currentPhotoUrl}?t=${Date.now()}`}
             alt="Фото инструмента"
           />
         ) : isPoolingPhoto ? (

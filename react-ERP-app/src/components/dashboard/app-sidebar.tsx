@@ -38,7 +38,14 @@ const sidebarItems = [
     url: "/monitoring",
     tab: "monitoring",
     icon: Blocks,
-    roles: ["OWNER", "ACCOUNTANT", "MASTER", "ADMIN", "ASSISTANT_MANAGER"],
+    roles: [
+      "OWNER",
+      "ACCOUNTANT",
+      "MASTER",
+      "ADMIN",
+      "ASSISTANT_MANAGER",
+      "HR",
+    ],
   },
   {
     title: "Мой объект",
@@ -80,7 +87,14 @@ const sidebarItems = [
     url: "/employees",
     tab: "employee",
     icon: Users,
-    roles: ["OWNER", "ACCOUNTANT", "MASTER", "ASSISTANT_MANAGER", "ADMIN"],
+    roles: [
+      "OWNER",
+      "ACCOUNTANT",
+      "MASTER",
+      "ASSISTANT_MANAGER",
+      "ADMIN",
+      "HR",
+    ],
   },
   {
     title: "Админ-панель",
@@ -94,6 +108,7 @@ const sidebarItems = [
       "MASTER",
       "ASSISTANT_MANAGER",
       "ADMIN",
+      "HR",
     ],
   },
 ];
@@ -152,9 +167,12 @@ export function AppSidebar() {
                   Если у вас возникли вопросы или трудности в работе приложения.
                 </p>
                 <div className="flex flex-col gap-1">
-                  <p className="text-[15px] font-medium">🖥 Георгий Силантьев</p>
+                  <p className="text-[15px] font-medium">Георгий Силантьев</p>
                   <p className="text-[15px] font-medium">
-                    📞 Телефон: +7-902-893-47-98
+                    Телефон: +7-902-893-47-98
+                  </p>
+                  <p className="text-[15px] font-medium">
+                    Telegram: @moe2smoke
                   </p>
                 </div>
               </AccordionContent>

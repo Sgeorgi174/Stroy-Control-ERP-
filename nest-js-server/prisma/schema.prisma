@@ -21,7 +21,8 @@ model User {
 
   object Object?
 
-  createdShifts Shift[]
+  createdShifts         Shift[]
+  createdShiftTemplates ShiftTemplate[]
 
   role Roles
 
@@ -95,6 +96,7 @@ model Object {
   clothes              Clothes[]
   devices              Device[]
   shifts               Shift[]
+  shiftsTemplate       ShiftTemplate[]
   fromClothesHistories ClothesHistory[] @relation("clothes_from_object_fk")
   toClothesHistories   ClothesHistory[] @relation("clothes_to_object_fk")
 
@@ -585,6 +587,7 @@ model Employee {
   devices        Tablet[]
   skills         Skill[]
   shifts         ShiftEmployee[]
+  shiftsTemplate ShiftTemplateEmployee[]
   archive        EmployeeArchive?
 
   workPlace Object? @relation(fields: [objectId], references: [id])
@@ -724,6 +727,48 @@ model ShiftEmployee {
 
   @@unique([shiftId, employeeId], name: "shift_employee_unique")
   @@index([shiftId])
+  @@index([employeeId])
+}
+
+model ShiftTemplate {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  name String @unique
+
+  plannedHours Int @map("planned_hours")
+
+  object   Object @relation(fields: [objectId], references: [id])
+  objectId String @map("object_id")
+
+  employees ShiftTemplateEmployee[]
+
+  createdBy   User?   @relation(fields: [createdById], references: [id])
+  createdById String? @map("created_by_id")
+}
+
+model ShiftTemplateEmployee {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  template   ShiftTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  templateId String        @map("template_id")
+
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employeeId String   @map("employee_id")
+
+  workedHours Int? @map("worked_hours")
+
+  present Boolean @default(true)
+
+  absenceReason String? @map("absence_reason")
+  task          String?
+
+  @@index([templateId])
   @@index([employeeId])
 }
 

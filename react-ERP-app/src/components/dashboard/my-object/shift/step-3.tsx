@@ -77,6 +77,8 @@ export default function Step3AbsenceReason({
                 </TableCell>
                 <TableCell>
                   <Input
+                    id={`absence-${emp.id}`}
+                    name="employee-absence"
                     placeholder="Введите причину отсутствия"
                     value={emp.absenceReason || ""}
                     onChange={(e) =>

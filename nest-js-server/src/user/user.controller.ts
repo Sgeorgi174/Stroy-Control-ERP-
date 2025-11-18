@@ -39,6 +39,7 @@ export class UserController {
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
+    Roles.HR,
   )
   @Post('update/:id')
   async updateUser(@Param('id') userId: string, @Body() dto: UpdateUserDto) {
@@ -65,6 +66,7 @@ export class UserController {
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
+    Roles.HR,
   )
   @Authorization()
   @Get('get-all')

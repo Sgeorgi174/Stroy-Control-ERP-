@@ -15,7 +15,7 @@ import { AlertTriangle, ArrowLeft, Building } from "lucide-react";
 import { ToolInfo } from "../tool-notification/tool-notifation-info";
 import { DeviceInfo } from "../device-notification/device-info";
 import { ClothesInfo } from "../clothes-notification/clothes-info";
-import { baseUrl } from "@/constants/baseUrl";
+import { photoUrl } from "@/constants/baseUrl";
 import { useState } from "react";
 import { ConfirmCheckbox } from "../notification-confirm-checkbox";
 import { useConfirmToolTransfer } from "@/hooks/tool/useConfirmToolTransfer";
@@ -135,7 +135,7 @@ export function ReturnNotificationDialog({
             <h4 className="font-medium mb-3">Фото, подтверждающее возврат</h4>
             <div className="bg-muted p-1 rounded-lg">
               <img
-                src={`${baseUrl}${returnTransfer.photoUrl}`}
+                src={`${photoUrl}${returnTransfer.photoUrl}`}
                 alt="Фото возврата"
                 className="max-w-full h-auto rounded-md shadow-sm"
               />

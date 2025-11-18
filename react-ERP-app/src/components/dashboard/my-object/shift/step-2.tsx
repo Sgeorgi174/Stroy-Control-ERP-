@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import type { Positions } from "@/types/employee";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface EmployeeSelection {
   id: string;
@@ -25,20 +26,21 @@ interface Step2AssignTasksProps {
   setEmployeeSelections: React.Dispatch<
     React.SetStateAction<EmployeeSelection[]>
   >;
-  onNext?: () => void;
+  taskHistory: string[];
 }
 
 export default function Step2AssignTasks({
   employeeSelections,
   setEmployeeSelections,
+  taskHistory,
 }: Step2AssignTasksProps) {
+  const selectedEmployees = employeeSelections.filter((emp) => emp.selected);
+
   const handleTaskChange = (id: string, value: string) => {
     setEmployeeSelections((prev) =>
       prev.map((emp) => (emp.id === id ? { ...emp, task: value } : emp))
     );
   };
-
-  const selectedEmployees = employeeSelections.filter((emp) => emp.selected);
 
   if (selectedEmployees.length === 0) {
     return (
@@ -49,7 +51,7 @@ export default function Step2AssignTasks({
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-150px)]">
+    <div>
       <h3 className="text-xl font-medium mb-4">
         Назначение задач выбранным сотрудникам
       </h3>
@@ -59,8 +61,10 @@ export default function Step2AssignTasks({
           <TableHeader className="sticky top-0 bg-background z-10 shadow-sm">
             <TableRow>
               <TableHead>Сотрудник</TableHead>
+              <TableHead>Местный</TableHead>
               <TableHead>Должность</TableHead>
               <TableHead>Часы</TableHead>
+
               <TableHead>Задача</TableHead>
             </TableRow>
           </TableHeader>
@@ -71,15 +75,27 @@ export default function Step2AssignTasks({
                   {emp.lastName} {emp.firstName}
                 </TableCell>
                 <TableCell>
+                  <Checkbox />
+                </TableCell>
+                <TableCell>
                   <Badge variant="outline">{emp.position}</Badge>
                 </TableCell>
                 <TableCell>{emp.workedHours ?? "—"}</TableCell>
+
                 <TableCell>
                   <Input
+                    id={`task-${emp.id}`}
+                    name="employee-task"
                     placeholder="Опишите задачу"
                     value={emp.task || ""}
                     onChange={(e) => handleTaskChange(emp.id, e.target.value)}
+                    list={`task-suggestions-${emp.id}`}
                   />
+                  <datalist id={`task-suggestions-${emp.id}`}>
+                    {taskHistory.map((task, idx) => (
+                      <option key={idx} value={task} />
+                    ))}
+                  </datalist>
                 </TableCell>
               </TableRow>
             ))}

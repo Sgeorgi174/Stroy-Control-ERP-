@@ -20,6 +20,7 @@ import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
 import { SkillModule } from './skill/skill.module';
 import { ShiftModule } from './shift/shift.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ShiftTemplateModule } from './shift-template/shift-template.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     TelegramBotModule,
     SkillModule,
     ShiftModule,
+    ShiftTemplateModule,
   ],
 })
 export class AppModule {}

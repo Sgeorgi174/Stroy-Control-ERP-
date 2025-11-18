@@ -36,8 +36,6 @@ export function NotificationCard() {
     isError: isErrorReturns,
   } = useUserReturns();
 
-  console.log(returns);
-
   const allNotifications: TransferNotification[] = [
     ...unconfirmedItems.tools.map((t) => ({ ...t, type: "tool" as const })),
     ...unconfirmedItems.devices.map((d) => ({ ...d, type: "device" as const })),
@@ -56,8 +54,6 @@ export function NotificationCard() {
     })),
   ];
 
-  console.log(allNotifications);
-
   const sortedTransferNotifications = allNotifications.sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
@@ -69,7 +65,7 @@ export function NotificationCard() {
   return (
     <Tabs defaultValue="important" className="gap-0 col-span-3 ">
       {/* TabsList СНАРУЖИ — без паддингов и без скролла */}
-      <TabsList className="w-full h-[40px] sticky top-0 z-3 bg-accent border border-b-0 rounded-b-none rounded-t-xl">
+      <TabsList className="w-full h-[40px] top-0 z-3 bg-accent border border-b-0 rounded-b-none rounded-t-xl">
         <TabsTrigger value="important">
           Важное
           <Badge className="ml-2 rounded-full bg-muted text-muted-foreground">
