@@ -9,7 +9,7 @@ const tabLabels = {
   employee: "сотрудника",
   "my-object": "",
   tablet: "Планшет",
-  device: "Орг. Технику",
+  device: "инвентарь",
   monitoring: "",
   transfers: "",
   admin: "",

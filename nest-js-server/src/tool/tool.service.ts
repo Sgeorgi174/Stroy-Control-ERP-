@@ -19,7 +19,7 @@ import { RetransferToolDto } from './dto/retransfer.dto';
 import { WriteOffToolInTransferDto } from './dto/write-off-in-transit.dto';
 import { CancelToolTransferDto } from './dto/cancel-transfer.dto';
 import { AddBagItemDto } from './dto/add-bag-item.dto';
-import { BagItem, Roles } from 'generated/prisma';
+import { BagItem, Roles, Tool } from 'generated/prisma';
 import { RemoveBagItemDto } from './dto/remove-bag-item';
 import { AddToolCommentDto } from './dto/add-tool-comment.dto';
 import { AddQuantityToolDto } from './dto/add-quantity-tool.dto';
@@ -268,6 +268,7 @@ export class ToolService {
       },
       include: {
         bagItems: true,
+        inTransit: { select: { quantity: true, status: true } },
         storage: {
           select: {
             foreman: {
@@ -395,6 +396,78 @@ export class ToolService {
     }
   }
 
+  public async transferBulk(id: string, dto: TransferDto, userId: string) {
+    const tool = await this.getById(id);
+
+    if (!tool.isBulk) {
+      throw new ConflictException('Этот инструмент не является групповым');
+    }
+
+    const quantityToMove = dto.quantity ?? 1;
+
+    if (quantityToMove <= 0) {
+      throw new ConflictException('Количество должно быть больше 0');
+    }
+
+    if (quantityToMove > tool.quantity) {
+      throw new ConflictException(
+        `Недостаточно количества. На объекте доступно: ${tool.quantity}`,
+      );
+    }
+
+    if (tool.objectId === dto.objectId) {
+      throw new ConflictException('Нельзя перемещать на тот же объект');
+    }
+
+    if (tool.status !== 'ON_OBJECT') {
+      throw new ConflictException(
+        'Нельзя перемещать инструмент, который не находится на объекте',
+      );
+    }
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        // 1. Уменьшаем количество на исходном объекте
+        await prisma.tool.update({
+          where: { id },
+          data: {
+            quantity: tool.quantity - quantityToMove,
+            // objectId НЕ меняем
+          },
+        });
+
+        // 2. Pending перемещение
+        const pending = await prisma.pendingTransfersTools.create({
+          data: {
+            status: 'IN_TRANSIT',
+            fromObjectId: tool.objectId,
+            toObjectId: dto.objectId,
+            toolId: id,
+            quantity: quantityToMove,
+          },
+        });
+
+        // 3. История перемещения
+        const history = await this.toolHistoryService.create({
+          userId,
+          toolId: id,
+          fromObjectId: tool.objectId ?? undefined,
+          toObjectId: dto.objectId,
+          action: 'TRANSFER',
+          quantity: quantityToMove,
+        });
+
+        return { pending, history };
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        notFoundMessage: 'Инструмент не найден',
+        conflictMessage: 'Ошибка изменения данных',
+        defaultMessage: 'Не удалось выполнить перемещение инструмента',
+      });
+    }
+  }
+
   public async confirmTransfer(recordId: string, userId: string) {
     const transfer = await this.getTransferById(recordId);
 
@@ -439,6 +512,111 @@ export class ToolService {
     }
   }
 
+  public async confirmTransferBulk(recordId: string, userId: string) {
+    const transfer = await this.getTransferById(recordId);
+
+    if (transfer.status !== 'IN_TRANSIT') {
+      throw new ConflictException('Перемещение уже завершено');
+    }
+
+    const tool = transfer.tool;
+
+    if (!tool.isBulk) {
+      throw new ConflictException(
+        'Этот метод обрабатывает только групповые инструменты',
+      );
+    }
+
+    try {
+      return await this.prismaService.$transaction(async (prisma) => {
+        const quantity = transfer.quantity;
+
+        // Ищем такой же bulk-инструмент на объекте назначения
+        const existing = await prisma.tool.findFirst({
+          where: {
+            name: tool.name,
+            isBulk: true,
+            isBag: false,
+            objectId: transfer.toObjectId,
+            serialNumber: null,
+          },
+        });
+
+        let targetTool: Tool;
+
+        if (existing) {
+          // 1. Увеличиваем количество у существующего инструмента
+          targetTool = await prisma.tool.update({
+            where: { id: existing.id },
+            data: {
+              quantity: existing.quantity + quantity,
+            },
+          });
+
+          await prisma.toolHistory.create({
+            data: {
+              action:
+                transfer.rejectMode === 'RETURN_TO_SOURCE'
+                  ? 'RETURN_TO_SOURCE'
+                  : 'CONFIRM',
+              userId,
+              fromObjectId: transfer.fromObjectId ?? undefined,
+              toObjectId: transfer.toObjectId,
+              toolId: targetTool.id, // <-- вот здесь исправление
+              quantity,
+            },
+          });
+        } else {
+          // 2. Создаём новый bulk-инструмент на объекте назначения
+          targetTool = await prisma.tool.create({
+            data: {
+              name: tool.name,
+              description: tool.description,
+              isBulk: true,
+              quantity: quantity,
+              objectId: transfer.toObjectId,
+              status: 'ON_OBJECT',
+            },
+          });
+
+          await prisma.toolHistory.create({
+            data: {
+              action:
+                transfer.rejectMode === 'RETURN_TO_SOURCE'
+                  ? 'RETURN_TO_SOURCE'
+                  : 'CONFIRM',
+              userId,
+              fromObjectId: transfer.fromObjectId ?? undefined,
+              toObjectId: transfer.toObjectId,
+              toolId: targetTool.id, // <-- вот здесь исправление
+              quantity,
+            },
+          });
+        }
+
+        // 3. Завершаем pending запись
+        await prisma.pendingTransfersTools.update({
+          where: { id: recordId },
+          data: { status: 'CONFIRM' },
+        });
+
+        // 4. История: ВАЖНО — записываем ID инструмента на объекте назначения
+
+        return {
+          receivedTool: targetTool,
+        };
+      });
+    } catch (error) {
+      console.log(error);
+
+      handlePrismaError(error, {
+        notFoundMessage: 'Перемещение не найдено',
+        conflictMessage: 'Ошибка обновления данных',
+        defaultMessage: 'Не удалось подтвердить перемещение',
+      });
+    }
+  }
+
   public async rejectTransfer(
     recordId: string,
     userId: string,
@@ -465,6 +643,7 @@ export class ToolService {
           toObjectId: updatedPendingTransfer.toObjectId,
           toolId: updatedPendingTransfer.toolId,
           userId,
+          quantity: updatedPendingTransfer.quantity,
         });
 
         return { updatedPendingTransfer, tranferRecord };
@@ -500,6 +679,7 @@ export class ToolService {
             : undefined,
           toObjectId: dto.toObjectId,
           action: 'TRANSFER',
+          quantity: transfer.quantity,
         });
 
         return await prisma.pendingTransfersTools.create({
@@ -508,6 +688,7 @@ export class ToolService {
             toObjectId: dto.toObjectId,
             status: 'IN_TRANSIT',
             toolId: transfer.toolId,
+            quantity: transfer.quantity,
           },
         });
       });
@@ -520,7 +701,7 @@ export class ToolService {
     }
   }
 
-  public async returnToSource(recordId: string, userId: string) {
+  public async returnToSource(recordId: string) {
     const transfer = await this.getTransferById(recordId);
 
     try {
@@ -528,14 +709,6 @@ export class ToolService {
         await prisma.pendingTransfersTools.update({
           where: { id: recordId },
           data: { rejectMode: 'RETURN_TO_SOURCE' },
-        });
-
-        await this.toolHistoryService.create({
-          userId,
-          toolId: transfer.tool.id,
-          fromObjectId: transfer.toObjectId,
-          toObjectId: transfer.fromObjectId as string,
-          action: 'RETURN_TO_SOURCE',
         });
 
         return await prisma.pendingTransfersTools.create({
@@ -547,6 +720,7 @@ export class ToolService {
             rejectMode: 'RETURN_TO_SOURCE',
             rejectionComment: transfer.rejectionComment,
             photoUrl: transfer.photoUrl,
+            quantity: transfer.quantity,
           },
         });
       });
@@ -573,9 +747,21 @@ export class ToolService {
           data: { rejectMode: 'WRITE_OFF' },
         });
 
-        await this.changeStatus(transfer.toolId, userId, {
+        if (!transfer.tool.isBulk) {
+          return await this.changeStatus(transfer.toolId, userId, {
+            comment: dto.comment,
+            status: dto.status,
+          });
+        }
+
+        return await this.toolHistoryService.create({
+          userId,
+          toolId: transfer.tool.id,
+          toObjectId: transfer.toObjectId,
+          fromObjectId: transfer.fromObjectId ?? undefined,
+          action: 'WRITTEN_OFF',
+          quantity: transfer.quantity,
           comment: dto.comment,
-          status: dto.status,
         });
       });
     } catch (error) {
@@ -602,6 +788,7 @@ export class ToolService {
           where: { id: transfer.toolId },
           data: {
             objectId: transfer.fromObjectId,
+            quantity: { increment: transfer.quantity },
             status: 'ON_OBJECT',
           },
         });
@@ -609,17 +796,20 @@ export class ToolService {
         await this.toolHistoryService.create({
           userId,
           toolId: transfer.tool.id,
-          fromObjectId: transfer.fromObjectId as string,
           toObjectId: transfer.toObjectId,
+          fromObjectId: transfer.fromObjectId ?? undefined,
           action: 'CANCEL',
+          quantity: transfer.quantity,
+          comment: dto.rejectionComment,
         });
-
         return await prisma.pendingTransfersTools.update({
           where: { id: recordId },
           data: { status: 'CANCEL', rejectionComment: dto.rejectionComment },
         });
       });
     } catch (error) {
+      console.log(error);
+
       handlePrismaError(error, {
         notFoundMessage: 'Запись не найдена',
         conflictMessage: 'Обновление нарушает уникальность данных',

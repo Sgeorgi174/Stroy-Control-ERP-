@@ -37,11 +37,7 @@ export class ToolHistoryService {
       return await this.prismaService.toolHistory.findMany({
         where: {
           toolId,
-          OR: [
-            { action: 'CONFIRM' },
-            { action: 'ADD' },
-            { action: 'WRITTEN_OFF' },
-          ],
+          NOT: [{ action: 'REJECT' }],
         },
         include: {
           fromObject: { select: { name: true } },
@@ -76,6 +72,8 @@ export class ToolHistoryService {
   }
 
   public async delete(historyId: string) {
+    console.log(historyId);
+
     try {
       return await this.prismaService.toolHistory.delete({
         where: { id: historyId },

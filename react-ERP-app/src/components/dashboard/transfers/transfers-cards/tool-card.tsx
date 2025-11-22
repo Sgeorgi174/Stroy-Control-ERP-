@@ -27,6 +27,8 @@ type TransferToolCardProps = {
 export function TransferToolCard({ transferTools }: TransferToolCardProps) {
   const { openSheet } = useTransferSheetStore();
 
+  console.log(transferTools);
+
   return (
     <>
       {transferTools.map((transfer) => (
@@ -49,9 +51,16 @@ export function TransferToolCard({ transferTools }: TransferToolCardProps) {
                     {transfer.tool.name}
                   </p>
 
-                  <p className="text-xs text-muted-foreground font-mono">
-                    #{transfer.tool.serialNumber}
-                  </p>
+                  {!transfer.tool.isBulk && (
+                    <p className="text-xs text-muted-foreground font-mono">
+                      #{transfer.tool.serialNumber}
+                    </p>
+                  )}
+                  {transfer.tool.isBulk && (
+                    <p className="text-xs text-muted-foreground font-mono">
+                      Количество: {transfer.quantity}
+                    </p>
+                  )}
                 </div>
               </div>
 

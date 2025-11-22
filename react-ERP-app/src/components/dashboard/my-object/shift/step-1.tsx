@@ -36,7 +36,7 @@ interface Step1Props {
   setEmployeeSelections: React.Dispatch<
     React.SetStateAction<EmployeeSelection[]>
   >;
-  onNext?: () => void; // <-- если нужно вызывать при клике "Далее"
+  isTemplate?: boolean;
 }
 
 export default function Step1SelectHours({
@@ -45,15 +45,30 @@ export default function Step1SelectHours({
   employees,
   employeeSelections,
   setEmployeeSelections,
+  isTemplate = false,
 }: Step1Props) {
   const hoursOptions = [7, 8, 9, 10, 11, 12];
   const employeeHoursOptions = [5, 6, 7, 8, 9, 10, 11, 12];
+
   const today = new Date();
   const formattedDate = formatDate(today.toISOString());
+
+  // ----------------------------------------------------
+  // 🔥 При смене plannedHours — обновляем часы выбранных сотрудников
+  // ----------------------------------------------------
+  const handlePlannedHoursChange = (val: string) => {
+    const hours = Number(val);
+    setPlannedHours(hours);
+
+    setEmployeeSelections((prev) =>
+      prev.map((emp) => (emp.selected ? { ...emp, workedHours: hours } : emp))
+    );
+  };
 
   const toggleEmployee = (employee: Employee) => {
     setEmployeeSelections((prev) => {
       const exists = prev.find((emp) => emp.id === employee.id);
+
       if (exists) {
         return prev.map((emp) =>
           emp.id === employee.id
@@ -65,6 +80,7 @@ export default function Step1SelectHours({
             : emp
         );
       }
+
       return [
         ...prev,
         {
@@ -87,19 +103,21 @@ export default function Step1SelectHours({
 
   return (
     <div className="flex flex-col h-[calc(100vh-150px)]">
-      {/* верхняя панель */}
+      {/* Верхняя панель */}
       <div className="bg-muted rounded-xl p-5 mb-5">
-        <p className="text-xl">Информация о смене</p>
         <div className="flex flex-wrap items-center gap-6 mt-3">
-          <div className="flex items-center gap-3">
-            <p className="font-medium text-blue-500">Дата:</p>
-            <p className="font-medium">{formattedDate}</p>
-          </div>
+          {!isTemplate && (
+            <div className="flex items-center gap-3">
+              <p className="font-medium text-blue-500">Дата:</p>
+              <p className="font-medium">{formattedDate}</p>
+            </div>
+          )}
+
           <div className="flex items-center gap-3">
             <p className="font-medium text-blue-500">Количество часов:</p>
             <Select
               value={plannedHours > 0 ? plannedHours.toString() : undefined}
-              onValueChange={(val) => setPlannedHours(Number(val))}
+              onValueChange={handlePlannedHoursChange}
             >
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Выберите часы" />
@@ -149,12 +167,16 @@ export default function Step1SelectHours({
                           onCheckedChange={() => toggleEmployee(employee)}
                         />
                       </TableCell>
+
                       <TableCell>
-                        {employee.lastName} {employee.firstName}
+                        {employee.lastName} {employee.firstName}{" "}
+                        {employee.fatherName}
                       </TableCell>
+
                       <TableCell>
                         <Badge variant="outline">{employee.position}</Badge>
                       </TableCell>
+
                       <TableCell>
                         {selected ? (
                           <Select

@@ -24,8 +24,15 @@ export function ToolTransferDetails({
             <p className="font-medium">{toolTransfer.tool.name}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Серийный номер</p>
-            <p className="font-medium">{toolTransfer.tool.serialNumber}</p>
+            <p className="text-sm text-muted-foreground">
+              {toolTransfer.tool.isBulk ? "Количество" : "Серийный номер"}
+            </p>
+            {!toolTransfer.tool.isBulk && (
+              <p className="font-medium">{toolTransfer.tool.serialNumber}</p>
+            )}
+            {toolTransfer.tool.isBulk && (
+              <p className="font-medium">{toolTransfer.quantity}</p>
+            )}
           </div>
         </div>
       </CardContent>

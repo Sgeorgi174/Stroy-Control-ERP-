@@ -28,6 +28,7 @@ const employeeSchema = z.object({
   passportNumber: z.string().min(1, "Это поле обязательно"),
   whereIssued: z.string().min(1, "Это поле обязательно"),
   dob: z.string().min(1, "Это поле обязательно"),
+  startWorkDate: z.string().min(1, "Это поле обязательно"),
   issueDate: z.string().min(1, "Это поле обязательно"),
   registrationRegion: z.string().min(1, "Это поле обязательно"),
   registrationCity: z.string().min(1, "Это поле обязательно"),
@@ -84,6 +85,7 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
       registrationBuild: employee.registrationBuild,
       registrationFlat: employee.registrationFlat,
       dob: employee.dob,
+      startWorkDate: employee.startWorkDate,
     },
   });
 
@@ -144,6 +146,7 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
         registrationFlat: data.registrationFlat,
         country: data.country,
         dob: data.dob,
+        startWorkDate: data.startWorkDate,
       });
 
       reset();
@@ -245,6 +248,25 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
             />
             {errors.position && (
               <p className="text-sm text-red-500">{errors.position.message}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-between">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="startWorkDate">Дата начала работы</Label>
+            <DatePicker
+              selected={watch("startWorkDate") || undefined}
+              onSelect={(dateStr) =>
+                setValue("startWorkDate", dateStr || "", {
+                  shouldValidate: true,
+                })
+              }
+            />
+            {errors.startWorkDate && (
+              <p className="text-sm text-red-500">
+                {errors.startWorkDate.message}
+              </p>
             )}
           </div>
         </div>

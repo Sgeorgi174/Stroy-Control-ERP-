@@ -38,6 +38,8 @@ export interface PendingToolTransfer {
   createdAt: string;
   updatedAt: string;
   rejectMode: RejectMode;
+  quantity: number;
+  type: "tool";
 }
 
 export interface PendingDeviceTransfer {

@@ -11,11 +11,13 @@ import type { Clothes } from "@/types/clothes";
 import { useState } from "react";
 import { AlertDialogDelete } from "../../alert-dialog-delete";
 import { useDeleteClothes } from "@/hooks/clothes/useClothes";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 export function ClothesDropdown({ clothes }: { clothes: Clothes }) {
   const { openSheet } = useClothesSheetStore();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const deleteMutation = useDeleteClothes();
+  const { data: user } = useAuth();
 
   const handleDelete = async () => {
     deleteMutation.mutate(clothes.id, {
@@ -42,7 +44,11 @@ export function ClothesDropdown({ clothes }: { clothes: Clothes }) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            disabled={clothes.quantity === 0}
+            disabled={
+              clothes.quantity < 1 ||
+              (user?.role === "FOREMAN" &&
+                user?.object?.id !== clothes.objectId)
+            }
             onClick={(e) => {
               e.stopPropagation();
               openSheet("give", clothes);
@@ -52,6 +58,7 @@ export function ClothesDropdown({ clothes }: { clothes: Clothes }) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
+            disabled={user?.role === "FOREMAN"}
             onClick={(e) => {
               e.stopPropagation();
               openSheet("edit", clothes);
@@ -60,7 +67,11 @@ export function ClothesDropdown({ clothes }: { clothes: Clothes }) {
             Редактировать
           </DropdownMenuItem>
           <DropdownMenuItem
-            disabled={clothes.quantity === 0}
+            disabled={
+              clothes.quantity < 1 ||
+              (user?.role === "FOREMAN" &&
+                user?.object?.id !== clothes.objectId)
+            }
             onClick={(e) => {
               e.stopPropagation();
               openSheet("transfer", clothes);
@@ -69,6 +80,7 @@ export function ClothesDropdown({ clothes }: { clothes: Clothes }) {
             Переместить
           </DropdownMenuItem>
           <DropdownMenuItem
+            disabled={user?.role === "FOREMAN"}
             onClick={(e) => {
               e.stopPropagation();
               openSheet("add", clothes);
@@ -77,7 +89,7 @@ export function ClothesDropdown({ clothes }: { clothes: Clothes }) {
             Пополнить
           </DropdownMenuItem>
           <DropdownMenuItem
-            disabled={clothes.quantity === 0}
+            disabled={clothes.quantity < 1 || user?.role === "FOREMAN"}
             onClick={(e) => {
               e.stopPropagation();
               openSheet("written_off", clothes);
@@ -87,6 +99,7 @@ export function ClothesDropdown({ clothes }: { clothes: Clothes }) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
+            disabled={user?.role === "FOREMAN"}
             onClick={(e) => {
               e.stopPropagation();
               setIsDeleteDialogOpen(true);

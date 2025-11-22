@@ -261,7 +261,7 @@ export function TransferSheet() {
 
   return (
     <Sheet open={isOpen} onOpenChange={closeSheet}>
-      <SheetContent className="overflow-y-auto w-full sm:max-w-xl">
+      <SheetContent className="w-[700px] sm:max-w-[1000px] overflow-auto">
         <SheetHeader className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">

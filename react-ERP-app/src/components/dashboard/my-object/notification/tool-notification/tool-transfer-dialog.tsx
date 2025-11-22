@@ -16,6 +16,7 @@ import { ToolRejectSection } from "./tool-notification-reject";
 import { ConfirmCheckbox } from "../notification-confirm-checkbox";
 import { useConfirmToolTransfer } from "@/hooks/tool/useConfirmToolTransfer";
 import { useRejectToolTransfer } from "@/hooks/tool/useRejectToolTransfer"; // импорт хука отказа
+import { useConfirmToolBulkTransfer } from "@/hooks/tool/useConfirmToolTransferBulk";
 
 type ToolTransferDialogProps = {
   toolTransfer: PendingToolTransfer;
@@ -33,11 +34,22 @@ export function ToolTransferDialog({
   const hasPhoto = Boolean(toolTransfer.photoUrl);
 
   const confirmTransferMutation = useConfirmToolTransfer();
+  const confirmTransferBulkMutation = useConfirmToolBulkTransfer();
   const rejectTransferMutation = useRejectToolTransfer(toolTransfer.id);
 
   // Подтверждение перемещения
   const handleConfirm = () => {
     if (!isConfirmed) return;
+    if (toolTransfer.tool.isBulk) {
+      confirmTransferBulkMutation.mutate(toolTransfer.id, {
+        onSuccess: () => {
+          setIsConfirmed(false);
+          onOpenChange(false);
+        },
+      });
+
+      return true;
+    }
     confirmTransferMutation.mutate(toolTransfer.id, {
       onSuccess: () => {
         setIsConfirmed(false);
@@ -76,7 +88,7 @@ export function ToolTransferDialog({
 
       <div className="flex flex-col gap-5 py-4">
         <div className="space-y-3 font-medium">Инструмент:</div>
-        <ToolInfo tool={toolTransfer.tool} />
+        <ToolInfo transfer={toolTransfer} />
       </div>
 
       {isReject && <Separator className="my-2" />}

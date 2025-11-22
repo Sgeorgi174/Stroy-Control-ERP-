@@ -62,6 +62,8 @@ export function NotificationCard() {
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
 
+  console.log(sortedReturnsNotifications);
+
   return (
     <Tabs defaultValue="important" className="gap-0 col-span-3 ">
       {/* TabsList СНАРУЖИ — без паддингов и без скролла */}

@@ -33,14 +33,15 @@ export function ArchiveEmployeesTable({
               Дата архивации
             </TableHead>
             <TableHead className="text-secondary font-bold">
-              Кто архивировал
-            </TableHead>
-            <TableHead className="text-secondary font-bold">Причина</TableHead>
-            <TableHead className="text-secondary font-bold">
               Сотрудник
             </TableHead>
+            <TableHead className="text-secondary font-bold">Причина</TableHead>
+
             <TableHead className="text-secondary font-bold">Телефон</TableHead>
             <TableHead className="text-secondary font-bold">Навыки</TableHead>
+            <TableHead className="text-secondary font-bold">
+              Кто архивировал
+            </TableHead>
             <TableHead className="text-secondary font-bold"></TableHead>
           </TableRow>
         </TableHeader>
@@ -56,20 +57,20 @@ export function ArchiveEmployeesTable({
               <TableCell>
                 {employee.archive && formatDate(employee.archive.archivedAt)}
               </TableCell>
-              <TableCell>
-                {employee.archive &&
-                  `${employee.archive.changedBy.lastName} ${employee.archive.changedBy.firstName}`}
-              </TableCell>
-
+              <TableCell className="font-medium">{`${employee.lastName} ${employee.firstName} ${employee.fatherName}`}</TableCell>
               <TableCell>
                 {employee.archive && employee.archive.comment}
               </TableCell>
-              <TableCell className="font-medium">{`${employee.lastName} ${employee.firstName} ${employee.fatherName}`}</TableCell>
+
               <TableCell className="font-medium">
                 {employee.phoneNumber}
               </TableCell>
               <TableCell className="w-[150px]">
                 <SkillsPopover skills={employee.skills} />
+              </TableCell>
+              <TableCell>
+                {employee.archive &&
+                  `${employee.archive.changedBy.lastName} ${employee.archive.changedBy.firstName}`}
               </TableCell>
               <TableCell>
                 <EmployeeDropDown employee={employee} />

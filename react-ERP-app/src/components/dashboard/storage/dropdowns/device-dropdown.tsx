@@ -11,6 +11,7 @@ import { AlertDialogDelete } from "../../alert-dialog-delete";
 import type { Device } from "@/types/device";
 import { useDeviceSheetStore } from "@/stores/device-sheet-store";
 import { useDeleteDevice } from "@/hooks/device/useDeleteDevice";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 type DeviceDropDownProps = { device: Device };
 
@@ -24,6 +25,7 @@ export function DeviceDropDown({ device }: DeviceDropDownProps) {
       onSettled: () => setIsDeleteDialogOpen(false),
     });
   };
+  const { data: user } = useAuth();
 
   return (
     <>
@@ -44,6 +46,7 @@ export function DeviceDropDown({ device }: DeviceDropDownProps) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
+            disabled={user?.role === "FOREMAN"}
             onClick={(e) => {
               e.stopPropagation();
               openSheet("edit", device);
@@ -52,7 +55,10 @@ export function DeviceDropDown({ device }: DeviceDropDownProps) {
             Редактировать
           </DropdownMenuItem>
           <DropdownMenuItem
-            disabled={device.status !== "ON_OBJECT"}
+            disabled={
+              device.status !== "ON_OBJECT" ||
+              (user?.role === "FOREMAN" && user?.object?.id !== device.objectId)
+            }
             onClick={(e) => {
               e.stopPropagation();
               openSheet("transfer", device);
@@ -64,7 +70,8 @@ export function DeviceDropDown({ device }: DeviceDropDownProps) {
             disabled={
               device.status === "IN_TRANSIT" ||
               device.status === "LOST" ||
-              device.status === "WRITTEN_OFF"
+              device.status === "WRITTEN_OFF" ||
+              user?.role === "FOREMAN"
             }
             onClick={(e) => {
               e.stopPropagation();
@@ -76,6 +83,7 @@ export function DeviceDropDown({ device }: DeviceDropDownProps) {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             variant="destructive"
+            disabled={user?.role === "FOREMAN"}
             onClick={(e) => {
               e.stopPropagation();
               setIsDeleteDialogOpen(true);

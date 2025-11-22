@@ -13,6 +13,7 @@ import { AlertDialogDelete } from "../../alert-dialog-delete";
 import { AlertDialogRelease } from "../alert-dialog-release";
 import { useDeleteTablet } from "@/hooks/tablet/useDeleteTablet";
 import { useReleaseTablet } from "@/hooks/tablet/useReleaseTablet";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 type TabletDropDownProps = { tablet: Tablet };
 
@@ -23,6 +24,7 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
 
   const deleteMutation = useDeleteTablet();
   const releaseMutation = useReleaseTablet();
+  const { data: user } = useAuth();
 
   const handleDelete = () => {
     deleteMutation.mutate(tablet.id, {
@@ -57,6 +59,7 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
+            disabled={user?.role === "FOREMAN"}
             onClick={(e) => {
               e.stopPropagation();
               openSheet("edit", tablet);
@@ -66,7 +69,9 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
           </DropdownMenuItem>
           <DropdownMenuItem
             disabled={
-              tablet.status === "LOST" || tablet.status === "WRITTEN_OFF"
+              tablet.status === "LOST" ||
+              tablet.status === "WRITTEN_OFF" ||
+              user?.role === "FOREMAN"
             }
             onClick={(e) => {
               e.stopPropagation();
@@ -77,6 +82,7 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
           </DropdownMenuItem>
           {tablet.employee && (
             <DropdownMenuItem
+              disabled={user?.role === "FOREMAN"}
               onClick={(e) => {
                 e.stopPropagation();
                 setIsReleaseDialogOpen(true);
@@ -87,7 +93,9 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
           )}
           <DropdownMenuItem
             disabled={
-              tablet.status === "LOST" || tablet.status === "WRITTEN_OFF"
+              tablet.status === "LOST" ||
+              tablet.status === "WRITTEN_OFF" ||
+              user?.role === "FOREMAN"
             }
             onClick={(e) => {
               e.stopPropagation();
@@ -98,6 +106,7 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
+            disabled={user?.role === "FOREMAN"}
             variant="destructive"
             onClick={(e) => {
               e.stopPropagation();

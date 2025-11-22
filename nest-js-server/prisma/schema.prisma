@@ -197,6 +197,8 @@ model PendingTransfersTools {
   fromObject   Object? @relation("pending_tools_from_object_fk", fields: [fromObjectId], references: [id])
   fromObjectId String?
 
+  quantity Int @default(1)
+
   toObject   Object @relation("pending_tools_to_object_fk", fields: [toObjectId], references: [id])
   toObjectId String
 
@@ -566,6 +568,7 @@ model Employee {
   registrationStreet String
   registrationBuild  String
   registrationFlat   String?
+  startWorkDate      String    @default("2007-02-02")
 
   warnings EmployeeWarning[]
 
@@ -721,6 +724,7 @@ model ShiftEmployee {
   workedHours Int? @map("worked_hours")
 
   present Boolean @default(true)
+  isLocal Boolean @default(false)
 
   absenceReason String? @map("absence_reason")
   task          String?
@@ -764,6 +768,7 @@ model ShiftTemplateEmployee {
   workedHours Int? @map("worked_hours")
 
   present Boolean @default(true)
+  isLocal Boolean @default(false)
 
   absenceReason String? @map("absence_reason")
   task          String?

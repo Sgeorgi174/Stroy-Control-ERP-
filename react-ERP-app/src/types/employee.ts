@@ -58,6 +58,7 @@ export type Employee = {
   position: Positions;
   objectId: string;
   dob: string;
+  startWorkDate: string;
   clothing: EmployeeClothingItem[];
   workPlace: Object | null;
   status: EmployeeStatuses;

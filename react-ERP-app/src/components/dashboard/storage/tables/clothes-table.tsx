@@ -22,77 +22,91 @@ export function ClothesTable({
   isLoading,
   isError,
 }: ClothesTableProps) {
-  console.log(clothes);
-
   const { openSheet } = useClothesSheetStore();
 
   return (
-    <div className="mt-6 rounded-lg border overflow-hidden">
-      <Table>
-        <TableHeader className="bg-primary pointer-events-none">
-          <TableRow>
-            <TableHead className=" text-secondary font-bold">
-              Наименование
-            </TableHead>
-            <TableHead className="text-secondary font-bold ">Размер</TableHead>
-            <TableHead className="text-secondary font-bold ">
-              Ростовка
-            </TableHead>
-            <TableHead className="text-secondary font-bold ">Сезон</TableHead>
-            <TableHead className="text-secondary font-bold ">
-              В наличии
-            </TableHead>
-            <TableHead className="text-secondary font-bold ">В пути</TableHead>
-            <TableHead className="text-secondary font-bold">
-              Место хранения
-            </TableHead>
-            <TableHead className="text-secondary font-bold">
-              Поставщик
-            </TableHead>
-            <TableHead className="text-secondary font-bold"></TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <PendingTable
-            isError={isError}
-            isLoading={isLoading}
-            data={clothes}
-          />
-          {clothes.map((item) => (
-            <TableRow
-              key={item.id}
-              onClick={() => openSheet("details", item)}
-              className="cursor-pointer"
-            >
-              <TableCell className="font-medium hover:underline">
-                {item.name}
-              </TableCell>
-              <TableCell>
-                {item.type === "CLOTHING"
-                  ? item.clothingSize.size
-                  : item.footwearSize.size}
-              </TableCell>
-              <TableCell>
-                {item.type === "CLOTHING" ? item.clothingHeight.height : "-"}
-              </TableCell>
-              <TableCell>
-                {item.season === "SUMMER" ? "Лето" : "Зима"}
-              </TableCell>
-              <TableCell>{item.quantity}</TableCell>
-              <TableCell>
-                {item.inTransit.reduce((acc, curr) => acc + curr.quantity, 0)}
-              </TableCell>
-              <TableCell>{item.storage.name}</TableCell>
-              <TableCell>{item.provider.name}</TableCell>
-              <TableCell>
-                <div onClick={(e) => e.stopPropagation()}>
-                  <ClothesDropdown clothes={item} />
-                </div>
-              </TableCell>
+    <>
+      <div className="bg-muted p-2 pl-4 rounded-xl mt-5 flex items-center gap-10">
+        {/* Всего сотрудников */}
+        <p>
+          Всего:{" "}
+          <span className="font-medium">
+            {clothes.reduce((acc, e) => acc + e.quantity, 0)}
+          </span>
+        </p>
+      </div>
+
+      <div className="mt-6 rounded-lg border overflow-hidden">
+        <Table>
+          <TableHeader className="bg-primary pointer-events-none">
+            <TableRow>
+              <TableHead className=" text-secondary font-bold">
+                Наименование
+              </TableHead>
+              <TableHead className="text-secondary font-bold ">
+                Размер
+              </TableHead>
+              <TableHead className="text-secondary font-bold ">
+                Ростовка
+              </TableHead>
+              <TableHead className="text-secondary font-bold ">Сезон</TableHead>
+              <TableHead className="text-secondary font-bold ">
+                В наличии
+              </TableHead>
+              <TableHead className="text-secondary font-bold ">
+                В пути
+              </TableHead>
+              <TableHead className="text-secondary font-bold">
+                Место хранения
+              </TableHead>
+              <TableHead className="text-secondary font-bold">
+                Поставщик
+              </TableHead>
+              <TableHead className="text-secondary font-bold"></TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            <PendingTable
+              isError={isError}
+              isLoading={isLoading}
+              data={clothes}
+            />
+            {clothes.map((item) => (
+              <TableRow
+                key={item.id}
+                onClick={() => openSheet("details", item)}
+                className="cursor-pointer"
+              >
+                <TableCell className="font-medium hover:underline">
+                  {item.name}
+                </TableCell>
+                <TableCell>
+                  {item.type === "CLOTHING"
+                    ? item.clothingSize.size
+                    : item.footwearSize.size}
+                </TableCell>
+                <TableCell>
+                  {item.type === "CLOTHING" ? item.clothingHeight.height : "-"}
+                </TableCell>
+                <TableCell>
+                  {item.season === "SUMMER" ? "Лето" : "Зима"}
+                </TableCell>
+                <TableCell>{item.quantity}</TableCell>
+                <TableCell>
+                  {item.inTransit.reduce((acc, curr) => acc + curr.quantity, 0)}
+                </TableCell>
+                <TableCell>{item.storage.name}</TableCell>
+                <TableCell>{item.provider.name}</TableCell>
+                <TableCell>
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <ClothesDropdown clothes={item} />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </>
   );
 }

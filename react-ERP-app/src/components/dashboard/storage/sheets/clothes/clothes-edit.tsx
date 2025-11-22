@@ -52,7 +52,6 @@ type FormData = z.infer<typeof clothesSchema>;
 type ClothesEditProps = { clothes: Clothes };
 
 export function ClothesEdit({ clothes }: ClothesEditProps) {
-  console.log(clothes);
   const { activeTab } = useFilterPanelStore();
   const updateClothesMutation = useUpdateClothes(clothes.id);
   const { data: objects = [] } = useObjects({

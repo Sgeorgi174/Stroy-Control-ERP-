@@ -243,12 +243,45 @@ export class ToolController {
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
   )
+  @Patch('transfer-bulk/:id')
+  async transferBulk(
+    @Param('id') id: string,
+    @Body() dto: TransferDto,
+    @Authorized('id') userId: string,
+  ) {
+    return this.toolService.transferBulk(id, dto, userId);
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Patch('confirm/:id')
   async confirmTransfer(
     @Param('id') id: string,
     @Authorized('id') userId: string,
   ) {
     return this.toolService.confirmTransfer(id, userId);
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
+  @Patch('confirm-bulk/:id')
+  async confirmTransferBulk(
+    @Param('id') id: string,
+    @Authorized('id') userId: string,
+  ) {
+    return this.toolService.confirmTransferBulk(id, userId);
   }
 
   @Authorization(
@@ -323,11 +356,8 @@ export class ToolController {
     Roles.ASSISTANT_MANAGER,
   )
   @Post('transfer-return/:id')
-  async returnToSource(
-    @Param('id') transferId: string,
-    @Authorized('id') userId: string,
-  ) {
-    return this.toolService.returnToSource(transferId, userId);
+  async returnToSource(@Param('id') transferId: string) {
+    return this.toolService.returnToSource(transferId);
   }
 
   @Authorization(

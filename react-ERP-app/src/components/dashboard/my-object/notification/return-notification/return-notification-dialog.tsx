@@ -21,6 +21,7 @@ import { ConfirmCheckbox } from "../notification-confirm-checkbox";
 import { useConfirmToolTransfer } from "@/hooks/tool/useConfirmToolTransfer";
 import { useConfirmDeviceTransfer } from "@/hooks/device/useConfirmDeviceTransfer";
 import { useConfirmClothesTransfer } from "@/hooks/clothes/useClothes";
+import { useConfirmToolBulkTransfer } from "@/hooks/tool/useConfirmToolTransferBulk";
 
 type ToolTransferDialogProps = {
   returnTransfer:
@@ -44,15 +45,22 @@ export function ReturnNotificationDialog({
   const clothesReturn = returnTransfer as PendingClothesTransfer;
 
   const confirmTool = useConfirmToolTransfer();
+  const confirmToolBulk = useConfirmToolBulkTransfer();
   const confirmDevice = useConfirmDeviceTransfer();
   const confirmClothes = useConfirmClothesTransfer(returnTransfer.id);
 
   // Подтверждение перемещения
   const handleConfirm = () => {
     if (type === "tool") {
-      confirmTool.mutate(toolReturn.id, {
-        onSuccess: () => onOpenChange(false),
-      });
+      if (toolReturn.tool.isBulk) {
+        confirmToolBulk.mutate(toolReturn.id, {
+          onSuccess: () => onOpenChange(false),
+        });
+      } else {
+        confirmTool.mutate(toolReturn.id, {
+          onSuccess: () => onOpenChange(false),
+        });
+      }
     }
 
     if (type === "device") {
@@ -70,6 +78,8 @@ export function ReturnNotificationDialog({
       );
     }
   };
+
+  console.log(toolReturn);
 
   return (
     <DialogContent className="max-w-3xl min-w-[500px] max-h-[80vh] overflow-auto flex flex-col">
@@ -107,7 +117,7 @@ export function ReturnNotificationDialog({
           </div>
         </div>
         <div>
-          {type === "tool" && <ToolInfo tool={toolReturn.tool} />}
+          {type === "tool" && <ToolInfo transfer={toolReturn} />}
           {type === "device" && <DeviceInfo device={deviceReturn.device} />}
           {type === "clothes" && (
             <ClothesInfo clothesTransfer={clothesReturn} />

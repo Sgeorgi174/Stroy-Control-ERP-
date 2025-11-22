@@ -46,6 +46,10 @@ export class CreateDto {
   @IsNotEmpty()
   dob: string;
 
+  @IsString()
+  @IsNotEmpty()
+  startWorkDate: string;
+
   @IsString({ message: 'ID объекта должен быть строкой' })
   @IsOptional()
   objectId?: string;

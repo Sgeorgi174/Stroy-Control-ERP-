@@ -12,6 +12,7 @@ export interface ShiftEmployee {
 
   workedHours: number;
   present: boolean;
+  isLocal: boolean;
   absenceReason?: string;
   task?: string;
 
@@ -29,6 +30,7 @@ export interface ShiftTemplateEmployee {
 
   workedHours: number;
   present: boolean;
+  isLocal: boolean;
   absenceReason?: string;
   task?: string;
 

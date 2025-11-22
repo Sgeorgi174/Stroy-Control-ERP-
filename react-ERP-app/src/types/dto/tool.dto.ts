@@ -31,6 +31,11 @@ export interface TransferToolDto {
   objectId: string;
 }
 
+export interface TransferToolBulkDto {
+  objectId: string;
+  quantity: number;
+}
+
 export interface RejectToolDto {
   rejectionComment: string;
 }

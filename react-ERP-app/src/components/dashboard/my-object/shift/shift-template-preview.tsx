@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { ShiftTemplate } from "@/types/shift";
-import { Eye } from "lucide-react";
+import { Eye, TriangleAlert } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -20,17 +20,26 @@ import {
 } from "@/components/ui/table";
 import { ShiftTemplateEditDialog } from "./update-shift-template";
 import { ShiftTemplateDeleteDialog } from "./delete-shift-template";
+import type { Employee } from "@/types/employee";
+import { diffTemplateEmployees } from "@/lib/utils/diffTemplateEmployees";
 
 interface ShiftTemplatePreviewDialogProps {
   template: ShiftTemplate;
+  employees: Employee[];
 }
 
 export function ShiftTemplatePreviewDialog({
   template,
+  employees,
 }: ShiftTemplatePreviewDialogProps) {
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const { removedEmployees, newEmployees } = diffTemplateEmployees({
+    template,
+    currentEmployees: employees,
+  });
 
   const selectedEmployees = template.employees.filter((e) => e.present);
   const absentEmployees = template.employees.filter((e) => !e.present);
@@ -73,6 +82,45 @@ export function ShiftTemplatePreviewDialog({
               </Button>
             </div>
           </DialogTitle>
+          {(removedEmployees.length > 0 || newEmployees.length > 0) && (
+            <div className="bg-yellow-300/30 p-3 rounded-md space-y-2">
+              <div className="flex gap-4 items-center">
+                <TriangleAlert className="text-yellow-700" />
+                <p className="font-medium">Требуется редактирование шаблона</p>
+              </div>
+
+              {removedEmployees.length > 0 && (
+                <div>
+                  <p className="font-medium text-red-700 mb-1">
+                    Больше не работают на объекте:
+                  </p>
+                  <ul className="list-disc list-inside text-sm">
+                    {removedEmployees.map((emp) => (
+                      <li key={emp.id}>
+                        {emp.employee.lastName} {emp.employee.firstName}{" "}
+                        {emp.employee.fatherName}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {newEmployees.length > 0 && (
+                <div>
+                  <p className="font-medium text-green-700 mb-1">
+                    Новые сотрудники на объекте:
+                  </p>
+                  <ul className="list-disc list-inside text-sm">
+                    {newEmployees.map((emp) => (
+                      <li key={emp.id}>
+                        {emp.lastName} {emp.firstName} {emp.fatherName}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </DialogHeader>
 
         <div className="w-full overflow-y-auto space-y-6 p-3 border rounded-md">

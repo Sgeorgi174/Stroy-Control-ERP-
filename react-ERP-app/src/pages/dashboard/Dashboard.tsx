@@ -39,8 +39,6 @@ export function Dashboard() {
     }
   }, [location.pathname, setActiveTab]);
 
-  console.log(location.pathname);
-
   return (
     <SidebarProvider>
       <AppSidebar />

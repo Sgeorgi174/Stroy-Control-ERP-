@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate, formatTime } from "@/lib/utils/format-date";
 import type { ClothesActions, TransferRecord } from "@/types/historyRecords";
 import {
+  ArrowRight,
   Calendar,
   Clock,
   MapPin,
@@ -26,13 +27,18 @@ const actionMap = {
   WRITTEN_OFF: "Списание",
   CANCEL: "Отмена перемещения",
   RETURN_FROM_EMPLOYEE: "Возврат от сотрудника",
+  RETURN_TO_SOURCE: "Возврат",
 };
 
 const getActionIcon = (action: ClothesActions) => {
   switch (action) {
     case "ADD":
+    case "CANCEL":
+    case "CONFIRM":
+    case "RETURN_TO_SOURCE":
       return <TrendingUp className="w-4 h-4 text-green-600" />;
     case "WRITTEN_OFF":
+    case "TRANSFER":
       return <TrendingDown className="w-4 h-4 text-red-600" />;
     default:
       return <Package className="w-4 h-4 text-blue-600" />;
@@ -51,7 +57,7 @@ export function ToolQuantityHistory({
       <div>
         <h3 className="font-medium text-muted-foreground mb-3 flex items-center gap-2">
           <MapPin className="w-4 h-4" />
-          Списания и пополнения
+          Списания, пополнения и перемещения
         </h3>
 
         {isLoading ? (
@@ -105,7 +111,17 @@ export function ToolQuantityHistory({
                       Кол-во: {history.quantity}
                     </Badge>
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  {(history.action === "CANCEL" ||
+                    history.action === "TRANSFER" ||
+                    history.action === "RETURN_TO_SOURCE" ||
+                    history.action === "CONFIRM") && (
+                    <div className="text-sm flex items-center gap-2">
+                      {history.fromObject?.name ?? "—"}{" "}
+                      <ArrowRight className="w-3 h-3 text-muted-foreground" />
+                      {history.toObject.name}
+                    </div>
+                  )}
+                  <div className="text-xs text-muted-foreground mt-2">
                     Кто: {history.movedBy.firstName} {history.movedBy.lastName}
                   </div>
                 </div>

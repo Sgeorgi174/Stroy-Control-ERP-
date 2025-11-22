@@ -24,6 +24,7 @@ export type CreateEmployeeDto = {
   registrationRegion: string;
   registrationCity: string;
   registrationStreet: string;
+  startWorkDate: string;
   registrationBuild: string;
   registrationFlat: string | undefined;
   dob: string;
@@ -50,6 +51,7 @@ export type UpdateEmployeeDto = {
   registrationCity: string;
   registrationStreet: string;
   registrationBuild: string;
+  startWorkDate: string;
   registrationFlat: string | undefined;
   dob: string;
 };

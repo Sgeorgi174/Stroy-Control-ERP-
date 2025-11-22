@@ -104,7 +104,7 @@ export function StorageFilters({ isBulk, setIsBulk }: StorageFiltersProps) {
           </div>
         )}
 
-        {(activeTab === "device" || activeTab === "tool") && (
+        {(activeTab === "device" || (activeTab === "tool" && !isBulk)) && (
           <div className="flex items-center gap-2">
             <p className="font-medium">Статус:</p>
             <ItemStatusSelectForFilter />

@@ -12,8 +12,6 @@ import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import { PendingTable } from "./pending-table";
 import { formatDate } from "@/lib/utils/format-date";
 import { CommentPopover } from "../comment-popover";
-import { StatusBadge } from "./status-badge";
-import { statusMap } from "@/constants/statusMap";
 
 type ToolsTableProps = {
   tools: Tool[];
@@ -34,9 +32,9 @@ export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
             <TableHead className="text-secondary font-bold">
               Наименование
             </TableHead>
-            <TableHead className="text-secondary font-bold">Кол-во</TableHead>
             <TableHead className="text-secondary font-bold">Описание</TableHead>
-            <TableHead className="text-secondary font-bold">Статус</TableHead>
+            <TableHead className="text-secondary font-bold">Кол-во</TableHead>
+            <TableHead className="text-secondary font-bold">В пути</TableHead>
             <TableHead className="text-secondary font-bold">Мастер</TableHead>
 
             <TableHead className="text-secondary font-bold">
@@ -62,17 +60,14 @@ export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
               </TableCell>
 
               <TableCell className=" hover:underline">{tool.name}</TableCell>
-              <TableCell className="font-medium">{tool.quantity}</TableCell>
               <TableCell className=" hover:underline">
                 {tool.description ?? ""}
               </TableCell>
+              <TableCell className="font-medium">{tool.quantity}</TableCell>
               <TableCell>
-                <StatusBadge
-                  isAnimate={tool.status === "IN_TRANSIT"}
-                  color={statusMap[tool.status]?.color}
-                  Icon={statusMap[tool.status]?.icon}
-                  text={statusMap[tool.status]?.label}
-                />
+                {tool.inTransit
+                  .filter((transit) => transit.status === "IN_TRANSIT")
+                  .reduce((acc, curr) => acc + curr.quantity, 0)}
               </TableCell>
               <TableCell>
                 {tool.storage && tool.storage.foreman

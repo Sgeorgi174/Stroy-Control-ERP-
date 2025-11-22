@@ -75,16 +75,12 @@ export function ToolsEdit({ tool }: ToolEditProps) {
     },
   });
 
-  console.log(tool);
-
   const isBulk = watch("isBulk");
 
   const { closeSheet } = useToolsSheetStore();
   const selectedObjectId = watch("objectId");
 
   const onSubmit = (data: FormData) => {
-    console.log(data);
-
     const payload = {
       name: data.name.trim(),
       objectId: data.objectId,

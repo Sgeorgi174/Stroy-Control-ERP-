@@ -120,16 +120,25 @@ export function ObjectNotification({
                     <div key={item.id} className="mt-2">
                       <div className="flex items-center gap-3 p-3 rounded-lg bg-muted">
                         <div className="flex-shrink-0 w-8 h-8  rounded-md flex items-center justify-center">
-                          <Wrench className="w-4 h-4" />
+                          <Wrench className="w-5 h-5" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <p className="font-medium  text-sm">{item.name}</p>
+                            <p className="font-medium text-[16px]">
+                              {item.name}
+                            </p>
                           </div>
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                            <span className="font-mono">
-                              Серийный номер: {item.serialNumber}
-                            </span>
+                            {!item.isBulk && (
+                              <span className="font-mono text-[14px]">
+                                Серийный номер: {item.serialNumber}
+                              </span>
+                            )}
+                            {item.isBulk && (
+                              <span className="font-mono text-[14px]">
+                                Количество: {item.quantity}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -150,14 +159,16 @@ export function ObjectNotification({
                     <div key={item.id} className="mt-2">
                       <div className="flex items-center gap-3 p-3 rounded-lg bg-muted">
                         <div className="flex-shrink-0 w-8 h-8 rounded-md flex items-center justify-center">
-                          <Printer className="w-4 h-4" />
+                          <Printer className="w-5 h-5" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <p className="font-medium  text-sm">{item.name}</p>
+                            <p className="font-medium  text-[16px]">
+                              {item.name}
+                            </p>
                           </div>
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                            <span className="font-mono">
+                            <span className="font-mono text-[14px]">
                               Серийный номер: {item.serialNumber}
                             </span>
                           </div>
@@ -182,32 +193,34 @@ export function ObjectNotification({
                       <div className="flex items-center gap-3 p-3 rounded-lg bg-muted">
                         <div className="flex-shrink-0 w-8 h-8 rounded-md flex items-center justify-center">
                           {item.type === "CLOTHING" ? (
-                            <Shirt className="w-4 h-4" />
+                            <Shirt className="w-5 h-5" />
                           ) : (
-                            <BootIcon className="w-4 h-4" />
+                            <BootIcon className="w-5 h-5" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <p className="font-medium  text-sm">{item.name}</p>
+                            <p className="font-medium  text-[16px]">
+                              {item.name}
+                            </p>
                           </div>
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                            <span className="font-mono">
+                            <span className="font-mono text-[14px]">
                               Сезон:{" "}
                               {item.season === "SUMMER" ? "Лето" : "Зима"}
                             </span>
-                            <span className="font-mono">
+                            <span className="font-mono text-[14px]">
                               Размер:{" "}
                               {item.type === "CLOTHING"
                                 ? item.clothingSize.size
                                 : item.footwearSize.size}
                             </span>
                             {item.type === "CLOTHING" && (
-                              <span className="font-mono">
+                              <span className="font-mono text-[14px]">
                                 Ростовка: {item.clothingHeight.height}
                               </span>
                             )}
-                            <span className="font-mono">
+                            <span className="font-mono text-[14px]">
                               Кол-во: {item.quantity}
                             </span>
                           </div>

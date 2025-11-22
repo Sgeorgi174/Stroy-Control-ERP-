@@ -16,8 +16,6 @@ type DetailsBoxProps = {
 };
 
 export function ToolsDetailsBox({ tool }: DetailsBoxProps) {
-  console.log(tool);
-
   return (
     <>
       <Card>

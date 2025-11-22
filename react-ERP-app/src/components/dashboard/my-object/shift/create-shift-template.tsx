@@ -9,9 +9,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { useEmployees } from "@/hooks/employee/useEmployees";
 import { Input } from "@/components/ui/input";
-import type { Positions } from "@/types/employee";
+import type { Employee, Positions } from "@/types/employee";
 import { useCreateShiftTemplate } from "@/hooks/shift-template/useShiftTemplate";
 import Step1SelectHours from "./step-1";
 import Step2AssignTasks from "./step-2";
@@ -24,10 +23,12 @@ import {
 
 interface ShiftTemplateDialogProps {
   objectId: string;
+  employees: Employee[];
 }
 
 export function ShiftTemplateCreateDialog({
   objectId,
+  employees,
 }: ShiftTemplateDialogProps) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
@@ -52,13 +53,6 @@ export function ShiftTemplateCreateDialog({
   >([]);
 
   const [taskHistory, setTaskHistory] = useState<string[]>([]);
-
-  // --- загрузка сотрудников ---
-  const { data: employees = [] } = useEmployees({
-    objectId,
-    searchQuery: "",
-    type: "ACTIVE",
-  });
 
   // --- инициализация сотрудников ---
   useEffect(() => {

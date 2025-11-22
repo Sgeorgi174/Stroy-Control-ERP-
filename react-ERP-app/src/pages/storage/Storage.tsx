@@ -104,8 +104,6 @@ export function Storage() {
     });
   }, [clothes, activeTab]);
 
-  console.log(user);
-
   if (user?.role === "FOREMAN" && !user?.object?.id)
     return (
       <div className="flex w-full h-full items-center justify-center">
@@ -114,8 +112,6 @@ export function Storage() {
         </p>
       </div>
     );
-
-  console.log(user);
 
   return (
     <div>

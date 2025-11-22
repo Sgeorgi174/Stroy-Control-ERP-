@@ -73,6 +73,17 @@ export function EmployeeDetailsBox({
               </div>
             </div>
             <div>
+              <p className="text-sm text-muted-foreground">
+                Дата начала работы
+              </p>
+              <div className="flex items-center gap-1">
+                <Shirt className="w-3 h-3 text-muted-foreground" />
+                <p className="font-medium">
+                  {formatDate(employee.startWorkDate)}
+                </p>
+              </div>
+            </div>
+            <div>
               <p className="text-sm text-muted-foreground">Размер одежды</p>
               <div className="flex items-center gap-1">
                 <Shirt className="w-3 h-3 text-muted-foreground" />

@@ -27,9 +27,6 @@ export function ObjectCard({ object }: ObjectCardProps) {
     true
   );
 
-  console.log(shiftData);
-  console.log(object);
-
   const todayShift = shiftData?.[0] ?? null;
   const objectForeman = object.foreman ?? null;
 

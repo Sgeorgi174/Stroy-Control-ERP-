@@ -19,6 +19,8 @@ import { startOfDay, endOfDay } from "date-fns";
 import { ShiftTemplateCreateDialog } from "@/components/dashboard/my-object/shift/create-shift-template";
 import { useShiftTemplatesByObject } from "@/hooks/shift-template/useShiftTemplate";
 import { ShiftTemplatePreviewDialog } from "@/components/dashboard/my-object/shift/shift-template-preview";
+import { useEmployees } from "@/hooks/employee/useEmployees";
+import { ShiftPDF } from "@/components/monitoring/pdf-button";
 
 export function MyObject() {
   const { data: user } = useAuth();
@@ -48,6 +50,13 @@ export function MyObject() {
     { objectId: user?.object?.id },
     !!user
   );
+
+  // --- загрузка сотрудников ---
+  const { data: employees = [] } = useEmployees({
+    objectId,
+    searchQuery: "",
+    type: "ACTIVE",
+  });
 
   const todayShift = shiftData?.[0]; // берем первую смену на выбранную дату
   const shiftDates = allShifts?.map((s) => new Date(s.shiftDate)) || [];
@@ -92,9 +101,10 @@ export function MyObject() {
             <Users size={30} />
             <p className="font-bold text-3xl">Управление сменой</p>
           </div>
-          <div>
+          <div className="flex gap-4 max-h-[75px]">
             {shiftTemplates && shiftTemplates?.length < 1 && (
               <ShiftTemplateCreateDialog
+                employees={employees}
                 objectId={user?.object?.id || "none"}
               />
             )}
@@ -103,8 +113,12 @@ export function MyObject() {
                 <ShiftTemplatePreviewDialog
                   key={shiftTemplate.id}
                   template={shiftTemplate}
+                  employees={employees}
                 />
               ))}
+            {todayShift && (
+              <ShiftPDF shift={todayShift} object={user?.object} />
+            )}
           </div>
         </div>
 
@@ -116,6 +130,7 @@ export function MyObject() {
               Нажмите "Открыть смену", чтобы назначить сотрудников на эту дату
             </p>
             <ShiftOpenDialog
+              employees={employees}
               objectId={user?.object?.id || "none"}
               shiftTemplates={shiftTemplates}
             />

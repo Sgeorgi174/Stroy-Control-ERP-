@@ -142,7 +142,7 @@ export function ShiftTemplateEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="min-w-4xl">
+      <DialogContent className="min-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             Редактирование шаблона
@@ -166,6 +166,7 @@ export function ShiftTemplateEditDialog({
         {/* ШАГ 1 */}
         {step === 1 && (
           <Step1SelectHours
+            isTemplate
             employees={employees}
             plannedHours={plannedHours}
             setPlannedHours={setPlannedHours}

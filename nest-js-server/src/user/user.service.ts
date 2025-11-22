@@ -91,7 +91,13 @@ export class UserService {
           },
           include: {
             tool: {
-              select: { name: true, id: true, serialNumber: true },
+              select: {
+                name: true,
+                id: true,
+                serialNumber: true,
+                isBulk: true,
+                quantity: true,
+              },
             },
             toObject: {
               select: {
@@ -259,7 +265,13 @@ export class UserService {
           },
           include: {
             tool: {
-              select: { name: true, id: true, serialNumber: true },
+              select: {
+                name: true,
+                id: true,
+                serialNumber: true,
+                isBulk: true,
+                quantity: true,
+              },
             },
             toObject: {
               select: {
@@ -375,7 +387,15 @@ export class UserService {
         const toolTransfers = await prisma.pendingTransfersTools.findMany({
           where: whereCommon,
           select: {
-            tool: { select: { id: true, name: true, serialNumber: true } },
+            tool: {
+              select: {
+                id: true,
+                name: true,
+                serialNumber: true,
+                isBulk: true,
+                quantity: true,
+              },
+            },
             status: true,
             id: true,
             createdAt: true,
@@ -386,6 +406,7 @@ export class UserService {
             rejectionComment: true,
             toolId: true,
             rejectMode: true,
+            quantity: true,
             fromObject: {
               select: {
                 name: true,

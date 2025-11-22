@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate, formatTime } from "@/lib/utils/format-date";
 import type { TransferRecord } from "@/types/historyRecords";
-import { ArrowRight, Calendar, Clock, MapPin } from "lucide-react";
+import { ArrowRight, Calendar, Clock, MapPin, X } from "lucide-react";
 
 type ToolTransferHistoryProps = {
   transferRecords: TransferRecord[];
@@ -53,7 +53,12 @@ export function ToolTransferHistory({
                 className="flex items-center gap-3 p-3 bg-muted rounded-lg border shadow"
               >
                 <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <ArrowRight className="w-4 h-4 text-blue-600" />
+                  {history.action !== "CANCEL" && (
+                    <ArrowRight className="w-4 h-4 text-blue-600" />
+                  )}
+                  {history.action === "CANCEL" && (
+                    <X className="w-4 h-4 text-blue-600" />
+                  )}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
@@ -65,6 +70,13 @@ export function ToolTransferHistory({
                       <div className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         <p>{formatTime(history.createdAt)}</p>
+                      </div>
+                      <div>
+                        <p>
+                          {history.action !== "CANCEL"
+                            ? "Перемещение"
+                            : "Перемещение отменено"}
+                        </p>
                       </div>
                     </Badge>
                   </div>

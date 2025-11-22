@@ -11,8 +11,6 @@ export function EmployeeClothingSection({
 }: EmployeeClothingSectionProps) {
   const { mutate: updateIssuedClothing } = useUpdateIssuedClothing();
 
-  console.log(employeeClothes);
-
   return (
     <div className="space-y-3 mt-4">
       {employeeClothes.map((item) => (

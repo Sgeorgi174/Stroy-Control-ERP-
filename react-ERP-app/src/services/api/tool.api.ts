@@ -13,6 +13,7 @@ import type {
   AddToolCommentDto,
   AddQuantityTool,
   WriteOffQuantityTool,
+  TransferToolBulkDto,
 } from "@/types/dto/tool.dto";
 import type { Tool, ToolStatus } from "@/types/tool";
 
@@ -110,9 +111,24 @@ export const transferTool = async (
   return res.data;
 };
 
+// Передать инструмент
+export const transferToolBulk = async (
+  id: string,
+  data: TransferToolBulkDto
+): Promise<{ transferredTool: Tool }> => {
+  const res = await api.patch(`/tools/transfer-bulk/${id}`, data);
+  return res.data;
+};
+
 // Подтвердить передачу
 export const confirmToolTransfer = async (id: string) => {
   const res = await api.patch(`/tools/confirm/${id}`);
+  return res.data;
+};
+
+// Подтвердить передачу
+export const confirmToolBulkTransfer = async (id: string) => {
+  const res = await api.patch(`/tools/confirm-bulk/${id}`);
   return res.data;
 };
 

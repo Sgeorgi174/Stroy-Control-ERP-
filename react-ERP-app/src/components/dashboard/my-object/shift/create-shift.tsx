@@ -12,9 +12,8 @@ import Step1SelectHours from "./step-1";
 import Step2AssignTasks from "./step-2";
 import Step3AbsenceReason from "./step-3";
 import Step4Summary from "./step-4";
-import { Plus } from "lucide-react";
-import { useEmployees } from "@/hooks/employee/useEmployees";
-import type { Positions } from "@/types/employee";
+import { Plus, TriangleAlert } from "lucide-react";
+import type { Employee, Positions } from "@/types/employee";
 import { formatISO } from "date-fns";
 import { useCreateShift } from "@/hooks/shift/useShift";
 import {
@@ -29,15 +28,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { diffTemplateEmployees } from "@/lib/utils/diffTemplateEmployees";
 
 interface ShiftOpenDialogProps {
   objectId: string;
   shiftTemplates: ShiftTemplate[];
+  employees: Employee[];
 }
 
 export function ShiftOpenDialog({
   objectId,
   shiftTemplates,
+  employees,
 }: ShiftOpenDialogProps) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
@@ -64,12 +66,6 @@ export function ShiftOpenDialog({
 
   const nextStep = () => setStep((s) => Math.min(s + 1, 4));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
-
-  const { data: employees = [] } = useEmployees({
-    objectId,
-    searchQuery: "",
-    type: "ACTIVE",
-  });
 
   const createShiftMutation = useCreateShift();
 
@@ -165,7 +161,15 @@ export function ShiftOpenDialog({
     );
   };
 
-  console.log(step);
+  const canDiff =
+    shiftTemplates && shiftTemplates.length > 0 && employees.length > 0;
+
+  const { removedEmployees, newEmployees } = canDiff
+    ? diffTemplateEmployees({
+        template: shiftTemplates[0],
+        currentEmployees: employees,
+      })
+    : { removedEmployees: [], newEmployees: [] };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -194,12 +198,21 @@ export function ShiftOpenDialog({
                 Новая смена
               </Button>
               <Button
-                disabled={shiftTemplates.length < 1}
+                disabled={
+                  shiftTemplates.length < 1 ||
+                  removedEmployees.length > 0 ||
+                  newEmployees.length > 0
+                }
                 variant={mode === "template" ? "default" : "outline"}
                 onClick={() => setMode("template")}
               >
                 Из шаблона
               </Button>
+              {removedEmployees.length > 0 || newEmployees.length > 0 ? (
+                <div className="flex gap-4 bg-yellow-300/30 items-center p-2 rounded-xl">
+                  <TriangleAlert /> Требуется изменить шаблон
+                </div>
+              ) : null}
             </div>
 
             {mode === "template" && (
