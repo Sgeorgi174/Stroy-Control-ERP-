@@ -85,6 +85,7 @@ export function GenerateEmployees({ objectId }: { objectId: string }) {
       passportNumber: pass.number,
       whereIssued: "ГУ МВД России по Челябинской области",
       issueDate: "2024-11-01",
+      startWorkDate: "2024-11-01",
 
       registrationRegion: addr.region,
       registrationCity: addr.city,

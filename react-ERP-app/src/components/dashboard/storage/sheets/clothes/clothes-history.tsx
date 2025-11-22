@@ -26,6 +26,7 @@ const actionMap = {
   WRITTEN_OFF: "Списание",
   CANCEL: "Отмена перемещения",
   RETURN_FROM_EMPLOYEE: "Возврат от сотрудника",
+  RETURN_TO_SOURCE: "Возврат",
 };
 
 const getActionIcon = (action: ClothesActions) => {
@@ -33,10 +34,12 @@ const getActionIcon = (action: ClothesActions) => {
     case "ADD":
     case "CONFIRM":
     case "CANCEL":
+    case "RETURN_FROM_EMPLOYEE":
       return <TrendingUp className="w-4 h-4 text-green-600" />;
     case "GIVE_TO_EMPLOYEE":
     case "TRANSFER":
     case "WRITTEN_OFF":
+    case "RETURN_TO_SOURCE":
       return <TrendingDown className="w-4 h-4 text-red-600" />;
     default:
       return <Package className="w-4 h-4 text-blue-600" />;
