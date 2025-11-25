@@ -48,6 +48,9 @@ export class DeviceService {
     const object = await this.prismaService.object.findUnique({
       where: { id: dto.objectId },
     });
+
+    console.log(dto);
+
     if (userRole !== 'ACCOUNTANT' && object?.name === 'Главный склад')
       throw new ForbiddenException('У вас нет доступа к этому складу');
     try {
