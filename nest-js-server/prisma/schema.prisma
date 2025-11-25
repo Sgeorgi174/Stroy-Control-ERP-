@@ -144,7 +144,7 @@ model Tool {
   status         ToolStatus @default(ON_OBJECT)
   serialNumber   String?    @unique @map("serial_number")
   description    String?
-  originalSerial String?    @unique @map("original_serial")
+  originalSerial String?    @map("original_serial")
 
   isBag    Boolean   @default(false)
   bagItems BagItem[]
@@ -268,7 +268,7 @@ model Device {
   name           String
   status         ToolStatus @default(ON_OBJECT)
   serialNumber   String     @unique @map("serial_number")
-  originalSerial String?    @unique @map("original_serial")
+  originalSerial String?    @map("original_serial")
 
   storage  Object? @relation(fields: [objectId], references: [id])
   objectId String? @map("object_id")
