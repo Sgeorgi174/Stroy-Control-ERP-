@@ -109,7 +109,9 @@ export function ObjectCard({ object }: ObjectCardProps) {
           {/* Employee Stats */}
           <div className="grid grid-cols-2 gap-3">
             <div className="text-center p-3 bg-muted rounded-lg">
-              <div className="text-xl font-bold">{object.employees.length}</div>
+              <div className="text-xl font-bold">
+                {todayShift ? todayShift.employees.length : "0"}
+              </div>
               <div className="text-xs text-blue-600 leading-tight">
                 Всего сотрудников
               </div>
