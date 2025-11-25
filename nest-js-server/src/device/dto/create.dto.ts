@@ -19,4 +19,8 @@ export class CreateDto {
   @IsString({ message: 'object_id должен быть строкой' })
   @IsOptional()
   objectId?: string;
+
+  @IsString()
+  @IsOptional()
+  originalSerial?: string;
 }

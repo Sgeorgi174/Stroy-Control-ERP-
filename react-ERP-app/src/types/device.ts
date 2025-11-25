@@ -16,4 +16,5 @@ export type Device = {
   createdAt: string;
   updatedAt: string;
   storage: Object;
+  originalSerial?: string;
 };

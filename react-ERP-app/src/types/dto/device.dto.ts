@@ -5,6 +5,7 @@ export interface CreateDeviceDto {
   serialNumber: string;
   objectId: string;
   status?: DeviceStatus;
+  originalSerial?: string;
 }
 
 export interface UpdateDeviceDto {
@@ -12,6 +13,7 @@ export interface UpdateDeviceDto {
   serialNumber: string;
   objectId: string;
   status?: DeviceStatus;
+  originalSerial?: string;
 }
 
 export interface TransferDeviceDto {

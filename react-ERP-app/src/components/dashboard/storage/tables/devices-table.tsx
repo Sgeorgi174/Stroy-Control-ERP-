@@ -44,6 +44,9 @@ export function DevicesTable({
             <TableHead className="text-secondary font-bold">
               Наименование
             </TableHead>
+            <TableHead className="text-secondary font-bold">
+              Серийный №
+            </TableHead>
             <TableHead className="text-secondary font-bold">Статус</TableHead>
             <TableHead className="text-secondary font-bold">Мастер</TableHead>
             <TableHead className="text-secondary font-bold">Телефон</TableHead>
@@ -79,6 +82,9 @@ export function DevicesTable({
                 {device.serialNumber}
               </TableCell>
               <TableCell className="hover:underline">{device.name}</TableCell>
+              <TableCell className="hover:underline">
+                {device.originalSerial}
+              </TableCell>
               <TableCell>
                 <StatusBadge
                   isAnimate={device.status === "IN_TRANSIT"}

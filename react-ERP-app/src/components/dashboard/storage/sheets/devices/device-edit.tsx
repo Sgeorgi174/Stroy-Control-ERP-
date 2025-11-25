@@ -15,6 +15,7 @@ const formSchema = z.object({
   name: z.string().min(1, "Наименование обязательно"),
   serialNumber: z.string().min(1, "Инвентарный номер обязателен"),
   objectId: z.string().min(1, "Место хранения обязательно"),
+  originalSerial: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -41,6 +42,7 @@ export function DeviceEdit({ device }: DeviceEditProps) {
       name: device.name,
       serialNumber: device.serialNumber,
       objectId: device.objectId || "",
+      originalSerial: device.originalSerial ?? undefined,
     },
     resolver: zodResolver(formSchema),
   });
@@ -57,6 +59,7 @@ export function DeviceEdit({ device }: DeviceEditProps) {
         name: data.name.trim(),
         serialNumber: data.serialNumber.trim(),
         objectId: data.objectId,
+        originalSerial: data.originalSerial,
       },
       {
         onSuccess: () => {
@@ -97,6 +100,22 @@ export function DeviceEdit({ device }: DeviceEditProps) {
           {errors.serialNumber && (
             <p className="text-sm text-red-500">
               {errors.serialNumber.message}
+            </p>
+          )}
+        </div>
+
+        {/* Серийник */}
+        <div className="flex flex-col gap-2 w-[400px]">
+          <Label htmlFor="originalSerial">Серийный №</Label>
+          <Input
+            id="originalSerial"
+            placeholder="Введите серийный номер"
+            type="text"
+            {...register("originalSerial")}
+          />
+          {errors.originalSerial && (
+            <p className="text-sm text-red-500">
+              {errors.originalSerial.message}
             </p>
           )}
         </div>

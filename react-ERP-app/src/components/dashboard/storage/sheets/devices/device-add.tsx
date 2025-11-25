@@ -14,6 +14,7 @@ const deviceSchema = z.object({
   name: z.string().min(1, "Это поле обязательно"),
   serialNumber: z.string().min(1, "Это поле обязательно"),
   objectId: z.string().min(1, "Выберите объект"),
+  originalSerial: z.string().optional(),
 });
 
 type FormData = z.infer<typeof deviceSchema>;
@@ -36,6 +37,7 @@ export function DeviceAdd() {
       name: "",
       serialNumber: "",
       objectId: objects[0]?.id ?? "",
+      originalSerial: "",
     },
   });
 
@@ -53,6 +55,7 @@ export function DeviceAdd() {
         name: trimmedName,
         serialNumber: trimmedSerial,
         objectId: data.objectId,
+        originalSerial: data.originalSerial,
       },
       {
         onSuccess: () => {
@@ -81,7 +84,7 @@ export function DeviceAdd() {
           )}
         </div>
 
-        {/* Серийник */}
+        {/* Инвентарник */}
         <div className="flex flex-col gap-2 w-[400px]">
           <Label htmlFor="serialNumber">Инвентарный № *</Label>
           <Input
@@ -94,6 +97,22 @@ export function DeviceAdd() {
           {errors.serialNumber && (
             <p className="text-sm text-red-500">
               {errors.serialNumber.message}
+            </p>
+          )}
+        </div>
+
+        {/* Серийник */}
+        <div className="flex flex-col gap-2 w-[400px]">
+          <Label htmlFor="originalSerial">Серийный №</Label>
+          <Input
+            id="originalSerial"
+            placeholder="Введите серийный номер"
+            type="text"
+            {...register("originalSerial")}
+          />
+          {errors.originalSerial && (
+            <p className="text-sm text-red-500">
+              {errors.originalSerial.message}
             </p>
           )}
         </div>

@@ -57,6 +57,7 @@ export class DeviceService {
           serialNumber: dto.serialNumber,
           status: dto.status ?? 'ON_OBJECT',
           objectId: dto.objectId,
+          originalSerial: dto.originalSerial ?? undefined,
         },
         include: { storage: true },
       });
@@ -139,6 +140,7 @@ export class DeviceService {
           serialNumber: dto.serialNumber,
           status: dto.status ?? 'ON_OBJECT',
           objectId: dto.objectId,
+          originalSerial: dto.originalSerial ?? undefined,
         },
         include: { storage: true },
       });
