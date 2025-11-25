@@ -49,8 +49,6 @@ export class DeviceService {
       where: { id: dto.objectId },
     });
 
-    console.log(dto);
-
     if (userRole !== 'ACCOUNTANT' && object?.name === 'Главный склад')
       throw new ForbiddenException('У вас нет доступа к этому складу');
     try {
@@ -65,7 +63,6 @@ export class DeviceService {
         include: { storage: true },
       });
     } catch (error) {
-      console.log(error);
       handlePrismaError(error, {
         conflictMessage: 'Устройство с таким серийным номером уже существует',
         defaultMessage: 'Ошибка создания устройства',
