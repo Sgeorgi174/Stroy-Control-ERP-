@@ -136,25 +136,29 @@ export function AdminPanel({
         </div>
       )}
 
-      <div className="mt-10">
-        <p className="text-2xl font-medium">Редактирование спецовки</p>
-        <Accordion type="single" collapsible className="w-full  mt-5">
-          {employees.map((employee) => (
-            <AccordionItem
-              className="mt-2 bg-muted rounded-xl px-5"
-              value={employee.id}
-              key={employee.id}
-            >
-              <AccordionTrigger>
-                {employee.lastName} {employee.firstName} {employee.fatherName}
-              </AccordionTrigger>
-              <AccordionContent className="flex flex-col gap-4 text-balance">
-                <EmployeeClothingSection employeeClothes={employee.clothing} />
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
+      {user?.role === "ADMIN" && (
+        <div className="mt-10">
+          <p className="text-2xl font-medium">Редактирование спецовки</p>
+          <Accordion type="single" collapsible className="w-full  mt-5">
+            {employees.map((employee) => (
+              <AccordionItem
+                className="mt-2 bg-muted rounded-xl px-5"
+                value={employee.id}
+                key={employee.id}
+              >
+                <AccordionTrigger>
+                  {employee.lastName} {employee.firstName} {employee.fatherName}
+                </AccordionTrigger>
+                <AccordionContent className="flex flex-col gap-4 text-balance">
+                  <EmployeeClothingSection
+                    employeeClothes={employee.clothing}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      )}
     </>
   );
 }

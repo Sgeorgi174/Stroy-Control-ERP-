@@ -9,8 +9,8 @@ export const useCreateUser = () => {
 
   return useMutation({
     mutationFn: (data: CreateUserDto) => createUser(data),
-    onSuccess: (data) => {
-      toast.success(`Юзер «${data.name}» успешно создан`);
+    onSuccess: () => {
+      toast.success(`Юзер успешно создан`);
       queryClient.invalidateQueries({ queryKey: ["users"] });
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
