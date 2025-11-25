@@ -45,34 +45,30 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "#000",
-    paddingVertical: 1, // Уменьшено для снижения высоты
+    paddingVertical: 1,
   },
   tableRow: {
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "#000",
-    paddingVertical: 1, // Уменьшено для снижения высоты
+    paddingVertical: 1,
   },
   cell: {
     borderRightWidth: 1,
     borderRightColor: "#000",
     paddingHorizontal: 4,
-    paddingVertical: 1, // Уменьшено для снижения высоты
+    paddingVertical: 1,
   },
   lastCell: {
     paddingHorizontal: 4,
-    paddingVertical: 1, // Уменьшено для снижения высоты
-  }, // Последняя ячейка без правой границы
-  smallCell: { flex: 0.6 }, // Для № (узкий)
-  nameCell: { flex: 2 }, // Для ФИО (средний)
-  positionCell: { flex: 1.8 }, // Для Должности (средний, короче)
-  statusCell: { flex: 4.8 }, // Для статуса/задания (широкий)
-  bold: { fontWeight: "bold" },
-  footer: {
-    marginTop: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    paddingVertical: 1,
   },
+  smallCell: { flex: 0.3 },
+  nameCell: { flex: 1.8 },
+  localCell: { flex: 0.8, textAlign: "center" },
+  positionCell: { flex: 1.6 },
+  statusCell: { flex: 5.5 },
+  bold: { fontWeight: "bold" },
   subFooter: {
     marginTop: 4,
     marginBottom: 10,
@@ -110,6 +106,9 @@ export const ShiftDocument: React.FC<ShiftDocumentProps> = ({
           <View style={styles.tableHeader}>
             <Text style={[styles.smallCell, styles.bold, styles.cell]}>№</Text>
             <Text style={[styles.nameCell, styles.bold, styles.cell]}>ФИО</Text>
+            <Text style={[styles.localCell, styles.bold, styles.cell]}>
+              Мест.
+            </Text>
             <Text style={[styles.positionCell, styles.bold, styles.cell]}>
               Должность
             </Text>
@@ -120,12 +119,18 @@ export const ShiftDocument: React.FC<ShiftDocumentProps> = ({
           {presentEmployees.map((e, index) => {
             const status = e.task || "-";
             const position = e.employee.position || "-";
+            const fatherInitial = e.employee.fatherName
+              ? `${e.employee.fatherName.charAt(0)} .`
+              : "";
             return (
               <View style={styles.tableRow} key={e.id}>
                 <Text style={[styles.smallCell, styles.cell]}>{index + 1}</Text>
                 <Text style={[styles.nameCell, styles.cell, styles.bold]}>
                   {e.employee.lastName} {e.employee.firstName.charAt(0)}.
-                  {e.employee.fatherName.charAt(0)}.
+                  {fatherInitial}
+                </Text>
+                <Text style={[styles.localCell, styles.cell]}>
+                  {e.isLocal ? "мест." : ""}
                 </Text>
                 <Text style={[styles.positionCell, styles.cell]}>
                   {position}
@@ -147,6 +152,9 @@ export const ShiftDocument: React.FC<ShiftDocumentProps> = ({
           <View style={styles.tableHeader}>
             <Text style={[styles.smallCell, styles.bold, styles.cell]}>№</Text>
             <Text style={[styles.nameCell, styles.bold, styles.cell]}>ФИО</Text>
+            <Text style={[styles.localCell, styles.bold, styles.cell]}>
+              Мест.
+            </Text>
             <Text style={[styles.positionCell, styles.bold, styles.cell]}>
               Должность
             </Text>
@@ -157,12 +165,18 @@ export const ShiftDocument: React.FC<ShiftDocumentProps> = ({
           {absentEmployees.map((e, index) => {
             const status = e.absenceReason || "-";
             const position = e.employee.position || "-";
+            const fatherInitial = e.employee.fatherName
+              ? `${e.employee.fatherName.charAt(0)} .`
+              : "";
             return (
               <View style={styles.tableRow} key={e.id}>
                 <Text style={[styles.smallCell, styles.cell]}>{index + 1}</Text>
                 <Text style={[styles.nameCell, styles.cell, styles.bold]}>
                   {e.employee.lastName} {e.employee.firstName.charAt(0)}.
-                  {e.employee.fatherName.charAt(0)}.
+                  {fatherInitial}
+                </Text>
+                <Text style={[styles.localCell, styles.cell]}>
+                  {e.isLocal ? "мест." : ""}
                 </Text>
                 <Text style={[styles.positionCell, styles.cell]}>
                   {position}

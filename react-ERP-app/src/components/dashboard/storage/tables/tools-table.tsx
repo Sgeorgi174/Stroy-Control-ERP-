@@ -14,6 +14,9 @@ import { StatusBadge } from "./status-badge";
 import { statusMap } from "@/constants/statusMap";
 import { formatDate } from "@/lib/utils/format-date";
 import { CommentPopover } from "../comment-popover";
+import { useRowColors } from "@/hooks/useRowColor";
+import { ToolPDFButton } from "../pdf-generate/tool/tool-pdf-generate";
+import { useFilterPanelStore } from "@/stores/filter-panel-store";
 
 type ToolsTableProps = {
   tools: Tool[];
@@ -23,20 +26,27 @@ type ToolsTableProps = {
 
 export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
   const { openSheet } = useToolsSheetStore();
+  const { colors, setColor, resetColor } = useRowColors("tool");
+  const { selectedObjectId } = useFilterPanelStore();
+
+  console.log(tools);
 
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>
-        <TableHeader className="bg-primary pointer-events-none">
+        <TableHeader className="bg-primary">
           <TableRow>
             <TableHead className="text-secondary font-bold">Дата</TableHead>
             <TableHead className="text-secondary font-bold">
-              Серийный №
+              Инвент. №
             </TableHead>
             <TableHead className="text-secondary font-bold">
               Наименование
             </TableHead>
             <TableHead className="text-secondary font-bold">Описание</TableHead>
+            <TableHead className="text-secondary font-bold">
+              Серийный №
+            </TableHead>
             <TableHead className="text-secondary font-bold w-[150px]">
               Статус
             </TableHead>
@@ -49,7 +59,9 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
               Комментарий
             </TableHead>
 
-            <TableHead className="text-secondary font-bold"></TableHead>
+            <TableHead className="text-secondary font-bold">
+              {selectedObjectId !== "all" && <ToolPDFButton tools={tools} />}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -58,20 +70,26 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
             <TableRow
               key={tool.id}
               onClick={() => openSheet("details", tool)}
-              className="cursor-pointer"
+              className={`cursor-pointer bg-${
+                colors[tool.id] ? colors[tool.id] : undefined
+              } hover:bg-${colors[tool.id] ? colors[tool.id] : undefined}`}
             >
               <TableCell className="font-medium">
                 {formatDate(tool.createdAt)}
               </TableCell>
               <TableCell className="font-medium">{tool.serialNumber}</TableCell>
-              <TableCell className=" hover:underline">{tool.name}</TableCell>
+              <TableCell className=" hover:underline font-medium">
+                {tool.name}
+              </TableCell>
               <TableCell className=" hover:underline">
                 {tool.description ?? ""}
+              </TableCell>
+              <TableCell className=" hover:underline">
+                {tool.originalSerial ?? ""}
               </TableCell>
               <TableCell>
                 <StatusBadge
                   isAnimate={tool.status === "IN_TRANSIT"}
-                  color={statusMap[tool.status]?.color}
                   Icon={statusMap[tool.status]?.icon}
                   text={statusMap[tool.status]?.label}
                 />
@@ -93,7 +111,11 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
               </TableCell>
               <TableCell>
                 <div onClick={(e) => e.stopPropagation()}>
-                  <ToolsDropDown tool={tool} />
+                  <ToolsDropDown
+                    tool={tool}
+                    setColor={setColor}
+                    resetColor={resetColor}
+                  />
                 </div>
               </TableCell>
             </TableRow>

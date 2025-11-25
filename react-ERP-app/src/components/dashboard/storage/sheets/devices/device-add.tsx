@@ -83,10 +83,10 @@ export function DeviceAdd() {
 
         {/* Серийник */}
         <div className="flex flex-col gap-2 w-[400px]">
-          <Label htmlFor="serialNumber">Серийный № *</Label>
+          <Label htmlFor="serialNumber">Инвентарный № *</Label>
           <Input
             id="serialNumber"
-            placeholder="Введите серийный номер"
+            placeholder="Введите инвентарный номер"
             type="text"
             {...register("serialNumber")}
             disabled={isPending}

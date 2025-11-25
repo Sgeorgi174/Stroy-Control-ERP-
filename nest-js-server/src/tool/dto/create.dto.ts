@@ -23,6 +23,10 @@ export class CreateDto {
   @IsOptional()
   serialNumber: string;
 
+  @IsString({ message: 'Серийный номер должен быть строкой' })
+  @IsOptional()
+  originalSerial: string;
+
   @IsNotEmpty()
   @IsBoolean()
   isBulk: boolean;

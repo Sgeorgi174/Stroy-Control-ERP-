@@ -131,7 +131,7 @@ export function ObjectNotification({
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
                             {!item.isBulk && (
                               <span className="font-mono text-[14px]">
-                                Серийный номер: {item.serialNumber}
+                                Инвентарный номер: {item.serialNumber}
                               </span>
                             )}
                             {item.isBulk && (
@@ -169,7 +169,7 @@ export function ObjectNotification({
                           </div>
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
                             <span className="font-mono text-[14px]">
-                              Серийный номер: {item.serialNumber}
+                              Инвентарный номер: {item.serialNumber}
                             </span>
                           </div>
                         </div>

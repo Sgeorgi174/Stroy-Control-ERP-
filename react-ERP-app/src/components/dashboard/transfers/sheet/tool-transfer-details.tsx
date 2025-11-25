@@ -25,7 +25,7 @@ export function ToolTransferDetails({
           </div>
           <div>
             <p className="text-sm text-muted-foreground">
-              {toolTransfer.tool.isBulk ? "Количество" : "Серийный номер"}
+              {toolTransfer.tool.isBulk ? "Количество" : "Инвентарный номер"}
             </p>
             {!toolTransfer.tool.isBulk && (
               <p className="font-medium">{toolTransfer.tool.serialNumber}</p>

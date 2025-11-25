@@ -33,7 +33,7 @@ export function TranferDetailsCardDialog({
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             {!toolTransfer.tool.isBulk && (
               <span className="font-mono">
-                Серийный номер: {toolTransfer.tool.serialNumber}
+                Инвентарный номер: {toolTransfer.tool.serialNumber}
               </span>
             )}
             {toolTransfer.tool.isBulk && (
@@ -101,7 +101,7 @@ export function TranferDetailsCardDialog({
           </div>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <span className="font-mono">
-              Серийный номер: {deviceTransfer.device.serialNumber}
+              Инвентарный номер: {deviceTransfer.device.serialNumber}
             </span>
           </div>
         </div>

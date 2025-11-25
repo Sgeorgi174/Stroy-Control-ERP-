@@ -18,11 +18,11 @@ import Step3AbsenceReason from "./step-3";
 import Step4Summary from "./step-4";
 
 import type { ShiftTemplate } from "@/types/shift";
-import type { Positions } from "@/types/employee";
 import {
   loadTaskHistory,
   saveTaskHistory,
 } from "@/lib/utils/task-absence-history";
+import type { EmployeeSelection } from "@/types/employee-selection";
 
 interface ShiftTemplateEditDialogProps {
   template: ShiftTemplate;
@@ -45,16 +45,7 @@ export function ShiftTemplateEditDialog({
   const [plannedHours, setPlannedHours] = useState(template.plannedHours);
 
   const [employeeSelections, setEmployeeSelections] = useState<
-    {
-      id: string;
-      selected: boolean;
-      workedHours: number | null;
-      firstName: string;
-      lastName: string;
-      position: Positions;
-      task?: string;
-      absenceReason?: string;
-    }[]
+    EmployeeSelection[]
   >([]);
 
   const [taskHistory, setTaskHistory] = useState<string[]>([]);
@@ -91,6 +82,8 @@ export function ShiftTemplateEditDialog({
           position: emp.position,
           task: fromTemplate?.task,
           absenceReason: fromTemplate?.absenceReason,
+          fatherName: emp.fatherName,
+          isLocal: fromTemplate?.isLocal ?? false,
         };
       })
     );
@@ -122,6 +115,7 @@ export function ShiftTemplateEditDialog({
       present: emp.selected,
       task: emp.task,
       absenceReason: emp.absenceReason,
+      isLocal: emp.isLocal,
     }));
 
     updateTemplateMutation.mutate(
@@ -142,7 +136,7 @@ export function ShiftTemplateEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="min-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[1250px] sm:max-w-[1250px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             Редактирование шаблона

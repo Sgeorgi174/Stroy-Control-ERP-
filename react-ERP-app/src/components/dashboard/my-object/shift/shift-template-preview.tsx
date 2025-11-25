@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { ShiftTemplate } from "@/types/shift";
-import { Eye, TriangleAlert } from "lucide-react";
+import { Check, Eye, TriangleAlert } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -60,7 +60,7 @@ export function ShiftTemplatePreviewDialog({
 
       <DialogContent
         showCloseButton={false}
-        className="min-w-[800px] h-[800px]"
+        className="w-[900px] sm:max-w-[1250px] max-h-[90vh] overflow-y-auto"
       >
         <DialogHeader>
           <DialogTitle className="flex justify-between items-center">
@@ -134,8 +134,9 @@ export function ShiftTemplatePreviewDialog({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Сотрудник</TableHead>
-                    <TableHead>Часы</TableHead>
+                    <TableHead className="w-[200px]">Сотрудник</TableHead>
+                    <TableHead className="w-[100px]">Местный</TableHead>
+                    <TableHead className="w-[100px]">Часы</TableHead>
                     <TableHead>Задача</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -143,8 +144,14 @@ export function ShiftTemplatePreviewDialog({
                   {selectedEmployees.map((emp) => (
                     <TableRow key={emp.id}>
                       <TableCell>
-                        {emp.employee.lastName} {emp.employee.firstName}{" "}
-                        {emp.employee.fatherName}
+                        {`${
+                          emp.employee.lastName
+                        } ${emp.employee.firstName.charAt(
+                          0
+                        )}.${emp.employee.fatherName.charAt(0)}.`}
+                      </TableCell>
+                      <TableCell className="pl-6">
+                        {emp.isLocal ? <Check className="w-[18px]" /> : ""}
                       </TableCell>
                       <TableCell>{emp.workedHours ?? "—"}</TableCell>
                       <TableCell>{emp.task || "—"}</TableCell>
@@ -165,7 +172,9 @@ export function ShiftTemplatePreviewDialog({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Сотрудник</TableHead>
+                    <TableHead className="w-[200px]">Сотрудник</TableHead>
+                    <TableHead className="w-[100px]">Местный</TableHead>
+                    <TableHead className="w-[100px]">Часы</TableHead>
                     <TableHead>Причина отсутствия</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -173,9 +182,16 @@ export function ShiftTemplatePreviewDialog({
                   {absentEmployees.map((emp) => (
                     <TableRow key={emp.id}>
                       <TableCell>
-                        {emp.employee.lastName} {emp.employee.firstName}{" "}
-                        {emp.employee.fatherName}
+                        {`${
+                          emp.employee.lastName
+                        } ${emp.employee.firstName.charAt(
+                          0
+                        )}.${emp.employee.fatherName.charAt(0)}.`}
                       </TableCell>
+                      <TableCell className="pl-6">
+                        {emp.isLocal ? <Check className="w-[18px]" /> : ""}
+                      </TableCell>
+                      <TableCell>{0}</TableCell>
                       <TableCell>{emp.absenceReason || "—"}</TableCell>
                     </TableRow>
                   ))}

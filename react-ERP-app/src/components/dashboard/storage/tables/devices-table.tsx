@@ -13,6 +13,9 @@ import { PendingTable } from "./pending-table";
 import { StatusBadge } from "./status-badge";
 import { statusMap } from "@/constants/statusMap";
 import { formatDate } from "@/lib/utils/format-date";
+import { useRowColors } from "@/hooks/useRowColor";
+import { DevicePDFButton } from "../pdf-generate/device/device-pdf-generate";
+import { useFilterPanelStore } from "@/stores/filter-panel-store";
 
 type DeviceTableProps = {
   devices: Device[];
@@ -26,15 +29,17 @@ export function DevicesTable({
   isError,
 }: DeviceTableProps) {
   const { openSheet } = useDeviceSheetStore();
+  const { colors, setColor, resetColor } = useRowColors("device");
+  const { selectedObjectId } = useFilterPanelStore();
 
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>
-        <TableHeader className="bg-primary pointer-events-none">
+        <TableHeader className="bg-primary">
           <TableRow>
             <TableHead className="text-secondary font-bold">Дата</TableHead>
             <TableHead className="text-secondary font-bold">
-              Серийный №
+              Инвент. №
             </TableHead>
             <TableHead className="text-secondary font-bold">
               Наименование
@@ -46,7 +51,11 @@ export function DevicesTable({
               Место хранения
             </TableHead>
 
-            <TableHead className="text-secondary font-bold"></TableHead>
+            <TableHead className="text-secondary font-bold">
+              {selectedObjectId !== "all" && (
+                <DevicePDFButton devices={devices} />
+              )}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -59,7 +68,9 @@ export function DevicesTable({
             <TableRow
               key={device.id}
               onClick={() => openSheet("details", device)}
-              className="cursor-pointer"
+              className={`cursor-pointer bg-${
+                colors[device.id] ? colors[device.id] : undefined
+              } hover:bg-${colors[device.id] ? colors[device.id] : undefined}`}
             >
               <TableCell className="font-medium">
                 {formatDate(device.createdAt)}
@@ -71,7 +82,6 @@ export function DevicesTable({
               <TableCell>
                 <StatusBadge
                   isAnimate={device.status === "IN_TRANSIT"}
-                  color={statusMap[device.status]?.color}
                   Icon={statusMap[device.status]?.icon}
                   text={statusMap[device.status]?.label}
                 />
@@ -91,7 +101,11 @@ export function DevicesTable({
               </TableCell>
               <TableCell>
                 <div onClick={(e) => e.stopPropagation()}>
-                  <DeviceDropDown device={device} />
+                  <DeviceDropDown
+                    device={device}
+                    setColor={setColor}
+                    resetColor={resetColor}
+                  />
                 </div>
               </TableCell>
             </TableRow>

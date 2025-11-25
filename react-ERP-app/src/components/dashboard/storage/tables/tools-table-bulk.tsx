@@ -12,6 +12,9 @@ import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import { PendingTable } from "./pending-table";
 import { formatDate } from "@/lib/utils/format-date";
 import { CommentPopover } from "../comment-popover";
+import { useRowColors } from "@/hooks/useRowColor";
+import { ToolBulkPDFButton } from "../pdf-generate/tool-bulk/tool-bulk-pdf-generate";
+import { useFilterPanelStore } from "@/stores/filter-panel-store";
 
 type ToolsTableProps = {
   tools: Tool[];
@@ -21,11 +24,13 @@ type ToolsTableProps = {
 
 export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
   const { openSheet } = useToolsSheetStore();
+  const { colors, setColor, resetColor } = useRowColors("tool-bulk");
+  const { selectedObjectId } = useFilterPanelStore();
 
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>
-        <TableHeader className="bg-primary pointer-events-none">
+        <TableHeader className="bg-primary">
           <TableRow>
             <TableHead className="text-secondary font-bold">Дата</TableHead>
 
@@ -44,7 +49,11 @@ export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
               Комментарий
             </TableHead>
 
-            <TableHead className="text-secondary font-bold"></TableHead>
+            <TableHead className="text-secondary font-bold">
+              {selectedObjectId !== "all" && (
+                <ToolBulkPDFButton tools={tools} />
+              )}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -53,13 +62,17 @@ export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
             <TableRow
               key={tool.id}
               onClick={() => openSheet("details", tool)}
-              className="cursor-pointer"
+              className={`cursor-pointer bg-${
+                colors[tool.id] ? colors[tool.id] : undefined
+              } hover:bg-${colors[tool.id] ? colors[tool.id] : undefined}`}
             >
               <TableCell className="font-medium">
                 {formatDate(tool.createdAt)}
               </TableCell>
 
-              <TableCell className=" hover:underline">{tool.name}</TableCell>
+              <TableCell className=" hover:underline font-medium">
+                {tool.name}
+              </TableCell>
               <TableCell className=" hover:underline">
                 {tool.description ?? ""}
               </TableCell>
@@ -87,7 +100,11 @@ export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
               </TableCell>
               <TableCell>
                 <div onClick={(e) => e.stopPropagation()}>
-                  <ToolsDropDown tool={tool} />
+                  <ToolsDropDown
+                    tool={tool}
+                    setColor={setColor}
+                    resetColor={resetColor}
+                  />
                 </div>
               </TableCell>
             </TableRow>

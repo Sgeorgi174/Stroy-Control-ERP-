@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import type { Employee, Positions } from "@/types/employee";
+import type { Employee } from "@/types/employee";
 import { useCreateShiftTemplate } from "@/hooks/shift-template/useShiftTemplate";
 import Step1SelectHours from "./step-1";
 import Step2AssignTasks from "./step-2";
@@ -20,6 +20,7 @@ import {
   loadTaskHistory,
   saveTaskHistory,
 } from "@/lib/utils/task-absence-history";
+import type { EmployeeSelection } from "@/types/employee-selection";
 
 interface ShiftTemplateDialogProps {
   objectId: string;
@@ -40,21 +41,10 @@ export function ShiftTemplateCreateDialog({
   const [templateName, setTemplateName] = useState("");
   const [plannedHours, setPlannedHours] = useState(0);
   const [employeeSelections, setEmployeeSelections] = useState<
-    {
-      id: string;
-      selected: boolean;
-      workedHours: number | null;
-      firstName: string;
-      lastName: string;
-      position: Positions;
-      task?: string;
-      absenceReason?: string;
-    }[]
+    EmployeeSelection[]
   >([]);
-
   const [taskHistory, setTaskHistory] = useState<string[]>([]);
 
-  // --- инициализация сотрудников ---
   useEffect(() => {
     setEmployeeSelections(
       employees.map((emp) => ({
@@ -63,26 +53,24 @@ export function ShiftTemplateCreateDialog({
         workedHours: null,
         firstName: emp.firstName,
         lastName: emp.lastName,
+        fatherName: emp.fatherName,
         position: emp.position,
+        isLocal: false,
       }))
     );
   }, [employees]);
 
-  // --- загрузка истории задач из localStorage ---
   useEffect(() => {
     setTaskHistory(loadTaskHistory());
   }, []);
 
-  // --- сохранение задач при смене шага ---
   useEffect(() => {
     if (prevStepRef.current !== step) {
       const newTasks = employeeSelections
         .map((emp) => emp.task)
         .filter((t): t is string => !!t);
-
       const updated = saveTaskHistory(taskHistory, newTasks);
       setTaskHistory(updated);
-
       prevStepRef.current = step;
     }
   }, [step, employeeSelections, taskHistory]);
@@ -90,14 +78,9 @@ export function ShiftTemplateCreateDialog({
   const createTemplateMutation = useCreateShiftTemplate();
 
   const handleCreateTemplate = () => {
-    if (!templateName.trim()) {
-      alert("Введите название шаблона");
-      return;
-    }
-    if (plannedHours <= 0) {
-      alert("Выберите количество часов для шаблона");
-      return;
-    }
+    if (!templateName.trim()) return alert("Введите название шаблона");
+    if (plannedHours <= 0)
+      return alert("Выберите количество часов для шаблона");
 
     const employeesForTemplate = employeeSelections.map((emp) => ({
       employeeId: emp.id,
@@ -105,6 +88,7 @@ export function ShiftTemplateCreateDialog({
       present: emp.selected,
       task: emp.task,
       absenceReason: emp.absenceReason,
+      isLocal: emp.isLocal,
     }));
 
     createTemplateMutation.mutate(
@@ -133,7 +117,7 @@ export function ShiftTemplateCreateDialog({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="min-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[1100px] sm:max-w-[1250px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             Создание шаблона смены
@@ -162,6 +146,7 @@ export function ShiftTemplateCreateDialog({
 
           {step === 1 && (
             <Step1SelectHours
+              isTemplate
               employees={employees}
               plannedHours={plannedHours}
               setPlannedHours={setPlannedHours}

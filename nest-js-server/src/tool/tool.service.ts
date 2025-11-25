@@ -64,6 +64,7 @@ export class ToolService {
           isBulk: dto.isBulk,
           quantity: dto.quantity ? dto.quantity : undefined,
           description: dto.description ?? undefined,
+          originalSerial: dto.originalSerial ?? undefined,
         },
         include: { storage: true },
       });
@@ -296,6 +297,7 @@ export class ToolService {
           objectId: dto.objectId,
           description: dto.description ?? undefined,
           quantity: dto.quantity ?? undefined,
+          originalSerial: dto.originalSerial ?? undefined,
         },
         include: { storage: true },
       });

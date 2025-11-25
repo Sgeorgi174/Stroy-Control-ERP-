@@ -140,10 +140,11 @@ model Tool {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  name         String
-  status       ToolStatus @default(ON_OBJECT)
-  serialNumber String?    @unique @map("serial_number")
-  description  String?
+  name           String
+  status         ToolStatus @default(ON_OBJECT)
+  serialNumber   String?    @unique @map("serial_number")
+  description    String?
+  originalSerial String?    @unique @map("original_serial")
 
   isBag    Boolean   @default(false)
   bagItems BagItem[]

@@ -13,6 +13,7 @@ import { Monitoring } from "@/pages/monitoring/Monitoring";
 import { AdminPanelPage } from "@/pages/admin-panel/Admin-panel";
 
 export const router = createBrowserRouter([
+  { path: "/login", element: <Auth /> },
   {
     element: <ProtectedRoute />,
     children: [
@@ -31,7 +32,6 @@ export const router = createBrowserRouter([
       },
 
       // 🔑 Авторизация и ошибки
-      { path: "/login", element: <Auth /> },
       { path: "*", element: <NotFound /> },
     ],
   },

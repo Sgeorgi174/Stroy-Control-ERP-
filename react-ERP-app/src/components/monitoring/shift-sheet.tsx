@@ -16,6 +16,7 @@ import {
 import type { Object } from "@/types/object";
 import type { Shift } from "@/types/shift";
 import { ShiftPDF } from "./pdf-button";
+import { Check } from "lucide-react";
 
 interface ShiftSheetProps {
   shift: Shift | null;
@@ -75,6 +76,7 @@ export function ShiftSheet({
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[180px]">ФИО</TableHead>
+                <TableHead className="w-[100px]">Местный</TableHead>
                 <TableHead className="w-[100px]">Часы</TableHead>
                 <TableHead>Развод</TableHead>
               </TableRow>
@@ -86,6 +88,9 @@ export function ShiftSheet({
                     {`${e.employee.lastName} ${e.employee.firstName.charAt(
                       0
                     )}.${e.employee.fatherName.charAt(0)}.`}
+                  </TableCell>
+                  <TableCell className="pl-6">
+                    {e.isLocal ? <Check className="w-[15px]" /> : ""}
                   </TableCell>
                   <TableCell>{e.workedHours}</TableCell>
                   <TableCell>{e.task || "-"}</TableCell>
@@ -102,6 +107,7 @@ export function ShiftSheet({
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[180px]">ФИО</TableHead>
+                <TableHead className="w-[100px]">Местный</TableHead>
                 <TableHead className="w-[100px]">Часы</TableHead>
                 <TableHead>Причина</TableHead>
               </TableRow>
@@ -113,6 +119,9 @@ export function ShiftSheet({
                     {`${e.employee.lastName} ${e.employee.firstName.charAt(
                       0
                     )}.${e.employee.fatherName.charAt(0)}.`}
+                  </TableCell>
+                  <TableCell className="pl-6">
+                    {e.isLocal ? <Check className="w-[15px]" /> : ""}
                   </TableCell>
                   <TableCell>{0}</TableCell>
                   <TableCell>{e.absenceReason || "-"}</TableCell>

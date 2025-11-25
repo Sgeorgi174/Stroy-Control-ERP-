@@ -10,6 +10,9 @@ import { ClothesDropdown } from "../dropdowns/clothes-dropdown";
 import type { Clothes } from "@/types/clothes";
 import { useClothesSheetStore } from "@/stores/clothes-sheet-store";
 import { PendingTable } from "./pending-table";
+import { useRowColors } from "@/hooks/useRowColor";
+import { ClothingPDFButton } from "../pdf-generate/clothing/clothing-pdf-generate";
+import { useFilterPanelStore } from "@/stores/filter-panel-store";
 
 type ClothesTableProps = {
   clothes: Clothes[];
@@ -23,6 +26,8 @@ export function ClothesTable({
   isError,
 }: ClothesTableProps) {
   const { openSheet } = useClothesSheetStore();
+  const { colors, setColor, resetColor } = useRowColors("clothes");
+  const { selectedObjectId } = useFilterPanelStore();
 
   return (
     <>
@@ -38,7 +43,7 @@ export function ClothesTable({
 
       <div className="mt-6 rounded-lg border overflow-hidden">
         <Table>
-          <TableHeader className="bg-primary pointer-events-none">
+          <TableHeader className="bg-primary">
             <TableRow>
               <TableHead className=" text-secondary font-bold">
                 Наименование
@@ -62,7 +67,11 @@ export function ClothesTable({
               <TableHead className="text-secondary font-bold">
                 Поставщик
               </TableHead>
-              <TableHead className="text-secondary font-bold"></TableHead>
+              <TableHead className="text-secondary font-bold">
+                {selectedObjectId !== "all" && (
+                  <ClothingPDFButton clothes={clothes} />
+                )}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -75,7 +84,9 @@ export function ClothesTable({
               <TableRow
                 key={item.id}
                 onClick={() => openSheet("details", item)}
-                className="cursor-pointer"
+                className={`cursor-pointer bg-${
+                  colors[item.id] ? colors[item.id] : undefined
+                } hover:bg-${colors[item.id] ? colors[item.id] : undefined}`}
               >
                 <TableCell className="font-medium hover:underline">
                   {item.name}
@@ -99,7 +110,11 @@ export function ClothesTable({
                 <TableCell>{item.provider.name}</TableCell>
                 <TableCell>
                   <div onClick={(e) => e.stopPropagation()}>
-                    <ClothesDropdown clothes={item} />
+                    <ClothesDropdown
+                      clothes={item}
+                      setColor={setColor}
+                      resetColor={resetColor}
+                    />
                   </div>
                 </TableCell>
               </TableRow>

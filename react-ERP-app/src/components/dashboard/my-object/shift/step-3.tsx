@@ -8,18 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import type { Positions } from "@/types/employee";
-
-interface EmployeeSelection {
-  id: string;
-  selected: boolean;
-  workedHours: number | null;
-  firstName: string;
-  lastName: string;
-  position: Positions;
-  task?: string;
-  absenceReason?: string;
-}
+import type { EmployeeSelection } from "@/types/employee-selection";
 
 interface Step3AbsenceReasonProps {
   employeeSelections: EmployeeSelection[];
@@ -52,7 +41,7 @@ export default function Step3AbsenceReason({
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-150px)]">
+    <div>
       <h3 className="text-xl font-medium mb-4">
         Укажите причину отсутствия сотрудников
       </h3>
@@ -70,7 +59,9 @@ export default function Step3AbsenceReason({
             {absentEmployees.map((emp) => (
               <TableRow key={emp.id} className="h-[53px]">
                 <TableCell>
-                  {emp.lastName} {emp.firstName}
+                  {`${emp.lastName} ${emp.firstName.charAt(
+                    0
+                  )}.${emp.fatherName.charAt(0)}.`}
                 </TableCell>
                 <TableCell>
                   <Badge variant="outline">{emp.position}</Badge>

@@ -23,6 +23,7 @@ const toolSchema = z
     serialNumber: z.string().optional(),
     description: z.string().optional(),
     quantity: z.number({ message: "Количество обязательно" }).optional(),
+    originalSerial: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.isBulk) {
@@ -37,7 +38,7 @@ const toolSchema = z
       if (!data.serialNumber || data.serialNumber.trim().length === 0) {
         ctx.addIssue({
           path: ["serialNumber"],
-          message: "Серийный номер обязателен",
+          message: "Инвентарный номер обязателен",
           code: z.ZodIssueCode.custom,
         });
       }
@@ -73,6 +74,7 @@ export function ToolsAdd() {
       isBulk: false,
       quantity: undefined,
       description: "",
+      originalSerial: "",
     },
   });
 
@@ -95,6 +97,7 @@ export function ToolsAdd() {
       name: data.name.trim(),
       objectId: data.objectId,
       description: data.description,
+      originalSerial: data.originalSerial,
       isBulk: data.isBulk,
       ...(data.isBulk
         ? { quantity: data.quantity }
@@ -113,7 +116,7 @@ export function ToolsAdd() {
 
   useEffect(() => {
     if (isBulk) {
-      // Групповой: очищаем серийный номер, ставим quantity по умолчанию
+      // Групповой: очищаем Инвентарный номер, ставим quantity по умолчанию
       setValue("serialNumber", "");
       setValue("quantity", 1);
     } else {
@@ -167,20 +170,36 @@ export function ToolsAdd() {
 
         {/* Серийник или количество */}
         {!isBulk ? (
-          <div className="flex flex-col gap-2 w-[400px]">
-            <Label htmlFor="serialNumber">Серийный № *</Label>
-            <Input
-              id="serialNumber"
-              placeholder="Введите серийный номер"
-              type="text"
-              {...register("serialNumber")}
-            />
-            {errors.serialNumber && (
-              <p className="text-sm text-red-500">
-                {errors.serialNumber.message}
-              </p>
-            )}
-          </div>
+          <>
+            <div className="flex flex-col gap-2 w-[400px]">
+              <Label htmlFor="serialNumber">Инвентарный № *</Label>
+              <Input
+                id="serialNumber"
+                placeholder="Введите инвентарный номер"
+                type="text"
+                {...register("serialNumber")}
+              />
+              {errors.serialNumber && (
+                <p className="text-sm text-red-500">
+                  {errors.serialNumber.message}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col gap-2 w-[400px]">
+              <Label htmlFor="originalSerial">Серийный №</Label>
+              <Input
+                id="originalSerial"
+                placeholder="Введите серийный номер"
+                type="text"
+                {...register("originalSerial")}
+              />
+              {errors.originalSerial && (
+                <p className="text-sm text-red-500">
+                  {errors.originalSerial.message}
+                </p>
+              )}
+            </div>
+          </>
         ) : (
           <div className="flex flex-col gap-2 w-[400px]">
             <Label htmlFor="quantity">Количество *</Label>

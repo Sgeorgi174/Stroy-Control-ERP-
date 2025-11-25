@@ -19,6 +19,7 @@ import {
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useLogin } from "@/hooks/auth/useLogin";
 import { useVerifyOtp } from "@/hooks/auth/useVerify";
+import { useNavigate, useLocation } from "react-router";
 
 type PhoneForm = {
   phone: string;
@@ -33,8 +34,12 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const [step, setStep] = useState<"phone" | "otp">("phone");
-  const [phoneValue, setPhoneValue] = useState<string>("");
+  const [phoneValue, setPhoneValue] = useState("");
   const [cooldown, setCooldown] = useState(0);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/"; // куда редиректить после входа
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -55,11 +60,7 @@ export function LoginForm({
     setValue: setOtpValue,
     watch: watchOtp,
     formState: { errors: otpErrors },
-  } = useForm<OtpForm>({
-    defaultValues: {
-      otp: "",
-    },
-  });
+  } = useForm<OtpForm>({ defaultValues: { otp: "" } });
 
   const { mutateAsync: sendOtp, isPending: isSending } = useLogin();
   const { mutateAsync: verifyOtp, isPending: isVerifying } = useVerifyOtp();
@@ -70,15 +71,16 @@ export function LoginForm({
       setPhoneValue(data.phone);
       setStep("otp");
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
   const onSubmitOtp = async (data: OtpForm) => {
     try {
       await verifyOtp({ phone: phoneValue, otp: +data.otp });
+      navigate(from, { replace: true }); // редирект после успешного входа
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -88,7 +90,7 @@ export function LoginForm({
       await sendOtp(data);
       setCooldown(30); // 30 секунд ожидания
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

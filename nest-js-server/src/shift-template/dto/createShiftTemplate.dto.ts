@@ -21,5 +21,6 @@ export class CreateShiftTemplateDto {
     present: boolean;
     absenceReason?: string;
     task?: string;
+    isLocal: boolean;
   }>;
 }

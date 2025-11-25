@@ -75,7 +75,7 @@ export function DeviceSheet() {
                   <div className="flex flex-col items-start">
                     <p>{selectedDevice?.name}</p>
                     <p className="text-lg text-muted-foreground">
-                      Серийный: {selectedDevice?.serialNumber}
+                      Инвентарный: {selectedDevice?.serialNumber}
                     </p>
                   </div>
                 </div>

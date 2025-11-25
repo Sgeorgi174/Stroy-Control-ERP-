@@ -12,6 +12,7 @@ import { useTabletSheetStore } from "@/stores/tablet-sheet-store";
 import { PendingTable } from "./pending-table";
 import { StatusBadge } from "./status-badge";
 import { statusMap } from "@/constants/statusMap";
+import { useRowColors } from "@/hooks/useRowColor";
 
 type TabletsTableProps = {
   tablets: Tablet[];
@@ -25,6 +26,7 @@ export function TabletsTable({
   isError,
 }: TabletsTableProps) {
   const { openSheet } = useTabletSheetStore();
+  const { colors, setColor, resetColor } = useRowColors("tablet");
 
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
@@ -56,7 +58,9 @@ export function TabletsTable({
             <TableRow
               key={tablet.id}
               onClick={() => openSheet("details", tablet)}
-              className="cursor-pointer"
+              className={`cursor-pointer bg-${
+                colors[tablet.id] ? colors[tablet.id] : undefined
+              } hover:bg-${colors[tablet.id] ? colors[tablet.id] : undefined}`}
             >
               <TableCell className="font-medium">
                 {tablet.serialNumber}
@@ -64,7 +68,6 @@ export function TabletsTable({
               <TableCell className="hover:underline">{tablet.name}</TableCell>
               <TableCell>
                 <StatusBadge
-                  color={statusMap[tablet.status]?.color}
                   Icon={statusMap[tablet.status]?.icon}
                   text={statusMap[tablet.status]?.label}
                 />
@@ -79,7 +82,11 @@ export function TabletsTable({
               </TableCell>
               <TableCell>
                 <div onClick={(e) => e.stopPropagation()}>
-                  <TabletsDropDown tablet={tablet} />
+                  <TabletsDropDown
+                    tablet={tablet}
+                    setColor={setColor}
+                    resetColor={resetColor}
+                  />
                 </div>
               </TableCell>
             </TableRow>

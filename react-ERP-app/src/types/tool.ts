@@ -24,4 +24,5 @@ export type Tool = {
   comment: string | undefined;
   isBulk: boolean;
   quantity: number;
+  originalSerial: string;
 };

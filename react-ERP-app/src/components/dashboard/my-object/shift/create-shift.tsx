@@ -13,7 +13,7 @@ import Step2AssignTasks from "./step-2";
 import Step3AbsenceReason from "./step-3";
 import Step4Summary from "./step-4";
 import { Plus, TriangleAlert } from "lucide-react";
-import type { Employee, Positions } from "@/types/employee";
+import type { Employee } from "@/types/employee";
 import { formatISO } from "date-fns";
 import { useCreateShift } from "@/hooks/shift/useShift";
 import {
@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { diffTemplateEmployees } from "@/lib/utils/diffTemplateEmployees";
+import type { EmployeeSelection } from "@/types/employee-selection";
 
 interface ShiftOpenDialogProps {
   objectId: string;
@@ -51,16 +52,7 @@ export function ShiftOpenDialog({
     null
   );
   const [employeeSelections, setEmployeeSelections] = useState<
-    {
-      id: string;
-      selected: boolean;
-      workedHours: number | null;
-      firstName: string;
-      lastName: string;
-      position: Positions;
-      task?: string;
-      absenceReason?: string;
-    }[]
+    EmployeeSelection[]
   >([]);
   const [taskHistory, setTaskHistory] = useState<string[]>([]);
 
@@ -85,6 +77,8 @@ export function ShiftOpenDialog({
           firstName: emp.firstName,
           lastName: emp.lastName,
           position: emp.position,
+          fatherName: emp.fatherName,
+          isLocal: false,
         }))
       );
       setPlannedHours(0);
@@ -107,6 +101,8 @@ export function ShiftOpenDialog({
             position: emp.position,
             task: tmplEmp?.task,
             absenceReason: tmplEmp?.absenceReason,
+            fatherName: emp.fatherName,
+            isLocal: tmplEmp?.isLocal ?? false,
           };
         })
       );
@@ -141,6 +137,7 @@ export function ShiftOpenDialog({
       present: emp.selected,
       task: emp.task,
       absenceReason: emp.absenceReason,
+      isLocal: emp.isLocal,
     }));
 
     createShiftMutation.mutate(

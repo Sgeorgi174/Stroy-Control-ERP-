@@ -19,7 +19,7 @@ export function ToolInfo({ transfer }: ToolInfoProps) {
         </div>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           {!transfer.tool.isBulk && (
-            <span>Серийный номер: {transfer.tool.serialNumber}</span>
+            <span>Инвентарный номер: {transfer.tool.serialNumber}</span>
           )}
           {transfer.tool.isBulk && <span>Количество: {transfer.quantity}</span>}
         </div>

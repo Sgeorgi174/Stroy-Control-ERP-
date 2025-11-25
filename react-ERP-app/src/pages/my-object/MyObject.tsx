@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Clock } from "@/components/ui/clock";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { useShiftsWithFilters } from "@/hooks/shift/useShift";
-import { HardHat, Users } from "lucide-react";
+import { Check, HardHat, Users } from "lucide-react";
 import {
   Table,
   TableHeader,
@@ -139,17 +139,17 @@ export function MyObject() {
           <div className="mt-6 flex flex-col gap-6">
             {/* Карточки с общей статистикой */}
             <div className="grid grid-cols-3 gap-4">
-              <Card className="p-4 flex flex-col items-center bg-green-100 text-green-800">
-                <p>Присутствует</p>
-                <p className="font-bold text-2xl">{presentEmployees.length}</p>
+              <Card className="p-4 flex flex-col items-center bg-table-green">
+                <p className="font-medium text-xl">Присутствует</p>
+                <p className="font-bold text-3xl">{presentEmployees.length}</p>
               </Card>
-              <Card className="p-4 flex flex-col items-center bg-red-100 text-red-800">
-                <p>Отсутствует</p>
-                <p className="font-bold text-2xl">{absentEmployees.length}</p>
+              <Card className="p-4 flex flex-col items-center bg-table-red ">
+                <p className="font-medium text-xl">Отсутствует</p>
+                <p className="font-bold text-3xl">{absentEmployees.length}</p>
               </Card>
-              <Card className="p-4 flex flex-col items-center bg-blue-100 text-blue-800">
-                <p>Общее количество часов</p>
-                <p className="font-bold text-2xl">{totalWorkedHours}</p>
+              <Card className="p-4 flex flex-col items-center bg-table-blue">
+                <p className="font-medium text-xl">Общее количество часов</p>
+                <p className="font-bold text-3xl">{totalWorkedHours}</p>
               </Card>
             </div>
 
@@ -162,16 +162,26 @@ export function MyObject() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Сотрудник</TableHead>
-                      <TableHead>Часы</TableHead>
+                      <TableHead className="w-[100px]">№</TableHead>
+                      <TableHead className="w-[250px]">Сотрудник</TableHead>
+                      <TableHead className="w-[150px]">Местный</TableHead>
+                      <TableHead className="w-[150px]">Часы</TableHead>
                       <TableHead>Задача</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {presentEmployees.map((emp) => (
+                    {presentEmployees.map((emp, index) => (
                       <TableRow key={emp.employeeId}>
+                        <TableCell>{index + 1}</TableCell>
                         <TableCell>
-                          {emp.employee.firstName} {emp.employee.lastName}
+                          {`${
+                            emp.employee.lastName
+                          } ${emp.employee.firstName.charAt(
+                            0
+                          )}.${emp.employee.fatherName.charAt(0)}.`}
+                        </TableCell>
+                        <TableCell className="pl-6">
+                          {emp.isLocal ? <Check className="w-[18px]" /> : ""}
                         </TableCell>
                         <TableCell>{emp.workedHours ?? "—"}</TableCell>
                         <TableCell>{emp.task || "—"}</TableCell>
@@ -191,16 +201,28 @@ export function MyObject() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Сотрудник</TableHead>
+                      <TableHead className="w-[100px]">№</TableHead>
+                      <TableHead className="w-[250px]">Сотрудник</TableHead>
+                      <TableHead className="w-[150px]">Местный</TableHead>
+                      <TableHead className="w-[150px]">Часы</TableHead>
                       <TableHead>Причина отсутствия</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {absentEmployees.map((emp) => (
+                    {absentEmployees.map((emp, index) => (
                       <TableRow key={emp.employeeId}>
+                        <TableCell>{index + 1}</TableCell>
                         <TableCell>
-                          {emp.employee.firstName} {emp.employee.lastName}
+                          {`${
+                            emp.employee.lastName
+                          } ${emp.employee.firstName.charAt(
+                            0
+                          )}.${emp.employee.fatherName.charAt(0)}.`}
                         </TableCell>
+                        <TableCell className="pl-6">
+                          {emp.isLocal ? <Check className="w-[18px]" /> : ""}
+                        </TableCell>
+                        <TableCell>{0}</TableCell>
                         <TableCell>{emp.absenceReason || "—"}</TableCell>
                       </TableRow>
                     ))}

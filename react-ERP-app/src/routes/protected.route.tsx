@@ -1,15 +1,12 @@
+import { Navigate, Outlet, useLocation } from "react-router";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { LoaderCircle } from "lucide-react";
-import { Navigate, Outlet, useLocation } from "react-router";
 
 export const ProtectedRoute = () => {
   const location = useLocation();
-  const { isLoading, data: user, isError } = useAuth();
+  const { isLoading, data: user } = useAuth();
 
-  const isAuthenticated = !!user;
-  const isLoginPage = location.pathname === "/login";
-
-  // Пока идёт проверка сессии — спиннер
+  // Пока идет проверка сессии — спиннер
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -21,21 +18,15 @@ export const ProtectedRoute = () => {
     );
   }
 
-  // ⛔️ Ошибка при проверке сессии — значит пользователь неавторизован
-  if (isError && !isLoginPage) {
-    return <Navigate to="/login" replace />;
+  // Не авторизован — редирект на login
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // ✅ Авторизован и на /login — редирект на /
-  if (isAuthenticated && isLoginPage) {
-    return <Navigate to="/" replace />;
+  if (user && location.pathname === "/") {
+    return <Navigate to="/storage" replace />;
   }
 
-  // ❌ Не авторизован и не на /login — редирект на /login
-  if (!isAuthenticated && !isLoginPage) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // ✅ Все остальные случаи — пропускаем внутрь
+  // Авторизован — показываем приватные маршруты
   return <Outlet />;
 };

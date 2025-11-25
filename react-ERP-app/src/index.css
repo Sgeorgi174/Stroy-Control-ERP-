@@ -40,6 +40,11 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-table-red: var(--table-red);
+  --color-table-orange: var(--table-orange);
+  --color-table-blue: var(--table-blue);
+  --color-table-green: var(--table-green);
+  --color-table-purple: var(--table-purple);
 }
 
 :root {
@@ -76,6 +81,11 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --table-red: oklch(76.224% 0.13108 20.544);
+  --table-orange: oklch(87.385% 0.11714 80.052);
+  --table-blue: oklch(79.508% 0.09853 255.834);
+  --table-green: oklch(81.336% 0.13935 157.977);
+  --table-purple: oklch(81.056% 0.06556 314.381);
 }
 
 .dark {
@@ -111,6 +121,11 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --table-red: oklch(50.225% 0.15856 24.903);
+  --table-orange: oklch(61.087% 0.11928 71.967);
+  --table-blue: oklch(52.531% 0.10217 237.7);
+  --table-green: oklch(54.963% 0.14256 152.129);
+  --table-purple: oklch(44.292% 0.13646 321.063);
 }
 
 @layer base {

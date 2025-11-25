@@ -13,7 +13,7 @@ import { useObjects } from "@/hooks/object/useObject";
 
 const formSchema = z.object({
   name: z.string().min(1, "Наименование обязательно"),
-  serialNumber: z.string().min(1, "Серийный номер обязателен"),
+  serialNumber: z.string().min(1, "Инвентарный номер обязателен"),
   objectId: z.string().min(1, "Место хранения обязательно"),
 });
 
@@ -87,7 +87,7 @@ export function DeviceEdit({ device }: DeviceEditProps) {
         </div>
 
         <div className="flex flex-col gap-2 w-[400px]">
-          <Label htmlFor="serialNumber">Серийный № *</Label>
+          <Label htmlFor="serialNumber">Инвентарный № *</Label>
           <Input
             id="serialNumber"
             type="text"

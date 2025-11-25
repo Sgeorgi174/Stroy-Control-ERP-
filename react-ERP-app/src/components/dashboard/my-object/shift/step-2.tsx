@@ -7,19 +7,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import type { Positions } from "@/types/employee";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-
-interface EmployeeSelection {
-  id: string;
-  selected: boolean;
-  workedHours: number | null;
-  firstName: string;
-  lastName: string;
-  position: Positions;
-  task?: string;
-}
+import type { EmployeeSelection } from "@/types/employee-selection";
 
 interface Step2AssignTasksProps {
   employeeSelections: EmployeeSelection[];
@@ -56,15 +45,13 @@ export default function Step2AssignTasks({
         Назначение задач выбранным сотрудникам
       </h3>
 
-      <div className="flex-1 overflow-y-auto rounded-md border p-3">
+      <div className="flex-1 rounded-md border p-3">
         <Table>
           <TableHeader className="sticky top-0 bg-background z-10 shadow-sm">
             <TableRow>
-              <TableHead>Сотрудник</TableHead>
-              <TableHead>Местный</TableHead>
-              <TableHead>Должность</TableHead>
-              <TableHead>Часы</TableHead>
-
+              <TableHead className="w-[200px]">Сотрудник</TableHead>
+              <TableHead className="w-[190px]">Должность</TableHead>
+              <TableHead className="w-[100px]">Часы</TableHead>
               <TableHead>Задача</TableHead>
             </TableRow>
           </TableHeader>
@@ -72,16 +59,14 @@ export default function Step2AssignTasks({
             {selectedEmployees.map((emp) => (
               <TableRow key={emp.id} className="h-[53px]">
                 <TableCell>
-                  {emp.lastName} {emp.firstName}
-                </TableCell>
-                <TableCell>
-                  <Checkbox />
+                  {`${emp.lastName} ${emp.firstName.charAt(
+                    0
+                  )}.${emp.fatherName.charAt(0)}.`}
                 </TableCell>
                 <TableCell>
                   <Badge variant="outline">{emp.position}</Badge>
                 </TableCell>
                 <TableCell>{emp.workedHours ?? "—"}</TableCell>
-
                 <TableCell>
                   <Input
                     id={`task-${emp.id}`}

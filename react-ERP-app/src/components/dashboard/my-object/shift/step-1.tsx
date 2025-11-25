@@ -16,17 +16,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatDate } from "@/lib/utils/format-date";
-import type { Employee, Positions } from "@/types/employee";
-
-interface EmployeeSelection {
-  id: string;
-  selected: boolean;
-  workedHours: number | null;
-  firstName: string;
-  lastName: string;
-  position: Positions;
-  task?: string;
-}
+import type { Employee } from "@/types/employee";
+import type { EmployeeSelection } from "@/types/employee-selection";
 
 interface Step1Props {
   plannedHours: number;
@@ -53,9 +44,7 @@ export default function Step1SelectHours({
   const today = new Date();
   const formattedDate = formatDate(today.toISOString());
 
-  // ----------------------------------------------------
-  // 🔥 При смене plannedHours — обновляем часы выбранных сотрудников
-  // ----------------------------------------------------
+  // Изменение общего количества часов
   const handlePlannedHoursChange = (val: string) => {
     const hours = Number(val);
     setPlannedHours(hours);
@@ -65,6 +54,7 @@ export default function Step1SelectHours({
     );
   };
 
+  // Переключение выбора сотрудника
   const toggleEmployee = (employee: Employee) => {
     setEmployeeSelections((prev) => {
       const exists = prev.find((emp) => emp.id === employee.id);
@@ -89,22 +79,34 @@ export default function Step1SelectHours({
           workedHours: plannedHours || null,
           firstName: employee.firstName,
           lastName: employee.lastName,
+          fatherName: employee.fatherName,
           position: employee.position,
+          isLocal: false, // по умолчанию false
         },
       ];
     });
   };
 
+  // Изменение количества часов для конкретного сотрудника
   const updateEmployeeHours = (id: string, hours: number) => {
     setEmployeeSelections((prev) =>
       prev.map((emp) => (emp.id === id ? { ...emp, workedHours: hours } : emp))
     );
   };
 
+  // Переключение isLocal для сотрудника
+  const toggleIsLocal = (id: string) => {
+    setEmployeeSelections((prev) =>
+      prev.map((emp) =>
+        emp.id === id ? { ...emp, isLocal: !emp.isLocal } : emp
+      )
+    );
+  };
+
   return (
-    <div className="flex flex-col h-[calc(100vh-150px)]">
+    <div>
       {/* Верхняя панель */}
-      <div className="bg-muted rounded-xl p-5 mb-5">
+      <div className="bg-muted rounded-xl p-5 mb-5 shrink-0">
         <div className="flex flex-wrap items-center gap-6 mt-3">
           {!isTemplate && (
             <div className="flex items-center gap-3">
@@ -134,81 +136,90 @@ export default function Step1SelectHours({
         </div>
       </div>
 
+      {/* Таблица сотрудников */}
       {plannedHours > 0 && (
-        <>
-          <div className="flex-1 overflow-y-auto rounded-md border p-3">
-            <Table>
-              <TableHeader className="sticky top-0 bg-background z-10">
-                <TableRow>
-                  <TableHead>Выбор</TableHead>
-                  <TableHead>Сотрудник</TableHead>
-                  <TableHead>Должность</TableHead>
-                  <TableHead className="w-[172px]">Часы</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {employees.map((employee) => {
-                  const empState = employeeSelections.find(
-                    (e) => e.id === employee.id
-                  );
-                  const selected = empState?.selected || false;
-                  const workedHours = empState?.workedHours ?? null;
+        <div className="flex-1 rounded-md border p-3">
+          <Table>
+            <TableHeader className="sticky top-0 bg-background z-10">
+              <TableRow>
+                <TableHead>Выбор</TableHead>
+                <TableHead>Сотрудник</TableHead>
+                <TableHead>Местный</TableHead>
+                <TableHead>Должность</TableHead>
+                <TableHead className="w-[172px]">Часы</TableHead>
+              </TableRow>
+            </TableHeader>
 
-                  return (
-                    <TableRow
-                      key={employee.id}
-                      className={`${
-                        selected ? "bg-muted" : "bg-transparent"
-                      } h-[53px] hover:bg-muted`}
-                    >
-                      <TableCell>
-                        <Checkbox
-                          checked={selected}
-                          onCheckedChange={() => toggleEmployee(employee)}
-                        />
-                      </TableCell>
+            <TableBody>
+              {employees.map((employee) => {
+                const empState = employeeSelections.find(
+                  (e) => e.id === employee.id
+                );
+                const selected = empState?.selected || false;
+                const workedHours = empState?.workedHours ?? null;
+                const isLocal = empState?.isLocal || false;
 
-                      <TableCell>
-                        {employee.lastName} {employee.firstName}{" "}
-                        {employee.fatherName}
-                      </TableCell>
+                return (
+                  <TableRow
+                    key={employee.id}
+                    className={`${
+                      selected ? "bg-muted" : "bg-transparent"
+                    } h-[53px] hover:bg-muted`}
+                  >
+                    <TableCell>
+                      <Checkbox
+                        checked={selected}
+                        onCheckedChange={() => toggleEmployee(employee)}
+                      />
+                    </TableCell>
 
-                      <TableCell>
-                        <Badge variant="outline">{employee.position}</Badge>
-                      </TableCell>
+                    <TableCell>
+                      {employee.lastName} {employee.firstName}{" "}
+                      {employee.fatherName || ""}
+                    </TableCell>
 
-                      <TableCell>
-                        {selected ? (
-                          <Select
-                            value={
-                              workedHours ? workedHours.toString() : undefined
-                            }
-                            onValueChange={(val) =>
-                              updateEmployeeHours(employee.id, Number(val))
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="—" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {employeeHoursOptions.map((hour) => (
-                                <SelectItem key={hour} value={hour.toString()}>
-                                  {hour} ч
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <span className="text-gray-400">—</span>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </>
+                    <TableCell>
+                      <Checkbox
+                        checked={isLocal}
+                        onCheckedChange={() => toggleIsLocal(employee.id)}
+                      />
+                    </TableCell>
+
+                    <TableCell>
+                      <Badge variant="outline">{employee.position}</Badge>
+                    </TableCell>
+
+                    <TableCell>
+                      {selected ? (
+                        <Select
+                          value={
+                            workedHours ? workedHours.toString() : undefined
+                          }
+                          onValueChange={(val) =>
+                            updateEmployeeHours(employee.id, Number(val))
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="—" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {employeeHoursOptions.map((hour) => (
+                              <SelectItem key={hour} value={hour.toString()}>
+                                {hour} ч
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <span className="text-gray-400">—</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
       )}
     </div>
   );

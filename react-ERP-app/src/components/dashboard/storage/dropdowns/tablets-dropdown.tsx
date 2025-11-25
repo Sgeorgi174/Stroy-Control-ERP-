@@ -3,6 +3,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EllipsisVertical } from "lucide-react";
@@ -15,9 +18,17 @@ import { useDeleteTablet } from "@/hooks/tablet/useDeleteTablet";
 import { useReleaseTablet } from "@/hooks/tablet/useReleaseTablet";
 import { useAuth } from "@/hooks/auth/useAuth";
 
-type TabletDropDownProps = { tablet: Tablet };
+type TabletDropDownProps = {
+  tablet: Tablet;
+  setColor: (id: string, color: string) => void;
+  resetColor: (id: string) => void;
+};
 
-export function TabletsDropDown({ tablet }: TabletDropDownProps) {
+export function TabletsDropDown({
+  tablet,
+  setColor,
+  resetColor,
+}: TabletDropDownProps) {
   const { openSheet } = useTabletSheetStore();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isReleaseDialogOpen, setIsReleaseDialogOpen] = useState(false);
@@ -57,6 +68,68 @@ export function TabletsDropDown({ tablet }: TabletDropDownProps) {
           >
             Подробнее
           </DropdownMenuItem>
+
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Задать цвет</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setColor(tablet.id, "table-red"); // пастельный красный
+                }}
+              >
+                <div className="w-[100px] h-[18px] bg-table-red"></div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setColor(tablet.id, "table-orange"); // пастельный жёлтый
+                }}
+              >
+                <div className="w-[100px] h-[18px] bg-table-orange"></div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setColor(tablet.id, "table-blue"); // пастельный голубой
+                }}
+              >
+                <div className="w-[100px] h-[18px] bg-table-blue"></div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setColor(tablet.id, "table-purple"); // пастельный сиреневый
+                }}
+              >
+                <div className="w-[100px] h-[18px] bg-table-purple"></div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setColor(tablet.id, "table-green"); // пастельный зелёный
+                }}
+              >
+                <div className="w-[100px] h-[18px] bg-table-green"></div>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  resetColor(tablet.id);
+                }}
+              >
+                Сбросить цвет
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+
           <DropdownMenuSeparator />
           <DropdownMenuItem
             disabled={user?.role === "FOREMAN"}

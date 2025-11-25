@@ -18,9 +18,17 @@ import { useDeleteTool } from "@/hooks/tool/useDeleteTool";
 import { ToolCommentDialog } from "../tool-comment-dialog";
 import { useAuth } from "@/hooks/auth/useAuth";
 
-type ToolDropDownProps = { tool: Tool };
+type ToolDropDownProps = {
+  tool: Tool;
+  setColor: (id: string, color: string) => void;
+  resetColor: (id: string) => void;
+};
 
-export function ToolsDropDown({ tool }: ToolDropDownProps) {
+export function ToolsDropDown({
+  tool,
+  setColor,
+  resetColor,
+}: ToolDropDownProps) {
   const { openSheet } = useToolsSheetStore();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { data: user } = useAuth();
@@ -37,7 +45,6 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
       onError: () => setIsDeleteDialogOpen(false),
     });
   };
-  console.log(tool);
 
   const hasComment = Boolean(tool.comment && tool.comment.trim().length > 0);
 
@@ -59,6 +66,66 @@ export function ToolsDropDown({ tool }: ToolDropDownProps) {
           >
             Подробнее
           </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Задать цвет</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setColor(tool.id, "table-red"); // пастельный красный
+                }}
+              >
+                <div className="w-[100px] h-[18px] bg-table-red"></div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setColor(tool.id, "table-orange"); // пастельный жёлтый
+                }}
+              >
+                <div className="w-[100px] h-[18px] bg-table-orange"></div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setColor(tool.id, "table-blue"); // пастельный голубой
+                }}
+              >
+                <div className="w-[100px] h-[18px] bg-table-blue"></div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setColor(tool.id, "table-purple"); // пастельный сиреневый
+                }}
+              >
+                <div className="w-[100px] h-[18px] bg-table-purple"></div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setColor(tool.id, "table-green"); // пастельный зелёный
+                }}
+              >
+                <div className="w-[100px] h-[18px] bg-table-green"></div>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  resetColor(tool.id);
+                }}
+              >
+                Сбросить цвет
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
 
           <DropdownMenuSeparator />
 

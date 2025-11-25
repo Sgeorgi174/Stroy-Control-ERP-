@@ -31,6 +31,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+import { LogoutDialog } from "./logout-dialog";
 
 const sidebarItems = [
   {
@@ -101,15 +102,7 @@ const sidebarItems = [
     url: "/admin",
     tab: "admin",
     icon: Shield,
-    roles: [
-      "OWNER",
-      "ACCOUNTANT",
-      "FOREMAN",
-      "MASTER",
-      "ASSISTANT_MANAGER",
-      "ADMIN",
-      "HR",
-    ],
+    roles: ["ADMIN"],
   },
 ];
 
@@ -186,9 +179,11 @@ export function AppSidebar() {
               <p className="font-medium">{`${user.lastName} ${user.firstName}`}</p>
               <p className="text-sm text-muted-foreground">{user.phone}</p>
             </div>
-            <Button className="rounded-xl cursor-pointer">
-              <LogOut />
-            </Button>
+            <LogoutDialog>
+              <Button className="rounded-xl cursor-pointer">
+                <LogOut />
+              </Button>
+            </LogoutDialog>
           </div>
         </div>
       </SidebarFooter>

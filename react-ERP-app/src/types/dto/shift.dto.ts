@@ -4,6 +4,7 @@ export interface ShiftEmployeeDto {
   present: boolean;
   absenceReason?: string;
   task?: string;
+  isLocal: boolean;
 }
 
 export interface CreateShiftDto {

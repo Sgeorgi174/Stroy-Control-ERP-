@@ -27,6 +27,7 @@ export class ShiftService {
               present: emp.present,
               absenceReason: emp.absenceReason ?? null,
               task: emp.task ?? null,
+              isLocal: emp.isLocal,
             })),
           },
         },
@@ -55,6 +56,7 @@ export class ShiftService {
             present: emp.present,
             absenceReason: emp.absenceReason ?? null,
             task: emp.task ?? null,
+            isLocal: emp.isLocal,
           })),
         });
       }

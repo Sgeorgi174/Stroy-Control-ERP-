@@ -71,7 +71,6 @@ export function ObjectsTable({
               <TableCell>
                 <StatusBadge
                   Icon={object.isPending ? PauseIcon : CircleCheck}
-                  color={object.isPending ? "#807F7F" : "#23732E"}
                   text={object.isPending ? "На паузе" : "Активен"}
                 ></StatusBadge>
               </TableCell>

@@ -81,7 +81,7 @@ export function TabletSheet() {
                   <div className="flex flex-col items-start">
                     <p>{selectedTablet?.name}</p>
                     <p className="text-lg text-muted-foreground">
-                      Серийный: {selectedTablet?.serialNumber}
+                      Инвентарный: {selectedTablet?.serialNumber}
                     </p>
                   </div>
                 </div>

@@ -7,6 +7,7 @@ export interface CreateToolDto {
   isBulk?: boolean;
   quantity?: number;
   description?: string;
+  originalSerial?: string;
 }
 
 export interface UpdateToolDto extends CreateToolDto {
