@@ -65,6 +65,7 @@ export class DeviceService {
         include: { storage: true },
       });
     } catch (error) {
+      console.log(error);
       handlePrismaError(error, {
         conflictMessage: 'Устройство с таким серийным номером уже существует',
         defaultMessage: 'Ошибка создания устройства',
