@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsBooleanString, IsEnum, IsOptional, IsString } from 'class-validator';
 import { ToolStatus } from 'generated/prisma';
 
 export class GetToolsQueryDto {
@@ -17,4 +17,8 @@ export class GetToolsQueryDto {
   @IsOptional()
   @IsString()
   isBulk?: string;
+
+  @IsOptional()
+  @IsBooleanString()
+  includeAllStatuses?: string; // 'true' | 'false'
 }

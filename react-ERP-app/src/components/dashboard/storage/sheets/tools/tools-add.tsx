@@ -13,6 +13,10 @@ import { useObjects } from "@/hooks/object/useObject";
 import { useCreateTool } from "@/hooks/tool/useCreateTool";
 import { useCreateToolBag } from "@/hooks/tool/useCreateToolBag";
 import { useState, useEffect } from "react";
+import { useTools } from "@/hooks/tool/useTools";
+import { generateInventoryNumber } from "@/lib/utils/generateInventaryNumber";
+import type { Tool } from "@/types/tool";
+import { SelectPreffixForInventory } from "@/components/dashboard/select-preffix-inventory";
 
 // ✅ Единая схема, которая учитывает оба варианта (штучный / групповой)
 const toolSchema = z
@@ -53,10 +57,22 @@ export function ToolsAdd() {
     status: "OPEN",
   });
 
+  const { data: tools = [] } = useTools({
+    isBulk: false,
+    searchQuery: "",
+    objectId: "all",
+    status: undefined,
+    includeAllStatuses: "true",
+  });
+  const usedNumbers = tools
+    .map((tool: Tool) => tool.serialNumber)
+    .filter(Boolean);
+
   const createTool = useCreateTool();
   const createToolBag = useCreateToolBag();
 
   const [isBag, setIsBag] = useState(false);
+  const [prefix, setPrefix] = useState<string | null>(null);
 
   const {
     register,
@@ -126,6 +142,8 @@ export function ToolsAdd() {
     }
   }, [isBulk, setValue]);
 
+  console.log(tools);
+
   return (
     <div className="p-5">
       {/* 🔹 Переключатель типа инструмента */}
@@ -171,19 +189,48 @@ export function ToolsAdd() {
         {/* Серийник или количество */}
         {!isBulk ? (
           <>
-            <div className="flex flex-col gap-2 w-[400px]">
-              <Label htmlFor="serialNumber">Инвентарный № *</Label>
-              <Input
-                id="serialNumber"
-                placeholder="Введите инвентарный номер"
-                type="text"
-                {...register("serialNumber")}
-              />
-              {errors.serialNumber && (
-                <p className="text-sm text-red-500">
-                  {errors.serialNumber.message}
-                </p>
-              )}
+            <div className="flex gap-2">
+              <div className="flex flex-col gap-2 w-[200px]">
+                <Label htmlFor="serialNumber">Инвентарный № *</Label>
+                <Input
+                  id="serialNumber"
+                  placeholder="Инвентарный №"
+                  type="text"
+                  {...register("serialNumber")}
+                />
+                {errors.serialNumber && (
+                  <p className="text-sm text-red-500">
+                    {errors.serialNumber.message}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label>Генерация</Label>
+                <SelectPreffixForInventory
+                  prefix={prefix ?? ""}
+                  setPrefix={setPrefix}
+                  isTool={true}
+                  className="w-[230px]"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label className="text-transparent">Генерация</Label>
+                <Button
+                  type="button"
+                  disabled={!prefix}
+                  onClick={() => {
+                    if (!prefix) return;
+                    const generated = generateInventoryNumber(
+                      prefix,
+                      usedNumbers
+                    );
+                    setValue("serialNumber", generated);
+                  }}
+                >
+                  Сгенерировать
+                </Button>
+              </div>
             </div>
             <div className="flex flex-col gap-2 w-[400px]">
               <Label htmlFor="originalSerial">Серийный №</Label>

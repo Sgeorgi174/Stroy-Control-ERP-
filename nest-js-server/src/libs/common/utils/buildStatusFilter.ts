@@ -1,7 +1,12 @@
 export function buildStatusFilter(
   statusFilter?: string[] | string,
+  includeAllStatuses = false,
   excludeStatuses: string[] = ['LOST', 'WRITTEN_OFF'],
 ): object {
+  if (includeAllStatuses) {
+    return {}; // не фильтруем по статусам вообще
+  }
+
   if (!statusFilter) {
     return { status: { notIn: excludeStatuses } };
   }

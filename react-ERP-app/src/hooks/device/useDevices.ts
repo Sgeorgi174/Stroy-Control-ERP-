@@ -6,6 +6,7 @@ interface FilterParams {
   searchQuery: string;
   objectId?: string | null;
   status?: DeviceStatus | null;
+  includeAllStatuses?: "true" | "false";
 }
 
 export const useDevices = (params: FilterParams, enabled = true) => {

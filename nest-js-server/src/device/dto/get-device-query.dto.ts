@@ -1,4 +1,10 @@
-import { IsOptional, IsEnum, IsUUID, IsString } from 'class-validator';
+import {
+  IsOptional,
+  IsEnum,
+  IsUUID,
+  IsString,
+  IsBooleanString,
+} from 'class-validator';
 import { ToolStatus } from 'generated/prisma';
 
 export class GetDeviceQueryDto {
@@ -13,4 +19,8 @@ export class GetDeviceQueryDto {
   @IsOptional()
   @IsString()
   searchQuery?: string;
+
+  @IsOptional()
+  @IsBooleanString()
+  includeAllStatuses?: string; // 'true' | 'false'
 }

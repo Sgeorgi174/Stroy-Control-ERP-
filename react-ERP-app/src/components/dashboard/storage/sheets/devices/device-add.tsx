@@ -8,6 +8,11 @@ import { z } from "zod";
 import { useDeviceSheetStore } from "@/stores/device-sheet-store";
 import { useCreateDevice } from "@/hooks/device/useCreateDevice";
 import { useObjects } from "@/hooks/object/useObject";
+import { SelectPreffixForInventory } from "@/components/dashboard/select-preffix-inventory";
+import { generateInventoryNumber } from "@/lib/utils/generateInventaryNumber";
+import { useDevices } from "@/hooks/device/useDevices";
+import type { Device } from "@/types/device";
+import { useState } from "react";
 
 // 1. Схема валидации Zod
 const deviceSchema = z.object({
@@ -45,6 +50,16 @@ export function DeviceAdd() {
   const selectedObjectId = watch("objectId");
 
   const { mutate: createDevice, isPending } = useCreateDevice();
+  const [prefix, setPrefix] = useState<string | null>(null);
+  const { data: devices = [] } = useDevices({
+    searchQuery: "",
+    objectId: "all",
+    status: undefined,
+    includeAllStatuses: "true",
+  });
+  const usedNumbers = devices
+    .map((device: Device) => device.serialNumber)
+    .filter(Boolean);
 
   const onSubmit = (data: FormData) => {
     const trimmedName = data.name.trim();
@@ -66,6 +81,8 @@ export function DeviceAdd() {
     );
   };
 
+  console.log(devices);
+
   return (
     <div className="p-5">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -85,20 +102,45 @@ export function DeviceAdd() {
         </div>
 
         {/* Инвентарник */}
-        <div className="flex flex-col gap-2 w-[400px]">
-          <Label htmlFor="serialNumber">Инвентарный № *</Label>
-          <Input
-            id="serialNumber"
-            placeholder="Введите инвентарный номер"
-            type="text"
-            {...register("serialNumber")}
-            disabled={isPending}
-          />
-          {errors.serialNumber && (
-            <p className="text-sm text-red-500">
-              {errors.serialNumber.message}
-            </p>
-          )}
+        <div className="flex gap-2">
+          <div className="flex flex-col gap-2 w-[200px]">
+            <Label htmlFor="serialNumber">Инвентарный № *</Label>
+            <Input
+              id="serialNumber"
+              placeholder="Инвентарный №"
+              type="text"
+              {...register("serialNumber")}
+            />
+            {errors.serialNumber && (
+              <p className="text-sm text-red-500">
+                {errors.serialNumber.message}
+              </p>
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label>Генерация</Label>
+            <SelectPreffixForInventory
+              prefix={prefix ?? ""}
+              setPrefix={setPrefix}
+              isTool={false}
+              className="w-[230px]"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label className="text-transparent">Генерация</Label>
+            <Button
+              type="button"
+              disabled={!prefix}
+              onClick={() => {
+                if (!prefix) return;
+                const generated = generateInventoryNumber(prefix, usedNumbers);
+                setValue("serialNumber", generated);
+              }}
+            >
+              Сгенерировать
+            </Button>
+          </div>
         </div>
 
         {/* Серийник */}

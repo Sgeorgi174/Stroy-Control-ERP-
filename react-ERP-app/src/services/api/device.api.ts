@@ -15,12 +15,14 @@ export const getFilteredDevice = async (params: {
   searchQuery: string;
   objectId?: string | null;
   status?: DeviceStatus | null;
+  includeAllStatuses?: "true" | "false";
 }) => {
   const res = await api.get("/devices/filter", {
     params: {
       searchQuery: params.searchQuery || undefined,
       objectId: params.objectId || undefined,
       status: params.status || undefined,
+      includeAllStatuses: params.includeAllStatuses || undefined,
     },
   });
   return res.data;

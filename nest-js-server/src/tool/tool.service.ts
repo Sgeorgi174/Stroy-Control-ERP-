@@ -247,12 +247,11 @@ export class ToolService {
   }
 
   public async getFiltered(query: GetToolsQueryDto) {
-    const statusFilter = buildStatusFilter(query.status);
     const tools = await this.prismaService.tool.findMany({
       where: {
         ...(query.objectId === 'all' ? {} : { objectId: query.objectId }),
         ...(query.isBulk === 'true' ? { isBulk: true } : { isBulk: false }),
-        ...statusFilter,
+        ...buildStatusFilter(query.status, query.includeAllStatuses === 'true'),
         ...(query.searchQuery
           ? {
               OR: [

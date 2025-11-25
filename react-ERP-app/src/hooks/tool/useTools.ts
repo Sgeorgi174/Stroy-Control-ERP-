@@ -7,6 +7,7 @@ type Params = {
   objectId?: string | null;
   status?: ToolStatus | null;
   isBulk: boolean;
+  includeAllStatuses?: "true" | "false";
 };
 
 export const useTools = (params: Params, enabled = true) => {

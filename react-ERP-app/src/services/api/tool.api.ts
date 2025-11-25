@@ -23,6 +23,7 @@ export const getFilteredTools = async (params: {
   objectId?: string | null;
   status?: ToolStatus | null;
   isBulk: boolean;
+  includeAllStatuses?: "true" | "false";
 }) => {
   const res = await api.get("/tools/filter", {
     params: {
@@ -30,6 +31,7 @@ export const getFilteredTools = async (params: {
       objectId: params.objectId || undefined,
       status: params.status || undefined,
       isBulk: params.isBulk,
+      includeAllStatuses: params.includeAllStatuses || undefined,
     },
   });
   return res.data;
