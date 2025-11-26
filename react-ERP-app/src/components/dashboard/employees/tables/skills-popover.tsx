@@ -19,7 +19,7 @@ export function SkillsPopover({ skills }: SkillsPopover) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button className="w-[90px] bg-accent text-accent-foreground border hover:text-accent p-1 rounded-2xl">
-          {"Открыть"}
+          {"Навыки"}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[400px]">

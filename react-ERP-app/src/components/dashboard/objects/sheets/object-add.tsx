@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect } from "react";
 import { useCreateObject } from "@/hooks/object/useCreateObject";
 import { useGetFreeForemen } from "@/hooks/user/useGetFreeForemen";
+import { CustomerSelectForForms } from "../customer-select-for-forms";
 
 // 1. Схема валидации Zod
 const tabletSchema = z
@@ -20,6 +21,7 @@ const tabletSchema = z
     buildings: z.string().min(1, "Это поле обязательно"),
     userId: z.string().nullable(), // Может быть null
     noForeman: z.boolean(), // Чекбокс
+    customerId: z.string().min(1, "Выберите заказчика"),
   })
   .refine(
     (data) => data.noForeman || (!!data.userId && data.userId.trim() !== ""),
@@ -49,6 +51,7 @@ export function ObjectAdd() {
       buildings: "",
       userId: "",
       noForeman: false,
+      customerId: "",
     },
   });
   const { mutate: createObject, isPending } = useCreateObject();
@@ -56,6 +59,7 @@ export function ObjectAdd() {
   const { closeSheet } = useObjectSheetStore();
   const selectedUserId = watch("userId");
   const noForeman = watch("noForeman");
+  const selectedCustomer = watch("customerId");
 
   useEffect(() => {
     if (noForeman) {
@@ -73,6 +77,7 @@ export function ObjectAdd() {
         name: trimmedName,
         address: trimmedAddress,
         userId: data.noForeman ? null : data.userId,
+        customerId: data.customerId,
       },
       {
         onSuccess: () => {
@@ -140,8 +145,20 @@ export function ObjectAdd() {
           </div>
         </div>
 
+        <div className="flex flex-col gap-2">
+          <Label>Заказчик</Label>
+          <CustomerSelectForForms
+            className="w-[300px]"
+            selectedCustomer={selectedCustomer}
+            onSelectChange={(customer) => setValue("customerId", customer)}
+          />
+          {errors.customerId && (
+            <p className="text-sm text-red-500">{errors.customerId.message}</p>
+          )}
+        </div>
+
         {/* Сотрудник */}
-        <div className="flex flex-col gap-2 mt-10">
+        <div className="flex flex-col gap-2 mt-5">
           <Label>Мастер *</Label>
           <div className="flex items-center gap-8">
             <ForemanAutocomplete

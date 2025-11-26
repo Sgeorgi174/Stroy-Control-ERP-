@@ -1,5 +1,5 @@
+import { ToolStatus } from '@prisma/client';
 import { IsBooleanString, IsEnum, IsOptional, IsString } from 'class-validator';
-import { ToolStatus } from 'generated/prisma';
 
 export class GetToolsQueryDto {
   @IsOptional()

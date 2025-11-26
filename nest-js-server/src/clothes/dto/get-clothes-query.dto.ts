@@ -1,5 +1,5 @@
 import { IsOptional, IsEnum, IsString, IsNotEmpty } from 'class-validator';
-import { ClothesType, Season } from 'generated/prisma';
+import { ClothesType, Season } from '@prisma/client';
 
 export class GetClothesQueryDto {
   @IsOptional()

@@ -6,7 +6,7 @@ import {
   IsPositive,
   IsString,
 } from 'class-validator';
-import { ClothesType, Season } from 'generated/prisma';
+import { ClothesType, Season } from '@prisma/client';
 
 export class CreateDto {
   @IsString({ message: 'Название одежды или обуви должно быть строкой' })

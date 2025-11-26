@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsEnum, IsOptional } from 'class-validator';
-import { Roles } from 'generated/prisma';
+import { Roles } from '@prisma/client';
 
 export class RegisterDto {
   @IsString({ message: 'Имя должно быть строкой.' })

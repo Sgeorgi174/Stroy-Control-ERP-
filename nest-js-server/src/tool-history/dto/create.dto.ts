@@ -1,3 +1,4 @@
+import { ToolActions } from '@prisma/client';
 import {
   IsEnum,
   IsNotEmpty,
@@ -6,7 +7,6 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { ToolActions } from 'generated/prisma';
 
 export class CreateDto {
   @IsUUID()

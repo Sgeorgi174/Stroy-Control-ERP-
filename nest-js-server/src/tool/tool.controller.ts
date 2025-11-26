@@ -15,7 +15,6 @@ import { ToolService } from './tool.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
-import { Roles } from 'generated/prisma';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { TransferDto } from './dto/transfer.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
@@ -31,6 +30,7 @@ import { RemoveBagItemDto } from './dto/remove-bag-item';
 import { AddToolCommentDto } from './dto/add-tool-comment.dto';
 import { AddQuantityToolDto } from './dto/add-quantity-tool.dto';
 import { WriteOffQuantityDto } from './dto/write-off-quantity-tool.dto';
+import { Roles } from '@prisma/client';
 
 @Controller('tools')
 export class ToolController {

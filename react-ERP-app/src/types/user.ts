@@ -15,7 +15,8 @@ export type User = {
   lastName: string;
   phone: string;
   role: Role;
-  object: Object | null;
+  primaryObjects: Object[];
+  secondaryObjects: Object[];
   objectId: string | null;
   createdAt: string;
 };

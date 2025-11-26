@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { Decimal } from '@prisma/client/runtime/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Decimal } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ClothingDebtCronService {

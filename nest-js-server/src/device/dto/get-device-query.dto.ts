@@ -5,7 +5,7 @@ import {
   IsString,
   IsBooleanString,
 } from 'class-validator';
-import { ToolStatus } from 'generated/prisma';
+import { ToolStatus } from '@prisma/client';
 
 export class GetDeviceQueryDto {
   @IsOptional()

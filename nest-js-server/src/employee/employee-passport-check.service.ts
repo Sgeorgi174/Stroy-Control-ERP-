@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { EmployeeWarningType, Statuses } from 'generated/prisma';
-import type { Employee } from 'generated/prisma';
+import { EmployeeWarningType, Statuses } from '@prisma/client';
+import type { Employee } from '@prisma/client';
 
 @Injectable()
 export class EmployeePassportCheckService {

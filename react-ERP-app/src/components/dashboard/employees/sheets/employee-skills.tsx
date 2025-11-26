@@ -163,26 +163,21 @@ export function EmployeeSkillsEdit({ employee }: EmployeeSkillsEditProps) {
         </CardContent>
       </Card>
 
-      <Card className="bg-gray-50">
+      <Card className="bg-muted">
         <CardContent className="pt-6">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                <span className="text-gray-600">
+                <span>
                   Текущие навыки: {(currentEmployee.skills ?? []).length}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <span className="text-gray-600">
-                  Доступно для добавления: {availableSkills.length}
-                </span>
+                <span>Доступно для добавления: {availableSkills.length}</span>
               </div>
             </div>
-            <Badge variant="outline" className="text-xs">
-              Всего навыков: {skills.length}
-            </Badge>
           </div>
         </CardContent>
       </Card>

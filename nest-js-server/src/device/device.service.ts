@@ -17,7 +17,7 @@ import { RejectDeviceTransferDto } from './dto/reject-transfer.dto';
 import { RetransferDeviceDto } from './dto/retransfer.dto';
 import { WriteOffDeviceInTransferDto } from './dto/write-off-in-transit.dto';
 import { CancelDeviceTransferDto } from './dto/cancel-transfer.dto';
-import { Roles } from 'generated/prisma';
+import { Roles } from '@prisma/client';
 
 @Injectable()
 export class DeviceService {
@@ -25,24 +25,6 @@ export class DeviceService {
     private readonly prismaService: PrismaService,
     private readonly historyService: DeviceHistoryService,
   ) {}
-
-  private async accessObject(id: string, userId: string) {
-    const user = await this.prismaService.user.findUnique({
-      where: { id: userId },
-      include: { object: true },
-    });
-    if (!user) throw new NotFoundException('Пользователь не найден');
-
-    const device = await this.prismaService.device.findUnique({
-      where: { id },
-    });
-    if (!device) throw new NotFoundException('Устройство не найдено');
-
-    if (user.role === 'FOREMAN' && user.object?.id !== device?.objectId)
-      throw new ForbiddenException('Недостаточно прав для этого объекта');
-
-    return { user, device };
-  }
 
   async create(dto: CreateDto, userRole: Roles) {
     const object = await this.prismaService.object.findUnique({
@@ -138,7 +120,7 @@ export class DeviceService {
         data: {
           name: dto.name,
           serialNumber: dto.serialNumber,
-          status: dto.status ?? 'ON_OBJECT',
+          status: dto.status,
           objectId: dto.objectId,
           originalSerial: dto.originalSerial ?? undefined,
         },

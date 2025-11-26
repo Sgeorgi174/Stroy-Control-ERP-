@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateDto } from './dto/create.dto';
-import { UpdateDto } from './dto/update.dto';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { GetEmployeeQueryDto } from './dto/employee-query.dto';
 import { TransferEmployeeDto } from './dto/transfer.dto';
@@ -10,7 +9,8 @@ import { AddSkillsDto } from './dto/add-skill.dto';
 import { RemoveSkillsDto } from './dto/remove-skill.dto';
 import { ArchiveDto } from './dto/archive-employee.dto';
 import { EmployeeStatusService } from './employee-status.service';
-import { Decimal } from '@prisma/client/runtime/library';
+import { UpdateDto } from './dto/update.dto';
+import { Decimal } from '@prisma/client/runtime/client';
 
 @Injectable()
 export class EmployeeService {

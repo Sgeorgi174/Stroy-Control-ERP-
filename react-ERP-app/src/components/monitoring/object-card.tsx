@@ -43,8 +43,11 @@ export function ObjectCard({ object }: ObjectCardProps) {
                 <Building className="w-6 h-6 text-blue-600" />
               </div>
               <div className="min-w-0 flex-1">
-                <CardTitle className="text-lg leading-tight mb-1 break-words">
-                  {object.name}
+                <CardTitle className="text-lg leading-tight mb-1 break-words flex items-center justify-between">
+                  <p>{object.name}</p>
+                  <p>
+                    {object.customer?.shortName ?? object.customer?.name ?? ""}
+                  </p>
                 </CardTitle>
                 <div className="flex items-start gap-1 text-sm text-muted-foreground">
                   <MapPin className="w-3 h-3 mt-0.5 flex-shrink-0" />

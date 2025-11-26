@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Param } from '@nestjs/common';
 import { ToolHistoryService } from './tool-history.service';
-import { Roles } from 'generated/prisma';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
+import { Roles } from '@prisma/client';
 
 @Controller('tool-history')
 export class ToolHistoryController {

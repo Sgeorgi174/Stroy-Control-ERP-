@@ -1,6 +1,5 @@
 import {
   ConflictException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -15,19 +14,6 @@ import { ChangeForemanDto } from './dto/changeForeman.dto';
 export class ObjectService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  private async accessObject(objectId: string, userId: string) {
-    const user = await this.prismaService.user.findUnique({
-      where: { id: userId },
-      include: { object: true },
-    });
-    if (!user) throw new NotFoundException('Пользователь не найден');
-
-    if (user.role === 'FOREMAN' && user.object?.id !== objectId)
-      throw new ForbiddenException('Недостаточно прав для этого объекта');
-
-    return user;
-  }
-
   public async create(dto: CreateDto) {
     try {
       return await this.prismaService.object.create({
@@ -36,6 +22,7 @@ export class ObjectService {
           address: dto.address,
           userId: dto.userId ?? null,
           isPending: true,
+          customerId: dto.customerId,
         },
         include: { tools: true, employees: true, clothes: true, devices: true },
       });
@@ -68,6 +55,7 @@ export class ObjectService {
           : {}),
       },
       include: {
+        customer: true,
         foreman: {
           select: { firstName: true, lastName: true, phone: true, id: true },
         },
@@ -172,7 +160,7 @@ export class ObjectService {
 
   public async getByUserId(userId: string) {
     try {
-      const object = await this.prismaService.object.findUnique({
+      const object = await this.prismaService.object.findFirst({
         where: { userId },
         include: { tools: true, employees: true, clothes: true, devices: true },
       });
@@ -198,6 +186,7 @@ export class ObjectService {
           name: dto.name,
           address: dto.address,
           userId: dto.userId ?? null,
+          customerId: dto.customerId,
         },
         include: { tools: true, employees: true, clothes: true, devices: true },
       });
@@ -241,8 +230,7 @@ export class ObjectService {
     }
   }
 
-  public async activateObject(objectId: string, userId: string) {
-    await this.accessObject(objectId, userId);
+  public async activateObject(objectId: string) {
     try {
       return await this.prismaService.object.update({
         where: { id: objectId },

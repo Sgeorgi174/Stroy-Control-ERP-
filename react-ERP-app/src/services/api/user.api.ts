@@ -28,14 +28,17 @@ export const deleteUser = async (userId: string) => {
   return response.data;
 };
 
-export const getUserNotifications =
-  async (): Promise<PendingTransfersResponse> => {
-    const response = await api.get("/users/notification");
-    return response.data;
-  };
+export const getUserNotifications = async (
+  objectId: string
+): Promise<PendingTransfersResponse> => {
+  const response = await api.get(`/users/notification/${objectId}`);
+  return response.data;
+};
 
-export const getReturns = async (): Promise<PendingTransfersResponse> => {
-  const response = await api.get("/users/notification-return");
+export const getReturns = async (
+  objectId: string
+): Promise<PendingTransfersResponse> => {
+  const response = await api.get(`/users/notification-return/${objectId}`);
   return response.data;
 };
 
@@ -54,8 +57,8 @@ export const getTransfers = async (params: {
   return response.data;
 };
 
-export const getStatusObject = async (): Promise<Object> => {
-  const response = await api.get("/users/get-status-object");
+export const getStatusObject = async (objectId: string): Promise<Object> => {
+  const response = await api.get(`/users/get-status-object/${objectId}`);
   return response.data;
 };
 

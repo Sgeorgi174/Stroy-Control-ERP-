@@ -36,8 +36,9 @@ export function ObjectsTable({
               Наименование
             </TableHead>
             <TableHead className="text-secondary font-bold">Адрес</TableHead>
+            <TableHead className="text-secondary font-bold">Заказчик</TableHead>
             <TableHead className="text-secondary font-bold">Мастер</TableHead>
-            <TableHead className="text-secondary font-bold">Телефон</TableHead>
+
             <TableHead className="text-secondary font-bold">Статус</TableHead>
             <TableHead className="text-secondary font-bold"></TableHead>
           </TableRow>
@@ -61,13 +62,14 @@ export function ObjectsTable({
                 splitAddress(object).street
               }, ${splitAddress(object).buldings}`}</TableCell>
               <TableCell>
+                {object.customer?.shortName ?? object.customer?.name ?? ""}
+              </TableCell>
+              <TableCell>
                 {object.foreman
                   ? `${object.foreman.lastName} ${object.foreman.firstName}`
                   : "Не назначен"}
               </TableCell>
-              <TableCell>
-                {object.foreman ? object.foreman.phone : "-"}
-              </TableCell>
+
               <TableCell>
                 <StatusBadge
                   Icon={object.isPending ? PauseIcon : CircleCheck}

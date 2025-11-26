@@ -19,11 +19,11 @@ import { RetransferToolDto } from './dto/retransfer.dto';
 import { WriteOffToolInTransferDto } from './dto/write-off-in-transit.dto';
 import { CancelToolTransferDto } from './dto/cancel-transfer.dto';
 import { AddBagItemDto } from './dto/add-bag-item.dto';
-import { BagItem, Roles, Tool } from 'generated/prisma';
 import { RemoveBagItemDto } from './dto/remove-bag-item';
 import { AddToolCommentDto } from './dto/add-tool-comment.dto';
 import { AddQuantityToolDto } from './dto/add-quantity-tool.dto';
 import { WriteOffQuantityDto } from './dto/write-off-quantity-tool.dto';
+import { BagItem, Roles, Tool } from '@prisma/client';
 
 @Injectable()
 export class ToolService {
@@ -31,23 +31,6 @@ export class ToolService {
     private readonly prismaService: PrismaService,
     private readonly toolHistoryService: ToolHistoryService,
   ) {}
-
-  private async accessObject(id: string, userId: string) {
-    const user = await this.prismaService.user.findUnique({
-      where: { id: userId },
-      include: { object: true },
-    });
-    if (!user) throw new NotFoundException('Пользователь не найден');
-
-    const tool = await this.prismaService.tool.findUnique({ where: { id } });
-
-    if (!tool) throw new NotFoundException('Инструмент не найден');
-
-    if (user.role === 'FOREMAN' && user.object?.id !== tool?.objectId)
-      throw new ForbiddenException('Недостаточно прав для этого объекта');
-
-    return { user, tool };
-  }
 
   public async create(dto: CreateDto, userRole: Roles) {
     const object = await this.prismaService.object.findUnique({
@@ -291,7 +274,7 @@ export class ToolService {
         where: { id },
         data: {
           name: dto.name,
-          status: dto.status ?? 'ON_OBJECT',
+          status: dto.status,
           serialNumber: dto.serialNumber,
           objectId: dto.objectId,
           description: dto.description ?? undefined,

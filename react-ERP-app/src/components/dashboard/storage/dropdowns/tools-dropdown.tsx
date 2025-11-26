@@ -197,7 +197,10 @@ export function ToolsDropDown({
             <DropdownMenuItem
               disabled={
                 tool.status !== "ON_OBJECT" ||
-                (user?.role === "FOREMAN" && user?.object?.id !== tool.objectId)
+                (user?.role === "FOREMAN" &&
+                  ![...user.primaryObjects, ...user.secondaryObjects].some(
+                    (obj) => obj.id === tool.objectId
+                  ))
               }
               onClick={(e) => {
                 e.stopPropagation();

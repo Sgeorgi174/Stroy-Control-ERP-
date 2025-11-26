@@ -3,12 +3,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { TransferType } from 'generated/prisma';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { QueryTransfersFilterDto } from './dto/query-transfer-filter.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { TransferType } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -66,23 +66,12 @@ export class UserService {
     return this.prismaService.user.delete({ where: { id: id } });
   }
 
-  public async getNotifications(userId: string) {
+  public async getNotifications(objectId: string) {
     try {
-      const user = await this.prismaService.user.findUnique({
-        where: { id: userId },
-        include: { object: true },
-      });
-
-      const object = user?.object;
-
-      if (!object) {
-        throw new NotFoundException('Вы не назначены ни на один объект');
-      }
-
       return await this.prismaService.$transaction(async (prisma) => {
         const tools = await prisma.pendingTransfersTools.findMany({
           where: {
-            toObjectId: object.id,
+            toObjectId: objectId,
             status: 'IN_TRANSIT',
             OR: [
               { rejectMode: null },
@@ -120,7 +109,7 @@ export class UserService {
 
         const devices = await prisma.pendingTransfersDevices.findMany({
           where: {
-            toObjectId: object.id,
+            toObjectId: objectId,
             status: 'IN_TRANSIT',
           },
           include: {
@@ -148,7 +137,7 @@ export class UserService {
 
         const clothes = await prisma.pendingTransfersClothes.findMany({
           where: {
-            toObjectId: object.id,
+            toObjectId: objectId,
             status: 'IN_TRANSIT',
           },
           include: {
@@ -195,13 +184,7 @@ export class UserService {
   public async getFreeForemen() {
     const foremen = await this.prismaService.user.findMany({
       where: {
-        OR: [
-          { role: 'FOREMAN', object: null },
-          { role: 'ACCOUNTANT', object: null },
-          { role: 'ASSISTANT_MANAGER', object: null },
-          { role: 'MASTER', object: null },
-          { role: 'ADMIN', object: null },
-        ],
+        NOT: [{ role: 'OWNER' }],
       },
       orderBy: { lastName: 'asc' },
     });
@@ -209,10 +192,10 @@ export class UserService {
     return foremen;
   }
 
-  public async getStatusObject(userId: string) {
+  public async getStatusObject(objectId: string) {
     try {
       const object = await this.prismaService.object.findUnique({
-        where: { userId, isPending: true },
+        where: { id: objectId, isPending: true },
         include: {
           clothes: {
             select: {
@@ -243,23 +226,12 @@ export class UserService {
     }
   }
 
-  public async getReturns(userId: string) {
+  public async getReturns(objectId: string) {
     try {
-      const user = await this.prismaService.user.findUnique({
-        where: { id: userId },
-        include: { object: true },
-      });
-
-      const object = user?.object;
-
-      if (!object) {
-        throw new NotFoundException('Вы не назначены ни на один объект');
-      }
-
       return await this.prismaService.$transaction(async (prisma) => {
         const tools = await prisma.pendingTransfersTools.findMany({
           where: {
-            toObjectId: object.id,
+            toObjectId: objectId,
             status: 'IN_TRANSIT',
             rejectMode: 'RETURN_TO_SOURCE',
           },
@@ -294,7 +266,7 @@ export class UserService {
 
         const devices = await prisma.pendingTransfersDevices.findMany({
           where: {
-            toObjectId: object.id,
+            toObjectId: objectId,
             status: 'IN_TRANSIT',
             rejectMode: 'RETURN_TO_SOURCE',
           },
@@ -323,7 +295,7 @@ export class UserService {
 
         const clothes = await prisma.pendingTransfersClothes.findMany({
           where: {
-            toObjectId: object.id,
+            toObjectId: objectId,
             status: 'IN_TRANSIT',
             rejectMode: 'RETURN_TO_SOURCE',
           },

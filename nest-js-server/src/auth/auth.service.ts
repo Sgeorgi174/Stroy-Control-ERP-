@@ -8,12 +8,12 @@ import {
 } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from 'generated/prisma';
 import { Request, Response } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { ConfigService } from '@nestjs/config';
 import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -58,7 +58,7 @@ export class AuthService {
         phone: dto.phone,
         role: dto.role,
       },
-      include: { object: true },
+      include: { primaryObjects: true, secondaryObjects: true },
     });
 
     // Если передан объект — привязать его к новому пользователю
@@ -123,13 +123,9 @@ export class AuthService {
       where: {
         id,
       },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        role: true,
-        phone: true,
-        object: true,
+      include: {
+        primaryObjects: { include: { employees: true, foreman: true } },
+        secondaryObjects: { include: { employees: true, foreman: true } },
       },
     });
 

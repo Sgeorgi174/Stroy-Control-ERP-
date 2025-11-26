@@ -1,3 +1,4 @@
+import { Countries } from '@prisma/client';
 import {
   IsEnum,
   IsNotEmpty,
@@ -6,7 +7,6 @@ import {
   IsPhoneNumber,
   IsArray,
 } from 'class-validator';
-import { Countries } from 'generated/prisma';
 
 export class CreateDto {
   @IsString({ message: 'Имя должно быть строкой' })

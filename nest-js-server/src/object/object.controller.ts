@@ -15,14 +15,20 @@ import { ObjectService } from './object.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
-import { Roles } from 'generated/prisma';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { GetObjectQueryDto } from './dto/get-object-query.dto';
 import { ChangeForemanDto } from './dto/changeForeman.dto';
+import { Roles } from '@prisma/client';
+import { CustomerService } from './customer.service';
+import { CreateCustomerDto } from './dto/create-customer.dto';
+import { UpdateCustomerDto } from './dto/update-customer.dto';
 
 @Controller('objects')
 export class ObjectController {
-  constructor(private readonly objectService: ObjectService) {}
+  constructor(
+    private readonly objectService: ObjectService,
+    private readonly customerService: CustomerService,
+  ) {}
 
   @Authorization(
     Roles.MASTER,
@@ -74,7 +80,7 @@ export class ObjectController {
   )
   @Get('by-id/:id')
   async getById(@Param('id') id: string) {
-    return this.objectService.getByIdToClose(id);
+    return this.objectService.getById(id);
   }
 
   @Authorization(
@@ -136,11 +142,8 @@ export class ObjectController {
     Roles.FOREMAN,
   )
   @Patch('activate/:id')
-  async activateObject(
-    @Param('id') id: string,
-    @Authorized('id') userId: string,
-  ) {
-    return this.objectService.activateObject(id, userId);
+  async activateObject(@Param('id') id: string) {
+    return this.objectService.activateObject(id);
   }
 
   @Authorization(
@@ -153,6 +156,61 @@ export class ObjectController {
   @Patch('close/:id')
   async closeObject(@Param('id') id: string) {
     return this.objectService.closeObject(id);
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
+  @HttpCode(HttpStatus.CREATED)
+  @Post('customer-create')
+  async createCustomer(@Body() dto: CreateCustomerDto) {
+    return this.customerService.create(dto);
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
+  @Put('customer-update/:id')
+  async updateCustomer(
+    @Param('id') id: string,
+    @Body() dto: UpdateCustomerDto,
+  ) {
+    return this.customerService.update(id, dto);
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
+  @Delete('customer-delete/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteCustomer(@Param('id') id: string) {
+    return this.customerService.delete(id);
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+    Roles.HR,
+  )
+  @Get('customers')
+  async getAllCustomers() {
+    return this.customerService.getAll();
   }
 
   @Authorization(

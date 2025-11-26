@@ -2,7 +2,7 @@ import { Controller, Delete, Get, Param, Post, Body } from '@nestjs/common';
 import { TabletHistoryService } from './tablet-history.service';
 import { CreateDto } from './dto/create.dto';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
-import { Roles } from 'generated/prisma';
+import { Roles } from '@prisma/client';
 
 @Controller('tablet-history')
 export class TabletHistoryController {

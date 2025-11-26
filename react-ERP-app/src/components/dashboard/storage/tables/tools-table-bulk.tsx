@@ -10,11 +10,11 @@ import { ToolsDropDown } from "../dropdowns/tools-dropdown";
 import type { Tool } from "@/types/tool";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import { PendingTable } from "./pending-table";
-import { formatDate } from "@/lib/utils/format-date";
 import { CommentPopover } from "../comment-popover";
 import { useRowColors } from "@/hooks/useRowColor";
 import { ToolBulkPDFButton } from "../pdf-generate/tool-bulk/tool-bulk-pdf-generate";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
+import { DescriptionPopover } from "../description-popover";
 
 type ToolsTableProps = {
   tools: Tool[];
@@ -32,8 +32,6 @@ export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
       <Table>
         <TableHeader className="bg-primary">
           <TableRow>
-            <TableHead className="text-secondary font-bold">Дата</TableHead>
-
             <TableHead className="text-secondary font-bold">
               Наименование
             </TableHead>
@@ -66,15 +64,15 @@ export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
                 colors[tool.id] ? colors[tool.id] : undefined
               } hover:bg-${colors[tool.id] ? colors[tool.id] : undefined}`}
             >
-              <TableCell className="font-medium">
-                {formatDate(tool.createdAt)}
-              </TableCell>
-
               <TableCell className=" hover:underline font-medium">
                 {tool.name}
               </TableCell>
-              <TableCell className=" hover:underline">
-                {tool.description ?? ""}
+              <TableCell>
+                {tool.description ? (
+                  <DescriptionPopover text={tool.description} maxLength={40} />
+                ) : (
+                  ""
+                )}
               </TableCell>
               <TableCell className="font-medium">{tool.quantity}</TableCell>
               <TableCell>

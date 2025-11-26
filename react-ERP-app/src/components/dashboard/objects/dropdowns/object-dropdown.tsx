@@ -110,6 +110,7 @@ export function ObjectDropDown({ object }: ObjectDropDownProps) {
           <DropdownMenuSeparator />
 
           <DropdownMenuItem
+            disabled
             variant="destructive"
             onClick={(e) => {
               e.stopPropagation();

@@ -12,7 +12,7 @@ export interface UpdateDeviceDto {
   name: string;
   serialNumber: string;
   objectId: string;
-  status?: DeviceStatus;
+  status: DeviceStatus;
   originalSerial?: string;
 }
 

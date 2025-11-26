@@ -2,7 +2,9 @@
 import type { Object, ObjectStatus } from "@/types/object"; // создай этот тип
 import type {
   ChangeForemanDto,
+  CreateCustomerDto,
   CreateObjectDto,
+  UpdateCustomerDto,
   UpdateObjectDto,
 } from "@/types/dto/object.dto";
 import { api } from "@/lib/api";
@@ -70,4 +72,25 @@ export const changeForeman = async (
 export const removeForeman = async (id: string): Promise<Object> => {
   const res = await api.patch(`/objects/remove-foreman/${id}`);
   return res.data;
+};
+
+export const getAllCustomers = async (): Promise<
+  { id: string; name: string; shortName: string | null }[]
+> => {
+  const res = await api.get("/objects/customers");
+  return res.data;
+};
+
+export const createCustomer = async (data: CreateCustomerDto) => {
+  const res = await api.post("/objects/customer-create", data);
+  return res.data;
+};
+
+export const updateCustomer = async (id: string, data: UpdateCustomerDto) => {
+  const res = await api.put(`/objects/customer-update/${id}`, data);
+  return res.data;
+};
+
+export const deleteCustomer = async (id: string) => {
+  await api.delete(`/objects/customer-delete/${id}`);
 };

@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsOptional, IsEnum, IsString, IsArray } from 'class-validator';
-import { employeeType, Statuses } from 'generated/prisma';
+import { employeeType, Statuses } from '@prisma/client';
 
 export class GetEmployeeQueryDto {
   @IsOptional()

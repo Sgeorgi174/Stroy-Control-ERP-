@@ -1,5 +1,5 @@
+import { ObjectStatus } from '@prisma/client';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { ObjectStatus } from 'generated/prisma';
 
 export class GetObjectQueryDto {
   @IsOptional()

@@ -12,7 +12,6 @@ import { useDeviceSheetStore } from "@/stores/device-sheet-store";
 import { PendingTable } from "./pending-table";
 import { StatusBadge } from "./status-badge";
 import { statusMap } from "@/constants/statusMap";
-import { formatDate } from "@/lib/utils/format-date";
 import { useRowColors } from "@/hooks/useRowColor";
 import { DevicePDFButton } from "../pdf-generate/device/device-pdf-generate";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
@@ -37,7 +36,6 @@ export function DevicesTable({
       <Table>
         <TableHeader className="bg-primary">
           <TableRow>
-            <TableHead className="text-secondary font-bold">Дата</TableHead>
             <TableHead className="text-secondary font-bold">
               Инвент. №
             </TableHead>
@@ -75,9 +73,6 @@ export function DevicesTable({
                 colors[device.id] ? colors[device.id] : undefined
               } hover:bg-${colors[device.id] ? colors[device.id] : undefined}`}
             >
-              <TableCell className="font-medium">
-                {formatDate(device.createdAt)}
-              </TableCell>
               <TableCell className="font-medium">
                 {device.serialNumber}
               </TableCell>

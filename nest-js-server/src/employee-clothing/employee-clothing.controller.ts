@@ -3,7 +3,7 @@ import { EmployeeClothingService } from './employee-clothing.service';
 import { IssueClothingDto } from './dto/issue-clothing.dto';
 import { ChangeDebtDto } from './dto/change-debt.dto';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
-import { Roles } from 'generated/prisma';
+import { Roles } from '@prisma/client';
 import { UpdateIssuedClothingDto } from './dto/update-issued-clothing.dto';
 
 @Controller('employee-clothing')

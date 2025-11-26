@@ -11,6 +11,7 @@ import { NotFound } from "@/pages/not-found/NotFound";
 import { Transfers } from "@/pages/transfers/Transfers";
 import { Monitoring } from "@/pages/monitoring/Monitoring";
 import { AdminPanelPage } from "@/pages/admin-panel/Admin-panel";
+import MyObjectPanelWrapper from "@/components/dashboard/my-object/my-object-panel-wrapper";
 
 export const router = createBrowserRouter([
   { path: "/login", element: <Auth /> },
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
           { path: "/storage", element: <Storage /> },
           { path: "/admin", element: <AdminPanelPage /> },
           { path: "/my-object", element: <MyObject /> },
+          { path: "/my-object/:id", element: <MyObjectPanelWrapper /> },
         ],
       },
 

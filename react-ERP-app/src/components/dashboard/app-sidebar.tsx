@@ -102,7 +102,7 @@ const sidebarItems = [
     url: "/admin",
     tab: "admin",
     icon: Shield,
-    roles: ["ADMIN", "ASSISTANT_MANAGER"],
+    roles: ["ADMIN", "ASSISTANT_MANAGER", "FOREMAN"],
   },
 ];
 

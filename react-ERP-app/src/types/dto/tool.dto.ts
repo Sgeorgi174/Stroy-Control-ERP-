@@ -11,7 +11,7 @@ export interface CreateToolDto {
 }
 
 export interface UpdateToolDto extends CreateToolDto {
-  status?: ToolStatus;
+  status: ToolStatus;
 }
 
 export interface AddToolBagItemDto {

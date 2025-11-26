@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Param } from '@nestjs/common';
 import { ClothesHistoryService } from './clothes-history.service';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
-import { Roles } from 'generated/prisma';
+import { Roles } from '@prisma/client';
 
 @Controller('clothes-history')
 export class ClothesHistoryController {

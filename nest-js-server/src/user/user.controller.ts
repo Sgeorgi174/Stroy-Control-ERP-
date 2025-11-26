@@ -9,11 +9,10 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
-import { Roles } from 'generated/prisma';
-import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { QueryTransfersFilterDto } from './dto/query-transfer-filter.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { Roles } from '@prisma/client';
 
 @Controller('users')
 export class UserController {
@@ -82,9 +81,9 @@ export class UserController {
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
   )
-  @Get('notification')
-  async getNotifications(@Authorized('id') userId: string) {
-    return this.userService.getNotifications(userId);
+  @Get('notification/:id')
+  async getNotifications(@Param('id') objectId: string) {
+    return this.userService.getNotifications(objectId);
   }
 
   @Authorization(
@@ -95,9 +94,9 @@ export class UserController {
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
   )
-  @Get('notification-return')
-  async getReturns(@Authorized('id') userId: string) {
-    return this.userService.getReturns(userId);
+  @Get('notification-return/:id')
+  async getReturns(@Param('id') objectId: string) {
+    return this.userService.getReturns(objectId);
   }
 
   @Authorization(
@@ -121,9 +120,9 @@ export class UserController {
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
   )
-  @Get('get-status-object')
-  async getStatusObject(@Authorized('id') userId: string) {
-    return this.userService.getStatusObject(userId);
+  @Get('get-status-object/:id')
+  async getStatusObject(@Param('id') objectId: string) {
+    return this.userService.getStatusObject(objectId);
   }
 
   @Authorization(

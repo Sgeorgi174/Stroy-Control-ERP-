@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { DeviceStatus } from 'generated/prisma';
+import { DeviceStatus } from '@prisma/client';
 
 export class UpdateStatusDto {
   @IsEnum(DeviceStatus, {

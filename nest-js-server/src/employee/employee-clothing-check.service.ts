@@ -5,8 +5,8 @@ import {
   Season,
   EmployeeWarningType,
   Statuses,
-} from 'generated/prisma';
-import type { Prisma } from 'generated/prisma';
+} from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 
 type EmployeeWithClothing = Prisma.EmployeeGetPayload<{
   include: { clothing: { include: { clothing: true } } };

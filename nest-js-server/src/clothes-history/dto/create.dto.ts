@@ -7,7 +7,7 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
-import { ClothesActions } from 'generated/prisma';
+import { ClothesActions } from '@prisma/client';
 
 export class CreateDto {
   @IsUUID()

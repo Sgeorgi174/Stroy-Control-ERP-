@@ -1,5 +1,5 @@
+import { ToolStatus } from '@prisma/client';
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { ToolStatus } from 'generated/prisma';
 
 export class UpdateStatusDto {
   @IsEnum(ToolStatus, {

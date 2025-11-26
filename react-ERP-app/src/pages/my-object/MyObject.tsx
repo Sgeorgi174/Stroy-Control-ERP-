@@ -1,75 +1,17 @@
-import { useState } from "react";
-import { Calendar01 } from "@/components/calendar-01";
-import { NotificationCard } from "@/components/dashboard/my-object/notification/notification-card";
-import { ShiftOpenDialog } from "@/components/dashboard/my-object/shift/create-shift";
-import { Card } from "@/components/ui/card";
-import { Clock } from "@/components/ui/clock";
+import { MyObjectObjectCard } from "@/components/dashboard/my-object/my-object-object-card";
 import { useAuth } from "@/hooks/auth/useAuth";
-import { useShiftsWithFilters } from "@/hooks/shift/useShift";
-import { Check, HardHat, Users } from "lucide-react";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
-import { startOfDay, endOfDay } from "date-fns";
-import { ShiftTemplateCreateDialog } from "@/components/dashboard/my-object/shift/create-shift-template";
-import { useShiftTemplatesByObject } from "@/hooks/shift-template/useShiftTemplate";
-import { ShiftTemplatePreviewDialog } from "@/components/dashboard/my-object/shift/shift-template-preview";
-import { useEmployees } from "@/hooks/employee/useEmployees";
-import { ShiftPDF } from "@/components/monitoring/pdf-button";
+import { Navigate } from "react-router";
 
 export function MyObject() {
   const { data: user } = useAuth();
-  const objectId = user?.object?.id;
 
-  const { data: shiftTemplates = [] } = useShiftTemplatesByObject(
-    objectId,
-    !!objectId // enabled = true только если objectId существует
-  );
+  const primaryCount = user?.primaryObjects?.length ?? 0;
+  const secondaryCount = user?.secondaryObjects?.length ?? 0;
 
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const hasAnyObject = primaryCount > 0 || secondaryCount > 0;
 
-  // Начало и конец выбранного дня
-  const dayStart = startOfDay(selectedDate).toISOString();
-  const dayEnd = endOfDay(selectedDate).toISOString();
-
-  const { data: shiftData } = useShiftsWithFilters(
-    {
-      objectId: user?.object?.id || "none",
-      fromDate: dayStart,
-      toDate: dayEnd,
-    },
-    !!user
-  );
-
-  const { data: allShifts } = useShiftsWithFilters(
-    { objectId: user?.object?.id },
-    !!user
-  );
-
-  // --- загрузка сотрудников ---
-  const { data: employees = [] } = useEmployees({
-    objectId,
-    searchQuery: "",
-    type: "ACTIVE",
-  });
-
-  const todayShift = shiftData?.[0]; // берем первую смену на выбранную дату
-  const shiftDates = allShifts?.map((s) => new Date(s.shiftDate)) || [];
-
-  // Подготовка данных для карточек
-  const presentEmployees = todayShift?.employees.filter((e) => e.present) || [];
-  const absentEmployees = todayShift?.employees.filter((e) => !e.present) || [];
-  const totalWorkedHours = presentEmployees.reduce(
-    (sum, e) => sum + (e.workedHours || 0),
-    0
-  );
-
-  if (!user?.object?.id)
+  // Если нет объектов — показать сообщение
+  if (!hasAnyObject) {
     return (
       <div className="flex w-full h-full items-center justify-center">
         <p className="font-bold text-3xl">
@@ -77,162 +19,23 @@ export function MyObject() {
         </p>
       </div>
     );
+  }
 
+  // Если только один объект в primary — сразу редирект на динамический маршрут
+  if (primaryCount === 1) {
+    const objectId = user!.primaryObjects[0].id;
+    return <Navigate to={`/my-object/${objectId}`} replace />;
+  }
+
+  // Иначе — отображаем список объектов
   return (
-    <div>
-      <div className="grid grid-cols-5 gap-3 mt-6">
-        <NotificationCard />
-        <div className="col-span-2 flex flex-col gap-5">
-          <Card className="flex justify-center p-2 items-center">
-            <Clock className="font-medium p-2 text-5xl" />
-          </Card>
-
-          <Calendar01
-            selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
-            shiftDates={shiftDates}
-          />
-        </div>
+    <>
+      <h1 className="text-3xl font-medium mt-6">Выберите объект</h1>
+      <div className="grid grid-cols-2 max-[1349px]:grid-cols-2 min-[1350px]:grid-cols-2 gap-5 mt-6">
+        {user?.primaryObjects.map((object) => (
+          <MyObjectObjectCard key={object.id} object={object} />
+        ))}
       </div>
-
-      <div className="p-5 shadow-md border rounded-2xl flex flex-col mt-8">
-        <div className="flex justify-between">
-          <div className="flex items-center gap-2">
-            <Users size={30} />
-            <p className="font-bold text-3xl">Управление сменой</p>
-          </div>
-          <div className="flex gap-4 max-h-[75px]">
-            {shiftTemplates && shiftTemplates?.length < 1 && (
-              <ShiftTemplateCreateDialog
-                employees={employees}
-                objectId={user?.object?.id || "none"}
-              />
-            )}
-            {shiftTemplates &&
-              shiftTemplates.map((shiftTemplate) => (
-                <ShiftTemplatePreviewDialog
-                  key={shiftTemplate.id}
-                  template={shiftTemplate}
-                  employees={employees}
-                />
-              ))}
-            {todayShift && (
-              <ShiftPDF shift={todayShift} object={user?.object} />
-            )}
-          </div>
-        </div>
-
-        {!todayShift ? (
-          <div className="p-5 border rounded-2xl flex flex-col items-center gap-2 mt-6">
-            <HardHat size={50} className="text-muted-foreground" />
-            <p className="font-medium text-xl">Смена не открыта</p>
-            <p className="text-muted-foreground">
-              Нажмите "Открыть смену", чтобы назначить сотрудников на эту дату
-            </p>
-            <ShiftOpenDialog
-              employees={employees}
-              objectId={user?.object?.id || "none"}
-              shiftTemplates={shiftTemplates}
-            />
-          </div>
-        ) : (
-          <div className="mt-6 flex flex-col gap-6">
-            {/* Карточки с общей статистикой */}
-            <div className="grid grid-cols-3 gap-4">
-              <Card className="p-4 flex flex-col items-center bg-table-green">
-                <p className="font-medium text-xl">Присутствует</p>
-                <p className="font-bold text-3xl">{presentEmployees.length}</p>
-              </Card>
-              <Card className="p-4 flex flex-col items-center bg-table-red ">
-                <p className="font-medium text-xl">Отсутствует</p>
-                <p className="font-bold text-3xl">{absentEmployees.length}</p>
-              </Card>
-              <Card className="p-4 flex flex-col items-center bg-table-blue">
-                <p className="font-medium text-xl">Общее количество часов</p>
-                <p className="font-bold text-3xl">{totalWorkedHours}</p>
-              </Card>
-            </div>
-
-            {/* Таблица с сотрудниками, которые работают */}
-            <Card className="p-5 border rounded-2xl">
-              <h4 className="font-medium mb-4">Сотрудники на смене</h4>
-              {presentEmployees.length === 0 ? (
-                <p className="text-gray-500">Нет сотрудников на смене</p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[100px]">№</TableHead>
-                      <TableHead className="w-[250px]">Сотрудник</TableHead>
-                      <TableHead className="w-[150px]">Местный</TableHead>
-                      <TableHead className="w-[150px]">Часы</TableHead>
-                      <TableHead>Задача</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {presentEmployees.map((emp, index) => (
-                      <TableRow key={emp.employeeId}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell>
-                          {`${
-                            emp.employee.lastName
-                          } ${emp.employee.firstName.charAt(
-                            0
-                          )}.${emp.employee.fatherName.charAt(0)}.`}
-                        </TableCell>
-                        <TableCell className="pl-6">
-                          {emp.isLocal ? <Check className="w-[18px]" /> : ""}
-                        </TableCell>
-                        <TableCell>{emp.workedHours ?? "—"}</TableCell>
-                        <TableCell>{emp.task || "—"}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </Card>
-
-            {/* Таблица с отсутствующими сотрудниками */}
-            <Card className="p-5 border rounded-2xl">
-              <h4 className="font-medium mb-4">Отсутствующие сотрудники</h4>
-              {absentEmployees.length === 0 ? (
-                <p className="text-gray-500">Все сотрудники на смене</p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[100px]">№</TableHead>
-                      <TableHead className="w-[250px]">Сотрудник</TableHead>
-                      <TableHead className="w-[150px]">Местный</TableHead>
-                      <TableHead className="w-[150px]">Часы</TableHead>
-                      <TableHead>Причина отсутствия</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {absentEmployees.map((emp, index) => (
-                      <TableRow key={emp.employeeId}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell>
-                          {`${
-                            emp.employee.lastName
-                          } ${emp.employee.firstName.charAt(
-                            0
-                          )}.${emp.employee.fatherName.charAt(0)}.`}
-                        </TableCell>
-                        <TableCell className="pl-6">
-                          {emp.isLocal ? <Check className="w-[18px]" /> : ""}
-                        </TableCell>
-                        <TableCell>{0}</TableCell>
-                        <TableCell>{emp.absenceReason || "—"}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </Card>
-          </div>
-        )}
-      </div>
-    </div>
+    </>
   );
 }

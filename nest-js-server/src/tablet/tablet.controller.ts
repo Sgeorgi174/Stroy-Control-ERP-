@@ -18,8 +18,8 @@ import { TransferTabletDto } from './dto/transfer.dto';
 import { UpdateTabletStatusDto } from './dto/update-status.dto';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
-import { Roles } from 'generated/prisma';
 import { GetTabletsQueryDto } from './dto/get-tablet-query.dto';
+import { Roles } from '@prisma/client';
 
 @Controller('tablets')
 export class TabletController {

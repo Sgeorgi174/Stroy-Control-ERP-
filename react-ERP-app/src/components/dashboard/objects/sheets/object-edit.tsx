@@ -11,6 +11,7 @@ import { splitAddress } from "@/lib/utils/splitAddress";
 import { useUpdateObject } from "@/hooks/object/useUpdateObject";
 import { useGetFreeForemen } from "@/hooks/user/useGetFreeForemen";
 import { useMemo } from "react";
+import { CustomerSelectForForms } from "../customer-select-for-forms";
 
 // 1. Схема валидации Zod
 const tabletSchema = z.object({
@@ -19,6 +20,7 @@ const tabletSchema = z.object({
   street: z.string().min(1, "Это поле обязательно"),
   buildings: z.string().min(1, "Это поле обязательно"),
   userId: z.string().nullable(), // Может быть null
+  customerId: z.string().min(1, "Выберите заказчика"),
 });
 
 type FormData = z.infer<typeof tabletSchema>;
@@ -43,11 +45,13 @@ export function ObjectEdit({ object }: ObjectEditProps) {
       street: splitAddress(object).street,
       buildings: splitAddress(object).buldings,
       userId: object.foreman ? object.foreman.id : null,
+      customerId: object.customer ? object.customer.id : undefined,
     },
   });
 
   const { closeSheet } = useObjectSheetStore();
   const selectedUserId = watch("userId");
+  const selectedCustomer = watch("customerId");
   const { data: foremen = [] } = useGetFreeForemen();
 
   const combinedForemen = useMemo(() => {
@@ -65,6 +69,7 @@ export function ObjectEdit({ object }: ObjectEditProps) {
         name: trimmedName,
         address: trimmedAddress,
         userId: data.userId,
+        customerId: data.customerId,
       },
       {
         onSuccess: () => {
@@ -132,8 +137,20 @@ export function ObjectEdit({ object }: ObjectEditProps) {
           </div>
         </div>
 
+        <div className="flex flex-col gap-2">
+          <Label>Заказчик</Label>
+          <CustomerSelectForForms
+            className="w-[300px]"
+            selectedCustomer={selectedCustomer}
+            onSelectChange={(customer) => setValue("customerId", customer)}
+          />
+          {errors.customerId && (
+            <p className="text-sm text-red-500">{errors.customerId.message}</p>
+          )}
+        </div>
+
         {/* Сотрудник */}
-        <div className="flex flex-col gap-2 mt-10">
+        <div className="flex flex-col gap-2 mt-5">
           <Label>Мастер *</Label>
 
           <ForemanAutocomplete

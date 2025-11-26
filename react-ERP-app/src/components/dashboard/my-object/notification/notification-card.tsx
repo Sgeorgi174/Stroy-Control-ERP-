@@ -14,27 +14,39 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useUserReturns } from "@/hooks/user/useGetReturns";
 import { ReturnNotification } from "./return-notification/return-notification";
+import { MyObjectEmployeesTable } from "../my-object-employees-table";
+import type { Employee } from "@/types/employee";
 
 type TransferNotification =
   | ({ type: "tool" } & PendingToolTransfer)
   | ({ type: "device" } & PendingDeviceTransfer)
   | ({ type: "clothes" } & PendingClothesTransfer);
-
-export function NotificationCard() {
+type NotificationCardProps = {
+  employees: Employee[];
+  isLoading: boolean;
+  isError: boolean;
+  objectId: string;
+};
+export function NotificationCard({
+  employees,
+  isLoading,
+  isError,
+  objectId,
+}: NotificationCardProps) {
   const { data: myObject, isLoading: isLoadingGetObject } =
-    useGetStatusObject();
+    useGetStatusObject(objectId);
 
   const {
     data: unconfirmedItems = { tools: [], devices: [], clothes: [] },
     isLoading: isLoadingTransfers,
     isError: isErrorTransfers,
-  } = useUserNotifications();
+  } = useUserNotifications(objectId);
 
   const {
     data: returns = { tools: [], devices: [], clothes: [] },
     isLoading: isLoadingReturns,
     isError: isErrorReturns,
-  } = useUserReturns();
+  } = useUserReturns(objectId);
 
   const allNotifications: TransferNotification[] = [
     ...unconfirmedItems.tools.map((t) => ({ ...t, type: "tool" as const })),
@@ -91,7 +103,7 @@ export function NotificationCard() {
         >
           Сотрудники
           <Badge className="ml-2 rounded-full bg-muted text-muted-foreground">
-            0
+            {employees.length}
           </Badge>
         </TabsTrigger>
       </TabsList>
@@ -101,7 +113,7 @@ export function NotificationCard() {
         scrollHideDelay={0}
         className="w-full h-full bg-accent border border-t-0 rounded-b-xl"
       >
-        <div className="bg-accent min-h-[450px] p-2 pr-4">
+        <div className="bg-accent min-h-[450px] max-h-[450px] p-2 pr-4">
           {/* Важное */}
           <TabsContent value="important">
             {myObject && (
@@ -176,9 +188,11 @@ export function NotificationCard() {
 
           {/* Сотрудники */}
           <TabsContent value="employees">
-            <div className="w-full py-6 text-center text-muted-foreground/50">
-              Уведомлений по сотрудникам пока нет
-            </div>
+            <MyObjectEmployeesTable
+              employees={employees}
+              isLoading={isLoading}
+              isError={isError}
+            />
           </TabsContent>
         </div>
       </ScrollArea>

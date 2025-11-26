@@ -104,7 +104,10 @@ export function Storage() {
     });
   }, [clothes, activeTab]);
 
-  if (user?.role === "FOREMAN" && !user?.object?.id)
+  if (
+    user?.role === "FOREMAN" &&
+    [...user.primaryObjects, ...user.secondaryObjects].length === 0
+  )
     return (
       <div className="flex w-full h-full items-center justify-center">
         <p className="font-bold text-3xl">

@@ -9,7 +9,7 @@ import { IssueClothingDto } from './dto/issue-clothing.dto';
 import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { ChangeDebtDto } from './dto/change-debt.dto';
 import { UpdateIssuedClothingDto } from './dto/update-issued-clothing.dto';
-import { Decimal } from '@prisma/client/runtime/library';
+import { Decimal } from '@prisma/client/runtime/client';
 
 @Injectable()
 export class EmployeeClothingService {

@@ -88,6 +88,7 @@ export function ToolsEdit({ tool }: ToolEditProps) {
       objectId: data.objectId,
       description: data.description,
       originalSerial: data.originalSerial,
+      status: tool.status,
       isBulk: data.isBulk,
       ...(tool.isBulk
         ? { quantity: data.quantity }

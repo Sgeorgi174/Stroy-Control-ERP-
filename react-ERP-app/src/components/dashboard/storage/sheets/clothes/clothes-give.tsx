@@ -11,20 +11,35 @@ import { ClothesDetailsBox } from "./clothes-details-box";
 import { useObjects } from "@/hooks/object/useObject";
 import { useEmployees } from "@/hooks/employee/useEmployees";
 import { useGiveClothes } from "@/hooks/clothes/useClothes";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 type ClothesGiveProps = { clothes: Clothes };
 
 export function ClothesGive({ clothes }: ClothesGiveProps) {
+  const { data: user, isLoading: isUserLoading } = useAuth();
+  console.log(user);
+
+  const employeeObjectId =
+    user?.role === "FOREMAN"
+      ? user.primaryObjects?.some((o) => o.id === clothes.objectId) ||
+        user.secondaryObjects?.some((o) => o.id === clothes.objectId)
+        ? clothes.objectId
+        : null // или "all", если тебе удобнее
+      : "all";
   const { closeSheet } = useClothesSheetStore();
   const { data: objects = [] } = useObjects({
     searchQuery: "",
     status: "OPEN",
   });
-  const { data: employees = [] } = useEmployees({
-    searchQuery: "",
-    objectId: "all",
-    type: "ACTIVE",
-  });
+
+  const { data: employees = [] } = useEmployees(
+    {
+      searchQuery: "",
+      objectId: employeeObjectId,
+      type: "ACTIVE",
+    },
+    !isUserLoading
+  );
 
   const giveClothesMutation = useGiveClothes(clothes.id);
 

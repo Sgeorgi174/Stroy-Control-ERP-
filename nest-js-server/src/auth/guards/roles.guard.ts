@@ -7,7 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 
 import { ROLES_KEY } from '../decorators/roles.decorator';
-import { Roles, User } from 'generated/prisma';
+import { Roles, User } from '@prisma/client';
 
 interface AuthenticatedRequest extends Express.Request {
   user: User;

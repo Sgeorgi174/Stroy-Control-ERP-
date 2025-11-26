@@ -12,4 +12,8 @@ export class CreateDto {
   @IsOptional()
   @IsString({ message: 'user_Id должен быть строкой' })
   userId?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  customerId: string;
 }

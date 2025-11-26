@@ -11,7 +11,7 @@ import { SkillService } from './skill.service';
 import { UpdateSkillDto } from './dto/update-skill.dto';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
-import { Roles } from 'generated/prisma';
+import { Roles } from '@prisma/client';
 
 @Controller('skills')
 export class SkillController {

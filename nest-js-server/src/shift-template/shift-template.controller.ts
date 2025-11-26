@@ -11,10 +11,10 @@ import {
 } from '@nestjs/common';
 import { ShiftTemplateService } from './shift-template.service';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
-import { Roles } from 'generated/prisma';
 import { CreateShiftTemplateDto } from './dto/createShiftTemplate.dto';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { UpdateShiftTemplateDto } from './dto/updateShiftTemplate.dto';
+import { Roles } from '@prisma/client';
 
 @Controller('shift-template')
 export class ShiftTemplateController {

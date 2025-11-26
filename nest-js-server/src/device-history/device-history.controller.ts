@@ -1,5 +1,5 @@
 import { Controller, Delete, Get, Param } from '@nestjs/common';
-import { Roles } from 'generated/prisma';
+import { Roles } from '@prisma/client';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
 import { DeviceHistoryService } from './device-history.service';
 

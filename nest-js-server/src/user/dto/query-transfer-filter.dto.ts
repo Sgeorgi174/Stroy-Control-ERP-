@@ -1,7 +1,7 @@
 // dto/get-transfers-filter.dto.ts
+import { PendingStatuses } from '@prisma/client';
 import { Transform } from 'class-transformer';
 import { IsOptional, IsString, IsEnum, IsDateString } from 'class-validator';
-import { PendingStatuses } from 'generated/prisma';
 
 export class QueryTransfersFilterDto {
   @IsOptional()

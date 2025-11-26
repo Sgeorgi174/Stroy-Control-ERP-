@@ -14,7 +14,7 @@ import { ClothesHistoryService } from 'src/clothes-history/clothes-history.servi
 import { handlePrismaError } from '../libs/common/utils/prisma-error.util';
 import { AddDto } from './dto/add.dto';
 import { WriteOffDto } from './dto/write-off.dto';
-import { ClothesActions, Roles } from 'generated/prisma';
+import { ClothesActions, Roles } from '@prisma/client';
 import { GiveClothingDto } from './dto/give-clothing.dto';
 import { GetClothesQueryDto } from './dto/get-clothes-query.dto';
 import { RejectClothesTransferDto } from './dto/reject-transfer.dto';

@@ -60,6 +60,7 @@ export function DeviceEdit({ device }: DeviceEditProps) {
         serialNumber: data.serialNumber.trim(),
         objectId: data.objectId,
         originalSerial: data.originalSerial,
+        status: device.status,
       },
       {
         onSuccess: () => {

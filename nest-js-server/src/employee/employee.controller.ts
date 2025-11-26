@@ -15,7 +15,6 @@ import { EmployeeService } from './employee.service';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
-import { Roles } from 'generated/prisma';
 import { GetEmployeeQueryDto } from './dto/employee-query.dto';
 import { TransferEmployeeDto } from './dto/transfer.dto';
 import { AssignEmployeesDto } from './dto/assign-employees.dto';
@@ -23,6 +22,7 @@ import { AddSkillsDto } from './dto/add-skill.dto';
 import { RemoveSkillsDto } from './dto/remove-skill.dto';
 import { ArchiveDto } from './dto/archive-employee.dto';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
+import { Roles } from '@prisma/client';
 
 @Controller('employees')
 export class EmployeeController {
@@ -62,6 +62,7 @@ export class EmployeeController {
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
     Roles.HR,
+    Roles.FOREMAN,
   )
   @Get('by-id/:id')
   async getById(@Param('id') id: string) {
@@ -127,6 +128,7 @@ export class EmployeeController {
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
     Roles.HR,
+    Roles.FOREMAN,
   )
   @Patch('unassign/:id')
   async unassignFromObject(@Param('id') id: string) {
@@ -140,6 +142,7 @@ export class EmployeeController {
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
     Roles.HR,
+    Roles.FOREMAN,
   )
   @Post('add-skills/:id')
   async addSkills(@Param('id') employeeId: string, @Body() dto: AddSkillsDto) {
@@ -153,6 +156,7 @@ export class EmployeeController {
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
     Roles.HR,
+    Roles.FOREMAN,
   )
   @Patch('remove-skill/:id')
   async removeSkill(

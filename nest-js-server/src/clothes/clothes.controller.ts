@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ClothesService } from './clothes.service';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
-import { Roles } from 'generated/prisma';
+import { Roles } from '@prisma/client';
 import { CreateDto } from './dto/create.dto';
 import { UpdateDto } from './dto/update.dto';
 import { TransferDto } from './dto/transfer.dto';

@@ -1,3 +1,4 @@
+import { TabletStatus } from '@prisma/client';
 import {
   IsEnum,
   IsNotEmpty,
@@ -5,7 +6,6 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { TabletStatus } from 'generated/prisma';
 
 export class CreateDto {
   @IsString()

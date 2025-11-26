@@ -51,6 +51,16 @@ export function ObjectDetailsBox({ object }: ObjectDetailsBoxProps) {
                 {object.foreman ? object.foreman.phone : "-"}
               </p>
             </div>
+
+            <div>
+              <p className="text-sm text-gray-500">Заказчик</p>
+              <p className="font-medium">
+                {object.customer ? object.customer.name : "-"}{" "}
+                {object.customer && object.customer.shortName
+                  ? `(${object.customer.shortName})`
+                  : ""}
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>

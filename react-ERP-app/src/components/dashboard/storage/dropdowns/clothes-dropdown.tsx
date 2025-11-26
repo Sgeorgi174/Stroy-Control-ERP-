@@ -118,7 +118,9 @@ export function ClothesDropdown({
             disabled={
               clothes.quantity < 1 ||
               (user?.role === "FOREMAN" &&
-                user?.object?.id !== clothes.objectId)
+                ![...user.primaryObjects, ...user.secondaryObjects].some(
+                  (obj) => obj.id === clothes.objectId
+                ))
             }
             onClick={(e) => {
               e.stopPropagation();
@@ -141,7 +143,9 @@ export function ClothesDropdown({
             disabled={
               clothes.quantity < 1 ||
               (user?.role === "FOREMAN" &&
-                user?.object?.id !== clothes.objectId)
+                ![...user.primaryObjects, ...user.secondaryObjects].some(
+                  (obj) => obj.id === clothes.objectId
+                ))
             }
             onClick={(e) => {
               e.stopPropagation();

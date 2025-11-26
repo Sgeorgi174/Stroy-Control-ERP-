@@ -4,7 +4,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { EmployeeClothingCheckService } from './employee-clothing-check.service';
 import { EmployeePassportCheckService } from './employee-passport-check.service';
-import { Statuses, EmployeeWarningType } from 'generated/prisma';
+import { Statuses, EmployeeWarningType } from '@prisma/client';
 
 @Injectable()
 export class EmployeeStatusService {

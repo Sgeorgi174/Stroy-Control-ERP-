@@ -4,7 +4,7 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { User } from 'generated/prisma';
+import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 interface AuthenticatedRequest extends Express.Request {
@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
 
     const user = await this.prismaService.user.findUnique({
       where: { id: request.session.userId },
-      include: { object: true },
+      include: { primaryObjects: true, secondaryObjects: true },
     });
 
     if (!user) throw new UnauthorizedException('Пользователь не найден');

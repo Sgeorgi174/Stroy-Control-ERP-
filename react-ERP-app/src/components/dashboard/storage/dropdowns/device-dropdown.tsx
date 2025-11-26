@@ -130,7 +130,10 @@ export function DeviceDropDown({
           <DropdownMenuItem
             disabled={
               device.status !== "ON_OBJECT" ||
-              (user?.role === "FOREMAN" && user?.object?.id !== device.objectId)
+              (user?.role === "FOREMAN" &&
+                ![...user.primaryObjects, ...user.secondaryObjects].some(
+                  (obj) => obj.id === device.objectId
+                ))
             }
             onClick={(e) => {
               e.stopPropagation();

@@ -1,9 +1,12 @@
+import { useNavigate, useParams } from "react-router";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ModeToggle } from "./mode-toggle";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { Archive } from "lucide-react";
+import { Archive, ArrowLeft } from "lucide-react";
+import { useObjectHeaderStore } from "@/stores/object-header-store";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 type PageHeaderProps = {
   location: string;
@@ -20,9 +23,24 @@ const pathToTabMap = {
 };
 
 export function PageHeader({ location }: PageHeaderProps) {
+  const { id } = useParams<{ id: string }>();
+  const objectName = useObjectHeaderStore((s) => s.objectName);
+  const { data: user } = useAuth();
+  const navigate = useNavigate();
+
+  const showBackButton =
+    (user?.primaryObjects?.length ?? 0) > 1 && location !== "/my-object";
+
+  // Если на странице /my-object/:id и есть имя объекта → показываем его
+  const title =
+    location.startsWith("/my-object") && id && objectName
+      ? objectName
+      : pathToTabMap[location as keyof typeof pathToTabMap] ??
+        "Неизвестный раздел";
+
   return (
     <header className="w-full flex items-center justify-between">
-      <div className="flex  items-center gap-1">
+      <div className="flex items-center gap-1">
         <SidebarTrigger
           size={"icon"}
           className="-ml-1 [&_svg:not([class*='size-'])]:size-5"
@@ -31,10 +49,20 @@ export function PageHeader({ location }: PageHeaderProps) {
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        <h1 className="text-xl font-medium">
-          {pathToTabMap[location as keyof typeof pathToTabMap] ??
-            "Неизвестный раздел"}
-        </h1>
+        <div className="flex items-center gap-6">
+          {showBackButton && id && (
+            <Button
+              variant={"outline"}
+              onClick={() => navigate("/my-object")}
+              className="flex items-center gap-2 font-medium"
+            >
+              <ArrowLeft size={18} />
+              Вернуться к выбору объекта
+            </Button>
+          )}
+          <h1 className="text-xl font-medium">{title}</h1>
+        </div>
+
         <div className="ml-auto flex items-center gap-2"></div>
         {location === "/storage" && (
           <Popover>

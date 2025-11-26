@@ -1,3 +1,4 @@
+import { ToolStatus } from '@prisma/client';
 import {
   IsBoolean,
   IsEnum,
@@ -6,7 +7,6 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { ToolStatus } from 'generated/prisma';
 
 export class CreateDto {
   @IsString({ message: 'Название инструмента должно быть строкой' })
