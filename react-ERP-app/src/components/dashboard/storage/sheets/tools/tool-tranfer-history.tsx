@@ -10,6 +10,17 @@ type ToolTransferHistoryProps = {
   isLoading: boolean;
 };
 
+const actionMap = {
+  ADD: "Пополнение",
+  TRANSFER: "Перемещение",
+  CONFIRM: "Приняли на объекте",
+  GIVE_TO_EMPLOYEE: "Выдача сотруднику",
+  WRITTEN_OFF: "Списание",
+  CANCEL: "Отмена перемещения",
+  RETURN_FROM_EMPLOYEE: "Возврат от сотрудника",
+  RETURN_TO_SOURCE: "Возврат",
+};
+
 export function ToolTransferHistory({
   transferRecords,
   isLoading,
@@ -72,11 +83,7 @@ export function ToolTransferHistory({
                         <p>{formatTime(history.createdAt)}</p>
                       </div>
                       <div>
-                        <p>
-                          {history.action !== "CANCEL"
-                            ? "Перемещение"
-                            : "Перемещение отменено"}
-                        </p>
+                        <p>{actionMap[history.action]}</p>
                       </div>
                     </Badge>
                   </div>

@@ -46,8 +46,6 @@ export function ToolsDropDown({
     });
   };
 
-  const hasComment = Boolean(tool.comment && tool.comment.trim().length > 0);
-
   return (
     <>
       <DropdownMenu>
@@ -229,44 +227,6 @@ export function ToolsDropDown({
           )}
 
           <DropdownMenuSeparator />
-
-          {/* Группа комментариев */}
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Комментарий</DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              <DropdownMenuGroup>
-                <DropdownMenuItem
-                  disabled={user?.role === "FOREMAN" || hasComment}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCommentDialog({ type: "add" });
-                  }}
-                >
-                  Добавить
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  disabled={user?.role === "FOREMAN" || !hasComment}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCommentDialog({ type: "edit" });
-                  }}
-                >
-                  Редактировать
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  disabled={user?.role === "FOREMAN" || !hasComment}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCommentDialog({ type: "delete" });
-                  }}
-                >
-                  Удалить
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
 
           <DropdownMenuSeparator />
 

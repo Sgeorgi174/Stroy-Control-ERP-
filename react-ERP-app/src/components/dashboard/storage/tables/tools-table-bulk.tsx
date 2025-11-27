@@ -10,7 +10,6 @@ import { ToolsDropDown } from "../dropdowns/tools-dropdown";
 import type { Tool } from "@/types/tool";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import { PendingTable } from "./pending-table";
-import { CommentPopover } from "../comment-popover";
 import { useRowColors } from "@/hooks/useRowColor";
 import { ToolBulkPDFButton } from "../pdf-generate/tool-bulk/tool-bulk-pdf-generate";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
@@ -42,9 +41,6 @@ export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
 
             <TableHead className="text-secondary font-bold">
               Место хранения
-            </TableHead>
-            <TableHead className="text-secondary font-bold">
-              Комментарий
             </TableHead>
 
             <TableHead className="text-secondary font-bold">
@@ -87,15 +83,6 @@ export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
               </TableCell>
 
               <TableCell>{tool.storage ? tool.storage.name : "-"}</TableCell>
-              <TableCell>
-                {tool.comment ? (
-                  <div onClick={(e) => e.stopPropagation()}>
-                    <CommentPopover comment={tool.comment} />
-                  </div>
-                ) : (
-                  <div></div>
-                )}
-              </TableCell>
               <TableCell>
                 <div onClick={(e) => e.stopPropagation()}>
                   <ToolsDropDown

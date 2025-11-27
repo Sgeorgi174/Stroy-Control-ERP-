@@ -1,7 +1,7 @@
 export const toolStatusMap = {
   ON_OBJECT: "На объекте",
   IN_TRANSIT: "В пути",
-  IN_REPAIR: "На ремонте",
-  LOST: "Утерян",
+  IN_REPAIR: "Сломан",
+  LOST: "В ремонте",
   WRITTEN_OFF: "Списан",
 };

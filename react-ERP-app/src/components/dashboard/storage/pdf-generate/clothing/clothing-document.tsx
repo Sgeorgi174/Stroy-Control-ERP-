@@ -70,10 +70,10 @@ const styles = StyleSheet.create({
   smallCell: { flex: 0.3 }, // Для №
   nameCell: { flex: 2.5 }, // Для name
   quantityCell: { flex: 1.4 }, // Для quantity
-  sizeCell: { flex: 1.5 }, // Для size
-  heightCell: { flex: 1.5 }, // Для height
+  sizeCell: { flex: 1 }, // Для size
+  heightCell: { flex: 1 }, // Для height
   seasonCell: { flex: 1.5 }, // Для season
-  manualCell: { flex: 3.3 }, // Для ручного заполнения (пустое)
+  manualCell: { flex: 4.3 }, // Для ручного заполнения (пустое)
   bold: { fontWeight: "bold" },
   indent: { marginLeft: 10 }, // Для отступа в подпунктах
   subFooter: {
@@ -96,7 +96,7 @@ export const ClothingDocument: React.FC<ClothingDocumentProps> = ({
 }) => {
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" orientation="landscape" style={styles.page}>
         <View
           style={{
             flexDirection: "row",

@@ -32,8 +32,8 @@ export function ItemStatusSelectForFilter() {
           <SelectItem value="null">Все</SelectItem>
           <SelectItem value="ON_OBJECT">На объекте</SelectItem>
           <SelectItem value="IN_TRANSIT">В пути</SelectItem>
-          <SelectItem value="IN_REPAIR">На ремонте</SelectItem>
-          <SelectItem value="LOST">Утерян</SelectItem>
+          <SelectItem value="IN_REPAIR">Сломан</SelectItem>
+          <SelectItem value="LOST">На ремонте</SelectItem>
           <SelectItem value="WRITTEN_OFF">Списан</SelectItem>
         </SelectGroup>
       </SelectContent>

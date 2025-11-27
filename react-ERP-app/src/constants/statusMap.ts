@@ -29,7 +29,7 @@ export const statusMap: Record<Status, StatusConfig> = {
     color: "#23732E",
   },
   IN_REPAIR: {
-    label: "На ремонте",
+    label: "Сломан",
     icon: Wrench,
     color: "#C7BC22",
   },
@@ -44,7 +44,7 @@ export const statusMap: Record<Status, StatusConfig> = {
     color: "#807F7F",
   },
   LOST: {
-    label: "Утерян",
+    label: "На ремонте",
     icon: BadgeX,
     color: "#971B1B",
   },

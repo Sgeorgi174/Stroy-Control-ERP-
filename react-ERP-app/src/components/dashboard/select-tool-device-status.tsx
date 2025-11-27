@@ -19,8 +19,8 @@ type SelectStatusToolOrDeviceForFormsProps = {
 
 const itemList = [
   { value: "ON_OBJECT", label: "На объекте" },
-  { value: "IN_REPAIR", label: "В ремонте" },
-  { value: "LOST", label: "Потерян" },
+  { value: "IN_REPAIR", label: "Сломан" },
+  { value: "LOST", label: "На ремонте" },
   { value: "WRITTEN_OFF", label: "Списан" },
 ];
 

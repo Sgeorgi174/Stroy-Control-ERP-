@@ -71,9 +71,9 @@ const styles = StyleSheet.create({
   smallCell: { flex: 0.3 }, // Для №
   nameCell: { flex: 2.5 }, // Для name
   serialCell: { flex: 1.4 }, // Для serialNumber
-  descCell: { flex: 3 }, // Для description (расширен для bagItems)
+  descCell: { flex: 2.5 }, // Для description (расширен для bagItems)
   statusCell: { flex: 1.5 }, // Для toolStatus
-  originalSerialCell: { flex: 1.5 }, // Для comment
+  originalSerialCell: { flex: 2 }, // Для comment
   manualCell: { flex: 2.9 }, // Для ручного заполнения (пустое)
   bold: { fontWeight: "bold" },
   indent: { marginLeft: 10 }, // Для отступа в подпунктах
@@ -95,7 +95,7 @@ const date = new Date().toLocaleDateString("ru-RU", {
 export const ToolDocument: React.FC<ToolDocumentProps> = ({ tools }) => {
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" orientation="landscape" style={styles.page}>
         <View
           style={{
             flexDirection: "row",
@@ -155,7 +155,9 @@ export const ToolDocument: React.FC<ToolDocumentProps> = ({ tools }) => {
                 <Text style={[styles.statusCell, styles.cell]}>
                   {statusMap[tool.status].label}
                 </Text>
-                <Text style={[styles.originalSerialCell, styles.cell]}> </Text>
+                <Text style={[styles.originalSerialCell, styles.cell]}>
+                  {tool.originalSerial}
+                </Text>
                 <Text style={[styles.manualCell, styles.lastCell]} />
                 {/* Пустое поле */}
               </View>

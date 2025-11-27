@@ -13,6 +13,7 @@ const tabLabels = {
   monitoring: "",
   transfers: "",
   admin: "",
+  "my-object/id": "",
 };
 
 type AddButtonProps = {

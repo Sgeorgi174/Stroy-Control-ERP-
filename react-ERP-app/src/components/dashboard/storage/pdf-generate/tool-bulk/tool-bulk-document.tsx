@@ -71,8 +71,7 @@ const styles = StyleSheet.create({
   nameCell: { flex: 2.5 }, // Для name
   quantity: { flex: 1.2 }, // Для quantity
   descCell: { flex: 3 }, // Для description (расширен для bagItems)
-  commentCell: { flex: 1.5 }, // Для comment
-  manualCell: { flex: 3.5 }, // Для ручного заполнения (пустое)
+  manualCell: { flex: 5 }, // Для ручного заполнения (пустое)
   bold: { fontWeight: "bold" },
   indent: { marginLeft: 10 }, // Для отступа в подпунктах
   subFooter: {
@@ -93,7 +92,7 @@ const date = new Date().toLocaleDateString("ru-RU", {
 export const ToolBulkDocument: React.FC<ToolDocumentProps> = ({ tools }) => {
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" orientation="landscape" style={styles.page}>
         <View
           style={{
             flexDirection: "row",
@@ -126,9 +125,6 @@ export const ToolBulkDocument: React.FC<ToolDocumentProps> = ({ tools }) => {
             <Text style={[styles.descCell, styles.bold, styles.cell]}>
               Описание
             </Text>
-            <Text style={[styles.commentCell, styles.bold, styles.cell]}>
-              Комм.
-            </Text>
             <Text style={[styles.manualCell, styles.bold, styles.lastCell]}>
               Ручное заполнение
             </Text>
@@ -147,9 +143,6 @@ export const ToolBulkDocument: React.FC<ToolDocumentProps> = ({ tools }) => {
                 <Text style={[styles.descCell, styles.cell]}>
                   {tool.description}
                 </Text>
-                <Text style={[styles.commentCell, styles.cell]}>
-                  {tool.comment || "-"}
-                </Text>
                 <Text style={[styles.manualCell, styles.lastCell]} />
                 {/* Пустое поле */}
               </View>
@@ -165,7 +158,6 @@ export const ToolBulkDocument: React.FC<ToolDocumentProps> = ({ tools }) => {
                     <Text style={[styles.descCell, styles.cell]}>
                       Количество: {item.quantity}
                     </Text>
-                    <Text style={[styles.commentCell, styles.cell]} />
                     <Text style={[styles.manualCell, styles.lastCell]} />
                   </View>
                 ))}

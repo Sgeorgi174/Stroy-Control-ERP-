@@ -71,8 +71,9 @@ const styles = StyleSheet.create({
   smallCell: { flex: 0.3 }, // Для №
   nameCell: { flex: 2.5 }, // Для name
   serialCell: { flex: 1.4 }, // Для serialNumber
+  originalSerialCell: { flex: 2 }, // Для comment
   statusCell: { flex: 1.5 }, // Для toolStatus
-  manualCell: { flex: 6.3 }, // Для ручного заполнения (пустое)
+  manualCell: { flex: 4.3 }, // Для ручного заполнения (пустое)
   bold: { fontWeight: "bold" },
   indent: { marginLeft: 10 }, // Для отступа в подпунктах
   subFooter: {
@@ -93,7 +94,7 @@ const date = new Date().toLocaleDateString("ru-RU", {
 export const DeviceDocument: React.FC<DeviceDocumentProps> = ({ devices }) => {
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" orientation="landscape" style={styles.page}>
         <View
           style={{
             flexDirection: "row",
@@ -124,6 +125,9 @@ export const DeviceDocument: React.FC<DeviceDocumentProps> = ({ devices }) => {
             <Text style={[styles.statusCell, styles.bold, styles.cell]}>
               Статус
             </Text>
+            <Text style={[styles.originalSerialCell, styles.bold, styles.cell]}>
+              Серийник
+            </Text>
             <Text style={[styles.manualCell, styles.bold, styles.lastCell]}>
               Ручное заполнение
             </Text>
@@ -141,6 +145,9 @@ export const DeviceDocument: React.FC<DeviceDocumentProps> = ({ devices }) => {
                 </Text>
                 <Text style={[styles.statusCell, styles.cell]}>
                   {statusMap[device.status].label}
+                </Text>
+                <Text style={[styles.originalSerialCell, styles.cell]}>
+                  {device.originalSerial}
                 </Text>
                 <Text style={[styles.manualCell, styles.lastCell]} />
                 {/* Пустое поле */}

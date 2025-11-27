@@ -12,7 +12,6 @@ import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import { PendingTable } from "./pending-table";
 import { StatusBadge } from "./status-badge";
 import { statusMap } from "@/constants/statusMap";
-import { CommentPopover } from "../comment-popover";
 import { useRowColors } from "@/hooks/useRowColor";
 import { ToolPDFButton } from "../pdf-generate/tool/tool-pdf-generate";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
@@ -53,9 +52,6 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
 
             <TableHead className="text-secondary font-bold">
               Место хранения
-            </TableHead>
-            <TableHead className="text-secondary font-bold">
-              Комментарий
             </TableHead>
 
             <TableHead className="text-secondary font-bold">
@@ -100,15 +96,6 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
                   : "Не назначен"}
               </TableCell>
               <TableCell>{tool.storage ? tool.storage.name : "-"}</TableCell>
-              <TableCell>
-                {tool.comment ? (
-                  <div onClick={(e) => e.stopPropagation()}>
-                    <CommentPopover comment={tool.comment} />
-                  </div>
-                ) : (
-                  <div></div>
-                )}
-              </TableCell>
               <TableCell>
                 <div onClick={(e) => e.stopPropagation()}>
                   <ToolsDropDown

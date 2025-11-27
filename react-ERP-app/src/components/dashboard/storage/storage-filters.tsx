@@ -16,6 +16,7 @@ import { useEffect, type Dispatch, type SetStateAction } from "react";
 import { useDebouncedState } from "@/hooks/useDebounceState";
 import { ClothesSettingsDropdown } from "./сlothes-settings-dropdown";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 type StorageFiltersProps = {
   isBulk: boolean;
@@ -23,6 +24,7 @@ type StorageFiltersProps = {
 };
 
 export function StorageFilters({ isBulk, setIsBulk }: StorageFiltersProps) {
+  const { data: user } = useAuth();
   const { activeTab, searchQuery, setSearchQuery } = useFilterPanelStore();
   const [localSearch, setLocalSearch, debouncedSearch] = useDebouncedState(
     searchQuery,
@@ -110,13 +112,15 @@ export function StorageFilters({ isBulk, setIsBulk }: StorageFiltersProps) {
             <ItemStatusSelectForFilter />
           </div>
         )}
-        <div className="flex gap-8">
-          <AddButton handleAdd={handleAdd} />
-          <SearchInput
-            searchQuery={localSearch}
-            setSearchQuery={setLocalSearch}
-          />
-        </div>
+        {(user?.role === "ACCOUNTANT" || user?.role === "ADMIN") && (
+          <div className="flex gap-8">
+            <AddButton handleAdd={handleAdd} />
+            <SearchInput
+              searchQuery={localSearch}
+              setSearchQuery={setLocalSearch}
+            />
+          </div>
+        )}
       </div>
     </FilterPanel>
   );
