@@ -29,7 +29,6 @@ import {
 } from "@/components/ui/accordion";
 import { GenerateEmployees } from "./generate-employees";
 import { useAuth } from "@/hooks/auth/useAuth";
-import { S3UploadTest } from "./S3UploadTest";
 
 type AdminPanelProps = {
   users: User[];
@@ -130,8 +129,6 @@ export function AdminPanel({
           </Table>
         </CardContent>
       </Card>
-
-      <S3UploadTest />
 
       {user?.role === "ADMIN" && (
         <div className="mt-6">
