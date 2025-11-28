@@ -523,6 +523,7 @@ export class ToolService {
             isBag: false,
             objectId: transfer.toObjectId,
             serialNumber: null,
+            description: tool.description,
           },
         });
 
@@ -583,8 +584,6 @@ export class ToolService {
           where: { id: recordId },
           data: { status: 'CONFIRM' },
         });
-
-        // 4. История: ВАЖНО — записываем ID инструмента на объекте назначения
 
         return {
           receivedTool: targetTool,
