@@ -21,6 +21,7 @@ import { SkillModule } from './skill/skill.module';
 import { ShiftModule } from './shift/shift.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ShiftTemplateModule } from './shift-template/shift-template.module';
+import { S3Module } from './s3/s3.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { ShiftTemplateModule } from './shift-template/shift-template.module';
     SkillModule,
     ShiftModule,
     ShiftTemplateModule,
+    S3Module,
   ],
 })
 export class AppModule {}

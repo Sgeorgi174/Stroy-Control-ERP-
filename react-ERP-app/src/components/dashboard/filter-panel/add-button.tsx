@@ -18,13 +18,18 @@ const tabLabels = {
 
 type AddButtonProps = {
   handleAdd: React.MouseEventHandler<HTMLButtonElement>;
+  isDisabled?: boolean;
 };
 
-export function AddButton({ handleAdd }: AddButtonProps) {
+export function AddButton({ handleAdd, isDisabled = false }: AddButtonProps) {
   const { activeTab } = useFilterPanelStore();
 
   return (
-    <Button className="w-[195px] font-medium" onClick={handleAdd}>
+    <Button
+      disabled={isDisabled}
+      className="w-[195px] font-medium"
+      onClick={handleAdd}
+    >
       {`Добавить ${tabLabels[activeTab]}`}
     </Button>
   );

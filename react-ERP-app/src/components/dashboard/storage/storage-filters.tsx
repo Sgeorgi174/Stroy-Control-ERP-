@@ -17,6 +17,7 @@ import { useDebouncedState } from "@/hooks/useDebounceState";
 import { ClothesSettingsDropdown } from "./сlothes-settings-dropdown";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/auth/useAuth";
+import { useLocation } from "react-router";
 
 type StorageFiltersProps = {
   isBulk: boolean;
@@ -24,6 +25,7 @@ type StorageFiltersProps = {
 };
 
 export function StorageFilters({ isBulk, setIsBulk }: StorageFiltersProps) {
+  const location = useLocation();
   const { data: user } = useAuth();
   const { activeTab, searchQuery, setSearchQuery } = useFilterPanelStore();
   const [localSearch, setLocalSearch, debouncedSearch] = useDebouncedState(
@@ -44,6 +46,11 @@ export function StorageFilters({ isBulk, setIsBulk }: StorageFiltersProps) {
     searchQuery: "",
     status: "OPEN",
   });
+
+  const isAddDisabled =
+    location.pathname === "/storage" &&
+    user?.role !== "ADMIN" &&
+    user?.role !== "ACCOUNTANT";
 
   const handleAdd = () => {
     switch (activeTab) {
@@ -112,15 +119,14 @@ export function StorageFilters({ isBulk, setIsBulk }: StorageFiltersProps) {
             <ItemStatusSelectForFilter />
           </div>
         )}
-        {(user?.role === "ACCOUNTANT" || user?.role === "ADMIN") && (
-          <div className="flex gap-8">
-            <AddButton handleAdd={handleAdd} />
-            <SearchInput
-              searchQuery={localSearch}
-              setSearchQuery={setLocalSearch}
-            />
-          </div>
-        )}
+
+        <div className="flex gap-8">
+          {<AddButton handleAdd={handleAdd} isDisabled={isAddDisabled} />}
+          <SearchInput
+            searchQuery={localSearch}
+            setSearchQuery={setLocalSearch}
+          />
+        </div>
       </div>
     </FilterPanel>
   );

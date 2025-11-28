@@ -1,6 +1,7 @@
 import { TelegramBotService } from './telegram-bot.service';
 import { InjectBot, Start, Update, On, Ctx } from 'nestjs-telegraf';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { S3Service } from 'src/s3/s3.service';
 import { Context, Telegraf } from 'telegraf';
 import { Message } from 'telegraf/typings/core/types/typegram';
 
@@ -10,6 +11,7 @@ export class TelegramBotUpdate {
     @InjectBot() private readonly bot: Telegraf<Context>,
     private readonly telegramBotService: TelegramBotService,
     private readonly prismaService: PrismaService,
+    private readonly s3Service: S3Service,
   ) {}
 
   @Start()
@@ -74,7 +76,7 @@ export class TelegramBotUpdate {
 
   @On('photo')
   async onPhoto(@Ctx() ctx: Context) {
-    const chatId = String(ctx.chat?.id); // ✅ тоже строка
+    const chatId = String(ctx.chat?.id);
     const message = ctx.message as Message.PhotoMessage;
 
     const telegramUser = await this.prismaService.telegramUser.findUnique({
@@ -102,34 +104,47 @@ export class TelegramBotUpdate {
       return;
     }
 
+    // Получаем файл с Telegram
     const fileLink = await ctx.telegram.getFileLink(largestPhoto.file_id);
     const file = await fetch(fileLink.href);
     const buffer = await file.arrayBuffer();
 
     const filename = `${transferId}.jpg`;
-    const fs = await import('fs/promises');
-    await fs.writeFile(`uploads/photos/${filename}`, Buffer.from(buffer));
 
-    const url = `/uploads/photos/${filename}`;
+    // Используем наш S3Service
+    const { path } = await this.s3Service.uploadImage(
+      {
+        buffer: Buffer.from(buffer),
+        originalname: filename,
+        mimetype: 'image/jpeg',
+        size: buffer.byteLength,
+      } as Express.Multer.File,
+      {
+        folder: 'transfer_photo',
+        filename: transferId,
+      },
+    );
+
+    // path = "transfer_photo/<transferId>.jpg"
 
     // Обновляем запись в нужной таблице
     switch (transferType) {
       case 'TOOL':
         await this.prismaService.pendingTransfersTools.update({
           where: { id: transferId },
-          data: { photoUrl: url },
+          data: { photoUrl: path },
         });
         break;
       case 'DEVICE':
         await this.prismaService.pendingTransfersDevices.update({
           where: { id: transferId },
-          data: { photoUrl: url },
+          data: { photoUrl: path },
         });
         break;
       case 'CLOTHES':
         await this.prismaService.pendingTransfersClothes.update({
           where: { id: transferId },
-          data: { photoUrl: url },
+          data: { photoUrl: path },
         });
         break;
       default:
@@ -137,6 +152,7 @@ export class TelegramBotUpdate {
         return;
     }
 
+    // Сбрасываем запрос фото
     await this.prismaService.telegramUser.update({
       where: { chatId },
       data: { photoRequestedTransferId: null },
