@@ -164,7 +164,9 @@ export default function Step1SelectHours({
                     key={employee.id}
                     className={`${
                       selected ? "bg-muted" : "bg-transparent"
-                    } h-[53px] hover:bg-muted`}
+                    } h-[53px] hover:${
+                      selected ? "bg-muted" : "bg-transparent"
+                    }`}
                   >
                     <TableCell>
                       <Checkbox

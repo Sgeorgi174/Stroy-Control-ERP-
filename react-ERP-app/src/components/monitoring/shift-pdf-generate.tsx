@@ -21,10 +21,10 @@ Font.register({
   ],
 });
 
-// ----------------- Стили PDF -----------------
+// ----------------- Стили PDF (без изменений) -----------------
 const styles = StyleSheet.create({
   page: {
-    padding: 10,
+    padding: 20,
     fontSize: 10,
     fontFamily: "OpenSans",
     flexDirection: "column",
@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
   smallCell: { flex: 0.3 },
   nameCell: { flex: 1.8 },
   localCell: { flex: 0.8, textAlign: "center" },
-  positionCell: { flex: 1.6 },
-  statusCell: { flex: 5.5 },
+  positionCell: { flex: 1.8 },
+  statusCell: { flex: 5.3 },
   bold: { fontWeight: "bold" },
   subFooter: {
     marginTop: 4,
@@ -93,14 +93,14 @@ export const ShiftDocument: React.FC<ShiftDocumentProps> = ({
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      {/* Страница 1 — только присутствующие */}
+      <Page size="A4" orientation="portrait" style={styles.page}>
         <View style={styles.section}>
           <Text style={[styles.bold, { fontSize: 12 }]}>
             {date} {object.name}
           </Text>
         </View>
 
-        {/* Таблица для присутствующих */}
         <Text style={styles.tableTitle}>Присутствующие</Text>
         <View style={styles.table}>
           <View style={styles.tableHeader}>
@@ -145,8 +145,16 @@ export const ShiftDocument: React.FC<ShiftDocumentProps> = ({
         <View style={styles.subFooter}>
           <Text style={[styles.bold]}>ИТОГО: {presentEmployees.length}</Text>
         </View>
+      </Page>
 
-        {/* Таблица для отсутствующих */}
+      {/* Страница 2 — только отсутствующие */}
+      <Page size="A4" orientation="portrait" style={styles.page}>
+        <View style={styles.section}>
+          <Text style={[styles.bold, { fontSize: 12 }]}>
+            {date} {object.name}
+          </Text>
+        </View>
+
         <Text style={styles.tableTitle}>Отсутствующие</Text>
         <View style={styles.table}>
           <View style={styles.tableHeader}>

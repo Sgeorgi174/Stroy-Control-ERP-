@@ -1,7 +1,6 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuSub,
@@ -127,69 +126,15 @@ export function ToolsDropDown({
 
           <DropdownMenuSeparator />
 
-          {tool.isBag && (
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>Редактировать</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    disabled={user?.role === "FOREMAN"}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openSheet("edit", tool);
-                    }}
-                  >
-                    Сумку
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    disabled={user?.role === "FOREMAN"}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openSheet("edit bag", tool);
-                    }}
-                  >
-                    Наполнение сумки
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-          )}
-
-          {!tool.isBag && (
-            <DropdownMenuItem
-              disabled={user?.role === "FOREMAN"}
-              onClick={(e) => {
-                e.stopPropagation();
-                openSheet("edit", tool);
-              }}
-            >
-              Редактировать
-            </DropdownMenuItem>
-          )}
-
-          {tool.isBulk && (
-            <DropdownMenuItem
-              disabled={tool.status !== "ON_OBJECT" || user?.role === "FOREMAN"}
-              onClick={(e) => {
-                e.stopPropagation();
-                openSheet("add qunatity", tool);
-              }}
-            >
-              Пополнить
-            </DropdownMenuItem>
-          )}
-
-          {tool.isBulk && (
-            <DropdownMenuItem
-              disabled={tool.status !== "ON_OBJECT" || user?.role === "FOREMAN"}
-              onClick={(e) => {
-                e.stopPropagation();
-                openSheet("write off", tool);
-              }}
-            >
-              Списать
-            </DropdownMenuItem>
-          )}
+          <DropdownMenuItem
+            disabled={user?.role === "FOREMAN"}
+            onClick={(e) => {
+              e.stopPropagation();
+              openSheet("edit", tool);
+            }}
+          >
+            Редактировать
+          </DropdownMenuItem>
 
           {
             <DropdownMenuItem

@@ -2,6 +2,7 @@ import { ObjectCard } from "@/components/monitoring/object-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useObjects } from "@/hooks/object/useObject";
 import { useShiftsWithFilters } from "@/hooks/shift/useShift";
+import { useFilterPanelStore } from "@/stores/filter-panel-store";
 import type { Object } from "@/types/object";
 
 export function Monitoring() {
@@ -10,19 +11,27 @@ export function Monitoring() {
     status: "OPEN",
   });
 
+  const selectedShiftDate = useFilterPanelStore((s) => s.selectedShiftDate);
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
+  const dayStart = new Date(selectedShiftDate);
+  dayStart.setHours(0, 0, 0, 0);
+
+  const dayEnd = new Date(dayStart);
+  dayEnd.setDate(dayEnd.getDate() + 1);
+
   const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
   const { data: shiftDataToday } = useShiftsWithFilters(
     {
       objectId: undefined,
-      fromDate: today.toISOString(),
-      toDate: tomorrow.toISOString(),
+      fromDate: dayStart.toISOString(),
+      toDate: dayEnd.toISOString(),
     },
     true
   );
@@ -31,7 +40,7 @@ export function Monitoring() {
     {
       objectId: undefined,
       fromDate: monthStart.toISOString(),
-      toDate: tomorrow.toISOString(),
+      toDate: dayEnd.toISOString(),
     },
     true
   );
@@ -120,7 +129,12 @@ export function Monitoring() {
         {objects
           .filter((object: Object) => object.name !== "Главный склад")
           .map((object: Object) => (
-            <ObjectCard key={object.id} object={object} />
+            <ObjectCard
+              dayStart={dayStart}
+              dayEnd={dayEnd}
+              key={object.id}
+              object={object}
+            />
           ))}
       </div>
     </>

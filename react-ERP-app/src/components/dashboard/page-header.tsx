@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { Archive, ArrowLeft } from "lucide-react";
 import { useObjectHeaderStore } from "@/stores/object-header-store";
 import { useAuth } from "@/hooks/auth/useAuth";
+import { DatePickerForShift } from "./filter-panel/date-picker-for-shift";
 
 type PageHeaderProps = {
   location: string;
@@ -90,7 +91,10 @@ export function PageHeader({ location }: PageHeaderProps) {
         )}
       </div>
 
-      <ModeToggle />
+      <div className="flex gap-5">
+        {location === "/monitoring" && <DatePickerForShift />}
+        <ModeToggle />
+      </div>
     </header>
   );
 }

@@ -5,13 +5,11 @@ import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToolsSheetStore } from "@/stores/tool-sheet-store";
 import { useForm } from "react-hook-form";
 import { useObjects } from "@/hooks/object/useObject";
 import { useCreateTool } from "@/hooks/tool/useCreateTool";
-import { useCreateToolBag } from "@/hooks/tool/useCreateToolBag";
 import { useState, useEffect } from "react";
 import { useTools } from "@/hooks/tool/useTools";
 import { generateInventoryNumber } from "@/lib/utils/generateInventaryNumber";
@@ -69,9 +67,7 @@ export function ToolsAdd() {
     .filter(Boolean);
 
   const createTool = useCreateTool();
-  const createToolBag = useCreateToolBag();
 
-  const [isBag, setIsBag] = useState(false);
   const [prefix, setPrefix] = useState<string | null>(null);
 
   const {
@@ -96,15 +92,6 @@ export function ToolsAdd() {
 
   const isBulk = watch("isBulk");
 
-  // Автоимя для сумки
-  useEffect(() => {
-    if (isBag) {
-      setValue("name", "Сумка расключника");
-    } else {
-      setValue("name", "");
-    }
-  }, [isBag, setValue]);
-
   const { closeSheet } = useToolsSheetStore();
   const selectedObjectId = watch("objectId");
 
@@ -120,7 +107,7 @@ export function ToolsAdd() {
         : { serialNumber: data.serialNumber?.trim() }),
     };
 
-    const mutation = isBag ? createToolBag : createTool;
+    const mutation = createTool;
 
     mutation.mutate(payload, {
       onSuccess: () => {
@@ -160,7 +147,7 @@ export function ToolsAdd() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {/* Чекбокс */}
-        {!isBulk && (
+        {/* {!isBulk && (
           <div className="flex items-center gap-2">
             <Checkbox
               id="isBag"
@@ -169,7 +156,7 @@ export function ToolsAdd() {
             />
             <Label htmlFor="isBag">Создать сумку расключника</Label>
           </div>
-        )}
+        )} */}
 
         {/* Имя */}
         <div className="flex flex-col gap-2 w-[400px]">
@@ -179,7 +166,6 @@ export function ToolsAdd() {
             type="text"
             placeholder="Введите наименование"
             {...register("name")}
-            readOnly={isBag}
           />
           {errors.name && (
             <p className="text-sm text-red-500">{errors.name.message}</p>
@@ -293,7 +279,7 @@ export function ToolsAdd() {
         {/* Кнопка */}
         <div className="flex justify-center mt-10">
           <Button type="submit" className="w-[300px]">
-            {isBag ? "Создать сумку" : "Добавить инструмент"}
+            "Добавить инструмент"
           </Button>
         </div>
       </form>

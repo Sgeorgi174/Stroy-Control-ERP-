@@ -24,7 +24,7 @@ Font.register({
 // ----------------- Стили PDF -----------------
 const styles = StyleSheet.create({
   page: {
-    padding: 10,
+    padding: 20,
     fontSize: 10,
     fontFamily: "OpenSans",
     flexDirection: "column",
@@ -161,24 +161,6 @@ export const ToolDocument: React.FC<ToolDocumentProps> = ({ tools }) => {
                 <Text style={[styles.manualCell, styles.lastCell]} />
                 {/* Пустое поле */}
               </View>
-              {/* Подпункты для bagItems, если isBag */}
-              {tool.isBag &&
-                tool.bagItems.map((item) => (
-                  <View style={styles.subRow} key={item.id}>
-                    <Text style={[styles.smallCell, styles.cell]} />
-                    {/* Пустой № */}
-                    <Text style={[styles.nameCell, styles.cell]}>
-                      <Text style={styles.indent}> - {item.name}</Text>
-                    </Text>
-                    <Text style={[styles.serialCell, styles.cell]} />
-                    <Text style={[styles.descCell, styles.cell]}>
-                      Количество: {item.quantity}
-                    </Text>
-                    <Text style={[styles.statusCell, styles.cell]} />
-                    <Text style={[styles.originalSerialCell, styles.cell]} />
-                    <Text style={[styles.manualCell, styles.lastCell]} />
-                  </View>
-                ))}
             </React.Fragment>
           ))}
         </View>

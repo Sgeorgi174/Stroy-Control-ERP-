@@ -1,12 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { formatDate } from "@/lib/utils/format-date";
 import { splitAddress } from "@/lib/utils/splitAddress";
 import type { Tool } from "@/types/tool";
@@ -118,45 +110,6 @@ export function ToolsDetailsBox({ tool }: DetailsBoxProps) {
           </CardContent>
         </Card>
       </div>
-
-      {tool.isBag && (
-        <Card className="mt-3">
-          <CardHeader>
-            <CardTitle className="text-lg">Наполнение сумки</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Инструмент</TableHead>
-                  <TableHead>Количество</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {tool.bagItems ? (
-                  tool.bagItems.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium">
-                        {`${item.name}`}
-                      </TableCell>
-                      <TableCell>{item.quantity}</TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={3}
-                      className="text-center p-4 text-gray-400"
-                    >
-                      Сумка пуста
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
     </>
   );
 }

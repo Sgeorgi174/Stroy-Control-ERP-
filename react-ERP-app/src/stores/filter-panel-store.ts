@@ -44,6 +44,9 @@ type TabState = {
   selectedTransferDate: Date;
   setSelectedTransferDate: (date: Date) => void;
 
+  selectedShiftDate: Date;
+  setSelectedShiftDate: (date: Date) => void;
+
   fromObjectId: string | null;
   setFromObjectId: (id: string | null) => void;
 
@@ -98,6 +101,9 @@ export const useFilterPanelStore = create<TabState>((set, get) => ({
   selectedTransferDate: new Date(),
   setSelectedTransferDate: (date) => set({ selectedTransferDate: date }),
 
+  selectedShiftDate: new Date(),
+  setSelectedShiftDate: (date) => set({ selectedShiftDate: date }),
+
   fromObjectId: "all",
   setFromObjectId: (id) => set({ fromObjectId: id }),
 
@@ -127,6 +133,7 @@ export const useFilterPanelStore = create<TabState>((set, get) => ({
       selectedEmployeeType: "ACTIVE",
       selectedSkills: [],
       selectedTransferDate: new Date(),
+      selectedShiftDate: new Date(),
       fromObjectId: "all",
       toObjectId: "all",
     }),

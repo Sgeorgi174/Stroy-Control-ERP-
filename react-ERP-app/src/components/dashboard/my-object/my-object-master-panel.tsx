@@ -7,7 +7,7 @@ import { NotificationCard } from "./notification/notification-card";
 import { Card } from "@/components/ui/card";
 import { Clock } from "@/components/ui/clock";
 import { Calendar01 } from "@/components/calendar-01";
-import { Check, HardHat, Users } from "lucide-react";
+import { Check, Eye, HardHat, Users } from "lucide-react";
 import { ShiftTemplateCreateDialog } from "./shift/create-shift-template";
 import { ShiftTemplatePreviewDialog } from "./shift/shift-template-preview";
 import { ShiftPDF } from "@/components/monitoring/pdf-button";
@@ -22,6 +22,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { EmployeeSheet } from "../employees/sheets/employee-sheet";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { formatDate, formatTime } from "@/lib/utils/format-date";
 
 type MyObjectMasterPanelProps = {
   object: Object;
@@ -154,7 +161,35 @@ export function MyObjectMasterPanel({ object }: MyObjectMasterPanelProps) {
 
             {/* Таблица с сотрудниками, которые работают */}
             <Card className="p-5 border rounded-2xl">
-              <h4 className="font-medium mb-4">Сотрудники на смене</h4>
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium mb-4">Сотрудники на смене</h4>
+                {shiftData[0].updatedReason && (
+                  <div className="flex items-center gap-5">
+                    <p className="text-muted-foreground">
+                      Изменено: {formatDate(shiftData[0].updatedAt)}{" "}
+                      {formatTime(shiftData[0].updatedAt)}
+                    </p>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline">
+                          <Eye />
+                        </Button>
+                      </PopoverTrigger>
+
+                      <PopoverContent className="w-80">
+                        <h4 className="text-sm font-medium mb-1">
+                          Причина изменения смены:
+                        </h4>
+
+                        <p className="text-sm whitespace-pre-wrap">
+                          {shiftData[0].updatedReason}
+                        </p>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                )}
+              </div>
+
               {presentEmployees.length === 0 ? (
                 <p className="text-gray-500">Нет сотрудников на смене</p>
               ) : (

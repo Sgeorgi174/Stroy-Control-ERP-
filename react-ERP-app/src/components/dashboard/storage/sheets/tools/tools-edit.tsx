@@ -125,7 +125,6 @@ export function ToolsEdit({ tool }: ToolEditProps) {
             id="name"
             type="text"
             placeholder="Введите наименование"
-            disabled={tool.isBag}
             {...register("name")}
           />
           {errors.name && (

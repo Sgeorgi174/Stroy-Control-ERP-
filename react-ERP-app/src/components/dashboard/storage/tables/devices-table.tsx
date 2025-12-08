@@ -15,6 +15,7 @@ import { statusMap } from "@/constants/statusMap";
 import { useRowColors } from "@/hooks/useRowColor";
 import { DevicePDFButton } from "../pdf-generate/device/device-pdf-generate";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
+import { DescriptionPopover } from "../description-popover";
 
 type DeviceTableProps = {
   devices: Device[];
@@ -78,7 +79,14 @@ export function DevicesTable({
               </TableCell>
               <TableCell className="hover:underline">{device.name}</TableCell>
               <TableCell className="hover:underline">
-                {device.originalSerial}
+                {device.originalSerial ? (
+                  <DescriptionPopover
+                    text={device.originalSerial}
+                    maxLength={15}
+                  />
+                ) : (
+                  ""
+                )}
               </TableCell>
               <TableCell>
                 <StatusBadge

@@ -81,7 +81,14 @@ export function ToolsTable({ tools, isLoading, isError }: ToolsTableProps) {
                 )}
               </TableCell>
               <TableCell className=" hover:underline">
-                {tool.originalSerial ?? ""}
+                {tool.originalSerial ? (
+                  <DescriptionPopover
+                    text={tool.originalSerial}
+                    maxLength={15}
+                  />
+                ) : (
+                  ""
+                )}
               </TableCell>
               <TableCell>
                 <StatusBadge

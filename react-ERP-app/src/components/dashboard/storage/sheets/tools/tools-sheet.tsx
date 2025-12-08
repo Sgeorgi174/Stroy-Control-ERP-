@@ -92,11 +92,6 @@ export function ToolsSheet() {
                         <p className="text-lg text-muted-foreground">
                           Инвентарный: {selectedTool?.serialNumber}
                         </p>
-
-                        <p className="text-lg text-muted-foreground">
-                          Серийный:{" "}
-                          {selectedTool?.originalSerial ?? "Не указан"}
-                        </p>
                       </div>
                     )}
                   </div>

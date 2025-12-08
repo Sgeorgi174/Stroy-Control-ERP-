@@ -23,7 +23,7 @@ Font.register({
 // ----------------- Стили PDF -----------------
 const styles = StyleSheet.create({
   page: {
-    padding: 10,
+    padding: 20,
     fontSize: 10,
     fontFamily: "OpenSans",
     flexDirection: "column",

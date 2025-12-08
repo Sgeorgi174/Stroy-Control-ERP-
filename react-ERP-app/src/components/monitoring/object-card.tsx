@@ -8,21 +8,18 @@ import { ShiftSheet } from "./shift-sheet";
 
 type ObjectCardProps = {
   object: Object;
+  dayStart: Date;
+  dayEnd: Date;
 };
 
-export function ObjectCard({ object }: ObjectCardProps) {
+export function ObjectCard({ object, dayStart, dayEnd }: ObjectCardProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
 
   const { data: shiftData } = useShiftsWithFilters(
     {
       objectId: object.id,
-      fromDate: today.toISOString(),
-      toDate: tomorrow.toISOString(),
+      fromDate: dayStart.toISOString(),
+      toDate: dayEnd.toISOString(),
     },
     true
   );

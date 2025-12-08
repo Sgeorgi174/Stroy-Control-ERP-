@@ -16,7 +16,12 @@ import {
 import type { Object } from "@/types/object";
 import type { Shift } from "@/types/shift";
 import { ShiftPDF } from "./pdf-button";
-import { Check } from "lucide-react";
+import { Check, Eye, SquarePen } from "lucide-react";
+import { useState } from "react";
+import { ShiftEditDialog } from "./updateShift";
+import { formatDate, formatTime } from "@/lib/utils/format-date";
+import { Button } from "../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 interface ShiftSheetProps {
   shift: Shift | null;
@@ -31,10 +36,17 @@ export function ShiftSheet({
   onClose,
   object,
 }: ShiftSheetProps) {
+  const [isOpenEditShift, setIsEditShift] = useState(false);
+
   if (!shift) return null;
 
-  const presentEmployees = shift.employees.filter((e) => e.present);
-  const absentEmployees = shift.employees.filter((e) => !e.present);
+  const presentEmployees = shift.employees
+    .filter((e) => e.present)
+    .sort((a, b) => a.employee.lastName.localeCompare(b.employee.lastName));
+
+  const absentEmployees = shift.employees
+    .filter((e) => !e.present)
+    .sort((a, b) => a.employee.lastName.localeCompare(b.employee.lastName));
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -63,15 +75,50 @@ export function ShiftSheet({
           </div>
           <div className="p-4 bg-muted rounded-lg text-center">
             <div className="text-xl font-bold">{shift.totalHours} ч</div>
-            <div className=" ">Общее кол-во часов</div>
+            <div className=" ">Кол-во часов</div>
           </div>
 
           <ShiftPDF shift={shift} object={object} />
+          <div
+            role="button"
+            onClick={() => setIsEditShift(true)}
+            className="p-4 bg-muted rounded-lg flex flex-col items-center  text-center cursor-pointer"
+          >
+            <SquarePen width={35} height={28} />
+            <div className=" ">Редактировать</div>
+          </div>
         </div>
 
         {/* Таблица присутствующих */}
         <div>
-          <h4 className="text-lg font-medium mb-2">Присутствующие</h4>
+          <div className="flex justify-between">
+            <h4 className="text-lg font-medium mb-2">Присутствующие</h4>
+            {shift.updatedReason && (
+              <div className="flex items-center gap-5">
+                <p className="text-muted-foreground">
+                  Изменено: {formatDate(shift.updatedAt)}{" "}
+                  {formatTime(shift.updatedAt)}
+                </p>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline">
+                      <Eye />
+                    </Button>
+                  </PopoverTrigger>
+
+                  <PopoverContent className="w-80">
+                    <h4 className="text-sm font-medium mb-1">
+                      Причина изменения смены:
+                    </h4>
+
+                    <p className="text-sm whitespace-pre-wrap">
+                      {shift.updatedReason}
+                    </p>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
+          </div>
           <Table className="mb-6">
             <TableHeader>
               <TableRow>
@@ -130,6 +177,11 @@ export function ShiftSheet({
             </TableBody>
           </Table>
         </div>
+        <ShiftEditDialog
+          open={isOpenEditShift}
+          shift={shift}
+          onClose={() => setIsEditShift(false)}
+        />
       </SheetContent>
     </Sheet>
   );
