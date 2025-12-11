@@ -171,6 +171,30 @@ export function ToolsDropDown({
             </DropdownMenuItem>
           )}
 
+          {tool.isBulk && (
+            <DropdownMenuItem
+              disabled={tool.status !== "ON_OBJECT" || user?.role === "FOREMAN"}
+              onClick={(e) => {
+                e.stopPropagation();
+                openSheet("add qunatity", tool);
+              }}
+            >
+              Пополнить
+            </DropdownMenuItem>
+          )}
+
+          {tool.isBulk && (
+            <DropdownMenuItem
+              disabled={tool.status !== "ON_OBJECT" || user?.role === "FOREMAN"}
+              onClick={(e) => {
+                e.stopPropagation();
+                openSheet("write off", tool);
+              }}
+            >
+              Списать
+            </DropdownMenuItem>
+          )}
+
           <DropdownMenuSeparator />
 
           <DropdownMenuSeparator />

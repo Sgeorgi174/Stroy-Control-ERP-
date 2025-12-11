@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Decimal } from '@prisma/client/runtime/client';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -39,6 +43,9 @@ export class ClothingDebtCronService {
           console.log('--- Обработка записи:', record.id);
 
           let monthsToWriteOff = 12;
+
+          if (!record.clothing)
+            throw new NotFoundException('одежда не найдена');
 
           console.log(
             `Тип: ${record.clothing.type}, сезон: ${record.clothing.season}`,

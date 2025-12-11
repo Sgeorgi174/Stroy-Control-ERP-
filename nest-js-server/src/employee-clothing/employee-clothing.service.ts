@@ -10,6 +10,7 @@ import { handlePrismaError } from 'src/libs/common/utils/prisma-error.util';
 import { ChangeDebtDto } from './dto/change-debt.dto';
 import { UpdateIssuedClothingDto } from './dto/update-issued-clothing.dto';
 import { Decimal } from '@prisma/client/runtime/client';
+import { IssueCustomClothingDto } from './dto/issue-custom-slothing.dto';
 
 @Injectable()
 export class EmployeeClothingService {
@@ -45,6 +46,39 @@ export class EmployeeClothingService {
       });
 
       return result;
+    } catch (error) {
+      console.error(error);
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка при выдаче одежды',
+      });
+    }
+  }
+
+  async issueCustomClothing(employeeId: string, dto: IssueCustomClothingDto) {
+    try {
+      const clothes = await this.prismaService.$transaction(async (prisma) => {
+        const customClothes = await prisma.customClothes.create({
+          data: {
+            name: dto.name,
+            price: dto.price,
+            season: dto.season,
+            type: dto.type,
+            size: dto.size,
+            height: dto.heigh ?? undefined,
+          },
+        });
+
+        return await prisma.employeeClothing.create({
+          data: {
+            customClothesId: customClothes.id,
+            debtAmount: customClothes.price,
+            priceWhenIssued: customClothes.price,
+            employeeId: employeeId,
+          },
+        });
+      });
+
+      return clothes;
     } catch (error) {
       console.error(error);
       handlePrismaError(error, {

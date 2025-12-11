@@ -30,7 +30,10 @@ export function PageHeader({ location }: PageHeaderProps) {
   const navigate = useNavigate();
 
   const showBackButton =
-    (user?.primaryObjects?.length ?? 0) > 1 && location !== "/my-object";
+    location !== "/my-object" &&
+    ((user?.primaryObjects?.length ?? 0) > 1 ||
+      user?.role === "ADMIN" ||
+      user?.role === "ACCOUNTANT");
 
   // Если на странице /my-object/:id и есть имя объекта → показываем его
   const title =

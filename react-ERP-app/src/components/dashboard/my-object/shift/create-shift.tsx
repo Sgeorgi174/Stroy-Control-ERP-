@@ -35,12 +35,14 @@ interface ShiftOpenDialogProps {
   objectId: string;
   shiftTemplates: ShiftTemplate[];
   employees: Employee[];
+  selectedDate: Date;
 }
 
 export function ShiftOpenDialog({
   objectId,
   shiftTemplates,
   employees,
+  selectedDate,
 }: ShiftOpenDialogProps) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
@@ -129,7 +131,7 @@ export function ShiftOpenDialog({
       return;
     }
 
-    const shiftDate = formatISO(new Date());
+    const shiftDate = formatISO(selectedDate);
 
     const employeesForShift = employeeSelections.map((emp) => ({
       employeeId: emp.id,

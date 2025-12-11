@@ -24,7 +24,7 @@ Font.register({
 // ----------------- Стили PDF -----------------
 const styles = StyleSheet.create({
   page: {
-    padding: 10,
+    padding: 20,
     fontSize: 10,
     fontFamily: "OpenSans",
     flexDirection: "column",
@@ -91,8 +91,17 @@ export const ShiftDocumentForForeman: React.FC<ShiftDocumentProps> = ({
     year: "2-digit",
   });
 
-  const presentEmployees = shift.employees.filter((e) => e.present);
-  const absentEmployees = shift.employees.filter((e) => !e.present);
+  const presentEmployees = shift.employees
+    .filter((e) => e.present)
+    .sort((a, b) =>
+      a.employee.lastName.localeCompare(b.employee.lastName, "ru")
+    );
+
+  const absentEmployees = shift.employees
+    .filter((e) => !e.present)
+    .sort((a, b) =>
+      a.employee.lastName.localeCompare(b.employee.lastName, "ru")
+    );
 
   return (
     <Document>

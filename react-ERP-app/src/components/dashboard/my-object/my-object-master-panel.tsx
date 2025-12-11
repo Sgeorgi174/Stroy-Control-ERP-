@@ -40,6 +40,7 @@ export function MyObjectMasterPanel({ object }: MyObjectMasterPanelProps) {
   );
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const isFutureDate = selectedDate > new Date();
 
   // Начало и конец выбранного дня
   const dayStart = startOfDay(selectedDate).toISOString();
@@ -132,14 +133,25 @@ export function MyObjectMasterPanel({ object }: MyObjectMasterPanelProps) {
           <div className="p-5 border rounded-2xl flex flex-col items-center gap-2 mt-6">
             <HardHat size={50} className="text-muted-foreground" />
             <p className="font-medium text-xl">Смена не открыта</p>
-            <p className="text-muted-foreground">
-              Нажмите "Открыть смену", чтобы назначить сотрудников на эту дату
-            </p>
-            <ShiftOpenDialog
-              employees={employees}
-              objectId={object.id || "none"}
-              shiftTemplates={shiftTemplates}
-            />
+
+            {isFutureDate ? (
+              <p className="text-muted-foreground">
+                Нельзя открыть смену на будущую дату
+              </p>
+            ) : (
+              <>
+                <p className="text-muted-foreground">
+                  Нажмите "Открыть смену", чтобы назначить сотрудников на эту
+                  дату
+                </p>
+                <ShiftOpenDialog
+                  selectedDate={selectedDate}
+                  employees={employees}
+                  objectId={object.id || "none"}
+                  shiftTemplates={shiftTemplates}
+                />
+              </>
+            )}
           </div>
         ) : (
           <div className="mt-6 flex flex-col gap-6">

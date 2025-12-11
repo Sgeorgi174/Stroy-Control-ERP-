@@ -696,13 +696,33 @@ model EmployeeClothing {
   employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   employeeId String   @map("employee_id")
 
-  clothing   Clothes @relation(fields: [clothingId], references: [id], onDelete: Cascade)
-  clothingId String  @map("clothing_id")
+  clothing   Clothes? @relation(fields: [clothingId], references: [id], onDelete: Cascade)
+  clothingId String?  @map("clothing_id")
+
+  customClothes   CustomClothes? @relation(fields: [customClothesId], references: [id], onDelete: Cascade)
+  customClothesId String?        @map("custom_clothes_id")
 
   issuedAt        DateTime @default(now()) @map("issued_at")
   priceWhenIssued Decimal  @map("price_when_issued") @db.Decimal(10, 2)
   debtAmount      Decimal  @map("debt_amount ") @db.Decimal(10, 2)
   isReturned      Boolean  @default(false) @map("is_returned ")
+}
+
+model CustomClothes {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  name     String
+  size     String?
+  height   String?
+  price    Decimal     @db.Decimal(10, 2)
+  season   Season
+  type     ClothesType
+  issuedAt DateTime    @default(now()) @map("issued_at")
+
+  employeeClothing EmployeeClothing[]
 }
 
 model Shift {

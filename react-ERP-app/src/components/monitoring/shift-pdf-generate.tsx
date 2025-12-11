@@ -64,10 +64,11 @@ const styles = StyleSheet.create({
     paddingVertical: 1,
   },
   smallCell: { flex: 0.3 },
+  hourCell: { flex: 0.2 },
   nameCell: { flex: 1.8 },
   localCell: { flex: 0.8, textAlign: "center" },
   positionCell: { flex: 1.8 },
-  statusCell: { flex: 5.3 },
+  statusCell: { flex: 5 },
   bold: { fontWeight: "bold" },
   subFooter: {
     marginTop: 4,
@@ -88,8 +89,17 @@ export const ShiftDocument: React.FC<ShiftDocumentProps> = ({
     year: "2-digit",
   });
 
-  const presentEmployees = shift.employees.filter((e) => e.present);
-  const absentEmployees = shift.employees.filter((e) => !e.present);
+  const presentEmployees = shift.employees
+    .filter((e) => e.present)
+    .sort((a, b) =>
+      a.employee.lastName.localeCompare(b.employee.lastName, "ru")
+    );
+
+  const absentEmployees = shift.employees
+    .filter((e) => !e.present)
+    .sort((a, b) =>
+      a.employee.lastName.localeCompare(b.employee.lastName, "ru")
+    );
 
   return (
     <Document>
@@ -106,6 +116,7 @@ export const ShiftDocument: React.FC<ShiftDocumentProps> = ({
           <View style={styles.tableHeader}>
             <Text style={[styles.smallCell, styles.bold, styles.cell]}>№</Text>
             <Text style={[styles.nameCell, styles.bold, styles.cell]}>ФИО</Text>
+            <Text style={[styles.hourCell, styles.bold, styles.cell]}>Ч.</Text>
             <Text style={[styles.localCell, styles.bold, styles.cell]}>
               Мест.
             </Text>
@@ -128,6 +139,9 @@ export const ShiftDocument: React.FC<ShiftDocumentProps> = ({
                 <Text style={[styles.nameCell, styles.cell, styles.bold]}>
                   {e.employee.lastName} {e.employee.firstName.charAt(0)}.
                   {fatherInitial}
+                </Text>
+                <Text style={[styles.hourCell, styles.bold, styles.cell]}>
+                  {e.workedHours}
                 </Text>
                 <Text style={[styles.localCell, styles.cell]}>
                   {e.isLocal ? "мест." : ""}
