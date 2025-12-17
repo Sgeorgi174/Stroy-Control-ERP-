@@ -39,7 +39,7 @@ export default function Step1SelectHours({
   isTemplate = false,
 }: Step1Props) {
   const hoursOptions = [7, 8, 9, 10, 11, 12];
-  const employeeHoursOptions = [5, 6, 7, 8, 9, 10, 11, 12];
+  const employeeHoursOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   const today = new Date();
   const formattedDate = formatDate(today.toISOString());
