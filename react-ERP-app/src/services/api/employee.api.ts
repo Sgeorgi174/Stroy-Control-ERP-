@@ -1,4 +1,5 @@
 import { api } from "@/lib/api";
+import type { IssueCustomClothesDto } from "@/types/dto/clothes.dto";
 import type {
   AddSkillsDto,
   ArchiveDto,
@@ -118,6 +119,26 @@ export const changeEmployeeDebt = async (
   const res = await api.patch<EmployeeClothingItem>(
     `/employee-clothing/change-debt/${id}`,
     data
+  );
+  return res.data;
+};
+
+export const issueCustomClothes = async (
+  id: string,
+  data: IssueCustomClothesDto
+): Promise<EmployeeClothingItem> => {
+  const res = await api.post<EmployeeClothingItem>(
+    `/employee-clothing/issue-custom/${id}`,
+    data
+  );
+  return res.data;
+};
+
+export const deleteCustomClothes = async (
+  id: string
+): Promise<EmployeeClothingItem> => {
+  const res = await api.delete<EmployeeClothingItem>(
+    `/employee-clothing/custom/${id}`
   );
   return res.data;
 };

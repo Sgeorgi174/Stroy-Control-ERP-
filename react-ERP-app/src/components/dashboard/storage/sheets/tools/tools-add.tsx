@@ -97,10 +97,12 @@ export function ToolsAdd() {
 
   const onSubmit = (data: FormData) => {
     const payload = {
-      name: data.name.trim(),
+      name: data.name.trim().replace(/\s+/g, " "),
       objectId: data.objectId,
-      description: data.description,
-      originalSerial: data.originalSerial,
+      description: data.description ? data.description.trim() : undefined,
+      originalSerial: data.originalSerial
+        ? data.originalSerial.trim()
+        : undefined,
       isBulk: data.isBulk,
       ...(data.isBulk
         ? { quantity: data.quantity }

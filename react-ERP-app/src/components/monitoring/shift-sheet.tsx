@@ -22,6 +22,7 @@ import { ShiftEditDialog } from "./updateShift";
 import { formatDate, formatTime } from "@/lib/utils/format-date";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 interface ShiftSheetProps {
   shift: Shift | null;
@@ -37,6 +38,7 @@ export function ShiftSheet({
   object,
 }: ShiftSheetProps) {
   const [isOpenEditShift, setIsEditShift] = useState(false);
+  const { data: user } = useAuth();
 
   if (!shift) return null;
 
@@ -79,14 +81,16 @@ export function ShiftSheet({
           </div>
 
           <ShiftPDF shift={shift} object={object} />
-          <div
-            role="button"
-            onClick={() => setIsEditShift(true)}
-            className="p-4 bg-muted rounded-lg flex flex-col items-center  text-center cursor-pointer"
-          >
-            <SquarePen width={35} height={28} />
-            <div className=" ">Редактировать</div>
-          </div>
+          {(user?.role === "ACCOUNTANT" || user?.role === "ADMIN") && (
+            <div
+              role="button"
+              onClick={() => setIsEditShift(true)}
+              className="p-4 bg-muted rounded-lg flex flex-col items-center  text-center cursor-pointer"
+            >
+              <SquarePen width={35} height={28} />
+              <div className=" ">Редактировать</div>
+            </div>
+          )}
         </div>
 
         {/* Таблица присутствующих */}

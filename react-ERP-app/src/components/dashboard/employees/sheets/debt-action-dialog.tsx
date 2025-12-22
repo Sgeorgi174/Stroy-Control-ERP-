@@ -64,7 +64,10 @@ export function DebtActionDialog({
               : "Списание долга"}
           </DialogTitle>
           <DialogDescription>
-            {clothing.clothing.name} — Остаток долга: {remainingDebt.toFixed(1)}
+            {clothing.clothing
+              ? clothing.clothing.name
+              : clothing.customClothes.name}{" "}
+            — Остаток долга: {remainingDebt.toFixed(1)}
           </DialogDescription>
         </DialogHeader>
 

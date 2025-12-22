@@ -1,4 +1,5 @@
-import type { Clothes } from "./clothes";
+import type { Clothes, ClothesType } from "./clothes";
+import type { Season } from "./season";
 
 export type EmployeeClothing = {
   totalDebt: number;
@@ -14,6 +15,15 @@ export type EmployeeClothingItem = {
   debtAmount: string;
   isReturned: boolean;
   clothing: Clothes;
+  customClothes: {
+    id: string;
+    name: string;
+    size: string;
+    height: string;
+    price: number;
+    season: Season;
+    clothesType: ClothesType;
+  };
 };
 
 export interface UpdateIssuedClothingDto {

@@ -7,7 +7,10 @@ import { Navigate } from "react-router";
 export function MyObject() {
   const { data: user } = useAuth();
 
-  const { data: allObjects } = useObjects({ status: "OPEN", searchQuery: "" });
+  const { data: allObjects = [] } = useObjects({
+    status: "OPEN",
+    searchQuery: "",
+  });
 
   const primaryCount = user?.primaryObjects?.length ?? 0;
   const secondaryCount = user?.secondaryObjects?.length ?? 0;

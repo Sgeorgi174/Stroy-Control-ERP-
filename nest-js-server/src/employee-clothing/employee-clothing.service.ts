@@ -92,6 +92,7 @@ export class EmployeeClothingService {
       const items = await this.prismaService.employeeClothing.findMany({
         where: { employeeId },
         include: {
+          customClothes: true,
           clothing: {
             select: {
               name: true,
@@ -195,6 +196,58 @@ export class EmployeeClothingService {
       console.error(error);
       throw new InternalServerErrorException(
         'Ошибка при обновлении выданной одежды',
+      );
+    }
+  }
+
+  async deleteCustomClothing(recordId: string) {
+    try {
+      const record = await this.prismaService.employeeClothing.findUnique({
+        where: { id: recordId },
+        include: {
+          customClothes: true,
+        },
+      });
+
+      if (!record) {
+        throw new NotFoundException('Запись не найдена');
+      }
+
+      const customClothesId = record.customClothesId;
+
+      if (!customClothesId) {
+        throw new BadRequestException('Удалить можно только кастомную одежду');
+      }
+
+      if (!record.isReturned && record.debtAmount.gt(0)) {
+        throw new BadRequestException(
+          'Нельзя удалить одежду с активной задолженностью',
+        );
+      }
+
+      await this.prismaService.$transaction(async (prisma) => {
+        await prisma.employeeClothing.delete({
+          where: { id: recordId },
+        });
+
+        await prisma.customClothes.delete({
+          where: { id: customClothesId },
+        });
+      });
+
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'Ошибка при удалении кастомной одежды',
       );
     }
   }

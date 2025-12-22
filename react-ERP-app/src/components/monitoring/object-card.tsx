@@ -10,12 +10,18 @@ type ObjectCardProps = {
   object: Object;
   dayStart: Date;
   dayEnd: Date;
+  totalHoursMonth: number; // добавляем проп
 };
 
-export function ObjectCard({ object, dayStart, dayEnd }: ObjectCardProps) {
+export function ObjectCard({
+  object,
+  dayStart,
+  dayEnd,
+  totalHoursMonth,
+}: ObjectCardProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const { data: shiftData } = useShiftsWithFilters(
+  const { data: shiftData = [] } = useShiftsWithFilters(
     {
       objectId: object.id,
       fromDate: dayStart.toISOString(),
@@ -24,8 +30,27 @@ export function ObjectCard({ object, dayStart, dayEnd }: ObjectCardProps) {
     true
   );
 
-  const todayShift = shiftData?.[0] ?? null;
+  // Фильтруем смены строго по выбранному дню
+  const todayShifts = shiftData.filter((shift) => {
+    const shiftDate = new Date(shift.shiftDate);
+    return shiftDate >= dayStart && shiftDate < dayEnd;
+  });
+
+  // Если несколько смен за день, берём первую для отображения "текущей"
+  const todayShift = todayShifts[0] ?? null;
+
   const objectForeman = object.foreman ?? null;
+
+  // Статистика по сотрудникам
+  const totalEmployees = todayShifts.reduce(
+    (acc, s) => acc + s.employees.length,
+    0
+  );
+  const totalPresent = todayShifts.reduce(
+    (acc, s) => acc + s.employees.filter((e) => e.present).length,
+    0
+  );
+  const totalHours = todayShifts.reduce((acc, s) => acc + s.totalHours, 0);
 
   return (
     <>
@@ -64,7 +89,7 @@ export function ObjectCard({ object, dayStart, dayEnd }: ObjectCardProps) {
                 На паузе
               </Badge>
             )}
-            {shiftData?.length !== 0 ? (
+            {todayShifts.length > 0 ? (
               <Badge
                 variant="secondary"
                 className="text-green-700 bg-green-100 text-xs"
@@ -86,7 +111,6 @@ export function ObjectCard({ object, dayStart, dayEnd }: ObjectCardProps) {
 
         <CardContent className="space-y-4 flex-1 flex flex-col">
           {/* Foreman Info */}
-
           <div className="bg-muted p-3 rounded-lg">
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">Мастер</p>
@@ -109,20 +133,13 @@ export function ObjectCard({ object, dayStart, dayEnd }: ObjectCardProps) {
           {/* Employee Stats */}
           <div className="grid grid-cols-2 gap-3">
             <div className="text-center p-3 bg-muted rounded-lg">
-              <div className="text-xl font-bold">
-                {todayShift ? todayShift.employees.length : "0"}
-              </div>
+              <div className="text-xl font-bold">{totalEmployees}</div>
               <div className="text-xs text-blue-600 leading-tight">
                 Всего сотрудников
               </div>
             </div>
             <div className="text-center p-3 bg-muted rounded-lg">
-              <div className="text-xl font-bold">
-                {todayShift
-                  ? todayShift.employees.filter((employee) => employee.present)
-                      .length
-                  : "0"}
-              </div>
+              <div className="text-xl font-bold">{totalPresent}</div>
               <div className="text-xs text-green-600 leading-tight">
                 На смене
               </div>
@@ -131,7 +148,7 @@ export function ObjectCard({ object, dayStart, dayEnd }: ObjectCardProps) {
 
           {/* Current Shift Info */}
           <div className="flex-1 flex flex-col justify-end">
-            <div className="border border-primary bg-muted  p-3 rounded-lg">
+            <div className="border border-primary bg-muted p-3 rounded-lg">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
                 <p className="font-medium text-sm">Текущая смена</p>
                 <Badge
@@ -147,7 +164,16 @@ export function ObjectCard({ object, dayStart, dayEnd }: ObjectCardProps) {
                   variant="outline"
                   className="border-primary text-xs w-fit"
                 >
-                  {todayShift ? `${todayShift.totalHours} ч.` : "0"}
+                  {totalHours} ч.
+                </Badge>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-2">
+                <p className="font-medium text-sm">Часы с начала месяца</p>
+                <Badge
+                  variant="outline"
+                  className="border-primary text-xs w-fit"
+                >
+                  {totalHoursMonth ?? 0} ч.
                 </Badge>
               </div>
             </div>
@@ -155,6 +181,7 @@ export function ObjectCard({ object, dayStart, dayEnd }: ObjectCardProps) {
         </CardContent>
       </Card>
 
+      {/* Shift Sheet */}
       <ShiftSheet
         object={object}
         shift={todayShift}

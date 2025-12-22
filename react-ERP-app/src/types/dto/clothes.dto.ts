@@ -1,4 +1,5 @@
 import type { ClothesType, Seasons } from "../clothes";
+import type { Season } from "../season";
 
 export interface CreateClothesDto {
   name: string;
@@ -69,4 +70,18 @@ export interface WirteOffClothesInTransferDto {
 
 export interface CancelClothesTransferDto {
   rejectionComment: string;
+}
+
+export interface IssueCustomClothesDto {
+  name: string;
+
+  size: string;
+
+  heigh?: string;
+
+  price: number;
+
+  type: ClothesType;
+
+  season: Season;
 }

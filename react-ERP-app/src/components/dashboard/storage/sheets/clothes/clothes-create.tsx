@@ -91,7 +91,7 @@ export function ClothesCreate() {
   const onSubmit = async (data: FormData) => {
     try {
       await createClothesMutation.mutateAsync({
-        name: data.name.trim(),
+        name: data.name.trim().replace(/\s+/g, " "),
         objectId: data.objectId,
         clothingHeightId:
           activeTab === "clothing" ? data.clothingHeightId : undefined,

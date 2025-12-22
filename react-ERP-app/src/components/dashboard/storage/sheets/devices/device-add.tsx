@@ -62,7 +62,7 @@ export function DeviceAdd() {
     .filter(Boolean);
 
   const onSubmit = (data: FormData) => {
-    const trimmedName = data.name.trim();
+    const trimmedName = data.name.trim().replace(/\s+/g, " ");
     const trimmedSerial = data.serialNumber.trim();
 
     createDevice(

@@ -69,6 +69,7 @@ export function EmployeeDetails({ employee }: EmployeeDetailsProps) {
 
       <EmployeeClothesTable
         isWarning={isClothingWarning}
+        employeeId={employee.id}
         items={data ? data.items : undefined}
         isLoading={isLoading}
         isError={isError}
