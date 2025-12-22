@@ -85,12 +85,12 @@ export function ToolsSheet() {
                     <p>{selectedTool?.name}</p>
                     {selectedTool?.isBulk ? (
                       <p className="text-lg text-muted-foreground">
-                        Количество: {selectedTool?.quantity}
+                        ID: {selectedTool?.id}
                       </p>
                     ) : (
                       <div className="flex flex-col  items-start">
                         <p className="text-lg text-muted-foreground">
-                          Инвентарный: {selectedTool?.serialNumber}
+                          ID: {selectedTool?.id}
                         </p>
                       </div>
                     )}

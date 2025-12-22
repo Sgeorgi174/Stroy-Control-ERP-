@@ -26,6 +26,8 @@ export function ToolsTableBulk({ tools, isLoading, isError }: ToolsTableProps) {
   const { colors, setColor, resetColor } = useRowColors("tool-bulk");
   const { selectedObjectId } = useFilterPanelStore();
 
+  console.log(tools);
+
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>

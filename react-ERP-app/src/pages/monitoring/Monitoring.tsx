@@ -66,6 +66,12 @@ export function Monitoring() {
   const totalHoursMonth =
     shiftDataMonth?.reduce((acc, s) => acc + s.totalHours, 0) ?? 0;
 
+  console.log(
+    `Всего сотрудников ${totalEmployeesToday}`,
+    `Вышли на смены ${totalPresentToday}`,
+    `Не вышли на смены ${totalAbsentToday}`
+  );
+
   return (
     <>
       <div className="grid grid-cols-4 gap-4 mb-6 mt-6">
