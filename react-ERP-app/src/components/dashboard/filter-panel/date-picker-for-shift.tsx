@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ChevronDownIcon } from "lucide-react";
-
+import { ru } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -34,6 +34,8 @@ export function DatePickerForShift() {
           <PopoverContent className="w-auto overflow-hidden p-0" align="start">
             <Calendar
               mode="single"
+              locale={ru}
+              weekStartsOn={1}
               selected={date}
               captionLayout="dropdown"
               onSelect={(date) => {

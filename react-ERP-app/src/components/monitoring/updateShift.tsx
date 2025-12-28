@@ -53,7 +53,7 @@ export function ShiftEditDialog({
   const [employeesFromShift, setEmployeesFromShift] = useState<Employee[]>([]);
 
   const [taskHistory, setTaskHistory] = useState<string[]>([]);
-  const [updatedReason, setUpdatedReason] = useState("");
+  const [updatedReason, setUpdatedReason] = useState(shift.updatedReason ?? "");
 
   const updateShiftMutation = useUpdateShift(shift.id);
 
