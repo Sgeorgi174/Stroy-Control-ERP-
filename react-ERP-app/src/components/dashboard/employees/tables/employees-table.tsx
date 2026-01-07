@@ -59,7 +59,7 @@ export function EmployeesTable({
               <TableCell>{employee.position}</TableCell>
               <TableCell>{employee.phoneNumber}</TableCell>
               <TableCell>
-                {employee.workPlace ? employee.workPlace.name : "На назначен"}
+                {employee.workPlace ? employee.workPlace.name : "Не назначен"}
               </TableCell>
               <TableCell className="w-[150px]">
                 <div onClick={(e) => e.stopPropagation()}>
