@@ -12,6 +12,7 @@ import { Transfers } from "@/pages/transfers/Transfers";
 import { Monitoring } from "@/pages/monitoring/Monitoring";
 import { AdminPanelPage } from "@/pages/admin-panel/Admin-panel";
 import MyObjectPanelWrapper from "@/components/dashboard/my-object/my-object-panel-wrapper";
+import { ReportPage } from "@/pages/reports/Reports";
 
 export const router = createBrowserRouter([
   { path: "/login", element: <Auth /> },
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
           { path: "/admin", element: <AdminPanelPage /> },
           { path: "/my-object", element: <MyObject /> },
           { path: "/my-object/:id", element: <MyObjectPanelWrapper /> },
+          { path: "/reports", element: <ReportPage /> },
         ],
       },
 

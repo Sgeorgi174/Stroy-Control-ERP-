@@ -2,6 +2,7 @@ import {
   Blocks,
   Building,
   ChartBarBig,
+  FileText,
   HardHat,
   LogOut,
   MessageCircleQuestion,
@@ -96,6 +97,13 @@ const sidebarItems = [
       "ADMIN",
       "HR",
     ],
+  },
+  {
+    title: "Отчеты",
+    url: "/reports",
+    tab: "reports",
+    icon: FileText,
+    roles: ["OWNER", "ACCOUNTANT", "MASTER", "ASSISTANT_MANAGER", "ADMIN"],
   },
   {
     title: "Админ-панель",

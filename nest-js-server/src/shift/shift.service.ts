@@ -112,6 +112,7 @@ export class ShiftService {
           : undefined,
       },
       include: {
+        object: { select: { id: true, name: true } },
         employees: {
           include: { employee: true },
         },
