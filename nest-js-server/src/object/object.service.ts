@@ -83,6 +83,32 @@ export class ObjectService {
     }
   }
 
+  public async pauseObject(id: string) {
+    try {
+      return await this.prismaService.object.update({
+        where: { id: id },
+        data: { status: 'PAUSE' },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка установки объекта на паузу',
+      });
+    }
+  }
+
+  public async unpauseObject(id: string) {
+    try {
+      return await this.prismaService.object.update({
+        where: { id: id },
+        data: { status: 'OPEN' },
+      });
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка возобновления работы объекта',
+      });
+    }
+  }
+
   public async getByIdToClose(id: string) {
     await this.getById(id);
     try {

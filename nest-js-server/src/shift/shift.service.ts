@@ -114,7 +114,17 @@ export class ShiftService {
       include: {
         object: { select: { id: true, name: true } },
         employees: {
-          include: { employee: true },
+          include: {
+            employee: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                fatherName: true,
+                position: true,
+              },
+            },
+          },
         },
       },
       orderBy: { shiftDate: 'asc' },

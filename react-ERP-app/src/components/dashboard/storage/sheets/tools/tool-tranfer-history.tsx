@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate, formatTime } from "@/lib/utils/format-date";
 import type { TransferRecord } from "@/types/historyRecords";
 import { ArrowRight, Calendar, Clock, MapPin, X } from "lucide-react";
+import { useMemo } from "react";
 
 type ToolTransferHistoryProps = {
   transferRecords: TransferRecord[];
@@ -26,7 +27,16 @@ export function ToolTransferHistory({
   isLoading,
   isError,
 }: ToolTransferHistoryProps) {
-  console.log(transferRecords);
+  const sortedRecords = useMemo(() => {
+    return [...transferRecords].sort((a, b) => {
+      const timeDiff =
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+
+      if (timeDiff !== 0) return timeDiff;
+
+      return a.id.localeCompare(b.id);
+    });
+  }, [transferRecords]);
 
   return (
     <div className="mt-4 space-y-6">
@@ -54,11 +64,11 @@ export function ToolTransferHistory({
           <div className="text-sm text-destructive">
             Ошибка загрузки истории перемещений.
           </div>
-        ) : transferRecords.length === 0 ? (
+        ) : sortedRecords.length === 0 ? (
           <div className="text-sm text-muted-foreground">История пуста.</div>
         ) : (
           <div className="space-y-3">
-            {transferRecords.map((history) => (
+            {sortedRecords.map((history) => (
               <div
                 key={history.id}
                 className="flex items-center gap-3 p-3 bg-muted rounded-lg border shadow"

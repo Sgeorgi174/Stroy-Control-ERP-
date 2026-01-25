@@ -44,11 +44,35 @@ export function ShiftSheet({
 
   const presentEmployees = shift.employees
     .filter((e) => e.present)
-    .sort((a, b) => a.employee.lastName.localeCompare(b.employee.lastName));
+    .sort((a, b) => {
+      const lastNameDiff = a.employee.lastName.localeCompare(
+        b.employee.lastName,
+      );
+      if (lastNameDiff !== 0) return lastNameDiff;
+
+      const firstNameDiff = a.employee.firstName.localeCompare(
+        b.employee.firstName,
+      );
+      if (firstNameDiff !== 0) return firstNameDiff;
+
+      return a.employee.fatherName.localeCompare(b.employee.fatherName);
+    });
 
   const absentEmployees = shift.employees
     .filter((e) => !e.present)
-    .sort((a, b) => a.employee.lastName.localeCompare(b.employee.lastName));
+    .sort((a, b) => {
+      const lastNameDiff = a.employee.lastName.localeCompare(
+        b.employee.lastName,
+      );
+      if (lastNameDiff !== 0) return lastNameDiff;
+
+      const firstNameDiff = a.employee.firstName.localeCompare(
+        b.employee.firstName,
+      );
+      if (firstNameDiff !== 0) return firstNameDiff;
+
+      return a.employee.fatherName.localeCompare(b.employee.fatherName);
+    });
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -137,7 +161,7 @@ export function ShiftSheet({
                 <TableRow key={e.id}>
                   <TableCell>
                     {`${e.employee.lastName} ${e.employee.firstName.charAt(
-                      0
+                      0,
                     )}.${e.employee.fatherName.charAt(0)}.`}
                   </TableCell>
                   <TableCell className="pl-6">
@@ -168,7 +192,7 @@ export function ShiftSheet({
                 <TableRow key={e.id}>
                   <TableCell>
                     {`${e.employee.lastName} ${e.employee.firstName.charAt(
-                      0
+                      0,
                     )}.${e.employee.fatherName.charAt(0)}.`}
                   </TableCell>
                   <TableCell className="pl-6">

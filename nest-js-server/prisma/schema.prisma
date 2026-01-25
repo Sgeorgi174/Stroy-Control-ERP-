@@ -136,6 +136,7 @@ model Customer {
 
 enum ObjectStatus {
   OPEN
+  PAUSE
   CLOSE
 }
 
@@ -612,6 +613,7 @@ model Employee {
   shifts         ShiftEmployee[]
   shiftsTemplate ShiftTemplateEmployee[]
   archive        EmployeeArchive?
+  documents      EmployeeDocument[]
 
   workPlace Object? @relation(fields: [objectId], references: [id])
   objectId  String? @map("object_id")
@@ -620,6 +622,20 @@ model Employee {
   toTabletHistories   TabletHistory[] @relation("tablet_to_employee_fk")
 
   @@unique([passportSerial, passportNumber], name: "employee_identity_unique")
+}
+
+model EmployeeDocument {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  name    String
+  docSrc  String
+  expDate String
+
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
 }
 
 model EmployeeWarning {

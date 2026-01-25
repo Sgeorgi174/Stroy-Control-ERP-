@@ -27,7 +27,7 @@ export function DatePicker({
 
     // Формируем строку yyyy-MM-dd из локальной даты
     const localDateStr = `${date.getFullYear()}-${String(
-      date.getMonth() + 1
+      date.getMonth() + 1,
     ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
     onSelect?.(localDateStr);
@@ -59,6 +59,8 @@ export function DatePicker({
           weekStartsOn={1} // Пн — первый день недели
           captionLayout="dropdown" // Выбор месяца и года
           initialFocus
+          fromYear={1950} // минимальный год
+          toYear={2050} // максимальный год
           classNames={{
             months_dropdown: "bg-muted",
             years_dropdown: "bg-muted",

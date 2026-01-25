@@ -12,7 +12,7 @@ import { PendingTable } from "../../storage/tables/pending-table";
 import { splitAddress } from "@/lib/utils/splitAddress";
 import { useObjectSheetStore } from "@/stores/objects-sheet-store";
 import { StatusBadge } from "../../storage/tables/status-badge";
-import { CircleCheck, PauseIcon } from "lucide-react";
+import { CircleCheck, PauseIcon, X } from "lucide-react";
 
 type ObjectsTableProps = {
   objects: Object[];
@@ -71,10 +71,21 @@ export function ObjectsTable({
               </TableCell>
 
               <TableCell>
-                <StatusBadge
-                  Icon={object.isPending ? PauseIcon : CircleCheck}
-                  text={object.isPending ? "На паузе" : "Активен"}
-                ></StatusBadge>
+                {object.status === "PAUSE" && (
+                  <StatusBadge
+                    Icon={PauseIcon}
+                    text={"Приостанвлен"}
+                  ></StatusBadge>
+                )}{" "}
+                {object.status === "OPEN" && (
+                  <StatusBadge
+                    Icon={object.isPending ? PauseIcon : CircleCheck}
+                    text={object.isPending ? "На паузе" : "Активен"}
+                  ></StatusBadge>
+                )}
+                {object.status === "CLOSE" && (
+                  <StatusBadge Icon={X} text={"Закрыт"}></StatusBadge>
+                )}
               </TableCell>
               <TableCell>
                 <div onClick={(e) => e.stopPropagation()}>

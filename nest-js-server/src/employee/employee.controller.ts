@@ -10,6 +10,8 @@ import {
   HttpStatus,
   Patch,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { CreateDto } from './dto/create.dto';
@@ -23,10 +25,18 @@ import { RemoveSkillsDto } from './dto/remove-skill.dto';
 import { ArchiveDto } from './dto/archive-employee.dto';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { Roles } from '@prisma/client';
+import { S3DocumentsService } from 'src/s3/s3-documents.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateEmployeeDocumentDto } from './dto/add-document.dto';
+import { EmployeeDocumentsService } from './employee-documents.service';
 
 @Controller('employees')
 export class EmployeeController {
-  constructor(private readonly employeeService: EmployeeService) {}
+  constructor(
+    private readonly employeeService: EmployeeService,
+    private readonly s3DocumentsService: S3DocumentsService,
+    private readonly employeeDocumentsService: EmployeeDocumentsService,
+  ) {}
 
   @Authorization(
     Roles.MASTER,
@@ -208,5 +218,60 @@ export class EmployeeController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {
     return this.employeeService.delete(id);
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.HR,
+  )
+  @Post('upload-document/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  async upload(
+    @Param('id') employeeId: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: CreateEmployeeDocumentDto,
+  ) {
+    const uploadResult = await this.s3DocumentsService.uploadDocument(file, {
+      folder: `employees_documents/${employeeId}`,
+      filename: body.name,
+    });
+    console.log('tuk tuk');
+
+    return this.employeeDocumentsService.create(employeeId, {
+      name: body.name,
+      expDate: body.expDate,
+      docSrc: uploadResult.url,
+    });
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.HR,
+  )
+  @Get('documents/:id')
+  async getDocumentsById(@Param('id') employeeId: string) {
+    return this.employeeDocumentsService.findAll(employeeId);
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.HR,
+  )
+  @Delete('remove-document/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async removeDocuement(@Param('id') documentId: string) {
+    return this.employeeDocumentsService.remove(documentId);
   }
 }

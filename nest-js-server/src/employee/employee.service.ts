@@ -159,6 +159,7 @@ export class EmployeeService {
         clothingHeight: true,
         clothingSize: true,
         footwearSize: true,
+        documents: true,
         warnings: true,
         skills: { select: { skill: true, id: true } },
         workPlace: { select: { name: true, address: true, id: true } },
@@ -192,7 +193,11 @@ export class EmployeeService {
           },
         },
       },
-      orderBy: { lastName: 'asc' },
+      orderBy: [
+        { lastName: 'asc' },
+        { firstName: 'asc' },
+        { fatherName: 'asc' },
+      ],
     });
 
     return employees;

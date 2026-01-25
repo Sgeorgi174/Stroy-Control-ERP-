@@ -28,6 +28,8 @@ const getStatusColor = (status: ObjectStatus) => {
       return "bg-green-100 text-green-800";
     case "CLOSE":
       return "bg-red-100 text-red-800";
+    case "PAUSE":
+      return "bg-gray-100 text-gray-800";
     default:
       return "bg-gray-100 text-gray-800";
   }
@@ -47,6 +49,7 @@ const getStatusIcon = (status: ObjectStatus) => {
 const objectStatusMap = {
   OPEN: "Открытый",
   CLOSE: "Закрытый",
+  PAUSE: "Приостановлен",
 };
 
 export function ObjectsSheet() {
@@ -83,7 +86,7 @@ export function ObjectsSheet() {
                 <div className="w-full flex justify-start mt-5 gap-2">
                   <Badge
                     className={`${getStatusColor(
-                      selectedObject ? selectedObject.status : "OPEN"
+                      selectedObject ? selectedObject.status : "OPEN",
                     )} flex items-center gap-1`}
                   >
                     {selectedObject && getStatusIcon(selectedObject.status)}

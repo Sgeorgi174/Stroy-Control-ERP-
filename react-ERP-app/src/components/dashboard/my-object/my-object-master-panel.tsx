@@ -36,7 +36,7 @@ type MyObjectMasterPanelProps = {
 export function MyObjectMasterPanel({ object }: MyObjectMasterPanelProps) {
   const { data: shiftTemplates = [] } = useShiftTemplatesByObject(
     object.id,
-    !!object.id // enabled = true только если objectId существует
+    !!object.id, // enabled = true только если objectId существует
   );
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -52,12 +52,12 @@ export function MyObjectMasterPanel({ object }: MyObjectMasterPanelProps) {
       fromDate: dayStart,
       toDate: dayEnd,
     },
-    !!object.id
+    !!object.id,
   );
 
   const { data: allShifts } = useShiftsWithFilters(
     { objectId: object.id },
-    !!object.id
+    !!object.id,
   );
 
   // --- загрузка сотрудников ---
@@ -75,11 +75,42 @@ export function MyObjectMasterPanel({ object }: MyObjectMasterPanelProps) {
   const shiftDates = allShifts?.map((s) => new Date(s.shiftDate)) || [];
 
   // Подготовка данных для карточек
-  const presentEmployees = todayShift?.employees.filter((e) => e.present) || [];
-  const absentEmployees = todayShift?.employees.filter((e) => !e.present) || [];
+  const presentEmployees =
+    todayShift?.employees
+      .filter((e) => e.present)
+      .sort((a, b) => {
+        const lastNameDiff = a.employee.lastName.localeCompare(
+          b.employee.lastName,
+        );
+        if (lastNameDiff !== 0) return lastNameDiff;
+
+        const firstNameDiff = a.employee.firstName.localeCompare(
+          b.employee.firstName,
+        );
+        if (firstNameDiff !== 0) return firstNameDiff;
+
+        return a.employee.fatherName.localeCompare(b.employee.fatherName);
+      }) || [];
+
+  const absentEmployees =
+    todayShift?.employees
+      .filter((e) => !e.present)
+      .sort((a, b) => {
+        const lastNameDiff = a.employee.lastName.localeCompare(
+          b.employee.lastName,
+        );
+        if (lastNameDiff !== 0) return lastNameDiff;
+
+        const firstNameDiff = a.employee.firstName.localeCompare(
+          b.employee.firstName,
+        );
+        if (firstNameDiff !== 0) return firstNameDiff;
+
+        return a.employee.fatherName.localeCompare(b.employee.fatherName);
+      }) || [];
   const totalWorkedHours = presentEmployees.reduce(
     (sum, e) => sum + (e.workedHours || 0),
-    0
+    0,
   );
 
   return (
@@ -223,7 +254,7 @@ export function MyObjectMasterPanel({ object }: MyObjectMasterPanelProps) {
                           {`${
                             emp.employee.lastName
                           } ${emp.employee.firstName.charAt(
-                            0
+                            0,
                           )}.${emp.employee.fatherName.charAt(0)}.`}
                         </TableCell>
                         <TableCell className="pl-6">
@@ -262,7 +293,7 @@ export function MyObjectMasterPanel({ object }: MyObjectMasterPanelProps) {
                           {`${
                             emp.employee.lastName
                           } ${emp.employee.firstName.charAt(
-                            0
+                            0,
                           )}.${emp.employee.fatherName.charAt(0)}.`}
                         </TableCell>
                         <TableCell className="pl-6">

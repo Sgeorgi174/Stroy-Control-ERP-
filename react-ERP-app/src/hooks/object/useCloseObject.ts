@@ -1,4 +1,3 @@
-// hooks/object/useDeleteObject.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { closeObject } from "@/services/api/object.api";
 import toast from "react-hot-toast";

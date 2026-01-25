@@ -8,6 +8,7 @@ import type { EmployeeClothingItem } from "@/types/employeesClothing";
 import { DebtActionDialog } from "./debt-action-dialog";
 import { useChangeEmployeeDebt } from "@/hooks/employee/useChangeEmployeeDebt";
 import { EmployeeWarningBox } from "./warning-box";
+import { EmployeeDocumentsBox } from "./documents-box";
 
 type EmployeeDetailsProps = { employee: Employee };
 
@@ -19,7 +20,7 @@ export function EmployeeDetails({ employee }: EmployeeDetailsProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const mutationEmployeeDebt = useChangeEmployeeDebt(
-    selectedClothing ? selectedClothing.id : ""
+    selectedClothing ? selectedClothing.id : "",
   );
 
   const handleConfirmAction = (amount: string) => {
@@ -38,11 +39,11 @@ export function EmployeeDetails({ employee }: EmployeeDetailsProps) {
       "CLOTHING_WINTER",
       "FOOTWEAR_SUMMER",
       "FOOTWEAR_WINTER",
-    ].includes(w.warningType)
+    ].includes(w.warningType),
   );
 
   const isPassportWarning = employee.warnings.some((w) =>
-    ["PASSPORT"].includes(w.warningType)
+    ["PASSPORT"].includes(w.warningType),
   );
 
   const handleReduceDebt = (clothing: EmployeeClothingItem) => {
@@ -66,6 +67,7 @@ export function EmployeeDetails({ employee }: EmployeeDetailsProps) {
       )}
       <EmployeeDetailsBox employee={employee} isWarning={isPassportWarning} />
       <EmployeeSkillsBox employee={employee} />
+      <EmployeeDocumentsBox employee={employee} />
 
       <EmployeeClothesTable
         isWarning={isClothingWarning}

@@ -21,13 +21,14 @@ export function ObjectStatusSelectForFilter() {
         setSetelectedObjectStatus(value as ObjectStatus)
       }
     >
-      <SelectTrigger className="w-[150px]">
+      <SelectTrigger className="w-[200px]">
         <SelectValue placeholder="Статус" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Статус</SelectLabel>
           <SelectItem value="OPEN">Открытые</SelectItem>
+          <SelectItem value="PAUSE">Приостановленные</SelectItem>
           <SelectItem value="CLOSE">Закрытые</SelectItem>
         </SelectGroup>
       </SelectContent>

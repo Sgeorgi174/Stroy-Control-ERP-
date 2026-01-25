@@ -80,3 +80,8 @@ export type ArchiveDto = {
 export type ChangeDebtDto = {
   debt: string;
 };
+
+export type UploadEmployeeDocumentDto = {
+  name: string;
+  expDate: string;
+};

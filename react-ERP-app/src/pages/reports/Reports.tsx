@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/select";
 import type { Object } from "@/types/object";
 import { Button } from "@/components/ui/button";
-import { DatePicker } from "@/components/ui/date-picker";
 import {
   Table,
   TableBody,
@@ -33,17 +32,57 @@ import type { Shift } from "@/types/shift";
 import { ReportShiftPDFButton } from "@/components/dashboard/reports/pdf button/report-pdf-generate-shift";
 
 /* ===================== utils ===================== */
+function getMonthRange(year: number, month: number) {
+  const from = new Date(year, month - 1, 1);
+  const to = new Date(year, month, 0, 23, 59, 59);
+  return {
+    fromDate: from.toISOString(),
+    toDate: to.toISOString(),
+  };
+}
+
 function getDateRange(from: string, to: string): string[] {
   const result: string[] = [];
   const start = new Date(from);
   const end = new Date(to);
 
-  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    result.push(d.toISOString().slice(0, 10));
-  }
+  const current = new Date(
+    start.getFullYear(),
+    start.getMonth(),
+    start.getDate(),
+  );
+  const last = new Date(end.getFullYear(), end.getMonth(), end.getDate());
 
+  while (current <= last) {
+    const yyyy = current.getFullYear();
+    const mm = String(current.getMonth() + 1).padStart(2, "0");
+    const dd = String(current.getDate()).padStart(2, "0");
+    result.push(`${yyyy}-${mm}-${dd}`);
+    current.setDate(current.getDate() + 1);
+  }
   return result;
 }
+
+/* ===================== constants ===================== */
+const months = [
+  { value: "1", label: "Январь" },
+  { value: "2", label: "Февраль" },
+  { value: "3", label: "Март" },
+  { value: "4", label: "Апрель" },
+  { value: "5", label: "Май" },
+  { value: "6", label: "Июнь" },
+  { value: "7", label: "Июль" },
+  { value: "8", label: "Август" },
+  { value: "9", label: "Сентябрь" },
+  { value: "10", label: "Октябрь" },
+  { value: "11", label: "Ноябрь" },
+  { value: "12", label: "Декабрь" },
+];
+
+const years = Array.from({ length: 5 }, (_, i) => {
+  const y = new Date().getFullYear() - i;
+  return { value: String(y), label: String(y) };
+});
 
 /* ===================== component ===================== */
 export function ReportPage() {
@@ -53,33 +92,28 @@ export function ReportPage() {
     status: "OPEN",
   });
 
-  /* ---------- draft filters (UI) ---------- */
   const [shiftObject, setShiftObject] = useState("");
-  const [shiftDateFrom, setShiftDateFrom] = useState<string>();
-  const [shiftDateTo, setShiftDateTo] = useState<string>();
-
-  /* ---------- applied filters (query) ---------- */
+  const [shiftMonth, setShiftMonth] = useState<string>();
+  const [shiftYear, setShiftYear] = useState<string>();
   const [appliedFilters, setAppliedFilters] = useState<{
     objectId: string;
     fromDate: string;
     toDate: string;
   } | null>(null);
 
-  /* ---------- query ---------- */
   const { data: shiftsData = [], isLoading } = useShiftsWithFilters(
     appliedFilters ?? {},
-    Boolean(appliedFilters)
+    Boolean(appliedFilters),
   );
 
   /* ===================== aggregation ===================== */
   const { dateColumns, rows, totalByDate, totalAll } = useMemo(() => {
-    if (!appliedFilters) {
+    if (!appliedFilters)
       return { dateColumns: [], rows: [], totalByDate: {}, totalAll: 0 };
-    }
 
     const dates = getDateRange(appliedFilters.fromDate, appliedFilters.toDate);
     const totalByDate: Record<string, number> = Object.fromEntries(
-      dates.map((d) => [d, 0])
+      dates.map((d) => [d, 0]),
     );
     let totalAll = 0;
 
@@ -87,6 +121,9 @@ export function ReportPage() {
       string,
       {
         employeeId: string;
+        employeeLastName: string;
+        employeeFirstName: string;
+        employeeFatherName: string;
         employeeName: string;
         hoursByDate: Record<string, number>;
         totalHours: number;
@@ -94,39 +131,48 @@ export function ReportPage() {
     >();
 
     shiftsData.forEach((shift: Shift) => {
-      const date = shift.shiftDate.slice(0, 10);
-
       shift.employees.forEach((se) => {
         const emp = se.employee;
         if (!emp) return;
 
+        // Локальная дата shiftDate
+        const shiftDate = new Date(shift.shiftDate);
+        const year = shiftDate.getFullYear();
+        const month = String(shiftDate.getMonth() + 1).padStart(2, "0");
+        const day = String(shiftDate.getDate()).padStart(2, "0");
+        const dateKey = `${year}-${month}-${day}`;
+
         if (!employeesMap.has(emp.id)) {
           employeesMap.set(emp.id, {
             employeeId: emp.id,
-            employeeName: `${emp.lastName} ${emp.firstName.charAt(0)}.${
-              emp.fatherName?.charAt(0) ?? ""
-            }.`,
+            employeeLastName: emp.lastName,
+            employeeFirstName: emp.firstName,
+            employeeFatherName: emp.fatherName ?? "",
+            employeeName: `${emp.lastName} ${emp.firstName.charAt(0)}.${emp.fatherName?.charAt(0) ?? ""}.`,
             hoursByDate: Object.fromEntries(dates.map((d) => [d, 0])),
             totalHours: 0,
           });
         }
 
-        const hours = se.workedHours ?? 0;
         const row = employeesMap.get(emp.id)!;
-        row.hoursByDate[date] += hours;
-        row.totalHours += hours;
+        const hours = se.workedHours ?? 0;
 
-        totalByDate[date] += hours;
+        // Увеличиваем часы
+        row.hoursByDate[dateKey] += hours;
+        row.totalHours += hours;
+        if (dateKey in totalByDate) totalByDate[dateKey] += hours;
         totalAll += hours;
       });
     });
 
-    return {
-      dateColumns: dates,
-      rows: Array.from(employeesMap.values()),
-      totalByDate,
-      totalAll,
-    };
+    const sortedRows = Array.from(employeesMap.values()).sort(
+      (a, b) =>
+        a.employeeLastName.localeCompare(b.employeeLastName) ||
+        a.employeeFirstName.localeCompare(b.employeeFirstName) ||
+        a.employeeFatherName.localeCompare(b.employeeFatherName),
+    );
+
+    return { dateColumns: dates, rows: sortedRows, totalByDate, totalAll };
   }, [shiftsData, appliedFilters]);
 
   /* ===================== render ===================== */
@@ -137,22 +183,22 @@ export function ReportPage() {
       className="w-full mt-6"
     >
       <TabsList className="grid w-full grid-cols-4">
-        <TabsTrigger value="tools">
+        <TabsTrigger disabled value="tools">
           <Wrench className="h-4 w-4 mr-2" /> Инструмент
         </TabsTrigger>
-        <TabsTrigger value="clothes">
+        <TabsTrigger disabled value="clothes">
           <Shirt className="h-4 w-4 mr-2" /> Одежда
         </TabsTrigger>
         <TabsTrigger value="shifts">
           <Clock className="h-4 w-4 mr-2" /> Смены
         </TabsTrigger>
-        <TabsTrigger value="work-list">
+        <TabsTrigger disabled value="work-list">
           <ListChecks className="h-4 w-4 mr-2" /> Журналы
         </TabsTrigger>
       </TabsList>
 
-      {/* ===================== SHIFTS ===================== */}
       <TabsContent value="shifts" className="space-y-4 mt-6">
+        {/* Filters */}
         <Card>
           <CardHeader>
             <CardTitle>Фильтры</CardTitle>
@@ -160,7 +206,6 @@ export function ReportPage() {
               Отчет по рабочим сменам сотрудников
             </CardDescription>
           </CardHeader>
-
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Объект</Label>
@@ -180,34 +225,54 @@ export function ReportPage() {
 
             <div className="flex gap-6">
               <div className="space-y-2">
-                <Label>Дата с</Label>
-                <DatePicker
-                  selected={shiftDateFrom}
-                  onSelect={setShiftDateFrom}
-                />
+                <Label>Месяц</Label>
+                <Select value={shiftMonth} onValueChange={setShiftMonth}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Месяц" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {months.map((m) => (
+                      <SelectItem key={m.value} value={m.value}>
+                        {m.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
-                <Label>Дата по</Label>
-                <DatePicker selected={shiftDateTo} onSelect={setShiftDateTo} />
+                <Label>Год</Label>
+                <Select value={shiftYear} onValueChange={setShiftYear}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Год" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {years.map((y) => (
+                      <SelectItem key={y.value} value={y.value}>
+                        {y.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
             <Button
               className="mt-4"
-              disabled={!shiftObject || !shiftDateFrom || !shiftDateTo}
-              onClick={() =>
-                setAppliedFilters({
-                  objectId: shiftObject,
-                  fromDate: shiftDateFrom!,
-                  toDate: `${shiftDateTo!}T23:59:59`,
-                })
-              }
+              disabled={!shiftObject || !shiftMonth || !shiftYear}
+              onClick={() => {
+                const { fromDate, toDate } = getMonthRange(
+                  Number(shiftYear),
+                  Number(shiftMonth),
+                );
+                setAppliedFilters({ objectId: shiftObject, fromDate, toDate });
+              }}
             >
               Сгенерировать отчет
             </Button>
           </CardContent>
         </Card>
 
+        {/* Result Table */}
         <Card>
           <CardHeader>
             <div className="flex justify-between">
@@ -218,7 +283,7 @@ export function ReportPage() {
               {!isLoading && rows.length !== 0 && (
                 <ReportShiftPDFButton
                   rows={rows}
-                  objectName={shiftsData[0].object.name}
+                  objectName={shiftsData[0]?.object.name}
                 />
               )}
             </div>
@@ -271,8 +336,8 @@ export function ReportPage() {
                                 row.hoursByDate[date] >= 8
                                   ? "bg-green-500/10 text-green-700"
                                   : row.hoursByDate[date] > 0
-                                  ? "bg-orange-500/10 text-orange-700"
-                                  : "bg-gray-500/10 text-gray-500"
+                                    ? "bg-orange-500/10 text-orange-700"
+                                    : "bg-gray-500/10 text-gray-500"
                               }`}
                             >
                               {row.hoursByDate[date]}
@@ -284,8 +349,6 @@ export function ReportPage() {
                         </TableCell>
                       </TableRow>
                     ))}
-
-                    {/* total row */}
                     <TableRow className="bg-muted/50 font-semibold">
                       <TableCell className="sticky left-0 bg-background border-r">
                         Итого
@@ -299,189 +362,8 @@ export function ReportPage() {
                     </TableRow>
                   </TableBody>
                 </Table>
-
-                <div className="mt-4 text-right font-semibold">
-                  Всего часов: {totalAll}
-                </div>
               </div>
             )}
-          </CardContent>
-        </Card>
-      </TabsContent>
-      {/* ===================== TOOLS ===================== */}
-      <TabsContent value="tools" className="space-y-4 mt-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Фильтры</CardTitle>
-            <CardDescription>Отчет по инструменту</CardDescription>
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Объект</Label>
-              <Select value={shiftObject} onValueChange={setShiftObject}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Выберите объект" />
-                </SelectTrigger>
-                <SelectContent>
-                  {objects.map((obj: Object) => (
-                    <SelectItem key={obj.id} value={obj.id}>
-                      {obj.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex gap-6">
-              <div className="space-y-2">
-                <Label>Дата с</Label>
-                <DatePicker
-                  selected={shiftDateFrom}
-                  onSelect={setShiftDateFrom}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Дата по</Label>
-                <DatePicker selected={shiftDateTo} onSelect={setShiftDateTo} />
-              </div>
-            </div>
-
-            <Button
-              className="mt-4"
-              disabled={!shiftObject || !shiftDateFrom || !shiftDateTo}
-            >
-              Сгенерировать отчет
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Отчет</CardTitle>
-            <CardDescription>История инструмента</CardDescription>
-          </CardHeader>
-
-          <CardContent>
-            <div>В РАЗРАБОТКЕ</div>
-          </CardContent>
-        </Card>
-      </TabsContent>
-      {/* ===================== CLOTHES ===================== */}
-      <TabsContent value="clothes" className="space-y-4 mt-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Фильтры</CardTitle>
-            <CardDescription>Отчет по спец. одежде</CardDescription>
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Объект</Label>
-              <Select value={shiftObject} onValueChange={setShiftObject}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Выберите объект" />
-                </SelectTrigger>
-                <SelectContent>
-                  {objects.map((obj: Object) => (
-                    <SelectItem key={obj.id} value={obj.id}>
-                      {obj.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex gap-6">
-              <div className="space-y-2">
-                <Label>Дата с</Label>
-                <DatePicker
-                  selected={shiftDateFrom}
-                  onSelect={setShiftDateFrom}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Дата по</Label>
-                <DatePicker selected={shiftDateTo} onSelect={setShiftDateTo} />
-              </div>
-            </div>
-
-            <Button
-              className="mt-4"
-              disabled={!shiftObject || !shiftDateFrom || !shiftDateTo}
-            >
-              Сгенерировать отчет
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Отчет</CardTitle>
-            <CardDescription>История спец. одежды</CardDescription>
-          </CardHeader>
-
-          <CardContent>
-            <div>В РАЗРАБОТКЕ</div>
-          </CardContent>
-        </Card>
-      </TabsContent>
-      {/* ===================== WORK-LiST ===================== */}
-      <TabsContent value="work-list" className="space-y-4 mt-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Фильтры</CardTitle>
-            <CardDescription>Журналы о проделанных работах</CardDescription>
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Объект</Label>
-              <Select value={shiftObject} onValueChange={setShiftObject}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Выберите объект" />
-                </SelectTrigger>
-                <SelectContent>
-                  {objects.map((obj: Object) => (
-                    <SelectItem key={obj.id} value={obj.id}>
-                      {obj.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex gap-6">
-              <div className="space-y-2">
-                <Label>Дата с</Label>
-                <DatePicker
-                  selected={shiftDateFrom}
-                  onSelect={setShiftDateFrom}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Дата по</Label>
-                <DatePicker selected={shiftDateTo} onSelect={setShiftDateTo} />
-              </div>
-            </div>
-
-            <Button
-              className="mt-4"
-              disabled={!shiftObject || !shiftDateFrom || !shiftDateTo}
-            >
-              Сгенерировать отчет
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Отчет</CardTitle>
-            <CardDescription>Журналы</CardDescription>
-          </CardHeader>
-
-          <CardContent>
-            <div>В РАЗРАБОТКЕ</div>
           </CardContent>
         </Card>
       </TabsContent>

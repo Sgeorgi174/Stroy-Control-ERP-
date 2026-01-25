@@ -29,7 +29,7 @@ export const getObjectById = async (id: string): Promise<Object> => {
 };
 
 export const getObjectByIdToClose = async (
-  id: string
+  id: string,
 ): Promise<ObjectToCloseResponse> => {
   const res = await api.get(`/objects/close-object/${id}`);
   return res.data;
@@ -47,7 +47,7 @@ export const createObject = async (dto: CreateObjectDto): Promise<Object> => {
 
 export const updateObject = async (
   id: string,
-  dto: UpdateObjectDto
+  dto: UpdateObjectDto,
 ): Promise<Object> => {
   const res = await api.put(`/objects/update/${id}`, dto);
   return res.data;
@@ -63,7 +63,7 @@ export const closeObject = async (id: string): Promise<void> => {
 
 export const changeForeman = async (
   id: string,
-  dto: ChangeForemanDto
+  dto: ChangeForemanDto,
 ): Promise<Object> => {
   const res = await api.patch(`/objects/change-foreman/${id}`, dto);
   return res.data;
@@ -93,4 +93,13 @@ export const updateCustomer = async (id: string, data: UpdateCustomerDto) => {
 
 export const deleteCustomer = async (id: string) => {
   await api.delete(`/objects/customer-delete/${id}`);
+};
+
+// ================= pause/unpause =================
+export const pauseObject = async (id: string): Promise<void> => {
+  await api.patch(`/objects/pause-object/${id}`);
+};
+
+export const unpauseObject = async (id: string): Promise<void> => {
+  await api.patch(`/objects/unpause-object/${id}`);
 };

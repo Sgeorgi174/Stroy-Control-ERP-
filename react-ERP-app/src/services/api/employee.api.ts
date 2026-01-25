@@ -15,6 +15,7 @@ import type {
   EmployeeType,
   Positions,
   EmployeeStatuses,
+  EmployeeDocument,
 } from "@/types/employee";
 import type {
   EmployeeClothing,
@@ -54,7 +55,7 @@ export const getFreeEmployees = async (): Promise<Employee[]> => {
 };
 
 export const createEmployee = async (
-  data: CreateEmployeeDto
+  data: CreateEmployeeDto,
 ): Promise<Employee> => {
   const res = await api.post("/employees/create", data);
   return res.data;
@@ -62,7 +63,7 @@ export const createEmployee = async (
 
 export const updateEmployee = async (
   id: string,
-  data: UpdateEmployeeDto
+  data: UpdateEmployeeDto,
 ): Promise<Employee> => {
   const res = await api.put(`/employees/update/${id}`, data);
   return res.data;
@@ -70,7 +71,7 @@ export const updateEmployee = async (
 
 export const transferEmployee = async (
   id: string,
-  data: TransferEmployeeDto
+  data: TransferEmployeeDto,
 ): Promise<{ transferredEmployee: Employee }> => {
   const res = await api.patch(`/employees/transfer/${id}`, data);
   return res.data;
@@ -107,38 +108,38 @@ export const restoreEmployee = async (id: string) => {
 };
 
 export const getEmployeeDebtDetails = async (
-  id: string
+  id: string,
 ): Promise<EmployeeClothing> => {
   const res = await api.get<EmployeeClothing>(`/employee-clothing/debt/${id}`);
   return res.data;
 };
 export const changeEmployeeDebt = async (
   id: string,
-  data: ChangeDebtDto
+  data: ChangeDebtDto,
 ): Promise<EmployeeClothingItem> => {
   const res = await api.patch<EmployeeClothingItem>(
     `/employee-clothing/change-debt/${id}`,
-    data
+    data,
   );
   return res.data;
 };
 
 export const issueCustomClothes = async (
   id: string,
-  data: IssueCustomClothesDto
+  data: IssueCustomClothesDto,
 ): Promise<EmployeeClothingItem> => {
   const res = await api.post<EmployeeClothingItem>(
     `/employee-clothing/issue-custom/${id}`,
-    data
+    data,
   );
   return res.data;
 };
 
 export const deleteCustomClothes = async (
-  id: string
+  id: string,
 ): Promise<EmployeeClothingItem> => {
   const res = await api.delete<EmployeeClothingItem>(
-    `/employee-clothing/custom/${id}`
+    `/employee-clothing/custom/${id}`,
   );
   return res.data;
 };
@@ -149,11 +150,43 @@ export const deleteEmployee = async (id: string): Promise<void> => {
 
 export const updateIssuedClothing = async (
   id: string,
-  data: UpdateIssuedClothingDto
+  data: UpdateIssuedClothingDto,
 ): Promise<EmployeeClothingItem> => {
   const res = await api.patch<EmployeeClothingItem>(
     `/employee-clothing/update/${id}`,
-    data
+    data,
   );
   return res.data;
+};
+
+export const uploadEmployeeDocument = async (
+  employeeId: string,
+  file: File,
+  data: { name: string; expDate: string },
+) => {
+  const formData = new FormData();
+
+  formData.append("file", file);
+  formData.append("name", data.name);
+  formData.append("expDate", data.expDate);
+
+  const res = await api.post(
+    `/employees/upload-document/${employeeId}`,
+    formData,
+  );
+
+  return res.data;
+};
+
+export const getEmployeeDocuments = async (
+  employeeId: string,
+): Promise<EmployeeDocument[]> => {
+  const res = await api.get(`/employees/documents/${employeeId}`);
+  return res.data;
+};
+
+export const removeEmployeeDocument = async (
+  documentId: string,
+): Promise<void> => {
+  await api.delete(`/employees/remove-document/${documentId}`);
 };

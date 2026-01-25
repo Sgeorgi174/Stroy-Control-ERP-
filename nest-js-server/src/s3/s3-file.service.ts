@@ -5,7 +5,7 @@ import { createS3Client } from './s3.client';
 import { UploadFileDto } from './dto/upload-file.dto';
 
 @Injectable()
-export class S3Service {
+export class S3FileService {
   private readonly s3Client: S3Client;
 
   constructor(private readonly configService: ConfigService) {

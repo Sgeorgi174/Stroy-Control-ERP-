@@ -75,6 +75,30 @@ export class ObjectController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+  )
+  @Patch('pause-object/:id')
+  async pauseObject(@Param('id') id: string) {
+    return this.objectService.pauseObject(id);
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+  )
+  @Patch('unpause-object/:id')
+  async unpauseObject(@Param('id') id: string) {
+    return this.objectService.unpauseObject(id);
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
     Roles.HR,
   )

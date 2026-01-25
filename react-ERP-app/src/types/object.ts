@@ -4,7 +4,7 @@ import type { Employee } from "./employee";
 import type { Tool } from "./tool";
 import type { User } from "./user";
 
-export type ObjectStatus = "OPEN" | "CLOSE";
+export type ObjectStatus = "OPEN" | "CLOSE" | "PAUSE";
 
 export type Customer = {
   id: string;

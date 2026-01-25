@@ -19,87 +19,95 @@ Font.register({
   ],
 });
 
-// ----------------- Стили PDF -----------------
+const ROWS_PER_PAGE = 21;
+
+// ----------------- Стили -----------------
 const styles = StyleSheet.create({
   page: {
-    padding: 20,
-    fontSize: 9, // Уменьшен шрифт для компактности
+    paddingTop: 28, // ~10 мм
+    paddingBottom: 32, // ~11 мм (снизу запас)
+    paddingLeft: 30, // ~10.5 мм (самое важное)
+    paddingRight: 24, // ~8.5 мм
+    fontSize: 9,
     fontFamily: "OpenSans",
-    flexDirection: "column",
   },
   header: {
     flexDirection: "row",
-    justifyContent: "flex-start",
     alignItems: "baseline",
-    gap: 10,
     marginBottom: 10,
   },
   title: {
     fontWeight: "bold",
-    marginLeft: 20,
-    fontSize: 13, // Уменьшен шрифт заголовка
+    fontSize: 13,
   },
   table: {
-    display: "flex",
-    width: "auto",
-    borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#000",
+  },
+  titleRow: {
+    borderBottomWidth: 1,
+    borderColor: "#000",
+    padding: 5,
+    alignItems: "center",
+  },
+  titleText: {
+    fontSize: 12,
+    fontWeight: "bold",
   },
   tableRow: {
     flexDirection: "row",
   },
   tableColHeader: {
-    borderStyle: "solid",
     borderBottomWidth: 1,
     borderRightWidth: 1,
     borderColor: "#000",
-    padding: 3, // Уменьшен padding для компактности
+    padding: 3,
     textAlign: "center",
     fontWeight: "bold",
   },
   tableCol: {
-    borderStyle: "solid",
     borderBottomWidth: 1,
     borderRightWidth: 1,
     borderColor: "#000",
-    padding: 3, // Уменьшен padding
+    padding: 3,
     textAlign: "center",
   },
   tableColLast: {
-    borderStyle: "solid",
     borderBottomWidth: 1,
     borderColor: "#000",
     padding: 3,
     textAlign: "center",
   },
-  numCol: { width: "4%" }, // Чуть уже
-  nameCol: { width: "22%" }, // Чуть уже
-  dateCol: { width: "3.5%" }, // Чуть шире
-  totalCol: { width: "9%" }, // Чуть шире
+  numCol: { width: "4%" },
+  nameCol: { width: "22%" },
+  dateCol: { width: "3.5%" },
+  totalCol: { width: "9%" },
   dateHeaderWrapper: {
-    height: 40, // Высота для вертикального текста
+    height: 65,
     justifyContent: "center",
     alignItems: "center",
   },
   verticalText: {
     transform: "rotate(-90deg)",
-    whiteSpace: "nowrap",
+    width: 65,
+    fontSize: 8,
     textAlign: "center",
-    width: 40, // Ширина для ротации
-  },
-  footer: {
-    marginTop: 20,
-    textAlign: "right",
   },
   signature: {
-    marginTop: 20,
-    flexDirection: "row",
-    justifyContent: "flex-end",
+    marginTop: 70, // было 40 — опускаем ниже
+  },
+  signatureText: {
+    fontSize: 11, // подпись читаемее
+  },
+  signatureLine: {
+    marginTop: 20, // расстояние до линии
+    width: 350, // длина линии под подпись
+    borderBottomWidth: 1,
+    borderColor: "#000",
   },
 });
 
-// ----------------- PDF Документ -----------------
+// ----------------- Типы -----------------
 type ReportShiftDocumentProps = {
   rows: {
     employeeId: string;
@@ -110,141 +118,167 @@ type ReportShiftDocumentProps = {
   objectName: string;
 };
 
+// ----------------- Компонент -----------------
 export const ReportShiftDocument: React.FC<ReportShiftDocumentProps> = ({
   rows,
   objectName,
 }) => {
-  // Извлечение уникальных дат и сортировка
   const allDates = new Set<string>();
   rows.forEach((row) =>
-    Object.keys(row.hoursByDate).forEach((date) => allDates.add(date))
+    Object.keys(row.hoursByDate).forEach((d) => allDates.add(d)),
   );
   const sortedDates = Array.from(allDates).sort();
 
-  // Извлечение месяца и года из первой даты (предполагаем формат YYYY-MM-DD)
   const firstDate = sortedDates[0];
-  let month = "";
   let year = "";
+  let monthName = "";
   if (firstDate) {
-    const dateObj = new Date(firstDate);
-    month = String(dateObj.getMonth() + 1); // 1-12
-    year = String(dateObj.getFullYear());
+    const d = new Date(firstDate);
+    year = String(d.getFullYear());
+    const m = d.toLocaleString("ru-RU", { month: "long" });
+    monthName = m[0].toUpperCase() + m.slice(1);
   }
 
-  // Расчёт итого по дням
-  const totalByDate: Record<string, number> = {};
-  sortedDates.forEach((date) => {
-    totalByDate[date] = rows.reduce(
-      (sum, row) => sum + (row.hoursByDate[date] || 0),
-      0
-    );
-  });
-  const grandTotal = rows.reduce((sum, row) => sum + row.totalHours, 0);
-
-  // Получение сокращенного дня недели
   const getWeekdayShort = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return (
-      String(
-        date.toLocaleString("ru-RU", { weekday: "short" })
-      )[0].toUpperCase() +
-      date.toLocaleString("ru-RU", { weekday: "short" }).slice(1)
-    );
+    const d = new Date(dateStr);
+    const w = d.toLocaleString("ru-RU", { weekday: "short" });
+    return w[0].toUpperCase() + w.slice(1);
   };
+
+  const totalByDate: Record<string, number> = {};
+  sortedDates.forEach((d) => {
+    totalByDate[d] = rows.reduce((sum, r) => sum + (r.hoursByDate[d] || 0), 0);
+  });
+
+  const grandTotal = rows.reduce((s, r) => s + r.totalHours, 0);
+
+  const pages = Array.from(
+    { length: Math.ceil(rows.length / ROWS_PER_PAGE) },
+    (_, i) => rows.slice(i * ROWS_PER_PAGE, (i + 1) * ROWS_PER_PAGE),
+  );
 
   return (
     <Document>
-      <Page size="A4" orientation="landscape" style={styles.page}>
-        {/* Заголовки */}
-        <View style={styles.header}>
-          <Text>месяц: {month}</Text>
-          <Text>год: {year}</Text>
-          <Text style={styles.title}>{objectName}</Text>
-        </View>
+      {pages.map((pageRows, pageIndex) => {
+        const isLastPage = pageIndex === pages.length - 1;
 
-        {/* Таблица смен */}
-        <View style={styles.table}>
-          {/* Заголовок таблицы */}
-          <View style={styles.tableRow} wrap={false}>
-            <Text style={[styles.tableColHeader, styles.numCol]}>№</Text>
-            <Text style={[styles.tableColHeader, styles.nameCol]}>ФИО</Text>
-            {sortedDates.map((date) => (
-              <View
-                key={date}
-                style={[
-                  styles.tableColHeader,
-                  styles.dateCol,
-                  styles.dateHeaderWrapper,
-                ]}
-              >
-                <Text style={styles.verticalText}>
-                  {new Date(date).getDate()} {getWeekdayShort(date)}
+        return (
+          <Page
+            key={pageIndex}
+            size="A4"
+            orientation="landscape"
+            style={styles.page}
+          >
+            {/* Заголовок */}
+            <View style={styles.header}>
+              <Text style={styles.title}>{objectName}</Text>
+            </View>
+
+            <View style={styles.table}>
+              {/* Название */}
+              <View style={styles.titleRow}>
+                <Text style={styles.titleText}>
+                  Табель учета рабочего времени за {monthName} {year}
                 </Text>
               </View>
-            ))}
-            <Text
-              style={[
-                styles.tableColLast,
-                styles.totalCol,
-                styles.tableColHeader,
-              ]}
-            >
-              Часы
-            </Text>
-          </View>
 
-          {/* Строки сотрудников */}
-          {rows.map((row, index) => (
-            <View key={row.employeeId} style={styles.tableRow} wrap={false}>
-              <Text style={[styles.tableCol, styles.numCol]}>{index + 1}</Text>
-              <Text style={[styles.tableCol, styles.nameCol]}>
-                {row.employeeName}
-              </Text>
-              {sortedDates.map((date) => (
-                <Text key={date} style={[styles.tableCol, styles.dateCol]}>
-                  {row.hoursByDate[date] || 0}
+              {/* Шапка */}
+              <View style={styles.tableRow} wrap={false}>
+                <Text style={[styles.tableColHeader, styles.numCol]}>№</Text>
+                <Text style={[styles.tableColHeader, styles.nameCol]}>ФИО</Text>
+                {sortedDates.map((date) => (
+                  <View
+                    key={date}
+                    style={[
+                      styles.tableColHeader,
+                      styles.dateCol,
+                      styles.dateHeaderWrapper,
+                    ]}
+                  >
+                    <Text style={styles.verticalText}>
+                      {new Date(date).toLocaleDateString("ru-RU", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                      })}{" "}
+                      {getWeekdayShort(date)}
+                    </Text>
+                  </View>
+                ))}
+                <Text
+                  style={[
+                    styles.tableColHeader,
+                    styles.tableColLast,
+                    styles.totalCol,
+                  ]}
+                >
+                  Часы
                 </Text>
+              </View>
+
+              {/* Строки */}
+              {pageRows.map((row, i) => (
+                <View key={row.employeeId} style={styles.tableRow} wrap={false}>
+                  <Text style={[styles.tableCol, styles.numCol]}>
+                    {pageIndex * ROWS_PER_PAGE + i + 1}
+                  </Text>
+                  <Text style={[styles.tableCol, styles.nameCol]}>
+                    {row.employeeName}
+                  </Text>
+                  {sortedDates.map((d) => (
+                    <Text key={d} style={[styles.tableCol, styles.dateCol]}>
+                      {row.hoursByDate[d] || 0}
+                    </Text>
+                  ))}
+                  <Text
+                    style={[
+                      styles.tableColLast,
+                      styles.totalCol,
+                      styles.tableColHeader,
+                    ]}
+                  >
+                    {row.totalHours}
+                  </Text>
+                </View>
               ))}
-              <Text
-                style={[
-                  styles.tableColLast,
-                  styles.totalCol,
-                  styles.tableColHeader,
-                ]}
-              >
-                {row.totalHours}
-              </Text>
+
+              {/* Итоги — только на последней странице */}
+              {isLastPage && (
+                <View style={styles.tableRow} wrap={false}>
+                  <Text style={[styles.tableColHeader, styles.numCol]} />
+                  <Text style={[styles.tableColHeader, styles.nameCol]}>
+                    Итого часов
+                  </Text>
+                  {sortedDates.map((d) => (
+                    <Text
+                      key={d}
+                      style={[styles.tableColHeader, styles.dateCol]}
+                    >
+                      {totalByDate[d]}
+                    </Text>
+                  ))}
+                  <Text
+                    style={[
+                      styles.tableColLast,
+                      styles.totalCol,
+                      styles.tableColHeader,
+                    ]}
+                  >
+                    {grandTotal}
+                  </Text>
+                </View>
+              )}
             </View>
-          ))}
 
-          {/* Итого по дням */}
-          <View style={styles.tableRow} wrap={false}>
-            <Text style={[styles.tableColHeader, styles.numCol]} />
-            <Text style={[styles.tableColHeader, styles.nameCol]}>
-              Итого часов
-            </Text>
-            {sortedDates.map((date) => (
-              <Text key={date} style={[styles.tableColHeader, styles.dateCol]}>
-                {totalByDate[date]}
-              </Text>
-            ))}
-            <Text
-              style={[
-                styles.tableColLast,
-                styles.totalCol,
-                styles.tableColHeader,
-              ]}
-            >
-              {grandTotal}
-            </Text>
-          </View>
-        </View>
-
-        {/* Подпись */}
-        <View style={styles.signature}>
-          <Text>Начальник участка: _________________________</Text>
-        </View>
-      </Page>
+            {isLastPage && (
+              <View style={styles.signature}>
+                <Text style={styles.signatureText}>Начальник участка:</Text>
+                <View style={styles.signatureLine} />
+              </View>
+            )}
+          </Page>
+        );
+      })}
     </Document>
   );
 };

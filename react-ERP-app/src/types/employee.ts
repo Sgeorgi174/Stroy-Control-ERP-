@@ -44,6 +44,14 @@ export type EmployeeWarning = {
   employeeId: string;
 };
 
+export type EmployeeDocument = {
+  id: string;
+  name: string;
+  expDate: string | null;
+  docSrc: string;
+  createdAt: string;
+};
+
 export type Employee = {
   id: string;
   createdAt: string;
@@ -76,4 +84,5 @@ export type Employee = {
   registrationBuild: string;
   registrationFlat: string | undefined;
   warnings: EmployeeWarning[];
+  documents: EmployeeDocument[];
 };

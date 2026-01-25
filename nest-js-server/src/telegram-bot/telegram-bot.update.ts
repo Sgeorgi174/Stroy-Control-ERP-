@@ -1,7 +1,7 @@
 import { TelegramBotService } from './telegram-bot.service';
 import { InjectBot, Start, Update, On, Ctx } from 'nestjs-telegraf';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { S3Service } from 'src/s3/s3.service';
+import { S3FileService } from 'src/s3/s3-file.service';
 import { Context, Telegraf } from 'telegraf';
 import { Message } from 'telegraf/typings/core/types/typegram';
 
@@ -11,7 +11,7 @@ export class TelegramBotUpdate {
     @InjectBot() private readonly bot: Telegraf<Context>,
     private readonly telegramBotService: TelegramBotService,
     private readonly prismaService: PrismaService,
-    private readonly s3Service: S3Service,
+    private readonly s3Service: S3FileService,
   ) {}
 
   @Start()

@@ -5,8 +5,11 @@ import { EmployeeStatusService } from './employee-status.service';
 import { ClothingDebtCronService } from './clothing-debt.service';
 import { EmployeeClothingCheckService } from './employee-clothing-check.service';
 import { EmployeePassportCheckService } from './employee-passport-check.service';
+import { S3Module } from 'src/s3/s3.module';
+import { EmployeeDocumentsService } from './employee-documents.service';
 
 @Module({
+  imports: [S3Module],
   controllers: [EmployeeController],
   providers: [
     EmployeeService,
@@ -14,6 +17,7 @@ import { EmployeePassportCheckService } from './employee-passport-check.service'
     ClothingDebtCronService,
     EmployeeClothingCheckService,
     EmployeePassportCheckService,
+    EmployeeDocumentsService,
   ],
   exports: [EmployeeStatusService],
 })

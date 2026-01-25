@@ -6,12 +6,12 @@ import {
   Body,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { S3Service } from './s3.service';
+import { S3FileService } from './s3-file.service';
 import { UploadFileDto } from './dto/upload-file.dto';
 
 @Controller('upload')
 export class S3Controller {
-  constructor(private readonly s3Service: S3Service) {}
+  constructor(private readonly s3Service: S3FileService) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
