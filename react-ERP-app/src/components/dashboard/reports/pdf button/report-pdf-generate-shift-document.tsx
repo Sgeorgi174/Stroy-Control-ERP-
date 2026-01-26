@@ -177,9 +177,7 @@ export const ReportShiftDocument: React.FC<ReportShiftDocumentProps> = ({
             {/* Заголовок */}
             <View style={styles.header}>
               <Text style={styles.title}>{objectName}</Text>
-              <Text style={styles.pageCount}>
-                {`Лист ${pageIndex + 1} / ${pages.length}`}
-              </Text>
+              <Text style={styles.pageCount}>{`Лист ${pageIndex + 1}`}</Text>
             </View>
 
             <View style={styles.table}>
