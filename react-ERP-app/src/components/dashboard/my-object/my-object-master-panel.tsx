@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { formatDate, formatTime } from "@/lib/utils/format-date";
+import { ReportShiftPopover } from "./my-object-shift-popover";
 
 type MyObjectMasterPanelProps = {
   object: Object;
@@ -126,7 +127,17 @@ export function MyObjectMasterPanel({ object }: MyObjectMasterPanelProps) {
           <Card className="flex justify-center p-2 items-center">
             <Clock className="font-medium p-2 text-5xl" />
           </Card>
-
+          <Card className="flex justify-center p-2 items-center">
+            <div className="flex w-full justify-between">
+              <Button className="w-[45%]" disabled>
+                В разработке
+              </Button>
+              <ReportShiftPopover
+                objectId={object.id}
+                objectName={object.name}
+              />
+            </div>
+          </Card>
           <Calendar01
             selectedDate={selectedDate}
             onSelectDate={setSelectedDate}

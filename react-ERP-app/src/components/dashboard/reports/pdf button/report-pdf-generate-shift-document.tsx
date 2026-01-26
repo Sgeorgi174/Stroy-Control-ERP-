@@ -19,7 +19,7 @@ Font.register({
   ],
 });
 
-const ROWS_PER_PAGE = 21;
+const ROWS_PER_PAGE = 20;
 
 // ----------------- Стили -----------------
 const styles = StyleSheet.create({
@@ -34,11 +34,15 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "baseline",
+    justifyContent: "space-between",
     marginBottom: 10,
   },
   title: {
     fontWeight: "bold",
     fontSize: 13,
+  },
+  pageCount: {
+    fontSize: 9,
   },
   table: {
     borderWidth: 1,
@@ -100,8 +104,9 @@ const styles = StyleSheet.create({
     fontSize: 11, // подпись читаемее
   },
   signatureLine: {
-    marginTop: 20, // расстояние до линии
-    width: 350, // длина линии под подпись
+    marginTop: 10, // расстояние до линии
+    width: 250,
+    marginLeft: 110, // длина линии под подпись
     borderBottomWidth: 1,
     borderColor: "#000",
   },
@@ -172,6 +177,9 @@ export const ReportShiftDocument: React.FC<ReportShiftDocumentProps> = ({
             {/* Заголовок */}
             <View style={styles.header}>
               <Text style={styles.title}>{objectName}</Text>
+              <Text style={styles.pageCount}>
+                {`Лист ${pageIndex + 1} / ${pages.length}`}
+              </Text>
             </View>
 
             <View style={styles.table}>

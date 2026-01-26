@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Clock, ListChecks, Loader2, Shirt, Wrench } from "lucide-react";
 import { useObjects } from "@/hooks/object/useObject";
 import { Label } from "@/components/ui/label";
@@ -175,6 +175,10 @@ export function ReportPage() {
     return { dateColumns: dates, rows: sortedRows, totalByDate, totalAll };
   }, [shiftsData, appliedFilters]);
 
+  useEffect(() => {
+    setAppliedFilters(null);
+  }, [shiftObject, shiftMonth, shiftYear]);
+
   /* ===================== render ===================== */
   return (
     <Tabs
@@ -267,7 +271,7 @@ export function ReportPage() {
                 setAppliedFilters({ objectId: shiftObject, fromDate, toDate });
               }}
             >
-              Сгенерировать отчет
+              Сформировать отчет
             </Button>
           </CardContent>
         </Card>
@@ -282,15 +286,20 @@ export function ReportPage() {
               </div>
               {!isLoading && rows.length !== 0 && (
                 <ReportShiftPDFButton
-                  rows={rows}
+                  month={shiftMonth ? months[Number(shiftMonth) - 1].label : ""}
+                  year={shiftYear || ""}
+                  rows={rows.filter((row) => row.totalHours !== 0)}
                   objectName={shiftsData[0]?.object.name}
                 />
               )}
             </div>
           </CardHeader>
-
           <CardContent>
-            {isLoading ? (
+            {!appliedFilters ? (
+              <div className="text-center py-12 text-muted-foreground">
+                Выберите параметры и нажмите «Сформировать отчет»
+              </div>
+            ) : isLoading ? (
               <div className="flex justify-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>

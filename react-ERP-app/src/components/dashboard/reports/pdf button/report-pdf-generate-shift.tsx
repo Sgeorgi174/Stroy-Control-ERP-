@@ -10,14 +10,18 @@ type ReportShiftPDFButtonProps = {
     totalHours: number;
   }[];
   objectName: string;
+  month: string;
+  year: string;
 };
 export const ReportShiftPDFButton: React.FC<ReportShiftPDFButtonProps> = ({
   rows,
   objectName,
+  month,
+  year,
 }) => {
   const handleDownload = async () => {
     const blob = await pdf(
-      <ReportShiftDocument objectName={objectName} rows={rows} />
+      <ReportShiftDocument objectName={objectName} rows={rows} />,
     ).toBlob();
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -37,8 +41,8 @@ export const ReportShiftPDFButton: React.FC<ReportShiftPDFButtonProps> = ({
       className="border-2 p-2 rounded-xl border-accent text-center cursor-pointer flex gap-2 items-center justify-center"
       onClick={handleDownload}
     >
-      <p>PDF</p>
-      <Download className="w-[14px]" />
+      <Download className="w-[15px]" />
+      <p>{`Табель ${month} ${year}`}</p>
     </div>
   );
 };
