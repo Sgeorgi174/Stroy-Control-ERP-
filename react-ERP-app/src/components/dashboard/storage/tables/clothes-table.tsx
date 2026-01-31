@@ -33,11 +33,15 @@ export function ClothesTable({
 
   function getRowBgColor(
     quantity: number,
+    storageName: string,
     customColor?: string,
   ): string | undefined {
+    if (storageName !== "Главный склад") return undefined;
+
     if (quantity <= 2) return "bg-table-red";
     if (quantity < 5) return "bg-table-orange";
-    return customColor; // может быть undefined — это ок
+
+    return customColor;
   }
 
   const sortedClothes = useMemo(() => sortClothes(clothes), [clothes]);
@@ -94,7 +98,11 @@ export function ClothesTable({
               data={clothes}
             />
             {sortedClothes.map((item) => {
-              const rowBg = getRowBgColor(item.quantity, colors[item.id]);
+              const rowBg = getRowBgColor(
+                item.quantity,
+                item.storage.name,
+                colors[item.id],
+              );
 
               return (
                 <TableRow
