@@ -94,9 +94,9 @@ export function ReportShiftPopover({
     return result;
   }
 
-  /* ===== aggregation ===== */
+  /* ===== aggregation + SORT ===== */
   const { rows } = useMemo(() => {
-    if (!applied) return { dateColumns: [], rows: [] };
+    if (!applied) return { rows: [] };
 
     const dates = getDateRange(applied.fromDate, applied.toDate);
 
@@ -104,6 +104,9 @@ export function ReportShiftPopover({
       string,
       {
         employeeId: string;
+        lastName: string;
+        firstName: string;
+        fatherName: string;
         employeeName: string;
         hoursByDate: Record<string, number>;
         totalHours: number;
@@ -124,6 +127,9 @@ export function ReportShiftPopover({
         if (!employeesMap.has(emp.id)) {
           employeesMap.set(emp.id, {
             employeeId: emp.id,
+            lastName: emp.lastName,
+            firstName: emp.firstName,
+            fatherName: emp.fatherName ?? "",
             employeeName: `${emp.lastName} ${emp.firstName.charAt(0)}.${emp.fatherName?.charAt(0) ?? ""}.`,
             hoursByDate: Object.fromEntries(dates.map((d) => [d, 0])),
             totalHours: 0,
@@ -138,10 +144,19 @@ export function ReportShiftPopover({
       });
     });
 
-    return {
-      dateColumns: dates,
-      rows: Array.from(employeesMap.values()).filter((r) => r.totalHours > 0),
-    };
+    const sortedRows = Array.from(employeesMap.values())
+      .filter((r) => r.totalHours > 0)
+      .sort((a, b) => {
+        const last = a.lastName.localeCompare(b.lastName, "ru");
+        if (last !== 0) return last;
+
+        const first = a.firstName.localeCompare(b.firstName, "ru");
+        if (first !== 0) return first;
+
+        return a.fatherName.localeCompare(b.fatherName, "ru");
+      });
+
+    return { rows: sortedRows };
   }, [shifts, applied]);
 
   useEffect(() => {
@@ -199,7 +214,6 @@ export function ReportShiftPopover({
           Сформировать
         </Button>
 
-        {/* ===== РЕЗУЛЬТАТ ===== */}
         {applied && rows.length > 0 && (
           <ReportShiftPDFButton
             month={months[Number(month!) - 1].label}

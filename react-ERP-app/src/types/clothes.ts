@@ -20,6 +20,7 @@ export type Clothes = {
   inTransit: PendingClothesTransfer[];
   objectId: string;
   storage: Object;
+  partNumber: string;
 };
 
 export type ClothingHeight = {

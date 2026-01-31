@@ -13,6 +13,8 @@ import { PendingTable } from "./pending-table";
 import { useRowColors } from "@/hooks/useRowColor";
 import { ClothingPDFButton } from "../pdf-generate/clothing/clothing-pdf-generate";
 import { useFilterPanelStore } from "@/stores/filter-panel-store";
+import { useMemo } from "react";
+import { sortClothes } from "@/lib/utils/clothes-sort";
 
 type ClothesTableProps = {
   clothes: Clothes[];
@@ -28,6 +30,17 @@ export function ClothesTable({
   const { openSheet } = useClothesSheetStore();
   const { colors, setColor, resetColor } = useRowColors("clothes");
   const { selectedObjectId } = useFilterPanelStore();
+
+  function getRowBgColor(
+    quantity: number,
+    customColor?: string,
+  ): string | undefined {
+    if (quantity <= 2) return "bg-table-red";
+    if (quantity < 5) return "bg-table-orange";
+    return customColor; // может быть undefined — это ок
+  }
+
+  const sortedClothes = useMemo(() => sortClothes(clothes), [clothes]);
 
   return (
     <>
@@ -80,45 +93,58 @@ export function ClothesTable({
               isLoading={isLoading}
               data={clothes}
             />
-            {clothes.map((item) => (
-              <TableRow
-                key={item.id}
-                onClick={() => openSheet("details", item)}
-                className={`cursor-pointer bg-${
-                  colors[item.id] ? colors[item.id] : undefined
-                } hover:bg-${colors[item.id] ? colors[item.id] : undefined}`}
-              >
-                <TableCell className="font-medium hover:underline">
-                  {item.name}
-                </TableCell>
-                <TableCell>
-                  {item.type === "CLOTHING"
-                    ? item.clothingSize.size
-                    : item.footwearSize.size}
-                </TableCell>
-                <TableCell>
-                  {item.type === "CLOTHING" ? item.clothingHeight.height : "-"}
-                </TableCell>
-                <TableCell>
-                  {item.season === "SUMMER" ? "Лето" : "Зима"}
-                </TableCell>
-                <TableCell>{item.quantity}</TableCell>
-                <TableCell>
-                  {item.inTransit.reduce((acc, curr) => acc + curr.quantity, 0)}
-                </TableCell>
-                <TableCell>{item.storage.name}</TableCell>
-                <TableCell>{item.provider.name}</TableCell>
-                <TableCell>
-                  <div onClick={(e) => e.stopPropagation()}>
-                    <ClothesDropdown
-                      clothes={item}
-                      setColor={setColor}
-                      resetColor={resetColor}
-                    />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+            {sortedClothes.map((item) => {
+              const rowBg = getRowBgColor(item.quantity, colors[item.id]);
+
+              return (
+                <TableRow
+                  key={item.id}
+                  onClick={() => openSheet("details", item)}
+                  className={[
+                    "cursor-pointer",
+                    rowBg,
+                    rowBg && `hover:${rowBg}`,
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                >
+                  <TableCell className="font-medium hover:underline">
+                    {item.name}
+                  </TableCell>
+                  <TableCell>
+                    {item.type === "CLOTHING"
+                      ? item.clothingSize.size
+                      : item.footwearSize.size}
+                  </TableCell>
+                  <TableCell>
+                    {item.type === "CLOTHING"
+                      ? item.clothingHeight.height
+                      : "-"}
+                  </TableCell>
+                  <TableCell>
+                    {item.season === "SUMMER" ? "Лето" : "Зима"}
+                  </TableCell>
+                  <TableCell>{item.quantity}</TableCell>
+                  <TableCell>
+                    {item.inTransit.reduce(
+                      (acc, curr) => acc + curr.quantity,
+                      0,
+                    )}
+                  </TableCell>
+                  <TableCell>{item.storage.name}</TableCell>
+                  <TableCell>{item.provider.name}</TableCell>
+                  <TableCell>
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <ClothesDropdown
+                        clothes={item}
+                        setColor={setColor}
+                        resetColor={resetColor}
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>

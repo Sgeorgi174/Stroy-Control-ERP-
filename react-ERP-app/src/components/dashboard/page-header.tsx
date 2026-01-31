@@ -22,6 +22,7 @@ const pathToTabMap = {
   "/transfers": "Перемещения",
   "/admin": "Админка",
   "/reports": "Отчеты",
+  "/requests": "Заявки",
 };
 
 export function PageHeader({ location }: PageHeaderProps) {
@@ -40,8 +41,8 @@ export function PageHeader({ location }: PageHeaderProps) {
   const title =
     location.startsWith("/my-object") && id && objectName
       ? objectName
-      : pathToTabMap[location as keyof typeof pathToTabMap] ??
-        "Неизвестный раздел";
+      : (pathToTabMap[location as keyof typeof pathToTabMap] ??
+        "Неизвестный раздел");
 
   return (
     <header className="w-full flex items-center justify-between">

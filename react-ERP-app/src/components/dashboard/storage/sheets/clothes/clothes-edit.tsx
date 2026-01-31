@@ -30,6 +30,7 @@ const baseSchema = z.object({
     .min(1, { message: "Количество должно быть больше 0" }),
   type: z.enum(["CLOTHING", "FOOTWEAR"], { message: "Выберите тип одежды" }),
   season: z.enum(["WINTER", "SUMMER"], { message: "Выберите сезон" }),
+  partNumber: z.string().min(1, "Это поле обязательно"),
 });
 
 const clothesSchema = baseSchema
@@ -40,7 +41,7 @@ const clothesSchema = baseSchema
     {
       message: "Выберите корректный размер",
       path: ["clothingSizeId"], // куда поместить ошибку
-    }
+    },
   )
   .refine((data) => data.type === "FOOTWEAR" || !!data.clothingHeightId, {
     message: "Выберите ростовку",
@@ -80,6 +81,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
       quantity: clothes.quantity,
       type: activeTab === "clothing" ? "CLOTHING" : "FOOTWEAR",
       season: clothes.season,
+      partNumber: clothes.partNumber,
     },
   });
 
@@ -109,6 +111,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
         quantity: data.quantity,
         type: data.type,
         season: data.season,
+        partNumber: data.partNumber,
       });
       reset();
       closeSheet();
@@ -176,28 +179,6 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
             )}
           </div>
         </div>
-
-        {/* {errors && (
-          <p className="text-sm text-red-500">{errors.type?.message}</p>
-        )}
-        {errors && (
-          <p className="text-sm text-red-500">
-            {errors.clothingHeightId?.message}
-          </p>
-        )}
-        {errors && (
-          <p className="text-sm text-red-500">
-            {errors.clothingSizeId?.message}
-          </p>
-        )}
-        {errors && (
-          <p className="text-sm text-red-500">
-            {errors.footwearSizeId?.message}
-          </p>
-        )}
-        {errors && (
-          <p className="text-sm text-red-500">{errors.name?.message}</p>
-        )} */}
 
         <div className="flex justify-between">
           {activeTab === "clothing" ? (
@@ -279,6 +260,20 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
               <p className="text-sm text-red-500">{errors.price.message}</p>
             )}
           </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="partNumber">Артикул</Label>
+          <Input
+            className="w-[300px]"
+            placeholder="Введите артикул"
+            id="partNumber"
+            type="text"
+            {...register("partNumber")}
+          />
+          {errors.partNumber && (
+            <p className="text-sm text-red-500">{errors.partNumber.message}</p>
+          )}
         </div>
 
         <div className="flex justify-center mt-10">

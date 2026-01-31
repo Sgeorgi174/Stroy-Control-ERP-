@@ -4,6 +4,7 @@ import {
   ChartBarBig,
   FileText,
   HardHat,
+  LayoutList,
   LogOut,
   MessageCircleQuestion,
   Shield,
@@ -103,6 +104,13 @@ const sidebarItems = [
     url: "/reports",
     tab: "reports",
     icon: FileText,
+    roles: ["OWNER", "ACCOUNTANT", "MASTER", "ASSISTANT_MANAGER", "ADMIN"],
+  },
+  {
+    title: "Заявки",
+    url: "/requests",
+    tab: "requests",
+    icon: LayoutList,
     roles: ["OWNER", "ACCOUNTANT", "MASTER", "ASSISTANT_MANAGER", "ADMIN"],
   },
   {

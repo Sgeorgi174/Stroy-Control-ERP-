@@ -53,10 +53,11 @@ export function ClothesDropdown({
           >
             Подробнее
           </DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Задать цвет</DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              <DropdownMenuItem
+          {clothes.quantity >= 5 && (
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>Задать цвет</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                {/* <DropdownMenuItem
                 onClick={(e) => {
                   e.stopPropagation();
                   setColor(clothes.id, "table-red"); // пастельный красный
@@ -72,54 +73,55 @@ export function ClothesDropdown({
                 }}
               >
                 <div className="w-[100px] h-[18px] bg-table-orange"></div>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
 
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setColor(clothes.id, "table-blue"); // пастельный голубой
-                }}
-              >
-                <div className="w-[100px] h-[18px] bg-table-blue"></div>
-              </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setColor(clothes.id, "table-blue"); // пастельный голубой
+                  }}
+                >
+                  <div className="w-[100px] h-[18px] bg-table-blue"></div>
+                </DropdownMenuItem>
 
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setColor(clothes.id, "table-purple"); // пастельный сиреневый
-                }}
-              >
-                <div className="w-[100px] h-[18px] bg-table-purple"></div>
-              </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setColor(clothes.id, "table-purple"); // пастельный сиреневый
+                  }}
+                >
+                  <div className="w-[100px] h-[18px] bg-table-purple"></div>
+                </DropdownMenuItem>
 
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setColor(clothes.id, "table-green"); // пастельный зелёный
-                }}
-              >
-                <div className="w-[100px] h-[18px] bg-table-green"></div>
-              </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setColor(clothes.id, "table-green"); // пастельный зелёный
+                  }}
+                >
+                  <div className="w-[100px] h-[18px] bg-table-green"></div>
+                </DropdownMenuItem>
 
-              <DropdownMenuSeparator />
+                <DropdownMenuSeparator />
 
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  resetColor(clothes.id);
-                }}
-              >
-                Сбросить цвет
-              </DropdownMenuItem>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    resetColor(clothes.id);
+                  }}
+                >
+                  Сбросить цвет
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem
             disabled={
               clothes.quantity < 1 ||
               (user?.role === "FOREMAN" &&
                 ![...user.primaryObjects, ...user.secondaryObjects].some(
-                  (obj) => obj.id === clothes.objectId
+                  (obj) => obj.id === clothes.objectId,
                 ))
             }
             onClick={(e) => {
@@ -144,7 +146,7 @@ export function ClothesDropdown({
               clothes.quantity < 1 ||
               (user?.role === "FOREMAN" &&
                 ![...user.primaryObjects, ...user.secondaryObjects].some(
-                  (obj) => obj.id === clothes.objectId
+                  (obj) => obj.id === clothes.objectId,
                 ))
             }
             onClick={(e) => {

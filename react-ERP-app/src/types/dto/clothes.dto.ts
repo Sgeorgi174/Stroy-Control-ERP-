@@ -12,6 +12,7 @@ export interface CreateClothesDto {
   type: ClothesType;
   objectId: string;
   price: number;
+  partNumber: string;
 }
 
 export interface UpdateClothesDto {
@@ -25,6 +26,7 @@ export interface UpdateClothesDto {
   type: ClothesType;
   objectId: string;
   price: number;
+  partNumber: string;
 }
 
 export interface TransferClothesDto {

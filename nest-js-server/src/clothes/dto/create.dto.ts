@@ -60,4 +60,8 @@ export class CreateDto {
   @IsString({ message: 'object_id должен быть строкой' })
   @IsNotEmpty({ message: 'object_id обязателен для заполнения.' })
   objectId: string;
+
+  @IsString({ message: 'partNumber должен быть строкой' })
+  @IsNotEmpty({ message: 'partNumber обязателен для заполнения.' })
+  partNumber: string;
 }

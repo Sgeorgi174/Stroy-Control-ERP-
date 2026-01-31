@@ -210,6 +210,7 @@ export class ClothesService {
           quantity: dto.quantity,
           providerId: dto.providerId,
           objectId: dto.objectId,
+          partNumber: dto.partNumber,
         },
       });
     } catch (error) {
@@ -301,6 +302,7 @@ export class ClothesService {
           objectId: dto.objectId,
           type: dto.type,
           season: dto.season,
+          partNumber: dto.partNumber,
         },
       });
     } catch (error) {

@@ -45,10 +45,13 @@ export function ClothesSheet() {
                   </div>
                   <div className="flex flex-col items-start">
                     <p>{selectedClothes?.name}</p>
-                    <div className="flex items-center text-muted-foreground gap-2">
+                    <div className="flex items-center text-muted-foreground gap-8">
                       <p className="text-lg text-muted-foreground">
                         Сезон:{" "}
                         {selectedClothes?.season === "SUMMER" ? "Лето" : "Зима"}
+                      </p>
+                      <p className="text-lg text-muted-foreground">
+                        Артикул: {selectedClothes?.partNumber}
                       </p>
                     </div>
                   </div>

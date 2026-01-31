@@ -28,6 +28,9 @@ model User {
 
   role Roles
 
+  clothesRequestsParticipated ClothesRequest[] @relation("ClothesRequestParticipants")
+  clothesRequestsNotified     ClothesRequest[] @relation("ClothesRequestNotifyUsers")
+
   verificationCode     VerifacationCode?
   clothesHistory       ClothesHistory[]
   toolsHistory         ToolHistory[]
@@ -36,6 +39,7 @@ model User {
   deviceStatusHistory  DeviceStatusHistory[]
   tabletsHistory       TabletHistory[]
   archiveHistory       EmployeeArchive[]
+  clothesRequests      ClothesRequest[]
   actionLogs           ActionLog[]
 }
 
@@ -394,6 +398,8 @@ model Clothes {
   price    Int
   quantity Int
 
+  partNumber String @default("0000")
+
   provider   Provider @relation(fields: [providerId], references: [id])
   providerId String   @map("provider_id")
 
@@ -412,9 +418,10 @@ model ClothingSize {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  size      String     @unique
-  clothes   Clothes[]
-  employees Employee[]
+  size           String           @unique
+  clothes        Clothes[]
+  requestClothes RequestClothes[]
+  employees      Employee[]
 }
 
 model ClothingHeight {
@@ -422,9 +429,10 @@ model ClothingHeight {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  height    String     @unique
-  clothes   Clothes[]
-  employees Employee[]
+  height         String           @unique
+  clothes        Clothes[]
+  employees      Employee[]
+  requestClothes RequestClothes[]
 }
 
 model FootwearSize {
@@ -432,9 +440,10 @@ model FootwearSize {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  size      String     @unique
-  clothes   Clothes[]
-  employees Employee[]
+  size           String           @unique
+  clothes        Clothes[]
+  requestClothes RequestClothes[]
+  employees      Employee[]
 }
 
 model Provider {
@@ -442,8 +451,9 @@ model Provider {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  name    String    @unique
-  Clothes Clothes[]
+  name           String           @unique
+  Clothes        Clothes[]
+  requestClothes RequestClothes[]
 }
 
 enum ClothesType {
@@ -831,6 +841,68 @@ model ShiftTemplateEmployee {
 
   @@index([templateId])
   @@index([employeeId])
+}
+
+model ClothesRequest {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  title    String
+  status   RequestStatus
+  customer String
+
+  createdBy User   @relation(fields: [userId], references: [id])
+  userId    String @map("user_id")
+
+  clothes RequestClothes?
+
+  participants User[] @relation("ClothesRequestParticipants")
+  notifyUsers  User[] @relation("ClothesRequestNotifyUsers")
+
+  @@map("clothes_requests")
+}
+
+model RequestClothes {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  request   ClothesRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  requestId String         @unique @map("request_id")
+
+  type   ClothesType
+  season Season
+  name   String
+  number Int
+
+  clothingSize   ClothingSize? @relation(fields: [clothingSizeId], references: [id])
+  clothingSizeId String?       @map("clothing_size_id")
+
+  clothingHeight   ClothingHeight? @relation(fields: [clothingHeightId], references: [id])
+  clothingHeightId String?         @map("clothing_height_id")
+
+  footwearSize   FootwearSize? @relation(fields: [footwearSizeId], references: [id])
+  footwearSizeId String?       @map("footwear_size_id")
+
+  price    Int
+  quantity Int
+
+  provider   Provider @relation(fields: [providerId], references: [id])
+  providerId String   @map("provider_id")
+
+  @@map("request_clothes")
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  IN_PROGRESS
+  COMPLETED
+  CLOSED
 }
 
 model ActionLog {
