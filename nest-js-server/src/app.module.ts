@@ -22,6 +22,9 @@ import { ShiftModule } from './shift/shift.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ShiftTemplateModule } from './shift-template/shift-template.module';
 import { S3Module } from './s3/s3.module';
+import { AdditionalStorageModule } from './additional-storage/additional-storage.module';
+import { SentItemModule } from './sent-item/sent-item.module';
+import { ClothesRequestModule } from './clothes-request/clothes-request.module';
 
 @Module({
   imports: [
@@ -56,6 +59,9 @@ import { S3Module } from './s3/s3.module';
     ShiftModule,
     ShiftTemplateModule,
     S3Module,
+    AdditionalStorageModule,
+    SentItemModule,
+    ClothesRequestModule,
   ],
 })
 export class AppModule {}

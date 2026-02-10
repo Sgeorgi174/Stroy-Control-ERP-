@@ -36,6 +36,21 @@ export function ClothesDropdown({
     });
   };
 
+  // const storageName = clothes.storage.name;
+
+  const isCustomColorAllowed = (() => {
+    // if (storageName === "Главный склад") {
+    //   return clothes.quantity >= 5;
+    // }
+
+    // if (storageName === "Полимет-Инжиниринг") {
+    //   return clothes.quantity >= 2;
+    // }
+
+    // остальные объекты — без ограничений
+    return false;
+  })();
+
   return (
     <>
       <DropdownMenu>
@@ -53,27 +68,27 @@ export function ClothesDropdown({
           >
             Подробнее
           </DropdownMenuItem>
-          {clothes.quantity >= 5 && (
+          {isCustomColorAllowed && (
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>Задать цвет</DropdownMenuSubTrigger>
               <DropdownMenuSubContent>
-                {/* <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setColor(clothes.id, "table-red"); // пастельный красный
-                }}
-              >
-                <div className="w-[100px] h-[18px] bg-table-red"></div>
-              </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setColor(clothes.id, "table-red"); // пастельный красный
+                  }}
+                >
+                  <div className="w-[100px] h-[18px] bg-table-red"></div>
+                </DropdownMenuItem>
 
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setColor(clothes.id, "table-orange"); // пастельный жёлтый
-                }}
-              >
-                <div className="w-[100px] h-[18px] bg-table-orange"></div>
-              </DropdownMenuItem> */}
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setColor(clothes.id, "table-orange"); // пастельный жёлтый
+                  }}
+                >
+                  <div className="w-[100px] h-[18px] bg-table-orange"></div>
+                </DropdownMenuItem>
 
                 <DropdownMenuItem
                   onClick={(e) => {

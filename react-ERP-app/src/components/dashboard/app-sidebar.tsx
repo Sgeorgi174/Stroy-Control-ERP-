@@ -1,6 +1,7 @@
 import {
   Blocks,
   Building,
+  Building2,
   ChartBarBig,
   FileText,
   HardHat,
@@ -111,6 +112,13 @@ const sidebarItems = [
     url: "/requests",
     tab: "requests",
     icon: LayoutList,
+    roles: ["OWNER", "ACCOUNTANT", "MASTER", "ASSISTANT_MANAGER", "ADMIN"],
+  },
+  {
+    title: "Доп. склад",
+    url: "/addtitionalStorage",
+    tab: "addtitionalStorage",
+    icon: Building2,
     roles: ["OWNER", "ACCOUNTANT", "MASTER", "ASSISTANT_MANAGER", "ADMIN"],
   },
   {

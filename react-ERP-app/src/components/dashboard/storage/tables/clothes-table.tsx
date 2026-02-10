@@ -36,15 +36,23 @@ export function ClothesTable({
     storageName: string,
     customColor?: string,
   ): string | undefined {
-    if (storageName !== "Главный склад") return undefined;
+    if (storageName === "Главный склад") {
+      if (quantity <= 2) return "bg-table-red";
+      if (quantity < 5) return "bg-table-orange";
+      return customColor;
+    }
 
-    if (quantity <= 2) return "bg-table-red";
-    if (quantity < 5) return "bg-table-orange";
+    if (storageName === "Полимет-Инжиниринг") {
+      if (quantity < 2) return "bg-table-red";
+      return customColor;
+    }
 
     return customColor;
   }
 
   const sortedClothes = useMemo(() => sortClothes(clothes), [clothes]);
+
+  console.log(sortedClothes);
 
   return (
     <>
@@ -57,7 +65,6 @@ export function ClothesTable({
           </span>
         </p>
       </div>
-
       <div className="mt-6 rounded-lg border overflow-hidden">
         <Table>
           <TableHeader className="bg-primary">
@@ -84,6 +91,7 @@ export function ClothesTable({
               <TableHead className="text-secondary font-bold">
                 Поставщик
               </TableHead>
+              <TableHead className="text-secondary font-bold">Статус</TableHead>
               <TableHead className="text-secondary font-bold">
                 {selectedObjectId !== "all" && (
                   <ClothingPDFButton clothes={clothes} />
@@ -108,13 +116,6 @@ export function ClothesTable({
                 <TableRow
                   key={item.id}
                   onClick={() => openSheet("details", item)}
-                  className={[
-                    "cursor-pointer",
-                    rowBg,
-                    rowBg && `hover:${rowBg}`,
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
                 >
                   <TableCell className="font-medium hover:underline">
                     {item.name}
@@ -141,6 +142,20 @@ export function ClothesTable({
                   </TableCell>
                   <TableCell>{item.storage.name}</TableCell>
                   <TableCell>{item.provider.name}</TableCell>
+                  <TableCell>
+                    <div
+                      className={[
+                        "cursor-pointer",
+                        "w-[20px]",
+                        "rounded-xl",
+                        "h-[20px]",
+                        rowBg,
+                        rowBg && `hover:${rowBg}`,
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                    ></div>
+                  </TableCell>
                   <TableCell>
                     <div onClick={(e) => e.stopPropagation()}>
                       <ClothesDropdown

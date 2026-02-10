@@ -49,6 +49,7 @@ import type { UploadEmployeeDocumentDto } from "@/types/dto/employee.dto";
 import { useUploadEmployeeDocument } from "@/hooks/employee/useUploadEmployeeDocument";
 import { useEmployeeDocuments } from "@/hooks/employee/useEmployeeDocuments";
 import { useRemoveEmployeeDocument } from "@/hooks/employee/useRemoveEmployeeDocument";
+import { EmployeeHintForDoc } from "./employee-hint-for-doc";
 
 /* ---------------- utils ---------------- */
 
@@ -244,7 +245,10 @@ export function EmployeeDocumentsBox({ employee }: { employee: Employee }) {
     <Card>
       <CardHeader>
         <div className="flex justify-between">
-          <CardTitle>Документы</CardTitle>
+          <div className="flex items-center g-4">
+            <CardTitle>Документы</CardTitle>
+            <EmployeeHintForDoc />
+          </div>
 
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -256,7 +260,10 @@ export function EmployeeDocumentsBox({ employee }: { employee: Employee }) {
 
             <DialogContent className="min-w-[650px]">
               <DialogHeader>
-                <DialogTitle>Добавить документ</DialogTitle>
+                <div className="flex items-center">
+                  <DialogTitle>Добавить документ</DialogTitle>
+                  <EmployeeHintForDoc />
+                </div>
               </DialogHeader>
 
               <div className="space-y-4">

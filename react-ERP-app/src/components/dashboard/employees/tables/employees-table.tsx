@@ -11,6 +11,7 @@ import { SkillsPopover } from "./skills-popover";
 import { EmployeeDropDown } from "../dropdowns/employee-dropdown";
 import { PendingTable } from "../../storage/tables/pending-table";
 import { useEmployeeSheetStore } from "@/stores/employee-sheet-store";
+import { EmployeesPDFButton } from "../pdf-employees/employees-pdf-generate";
 
 type EmployeesTableProps = {
   employees: Employee[];
@@ -27,7 +28,7 @@ export function EmployeesTable({
   return (
     <div className="mt-6 rounded-lg border overflow-hidden">
       <Table>
-        <TableHeader className="bg-primary pointer-events-none">
+        <TableHeader className="bg-primary">
           <TableRow>
             <TableHead className="text-secondary font-bold">ФИО</TableHead>
             <TableHead className="text-secondary font-bold">
@@ -40,7 +41,9 @@ export function EmployeesTable({
               Статус
             </TableHead>
 
-            <TableHead className="text-secondary font-bold"></TableHead>
+            <TableHead className="text-secondary font-bold">
+              <EmployeesPDFButton employees={employees} />
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -73,10 +76,10 @@ export function EmployeesTable({
                       employee.status === "OK"
                         ? "glow-green"
                         : employee.status === "WARNING"
-                        ? "glow-yellow"
-                        : employee.status === "INACTIVE"
-                        ? "bg-gray-500"
-                        : "glow-red"
+                          ? "glow-yellow"
+                          : employee.status === "INACTIVE"
+                            ? "bg-gray-500"
+                            : "glow-red"
                     }`}
                   />
                 </div>

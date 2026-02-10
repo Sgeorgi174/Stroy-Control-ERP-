@@ -451,9 +451,8 @@ model Provider {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  name           String           @unique
-  Clothes        Clothes[]
-  requestClothes RequestClothes[]
+  name    String    @unique
+  Clothes Clothes[]
 }
 
 enum ClothesType {
@@ -876,7 +875,6 @@ model RequestClothes {
   type   ClothesType
   season Season
   name   String
-  number Int
 
   clothingSize   ClothingSize? @relation(fields: [clothingSizeId], references: [id])
   clothingSizeId String?       @map("clothing_size_id")
@@ -887,11 +885,7 @@ model RequestClothes {
   footwearSize   FootwearSize? @relation(fields: [footwearSizeId], references: [id])
   footwearSizeId String?       @map("footwear_size_id")
 
-  price    Int
   quantity Int
-
-  provider   Provider @relation(fields: [providerId], references: [id])
-  providerId String   @map("provider_id")
 
   @@map("request_clothes")
 }
@@ -917,4 +911,46 @@ model ActionLog {
   entityId String @map("entity_id")
 
   details Json? // Дополнительные данные
+}
+
+model AdditionalStorage {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  name  String
+  items SentItems[]
+}
+
+model SentItems {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  addedDay  DateTime
+
+  name         String
+  quantity     Int
+  price        Int
+  desсription String
+
+  storage             AdditionalStorage @relation(fields: [additionalStorageId], references: [id])
+  additionalStorageId String
+  history             SentItemHistory[]
+}
+
+enum SentItemHistoryType {
+  ADD
+  REMOVE
+  CREATE
+}
+
+model SentItemHistory {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  type       SentItemHistoryType
+  quantity   Int
+  comment    String?
+  actionDate DateTime
+
+  sentItemId String
+  sentItem   SentItems @relation(fields: [sentItemId], references: [id])
 }

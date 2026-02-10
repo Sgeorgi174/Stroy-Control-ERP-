@@ -14,6 +14,7 @@ import { AdminPanelPage } from "@/pages/admin-panel/Admin-panel";
 import MyObjectPanelWrapper from "@/components/dashboard/my-object/my-object-panel-wrapper";
 import { ReportPage } from "@/pages/reports/Reports";
 import { Requests } from "@/pages/requests/Requests";
+import { AdditionalStorage } from "@/pages/additional-storage/AdditionalStorage";
 
 export const router = createBrowserRouter([
   { path: "/login", element: <Auth /> },
@@ -34,6 +35,7 @@ export const router = createBrowserRouter([
           { path: "/my-object/:id", element: <MyObjectPanelWrapper /> },
           { path: "/reports", element: <ReportPage /> },
           { path: "/requests", element: <Requests /> },
+          { path: "/addtitionalStorage", element: <AdditionalStorage /> },
         ],
       },
 
