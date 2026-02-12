@@ -23,7 +23,7 @@ import { RemoveBagItemDto } from './dto/remove-bag-item';
 import { AddToolCommentDto } from './dto/add-tool-comment.dto';
 import { AddQuantityToolDto } from './dto/add-quantity-tool.dto';
 import { WriteOffQuantityDto } from './dto/write-off-quantity-tool.dto';
-import { BagItem, Roles, Tool } from '@prisma/client';
+import { BagItem, Roles, Tool, User } from '@prisma/client';
 
 @Injectable()
 export class ToolService {
@@ -330,14 +330,14 @@ export class ToolService {
     }
   }
 
-  public async transfer(id: string, dto: TransferDto, userId: string) {
+  public async transfer(id: string, dto: TransferDto, user: User) {
     // await this.accessObject(id, userId);
     const tool = await this.getById(id);
 
     if (tool.objectId === dto.objectId)
       throw new ConflictException('Нельзя перемещать на тот же объект');
 
-    if (tool.status !== 'ON_OBJECT')
+    if (tool.status !== 'ON_OBJECT' && user.role !== 'ACCOUNTANT')
       throw new ConflictException(
         'Нельзя перемещать инструмент, который, не на объекте',
       );
@@ -362,7 +362,7 @@ export class ToolService {
         });
 
         const recordHistory = await this.toolHistoryService.create({
-          userId,
+          userId: user.id,
           toolId: id,
           fromObjectId: tool.objectId ? tool.objectId : undefined,
           toObjectId: dto.objectId,

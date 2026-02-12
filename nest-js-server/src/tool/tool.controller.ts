@@ -30,7 +30,7 @@ import { RemoveBagItemDto } from './dto/remove-bag-item';
 import { AddToolCommentDto } from './dto/add-tool-comment.dto';
 import { AddQuantityToolDto } from './dto/add-quantity-tool.dto';
 import { WriteOffQuantityDto } from './dto/write-off-quantity-tool.dto';
-import { Roles } from '@prisma/client';
+import { Roles, User } from '@prisma/client';
 
 @Controller('tools')
 export class ToolController {
@@ -230,9 +230,9 @@ export class ToolController {
   async transfer(
     @Param('id') id: string,
     @Body() dto: TransferDto,
-    @Authorized('id') userId: string,
+    @Authorized() user: User,
   ) {
-    return this.toolService.transfer(id, dto, userId);
+    return this.toolService.transfer(id, dto, user);
   }
 
   @Authorization(
