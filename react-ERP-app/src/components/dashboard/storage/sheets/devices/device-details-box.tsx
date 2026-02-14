@@ -6,6 +6,11 @@ import { Building, Calendar, Hash, MapPin, Phone, User } from "lucide-react";
 
 type DeviceDetailsBoxProps = { device: Device };
 
+const truncateUrl = (url: string, maxLength = 20) => {
+  if (url.length <= maxLength) return url;
+  return url.slice(0, maxLength) + "...";
+};
+
 export function DeviceDetailsBox({ device }: DeviceDetailsBoxProps) {
   return (
     <div className="flex flex-col gap-5">
@@ -37,6 +42,27 @@ export function DeviceDetailsBox({ device }: DeviceDetailsBoxProps) {
                 <Hash className="w-5 h-5" />
                 <p className="font-medium">
                   {device.originalSerial ? device.originalSerial : "Не указан"}
+                </p>
+              </div>
+            </div>
+
+            <div className="col-span-3">
+              <p className="text-sm text-muted-foreground">Ссылка на товар</p>
+              <div className="flex gap-2 items-center">
+                <Hash className="w-5 h-5" />
+                <p className="font-medium break-all">
+                  {device.marketUrl ? (
+                    <a
+                      href={device.marketUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {truncateUrl(device.marketUrl)}
+                    </a>
+                  ) : (
+                    "Не указана"
+                  )}
                 </p>
               </div>
             </div>

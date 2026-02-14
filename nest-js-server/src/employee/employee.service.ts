@@ -193,11 +193,14 @@ export class EmployeeService {
           },
         },
       },
-      orderBy: [
-        { lastName: 'asc' },
-        { firstName: 'asc' },
-        { fatherName: 'asc' },
-      ],
+      orderBy:
+        query.type === 'ARCHIVE'
+          ? [
+              { archive: { archivedAt: 'desc' } },
+              { lastName: 'asc' },
+              { firstName: 'asc' },
+            ]
+          : [{ lastName: 'asc' }, { firstName: 'asc' }, { fatherName: 'asc' }],
     });
 
     return employees;

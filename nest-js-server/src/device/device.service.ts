@@ -41,6 +41,7 @@ export class DeviceService {
           status: dto.status ?? 'ON_OBJECT',
           objectId: dto.objectId,
           originalSerial: dto.originalSerial ?? undefined,
+          marketUrl: dto.marketUrl ?? undefined,
         },
         include: { storage: true },
       });
@@ -123,6 +124,7 @@ export class DeviceService {
           status: dto.status,
           objectId: dto.objectId,
           originalSerial: dto.originalSerial ?? undefined,
+          marketUrl: dto.marketUrl ?? undefined,
         },
         include: { storage: true },
       });

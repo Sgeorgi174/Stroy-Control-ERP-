@@ -16,6 +16,7 @@ const formSchema = z.object({
   serialNumber: z.string().min(1, "Инвентарный номер обязателен"),
   objectId: z.string().min(1, "Место хранения обязательно"),
   originalSerial: z.string().optional(),
+  marketUrl: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -43,6 +44,7 @@ export function DeviceEdit({ device }: DeviceEditProps) {
       serialNumber: device.serialNumber,
       objectId: device.objectId || "",
       originalSerial: device.originalSerial ?? undefined,
+      marketUrl: device.marketUrl ?? undefined,
     },
     resolver: zodResolver(formSchema),
   });
@@ -61,6 +63,7 @@ export function DeviceEdit({ device }: DeviceEditProps) {
         objectId: data.objectId,
         originalSerial: data.originalSerial,
         status: device.status,
+        marketUrl: data.marketUrl,
       },
       {
         onSuccess: () => {
@@ -70,7 +73,7 @@ export function DeviceEdit({ device }: DeviceEditProps) {
         onError: () => {
           toast.error("Не удалось обновить устройство");
         },
-      }
+      },
     );
   };
 
@@ -118,6 +121,19 @@ export function DeviceEdit({ device }: DeviceEditProps) {
             <p className="text-sm text-red-500">
               {errors.originalSerial.message}
             </p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2 w-[400px]">
+          <Label htmlFor="marketUrl">Ссылка на товар</Label>
+          <Input
+            id="marketUrl"
+            type="text"
+            placeholder="Укажите ссылку"
+            {...register("marketUrl")}
+          />
+          {errors.marketUrl && (
+            <p className="text-sm text-red-500">{errors.marketUrl.message}</p>
           )}
         </div>
 

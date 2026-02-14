@@ -48,9 +48,10 @@ export class CreateClothesRequestDto {
   status?: RequestStatus;
 
   @IsOptional()
-  @ValidateNested()
+  @IsArray()
+  @ValidateNested({ each: true })
   @Type(() => CreateRequestClothesDto)
-  clothes?: CreateRequestClothesDto;
+  clothes?: CreateRequestClothesDto[]; // ✅ массив
 
   @IsOptional()
   @IsArray()

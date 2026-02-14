@@ -23,4 +23,8 @@ export class CreateDto {
   @IsString()
   @IsOptional()
   originalSerial?: string;
+
+  @IsString({ message: 'Ссылка должна быть строкой' })
+  @IsOptional()
+  marketUrl?: string;
 }

@@ -63,29 +63,24 @@ export class ClothesRequestService {
         },
 
         participants: dto.participantsIds
-          ? {
-              connect: dto.participantsIds.map((id) => ({ id })),
-            }
+          ? { connect: dto.participantsIds.map((id) => ({ id })) }
           : undefined,
 
         notifyUsers: dto.notifyUsersIds
-          ? {
-              connect: dto.notifyUsersIds.map((id) => ({ id })),
-            }
+          ? { connect: dto.notifyUsersIds.map((id) => ({ id })) }
           : undefined,
 
-        clothes: dto.clothes
+        clothes: dto.clothes?.length
           ? {
-              create: {
-                type: dto.clothes.type,
-                season: dto.clothes.season,
-                name: dto.clothes.name,
-                quantity: dto.clothes.quantity,
-
-                clothingSizeId: dto.clothes.clothingSizeId,
-                clothingHeightId: dto.clothes.clothingHeightId,
-                footwearSizeId: dto.clothes.footwearSizeId,
-              },
+              create: dto.clothes.map((c) => ({
+                type: c.type,
+                season: c.season,
+                name: c.name,
+                quantity: c.quantity,
+                clothingSizeId: c.clothingSizeId,
+                clothingHeightId: c.clothingHeightId,
+                footwearSizeId: c.footwearSizeId,
+              })),
             }
           : undefined,
       },
@@ -116,35 +111,28 @@ export class ClothesRequestService {
         status: dto.status,
 
         participants: dto.participantsIds
-          ? {
-              set: dto.participantsIds.map((id) => ({ id })),
-            }
+          ? { set: dto.participantsIds.map((id) => ({ id })) }
           : undefined,
 
         notifyUsers: dto.notifyUsersIds
-          ? {
-              set: dto.notifyUsersIds.map((id) => ({ id })),
-            }
+          ? { set: dto.notifyUsersIds.map((id) => ({ id })) }
           : undefined,
 
-        clothes: dto.clothes
-          ? request.clothes
-            ? {
-                update: {
-                  type: dto.clothes.type,
-                  season: dto.clothes.season,
-                  name: dto.clothes.name,
-                  quantity: dto.clothes.quantity,
-                  clothingSizeId: dto.clothes.clothingSizeId,
-                  clothingHeightId: dto.clothes.clothingHeightId,
-                  footwearSizeId: dto.clothes.footwearSizeId,
-                },
-              }
-            : {
-                create: {
-                  ...dto.clothes,
-                },
-              }
+        clothes: dto.clothes?.length
+          ? {
+              // Удаляем старые позиции и создаем новые
+              deleteMany: {},
+
+              create: dto.clothes.map((c) => ({
+                type: c.type,
+                season: c.season,
+                name: c.name,
+                quantity: c.quantity,
+                clothingSizeId: c.clothingSizeId,
+                clothingHeightId: c.clothingHeightId,
+                footwearSizeId: c.footwearSizeId,
+              })),
+            }
           : undefined,
       },
       include: {

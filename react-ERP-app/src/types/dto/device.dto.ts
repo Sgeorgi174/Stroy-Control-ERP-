@@ -6,6 +6,7 @@ export interface CreateDeviceDto {
   objectId: string;
   status?: DeviceStatus;
   originalSerial?: string;
+  marketUrl?: string;
 }
 
 export interface UpdateDeviceDto {
@@ -14,6 +15,7 @@ export interface UpdateDeviceDto {
   objectId: string;
   status: DeviceStatus;
   originalSerial?: string;
+  marketUrl?: string;
 }
 
 export interface TransferDeviceDto {

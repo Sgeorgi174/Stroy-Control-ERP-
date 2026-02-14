@@ -26,6 +26,7 @@ const toolSchema = z
     description: z.string().optional(),
     quantity: z.number({ message: "Количество обязательно" }).optional(),
     originalSerial: z.string().optional(),
+    marketUrl: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.isBulk) {
@@ -87,6 +88,7 @@ export function ToolsAdd() {
       quantity: undefined,
       description: "",
       originalSerial: "",
+      marketUrl: "",
     },
   });
 
@@ -100,6 +102,7 @@ export function ToolsAdd() {
       name: data.name.trim().replace(/\s+/g, " "),
       objectId: data.objectId,
       description: data.description ? data.description.trim() : undefined,
+      marketUrl: data.marketUrl ?? "",
       originalSerial: data.originalSerial
         ? data.originalSerial.trim()
         : undefined,
@@ -211,7 +214,7 @@ export function ToolsAdd() {
                     if (!prefix) return;
                     const generated = generateInventoryNumber(
                       prefix,
-                      usedNumbers
+                      usedNumbers,
                     );
                     setValue("serialNumber", generated);
                   }}
@@ -260,6 +263,19 @@ export function ToolsAdd() {
           />
           {errors.description && (
             <p className="text-sm text-red-500">{errors.description.message}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2 w-[400px]">
+          <Label htmlFor="marketUrl">Ссылка на товар</Label>
+          <Input
+            id="marketUrl"
+            type="text"
+            placeholder="Укажите ссылку"
+            {...register("marketUrl")}
+          />
+          {errors.marketUrl && (
+            <p className="text-sm text-red-500">{errors.marketUrl.message}</p>
           )}
         </div>
 

@@ -1,3 +1,5 @@
+import type { ClothesType } from "./clothes";
+import type { Season } from "./season";
 import type { User } from "./user";
 
 export type RequestStatus =
@@ -17,7 +19,7 @@ export interface ClothesRequest {
   updatedAt: string;
 
   createdBy: User;
-  clothes?: RequestClothes;
+  clothes?: RequestClothes[];
 
   participants: User[];
   notifyUsers: User[];
@@ -25,8 +27,8 @@ export interface ClothesRequest {
 
 export interface RequestClothes {
   id: string;
-  type: string;
-  season: string;
+  type: ClothesType;
+  season: Season;
   name: string;
   quantity: number;
 

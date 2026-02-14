@@ -20,6 +20,7 @@ const deviceSchema = z.object({
   serialNumber: z.string().min(1, "Это поле обязательно"),
   objectId: z.string().min(1, "Выберите объект"),
   originalSerial: z.string().optional(),
+  marketUrl: z.string().optional(),
 });
 
 type FormData = z.infer<typeof deviceSchema>;
@@ -43,6 +44,7 @@ export function DeviceAdd() {
       serialNumber: "",
       objectId: objects[0]?.id ?? "",
       originalSerial: "",
+      marketUrl: "",
     },
   });
 
@@ -71,13 +73,14 @@ export function DeviceAdd() {
         serialNumber: trimmedSerial,
         objectId: data.objectId,
         originalSerial: data.originalSerial,
+        marketUrl: data.marketUrl ?? undefined,
       },
       {
         onSuccess: () => {
           reset();
           closeSheet();
         },
-      }
+      },
     );
   };
 
@@ -156,6 +159,19 @@ export function DeviceAdd() {
             <p className="text-sm text-red-500">
               {errors.originalSerial.message}
             </p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2 w-[400px]">
+          <Label htmlFor="marketUrl">Ссылка на товар</Label>
+          <Input
+            id="marketUrl"
+            type="text"
+            placeholder="Укажите ссылку"
+            {...register("marketUrl")}
+          />
+          {errors.marketUrl && (
+            <p className="text-sm text-red-500">{errors.marketUrl.message}</p>
           )}
         </div>
 

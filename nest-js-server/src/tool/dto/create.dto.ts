@@ -42,4 +42,8 @@ export class CreateDto {
   @IsString({ message: 'Описание должно быть строкой' })
   @IsOptional()
   description?: string;
+
+  @IsString({ message: 'Ссылка должна быть строкой' })
+  @IsOptional()
+  marketUrl?: string;
 }

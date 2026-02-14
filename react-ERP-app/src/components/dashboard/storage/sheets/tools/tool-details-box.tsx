@@ -8,6 +8,11 @@ type DetailsBoxProps = {
   tool: Tool;
 };
 
+const truncateUrl = (url: string, maxLength = 20) => {
+  if (url.length <= maxLength) return url;
+  return url.slice(0, maxLength) + "...";
+};
+
 export function ToolsDetailsBox({ tool }: DetailsBoxProps) {
   return (
     <>
@@ -41,7 +46,7 @@ export function ToolsDetailsBox({ tool }: DetailsBoxProps) {
               {!tool.isBulk && (
                 <div className="col-span-2">
                   <p className="text-sm text-muted-foreground">Серийный №</p>
-                  <div className="flex gap-2 items-center">
+                  <div className="flex gap-2 items-start">
                     <Hash className="w-5 h-5" />
                     <p className="font-medium">
                       {tool.originalSerial ? tool.originalSerial : "Не указан"}
@@ -49,6 +54,26 @@ export function ToolsDetailsBox({ tool }: DetailsBoxProps) {
                   </div>
                 </div>
               )}
+              <div className="col-span-3">
+                <p className="text-sm text-muted-foreground">Ссылка на товар</p>
+                <div className="flex gap-2 items-center">
+                  <Hash className="w-5 h-5" />
+                  <p className="font-medium break-all">
+                    {tool.marketUrl ? (
+                      <a
+                        href={tool.marketUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        {truncateUrl(tool.marketUrl)}
+                      </a>
+                    ) : (
+                      "Не указана"
+                    )}
+                  </p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>

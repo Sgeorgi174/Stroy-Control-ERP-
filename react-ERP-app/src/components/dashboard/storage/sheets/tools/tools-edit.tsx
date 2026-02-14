@@ -22,6 +22,7 @@ const toolSchema = z
     originalSerial: z.string().optional(),
     description: z.string().optional(),
     quantity: z.number({ message: "Количество обязательно" }).optional(),
+    marketUrl: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.isBulk) {
@@ -74,6 +75,7 @@ export function ToolsEdit({ tool }: ToolEditProps) {
       quantity: tool.quantity ?? undefined,
       description: tool.description ?? "",
       originalSerial: tool.originalSerial ?? "",
+      marketUrl: tool.marketUrl ?? "",
     },
   });
 
@@ -90,6 +92,7 @@ export function ToolsEdit({ tool }: ToolEditProps) {
       originalSerial: data.originalSerial,
       status: tool.status,
       isBulk: data.isBulk,
+      marketUrl: data.marketUrl,
       ...(tool.isBulk
         ? { quantity: data.quantity }
         : { serialNumber: data.serialNumber?.trim() }),
@@ -189,6 +192,19 @@ export function ToolsEdit({ tool }: ToolEditProps) {
           />
           {errors.description && (
             <p className="text-sm text-red-500">{errors.description.message}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2 w-[400px]">
+          <Label htmlFor="marketUrl">Ссылка на товар</Label>
+          <Input
+            id="marketUrl"
+            type="text"
+            placeholder="Укажите ссылку"
+            {...register("marketUrl")}
+          />
+          {errors.marketUrl && (
+            <p className="text-sm text-red-500">{errors.marketUrl.message}</p>
           )}
         </div>
 

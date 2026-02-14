@@ -17,4 +17,5 @@ export type Device = {
   updatedAt: string;
   storage: Object;
   originalSerial?: string;
+  marketUrl: string | undefined;
 };

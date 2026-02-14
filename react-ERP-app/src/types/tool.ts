@@ -25,4 +25,5 @@ export type Tool = {
   isBulk: boolean;
   quantity: number;
   originalSerial: string;
+  marketUrl: string | undefined;
 };

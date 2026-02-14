@@ -8,6 +8,7 @@ export interface CreateToolDto {
   quantity?: number;
   description?: string;
   originalSerial?: string;
+  marketUrl?: string;
 }
 
 export interface UpdateToolDto extends CreateToolDto {

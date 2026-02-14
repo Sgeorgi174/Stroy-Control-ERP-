@@ -48,6 +48,7 @@ export class ToolService {
           quantity: dto.quantity ? dto.quantity : undefined,
           description: dto.description ?? undefined,
           originalSerial: dto.originalSerial ?? undefined,
+          marketUrl: dto.marketUrl ?? undefined,
         },
         include: { storage: true },
       });
@@ -280,6 +281,7 @@ export class ToolService {
           description: dto.description ?? undefined,
           quantity: dto.quantity ?? undefined,
           originalSerial: dto.originalSerial ?? undefined,
+          marketUrl: dto.marketUrl ?? undefined,
         },
         include: { storage: true },
       });
@@ -561,6 +563,7 @@ export class ToolService {
               quantity: quantity,
               objectId: transfer.toObjectId,
               status: 'ON_OBJECT',
+              marketUrl: tool.marketUrl,
             },
           });
 
