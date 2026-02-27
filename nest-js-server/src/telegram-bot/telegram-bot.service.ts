@@ -98,14 +98,7 @@ export class TelegramBotService {
     // 2. Отправляем сообщения
     const sendPromises = telegramUsers.map(async (user) => {
       try {
-        // Формируем тестовое сообщение: добавляем имя того, кому оно ПРЕДНАЗНАЧАЛОСЬ
-        const testText = `${text}`;
-
-        await this.bot.telegram.sendMessage(836996470, testText);
-
-        console.log(
-          `Тестовое уведомление для ${user.chatId} отправлено в ваш чат`,
-        );
+        await this.bot.telegram.sendMessage(user.chatId, text);
       } catch (error) {
         console.error(`Ошибка отправки для ${user.phone}:`, error);
       }
