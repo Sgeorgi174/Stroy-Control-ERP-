@@ -50,8 +50,6 @@ export function ToolQuantityHistory({
   isLoading,
   isError,
 }: ToolTransferHistoryProps) {
-  console.log(transferRecords);
-
   return (
     <div className="mt-4 space-y-6">
       <div>

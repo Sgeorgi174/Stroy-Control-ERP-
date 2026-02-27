@@ -40,6 +40,7 @@ model User {
   tabletsHistory       TabletHistory[]
   archiveHistory       EmployeeArchive[]
   clothesRequests      ClothesRequest[]
+  requestComments      RequestComment[]
   actionLogs           ActionLog[]
 }
 
@@ -625,7 +626,6 @@ model Employee {
   shiftsTemplate ShiftTemplateEmployee[]
   archive        EmployeeArchive?
   documents      EmployeeDocument[]
-  // photos         EmployeePhoto[]
 
   workPlace Object? @relation(fields: [objectId], references: [id])
   objectId  String? @map("object_id")
@@ -642,29 +642,15 @@ model EmployeeDocument {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  name    String
-  docSrc  String
-  expDate String
+  name         String
+  docSrc       String
+  expDate      String?
+  isIndefinite Boolean @default(false) @map("is_indefinite")
 
   employee   Employee @relation(fields: [employeeId], references: [id])
   employeeId String
+  comment    String?
 }
-
-/**
- * ЗАГОТОВКА ПОД ФОТКИ БЕЗ СРОКОВ (СЕЛФИ, СНИЛС, ИНН, И Т.Д.)
- */
-// model EmployeePhoto {
-//   id String @id @default(uuid())
-
-//   createdAt DateTime @default(now()) @map("created_at")  
-//   updatedAt DateTime @updatedAt @map("updated_at")
-
-//   name String
-//   photoUrl String
-
-//   employee  Employee @relation(fields: [employeeId], references: [id])
-//   employeeId String
-// }
 
 model EmployeeWarning {
   id String @id @default(uuid())
@@ -868,11 +854,14 @@ model ClothesRequest {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   title    String
+  number   Int           @unique @default(autoincrement())
   status   RequestStatus
   customer String
 
   createdBy User   @relation(fields: [userId], references: [id])
   userId    String @map("user_id")
+
+  comments RequestComment[]
 
   clothes      RequestClothes[] // теперь массив
   participants User[]           @relation("ClothesRequestParticipants")
@@ -903,12 +892,30 @@ model RequestClothes {
   footwearSize   FootwearSize? @relation(fields: [footwearSizeId], references: [id])
   footwearSizeId String?       @map("footwear_size_id")
 
-  quantity Int
+  quantity            Int
+  transferredQuantity Int @default(0)
 
   @@map("request_clothes")
 }
 
+model RequestComment {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  text String
+
+  createdBy       User    @relation(fields: [userId], references: [id])
+  userId          String  @map("user_id")
+  isSystemComment Boolean @default(false)
+
+  request   ClothesRequest @relation(fields: [requestId], references: [id])
+  requestId String // убрали @unique, теперь можно несколько записей на один request
+}
+
 enum RequestStatus {
+  CREATED
   PENDING
   APPROVED
   REJECTED

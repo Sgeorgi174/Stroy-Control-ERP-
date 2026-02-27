@@ -134,8 +134,6 @@ export function ToolsAdd() {
     }
   }, [isBulk, setValue]);
 
-  console.log(tools);
-
   return (
     <div className="p-5">
       {/* 🔹 Переключатель типа инструмента */}

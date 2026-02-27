@@ -3,6 +3,7 @@ import type { Season } from "./season";
 import type { User } from "./user";
 
 export type RequestStatus =
+  | "CREATED"
   | "PENDING"
   | "APPROVED"
   | "REJECTED"
@@ -13,6 +14,7 @@ export type RequestStatus =
 export interface ClothesRequest {
   id: string;
   title: string;
+  number: number;
   customer: string;
   status: RequestStatus;
   createdAt: string;
@@ -20,6 +22,7 @@ export interface ClothesRequest {
 
   createdBy: User;
   clothes?: RequestClothes[];
+  comments?: RequestComment[];
 
   participants: User[];
   notifyUsers: User[];
@@ -31,8 +34,22 @@ export interface RequestClothes {
   season: Season;
   name: string;
   quantity: number;
+  transferredQuantity: number;
 
   clothingSizeId?: string | null;
   clothingHeightId?: string | null;
   footwearSizeId?: string | null;
+}
+
+export interface RequestComment {
+  id: string;
+  text: string;
+  createdAt: string;
+  createdBy: User;
+  userId: string;
+
+  request: ClothesRequest;
+  requestId: string;
+
+  isSystemComment: boolean;
 }

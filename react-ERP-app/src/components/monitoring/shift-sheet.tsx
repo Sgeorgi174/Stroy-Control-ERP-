@@ -23,6 +23,8 @@ import { formatDate, formatTime } from "@/lib/utils/format-date";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useAuth } from "@/hooks/auth/useAuth";
+import { useDataMaskStore } from "@/stores/data-mask-store";
+import { cn } from "@/lib/utils";
 
 interface ShiftSheetProps {
   shift: Shift | null;
@@ -39,6 +41,13 @@ export function ShiftSheet({
 }: ShiftSheetProps) {
   const [isOpenEditShift, setIsEditShift] = useState(false);
   const { data: user } = useAuth();
+
+  const isMasked = useDataMaskStore((s) => s.isMasked);
+
+  const blurClass = cn(
+    "transition-all duration-300 ease-in-out", // Плавный переход
+    isMasked && "blur-[7px] select-none pointer-events-none", // Сильное размытие, запрет выделения
+  );
 
   if (!shift) return null;
 
@@ -78,7 +87,9 @@ export function ShiftSheet({
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="w-[960px] sm:max-w-full overflow-auto p-6">
         <SheetHeader>
-          <SheetTitle className="text-2xl font-bold">{object.name}</SheetTitle>
+          <SheetTitle className={`text-2xl font-bold ${blurClass}`}>
+            {object.name}
+          </SheetTitle>
           <SheetDescription>
             Смена на {new Date(shift.shiftDate).toLocaleDateString()}
           </SheetDescription>

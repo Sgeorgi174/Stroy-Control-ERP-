@@ -29,6 +29,7 @@ import { S3DocumentsService } from 'src/s3/s3-documents.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateEmployeeDocumentDto } from './dto/add-document.dto';
 import { EmployeeDocumentsService } from './employee-documents.service';
+import { UpdateDocumentCommentDto } from 'src/employee/dto/update-document-comment.dto';
 
 @Controller('employees')
 export class EmployeeController {
@@ -239,13 +240,29 @@ export class EmployeeController {
       folder: `employees_documents/${employeeId}`,
       filename: body.name,
     });
-    console.log('tuk tuk');
-
     return this.employeeDocumentsService.create(employeeId, {
       name: body.name,
       expDate: body.expDate,
       docSrc: uploadResult.url,
+      isIndefinite: body.isIndefinite,
+      comment: body.comment ?? '',
     });
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.HR,
+  )
+  @Patch('update-document/:id')
+  documentUpdate(
+    @Param('id') id: string,
+    @Body() dto: CreateEmployeeDocumentDto,
+  ) {
+    return this.employeeDocumentsService.update(id, dto);
   }
 
   @Authorization(
@@ -273,5 +290,35 @@ export class EmployeeController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeDocuement(@Param('id') documentId: string) {
     return this.employeeDocumentsService.remove(documentId);
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.HR,
+  )
+  @Patch('document/:id/comment')
+  async updateComment(
+    @Param('id') id: string,
+    @Body() dto: UpdateDocumentCommentDto,
+  ) {
+    return this.employeeDocumentsService.updateComment(id, dto.comment);
+  }
+
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.HR,
+  )
+  @Delete('document/:id/comment')
+  @HttpCode(HttpStatus.OK) // Используем OK, так как мы возвращаем обновленный объект
+  async deleteComment(@Param('id') id: string) {
+    return this.employeeDocumentsService.deleteComment(id);
   }
 }

@@ -69,8 +69,6 @@ export function EmployeeSheet() {
     <Sheet open={isOpen} onOpenChange={closeSheet}>
       <SheetContent
         className="w-[900px] sm:max-w-[900px] overflow-auto"
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
         <SheetHeader>
@@ -97,7 +95,7 @@ export function EmployeeSheet() {
                   <div className="flex items-center gap-2 mt-5">
                     <Badge
                       className={`${getStatusColor(
-                        selectedEmployee.status
+                        selectedEmployee.status,
                       )} flex items-center gap-1`}
                     >
                       <span>{getStatusIcon(selectedEmployee.status)}</span>

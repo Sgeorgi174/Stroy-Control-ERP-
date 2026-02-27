@@ -6,8 +6,6 @@ type ToolInfoProps = {
 };
 
 export function ToolInfo({ transfer }: ToolInfoProps) {
-  console.log(transfer);
-
   return (
     <div className="flex items-center gap-4 p-3 rounded-lg bg-muted">
       <div className="flex-shrink-0 w-8 h-8 rounded-md flex items-center justify-center">

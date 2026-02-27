@@ -4,10 +4,11 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ModeToggle } from "./mode-toggle";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { Archive, ArrowLeft } from "lucide-react";
+import { Archive, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useObjectHeaderStore } from "@/stores/object-header-store";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { DatePickerForShift } from "./filter-panel/date-picker-for-shift";
+import { useDataMaskStore } from "@/stores/data-mask-store";
 
 type PageHeaderProps = {
   location: string;
@@ -27,6 +28,7 @@ const pathToTabMap = {
 };
 
 export function PageHeader({ location }: PageHeaderProps) {
+  const { isMasked, toggleMask } = useDataMaskStore();
   const { id } = useParams<{ id: string }>();
   const objectName = useObjectHeaderStore((s) => s.objectName);
   const { data: user } = useAuth();
@@ -99,6 +101,21 @@ export function PageHeader({ location }: PageHeaderProps) {
 
       <div className="flex gap-5">
         {location === "/monitoring" && <DatePickerForShift />}
+        {location === "/monitoring" && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={toggleMask}
+            title={isMasked ? "Показать данные" : "Скрыть данные"}
+            className="ml-2"
+          >
+            {isMasked ? (
+              <EyeOff className="size-5 text-muted-foreground" />
+            ) : (
+              <Eye className="size-5 text-blue-600" />
+            )}
+          </Button>
+        )}
         <ModeToggle />
       </div>
     </header>

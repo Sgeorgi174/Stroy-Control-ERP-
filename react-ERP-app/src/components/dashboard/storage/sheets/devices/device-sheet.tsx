@@ -58,8 +58,6 @@ export function DeviceSheet() {
     <Sheet open={isOpen} onOpenChange={closeSheet}>
       <SheetContent
         className="w-[700px] sm:max-w-[1000px] overflow-auto"
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
         <SheetHeader>
@@ -82,7 +80,7 @@ export function DeviceSheet() {
                 <div className="w-full flex justify-start mt-5">
                   <Badge
                     className={`${getStatusColor(
-                      selectedDevice ? selectedDevice.status : "ON_OBJECT"
+                      selectedDevice ? selectedDevice.status : "ON_OBJECT",
                     )} flex items-center gap-1`}
                   >
                     {selectedDevice && getStatusIcon(selectedDevice.status)}

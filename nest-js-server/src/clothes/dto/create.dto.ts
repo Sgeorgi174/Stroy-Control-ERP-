@@ -37,7 +37,6 @@ export class CreateDto {
   price: number;
 
   @IsInt({ message: 'Количество должно быть целым числом' })
-  @IsPositive({ message: 'Количество не может быть отрицательным' })
   @IsNotEmpty({ message: 'Количество обязательно для заполнения' })
   quantity: number;
 

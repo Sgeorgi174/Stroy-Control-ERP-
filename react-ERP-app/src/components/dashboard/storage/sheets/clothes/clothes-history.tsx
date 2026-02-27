@@ -134,8 +134,7 @@ export function ClothesHistory({
                     </div>
                   </div>
                 </div>
-                {(history.action === "WRITTEN_OFF" ||
-                  history.action === "RETURN_FROM_EMPLOYEE") && (
+                {history.writeOffComment && (
                   <CommentPopover comment={history.writeOffComment} />
                 )}
               </div>

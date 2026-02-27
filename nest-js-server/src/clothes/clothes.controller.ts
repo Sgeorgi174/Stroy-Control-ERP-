@@ -246,6 +246,19 @@ export class ClothesController {
     Roles.ASSISTANT_MANAGER,
     Roles.FOREMAN,
   )
+  @Get('catalog')
+  async getCatalog() {
+    return this.clothesService.getClothesCatalog();
+  }
+
+  @Authorization(
+    Roles.OWNER,
+    Roles.MASTER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('by-id/:id')
   async getById(@Param('id') id: string) {
     return this.clothesService.getById(id);
@@ -348,8 +361,6 @@ export class ClothesController {
     @Body() dto: RetransferClothesDto,
     @Authorized('id') userId: string,
   ) {
-    console.log(transferId, dto, userId);
-
     return this.clothesService.reTransfer(transferId, dto, userId);
   }
 

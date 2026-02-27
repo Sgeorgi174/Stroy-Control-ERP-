@@ -84,8 +84,6 @@ export function DeviceAdd() {
     );
   };
 
-  console.log(devices);
-
   return (
     <div className="p-5">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">

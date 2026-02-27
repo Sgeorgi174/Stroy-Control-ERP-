@@ -42,7 +42,7 @@ export const getClothesById = async (id: string): Promise<Clothes> => {
 
 // Создать одежду
 export const createClothes = async (
-  data: CreateClothesDto
+  data: CreateClothesDto,
 ): Promise<Clothes> => {
   const res = await api.post("/clothes/create", data);
   return res.data;
@@ -51,7 +51,7 @@ export const createClothes = async (
 // Обновить одежду
 export const updateClothes = async (
   id: string,
-  data: UpdateClothesDto
+  data: UpdateClothesDto,
 ): Promise<Clothes> => {
   const res = await api.put(`/clothes/update/${id}`, data);
   return res.data;
@@ -60,7 +60,7 @@ export const updateClothes = async (
 // Передать одежду сотруднику (создать запись выдачи)
 export const transferClothes = async (
   id: string,
-  data: TransferClothesDto
+  data: TransferClothesDto,
 ): Promise<{ transferredClothes: Clothes }> => {
   const res = await api.patch(`/clothes/transfer/${id}`, data);
   return res.data;
@@ -69,7 +69,7 @@ export const transferClothes = async (
 // Подтвердить передачу одежды
 export const confirmClothesTransfer = async (
   id: string,
-  quantity: number
+  quantity: number,
 ): Promise<Clothes> => {
   const res = await api.patch(`/clothes/confirm/${id}`, { quantity });
   return res.data;
@@ -77,7 +77,7 @@ export const confirmClothesTransfer = async (
 
 export const rejectClothesTransfer = async (
   id: string,
-  data: RejectClotheseDto
+  data: RejectClotheseDto,
 ) => {
   const res = await api.patch(`/clothes/reject/${id}`, data);
   return res.data;
@@ -85,7 +85,7 @@ export const rejectClothesTransfer = async (
 
 export const resendClothesTransfer = async (
   id: string,
-  data: ResendClothesTransferDto
+  data: ResendClothesTransferDto,
 ) => {
   const res = await api.post(`/clothes/retransfer/${id}`, data);
   return res.data;
@@ -98,7 +98,7 @@ export const returnClothesToSource = async (id: string) => {
 
 export const cancelClothesTransfer = async (
   id: string,
-  data: CancelClothesTransferDto
+  data: CancelClothesTransferDto,
 ) => {
   const res = await api.post(`/clothes/transfer-cancel/${id}`, data);
   return res.data;
@@ -106,7 +106,7 @@ export const cancelClothesTransfer = async (
 
 export const writeOffClothesInTransfer = async (
   id: string,
-  data: WirteOffClothesInTransferDto
+  data: WirteOffClothesInTransferDto,
 ) => {
   const res = await api.post(`/clothes/transfer-write-off/${id}`, data);
   return res.data;
@@ -120,7 +120,7 @@ export const requestClothesPhotoByTransferId = async (transferId: string) => {
 // Списать одежду (write off)
 export const writeOffClothes = async (
   id: string,
-  data: WriteOffClothesDto
+  data: WriteOffClothesDto,
 ): Promise<Clothes> => {
   const res = await api.patch(`/clothes/write-off/${id}`, data);
   return res.data;
@@ -128,7 +128,7 @@ export const writeOffClothes = async (
 
 export const addClothes = async (
   id: string,
-  data: AddClothesDto
+  data: AddClothesDto,
 ): Promise<Clothes> => {
   const res = await api.patch(`/clothes/add/${id}`, data);
   return res.data;
@@ -136,14 +136,14 @@ export const addClothes = async (
 
 export const giveClothes = async (
   id: string,
-  data: GiveClothingDto
+  data: GiveClothingDto,
 ): Promise<Clothes> => {
   const res = await api.patch(`/clothes/give/${id}`, data);
   return res.data;
 };
 
 export const returnFromEmployee = async (
-  data: ReturnFromEmployeeDto
+  data: ReturnFromEmployeeDto,
 ): Promise<Clothes> => {
   const res = await api.patch(`/clothes/return`, data);
   return res.data;
@@ -155,7 +155,7 @@ export const deleteClothes = async (id: string): Promise<void> => {
 };
 
 export const getClothesHistory = async (
-  id: string
+  id: string,
 ): Promise<TransferRecord[]> => {
   const res = await api.get(`/clothes-history/transfers/${id}`);
   return res.data;
@@ -248,4 +248,18 @@ export const updateProvider = async (id: string, data: { name: string }) => {
 
 export const deleteProvider = async (id: string) => {
   await api.delete(`/clothes/remove-provider/${id}`);
+};
+
+// ===== CLOTHES CATALOG =====
+
+export type ClothesCatalogItem = {
+  name: string;
+  type: ClothesType;
+  season: Seasons;
+};
+
+// Получить каталог уникальных позиций одежды
+export const getClothesCatalog = async (): Promise<ClothesCatalogItem[]> => {
+  const res = await api.get("/clothes/catalog");
+  return res.data;
 };

@@ -5,6 +5,8 @@ import { Badge } from "../ui/badge";
 import { useShiftsWithFilters } from "@/hooks/shift/useShift";
 import { useState } from "react";
 import { ShiftSheet } from "./shift-sheet";
+import { useDataMaskStore } from "@/stores/data-mask-store";
+import { cn } from "@/lib/utils";
 
 type ObjectCardProps = {
   object: Object;
@@ -20,6 +22,12 @@ export function ObjectCard({
   totalHoursMonth,
 }: ObjectCardProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const isMasked = useDataMaskStore((s) => s.isMasked);
+
+  const blurClass = cn(
+    "transition-all duration-300 ease-in-out", // Плавный переход
+    isMasked && "blur-[6px] select-none pointer-events-none", // Сильное размытие, запрет выделения
+  );
 
   const { data: shiftData = [] } = useShiftsWithFilters(
     {
@@ -27,7 +35,7 @@ export function ObjectCard({
       fromDate: dayStart.toISOString(),
       toDate: dayEnd.toISOString(),
     },
-    true
+    true,
   );
 
   // Фильтруем смены строго по выбранному дню
@@ -44,11 +52,11 @@ export function ObjectCard({
   // Статистика по сотрудникам
   const totalEmployees = todayShifts.reduce(
     (acc, s) => acc + s.employees.length,
-    0
+    0,
   );
   const totalPresent = todayShifts.reduce(
     (acc, s) => acc + s.employees.filter((e) => e.present).length,
-    0
+    0,
   );
   const totalHours = todayShifts.reduce((acc, s) => acc + s.totalHours, 0);
 
@@ -66,14 +74,18 @@ export function ObjectCard({
               </div>
               <div className="min-w-0 flex-1">
                 <CardTitle className="text-lg leading-tight mb-1 break-words flex items-center justify-between">
-                  <p>{object.name}</p>
-                  <p>
+                  <p className={`${blurClass}`}>{object.name}</p>
+                  <p className={`${blurClass}`}>
                     {object.customer?.shortName ?? object.customer?.name ?? ""}
                   </p>
                 </CardTitle>
                 <div className="flex items-start gap-1 text-sm text-muted-foreground">
-                  <MapPin className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                  <span className="break-words">{object.address}</span>
+                  <MapPin
+                    className={`w-3 h-3 mt-0.5 flex-shrink-0 ${blurClass}`}
+                  />
+                  <span className={`${blurClass} break-words`}>
+                    {object.address}
+                  </span>
                 </div>
               </div>
             </div>

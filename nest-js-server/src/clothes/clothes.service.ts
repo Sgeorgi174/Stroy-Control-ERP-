@@ -960,4 +960,24 @@ export class ClothesService {
       });
     }
   }
+
+  async getClothesCatalog() {
+    try {
+      const catalog = await this.prismaService.clothes.findMany({
+        distinct: ['name', 'type', 'season'],
+        select: {
+          name: true,
+          type: true,
+          season: true,
+        },
+        orderBy: [{ type: 'asc' }, { season: 'asc' }, { name: 'asc' }],
+      });
+
+      return catalog;
+    } catch (error) {
+      handlePrismaError(error, {
+        defaultMessage: 'Ошибка получения каталога одежды',
+      });
+    }
+  }
 }

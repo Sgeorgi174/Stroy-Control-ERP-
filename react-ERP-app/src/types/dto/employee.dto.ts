@@ -83,5 +83,18 @@ export type ChangeDebtDto = {
 
 export type UploadEmployeeDocumentDto = {
   name: string;
-  expDate: string;
+  expDate?: string | null;
+  isIndefinite?: boolean;
+  comment?: string;
+};
+
+export type UpdateEmployeeDocumentDto = {
+  name?: string;
+  expDate?: string | null;
+  isIndefinite?: boolean;
+  comment?: string;
+};
+
+export type UpdateDocumentCommentDto = {
+  comment: string;
 };

@@ -15,8 +15,6 @@ export class ClothingDebtCronService {
     timeZone: 'Europe/Moscow',
   })
   async handleDailyDebtDeduction() {
-    console.log('=== START Cron: Долги спецовки ===');
-
     try {
       const issuedClothes = await this.prisma.employeeClothing.findMany({
         where: {
@@ -32,7 +30,6 @@ export class ClothingDebtCronService {
       });
 
       if (issuedClothes.length === 0) {
-        console.log('Нет активных долгов — выход');
         return;
       }
 
@@ -76,8 +73,6 @@ export class ClothingDebtCronService {
           });
         }
       });
-
-      console.log('=== END Cron: Успешно ===');
     } catch (error) {
       console.error('=== ERROR в CRON ===', error);
       throw new InternalServerErrorException(

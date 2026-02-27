@@ -24,9 +24,7 @@ const baseSchema = z.object({
   price: z
     .number({ invalid_type_error: "Укажите цену" })
     .min(1, { message: "Цена должна быть больше 0" }),
-  quantity: z
-    .number({ invalid_type_error: "Введите количество" })
-    .min(1, { message: "Количество должно быть больше 0" }),
+  quantity: z.number({ invalid_type_error: "Введите количество" }).min(0, {}),
   type: z.enum(["CLOTHING", "FOOTWEAR"], { message: "Выберите тип одежды" }),
   season: z.enum(["WINTER", "SUMMER"], { message: "Выберите сезон" }),
   partNumber: z.string().min(1, "Это поле обязательно"),

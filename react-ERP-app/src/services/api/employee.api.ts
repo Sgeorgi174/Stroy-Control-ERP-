@@ -8,7 +8,9 @@ import type {
   CreateEmployeeDto,
   RemoveSkillDto,
   TransferEmployeeDto,
+  UpdateEmployeeDocumentDto,
   UpdateEmployeeDto,
+  UploadEmployeeDocumentDto,
 } from "@/types/dto/employee.dto";
 import type {
   Employee,
@@ -159,22 +161,35 @@ export const updateIssuedClothing = async (
   return res.data;
 };
 
+// Обновляем загрузку
 export const uploadEmployeeDocument = async (
   employeeId: string,
   file: File,
-  data: { name: string; expDate: string },
+  data: UploadEmployeeDocumentDto,
 ) => {
   const formData = new FormData();
-
   formData.append("file", file);
   formData.append("name", data.name);
-  formData.append("expDate", data.expDate);
+  if (data.expDate) formData.append("expDate", data.expDate);
+  formData.append("isIndefinite", String(data.isIndefinite ?? false));
+
+  // Добавляем комментарий в FormData, если он есть
+  if (data.comment) formData.append("comment", data.comment);
 
   const res = await api.post(
     `/employees/upload-document/${employeeId}`,
     formData,
   );
+  return res.data;
+};
 
+// Добавляем редактирование (PATCH)
+export const updateEmployeeDocument = async (
+  documentId: string,
+  data: UpdateEmployeeDocumentDto,
+): Promise<EmployeeDocument> => {
+  // Тут отправляем обычный JSON, так как файл не меняется
+  const res = await api.patch(`/employees/update-document/${documentId}`, data);
   return res.data;
 };
 
@@ -189,4 +204,23 @@ export const removeEmployeeDocument = async (
   documentId: string,
 ): Promise<void> => {
   await api.delete(`/employees/remove-document/${documentId}`);
+};
+
+// Обновить только комментарий
+export const updateDocumentComment = async (
+  documentId: string,
+  comment: string,
+): Promise<EmployeeDocument> => {
+  const res = await api.patch(`/employees/document/${documentId}/comment`, {
+    comment,
+  });
+  return res.data;
+};
+
+// Удалить только комментарий
+export const deleteDocumentComment = async (
+  documentId: string,
+): Promise<EmployeeDocument> => {
+  const res = await api.delete(`/employees/document/${documentId}/comment`);
+  return res.data;
 };

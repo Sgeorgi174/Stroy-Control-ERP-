@@ -27,8 +27,6 @@ type TransferToolCardProps = {
 export function TransferToolCard({ transferTools }: TransferToolCardProps) {
   const { openSheet } = useTransferSheetStore();
 
-  console.log(transferTools);
-
   return (
     <>
       {transferTools.map((transfer) => (
@@ -36,7 +34,7 @@ export function TransferToolCard({ transferTools }: TransferToolCardProps) {
           key={transfer.id}
           onClick={() => openSheet("tool", transfer)}
           className={`p-2 bg-sidebar-accent hover:shadow-primary border-l-4 border-b-4 cursor-pointer ${getColorBorder(
-            transfer.status
+            transfer.status,
           )}`}
         >
           <CardContent className="p-4">
@@ -105,7 +103,7 @@ export function TransferToolCard({ transferTools }: TransferToolCardProps) {
                 {transfer.rejectMode && transfer.status === "REJECT" && (
                   <Badge
                     className={`col-span-2 text-xs bg-transparent text-primary ${getColorStatus(
-                      transfer.status
+                      transfer.status,
                     )} rounded-xl font-medium text-center`}
                   >
                     {rejectModeMap[transfer.rejectMode]}
@@ -114,7 +112,7 @@ export function TransferToolCard({ transferTools }: TransferToolCardProps) {
                 {!transfer.rejectMode && transfer.status === "REJECT" && (
                   <Badge
                     className={`col-span-2 animate-caret-blink text-xs bg-transparent text-primary ${getColorStatus(
-                      transfer.status
+                      transfer.status,
                     )} rounded-xl font-medium text-center`}
                   >
                     {"Требуется действие"}
@@ -125,7 +123,7 @@ export function TransferToolCard({ transferTools }: TransferToolCardProps) {
                   transfer.status === "IN_TRANSIT" && (
                     <Badge
                       className={`col-span-2 text-xs bg-transparent text-primary ${getColorStatus(
-                        transfer.status
+                        transfer.status,
                       )} rounded-xl font-medium text-center`}
                     >
                       {rejectModeMap[transfer.rejectMode]}
@@ -138,7 +136,7 @@ export function TransferToolCard({ transferTools }: TransferToolCardProps) {
                 <div className="flex  items-center gap-2">
                   <Badge
                     className={`${getStatusColor(
-                      transfer.status
+                      transfer.status,
                     )} flex items-center gap-1`}
                   >
                     {getStatusIcon(transfer.status)}

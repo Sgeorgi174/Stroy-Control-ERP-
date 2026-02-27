@@ -5,8 +5,6 @@ import { TriangleAlert } from "lucide-react";
 type EmployeeWarningBoxProps = { employee: Employee };
 
 export function EmployeeWarningBox({ employee }: EmployeeWarningBoxProps) {
-  console.log(employee);
-
   return (
     <div className="flex flex-col gap-5">
       <Card className="bg-yellow-300/30">

@@ -209,8 +209,6 @@ export class DeviceController {
     @Body() dto: RetransferDeviceDto,
     @Authorized('id') userId: string,
   ) {
-    console.log(transferId, dto, userId);
-
     return this.deviceService.reTransfer(transferId, dto, userId);
   }
 

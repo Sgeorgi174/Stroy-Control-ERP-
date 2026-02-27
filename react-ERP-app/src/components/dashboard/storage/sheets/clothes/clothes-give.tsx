@@ -17,7 +17,6 @@ type ClothesGiveProps = { clothes: Clothes };
 
 export function ClothesGive({ clothes }: ClothesGiveProps) {
   const { data: user, isLoading: isUserLoading } = useAuth();
-  console.log(user);
 
   const employeeObjectId =
     user?.role === "FOREMAN"
@@ -38,7 +37,7 @@ export function ClothesGive({ clothes }: ClothesGiveProps) {
       objectId: employeeObjectId,
       type: "ACTIVE",
     },
-    !isUserLoading
+    !isUserLoading,
   );
 
   const giveClothesMutation = useGiveClothes(clothes.id);

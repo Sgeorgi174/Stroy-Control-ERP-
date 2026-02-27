@@ -67,14 +67,12 @@ export function NotificationCard({
   ];
 
   const sortedTransferNotifications = allNotifications.sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
   );
 
   const sortedReturnsNotifications = allReturnsNotification.sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
   );
-
-  console.log(sortedReturnsNotifications);
 
   return (
     <Tabs defaultValue="important" className="gap-0 col-span-3 ">

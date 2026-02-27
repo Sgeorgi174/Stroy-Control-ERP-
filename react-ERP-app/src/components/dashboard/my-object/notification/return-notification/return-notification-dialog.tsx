@@ -74,12 +74,10 @@ export function ReturnNotificationDialog({
         { quantity: clothesReturn.quantity },
         {
           onSuccess: () => onOpenChange(false),
-        }
+        },
       );
     }
   };
-
-  console.log(toolReturn);
 
   return (
     <DialogContent className="max-w-3xl min-w-[500px] max-h-[80vh] overflow-auto flex flex-col">

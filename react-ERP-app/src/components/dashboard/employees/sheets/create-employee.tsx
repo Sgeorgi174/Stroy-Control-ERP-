@@ -17,6 +17,13 @@ import { HeightSelectForForms } from "../../select-height-for-form";
 import { DatePicker } from "@/components/ui/date-picker";
 import { SelectCountry } from "../select-country";
 import type { Positions } from "@/types/employee";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const employeeSchema = z.object({
   firstName: z.string().min(1, "Это поле обязательно"),
@@ -326,25 +333,29 @@ export function EmployeeCreate() {
                 onSelectChange={(country) => {
                   setValue("country", country, { shouldValidate: true });
 
-                  // автоматически подставляем код паспорта для нероссийских стран
-                  if (country !== "RU") {
-                    const code =
-                      country === "KZ"
-                        ? "KZT"
-                        : country === "KG"
-                        ? "AZE"
-                        : country === "AZ"
-                        ? "KGZ"
-                        : country === "TJ"
-                        ? "TJK"
-                        : country === "BY"
-                        ? "BYN"
-                        : "";
-                    setValue("passportSerial", code, { shouldValidate: true });
-                  } else {
-                    // если выбрана Россия — очищаем поле для ручного ввода
-                    setValue("passportSerial", "", { shouldValidate: true });
+                  // Логика автоподстановки кодов
+                  let code = "";
+                  switch (country) {
+                    case "KZ":
+                      code = "KZT";
+                      break; // Дефолт для Казахстана
+                    case "KG":
+                      code = "KGZ";
+                      break;
+                    case "AZ":
+                      code = "AZE";
+                      break;
+                    case "TJ":
+                      code = "TJK";
+                      break;
+                    case "BY":
+                      code = "BYN";
+                      break;
+                    default:
+                      code = ""; // Для RU оставляем пустым
                   }
+
+                  setValue("passportSerial", code, { shouldValidate: true });
                 }}
               />
               {errors.country && (
@@ -358,38 +369,41 @@ export function EmployeeCreate() {
               <Label htmlFor="passportSerial">
                 {selectedCountry === "RU" ? "Серия" : "Код"}
               </Label>
-              <Input
-                className="w-[300px]"
-                placeholder={
-                  selectedCountry === "RU" ? "1234" : "KZT / KGZ / TJK"
-                }
-                id="passportSerial"
-                type="text"
-                readOnly={selectedCountry !== "RU"}
-                {...register("passportSerial")}
-                value={
-                  selectedCountry === "RU"
-                    ? watch("passportSerial")
-                    : selectedCountry === "KZ"
-                    ? "KZT"
-                    : selectedCountry === "KG"
-                    ? "KGZ"
-                    : selectedCountry === "AZ"
-                    ? "AZE"
-                    : selectedCountry === "TJ"
-                    ? "TJK"
-                    : selectedCountry === "BY"
-                    ? "BYN"
-                    : ""
-                }
-                onChange={(e) => {
-                  if (selectedCountry === "RU") {
-                    setValue("passportSerial", e.target.value, {
-                      shouldValidate: true,
-                    });
+
+              {selectedCountry === "KZ" ? (
+                /* 🇰🇿 Если Казахстан — показываем Select */
+                <Select
+                  value={watch("passportSerial")}
+                  onValueChange={(value) =>
+                    setValue("passportSerial", value, { shouldValidate: true })
                   }
-                }}
-              />
+                >
+                  <SelectTrigger className="w-[300px]">
+                    <SelectValue placeholder="Выберите код" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="KZT">KZT</SelectItem>
+                    <SelectItem value="KAZ">KAZ</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                /* 🌍 Для остальных стран оставляем Input */
+                <Input
+                  className="w-[300px]"
+                  placeholder={
+                    selectedCountry === "RU" ? "1234" : "Код паспорта"
+                  }
+                  id="passportSerial"
+                  type="text"
+                  // Используем as string, чтобы TS не ругался на непересекающиеся литералы
+                  readOnly={
+                    (selectedCountry as string) !== "RU" &&
+                    (selectedCountry as string) !== "KZ"
+                  }
+                  {...register("passportSerial")}
+                />
+              )}
+
               {errors.passportSerial && (
                 <p className="text-sm text-red-500">
                   {errors.passportSerial.message}
@@ -562,7 +576,7 @@ export function EmployeeCreate() {
                     } else {
                       setValue(
                         "skillIds",
-                        currentSkills.filter((id) => id !== skill.id)
+                        currentSkills.filter((id) => id !== skill.id),
                       );
                     }
                   }}

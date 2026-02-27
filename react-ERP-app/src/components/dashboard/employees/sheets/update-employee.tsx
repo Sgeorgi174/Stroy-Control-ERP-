@@ -14,7 +14,13 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { SelectCountry } from "../select-country";
 import { useUpdateEmployee } from "@/hooks/employee/useUpdateEmployee";
 import type { Employee, Positions } from "@/types/employee";
-import { useEffect } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const employeeSchema = z.object({
   firstName: z.string().min(1, "Это поле обязательно"),
@@ -74,7 +80,7 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
       clothingHeightId: employee.clothingHeight.id,
       position: employee.position,
       objectId: employee.objectId,
-      country: employee.country,
+      country: employee.country as FormData["country"],
       passportNumber: employee.passportNumber,
       passportSerial: employee.passportSerial,
       whereIssued: employee.whereIssued,
@@ -96,32 +102,8 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
   const selectedClosthingSize = watch("clothingSizeId");
   const selectedFootwearSize = watch("footwearSizeId");
   const selectedClothingHeight = watch("clothingHeightId");
-  const selectedCountry = watch("country");
-
-  useEffect(() => {
-    if (selectedCountry !== "RU") {
-      const code =
-        selectedCountry === "KZ"
-          ? "KZT"
-          : selectedCountry === "KG"
-          ? "KGZ"
-          : selectedCountry === "AZ"
-          ? "AZE"
-          : selectedCountry === "TJ"
-          ? "TJK"
-          : selectedCountry === "BY"
-          ? "BYN"
-          : "";
-
-      setValue("passportSerial", code, { shouldValidate: true });
-    }
-  }, [selectedCountry, setValue]);
-
-  useEffect(() => {
-    if (employee.country) {
-      setValue("country", employee.country);
-    }
-  }, [employee.country, setValue]);
+  // Приведение типа, чтобы избежать ошибки TS2367
+  const selectedCountry = watch("country") as FormData["country"];
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -162,15 +144,14 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-6 m-auto w-[700px]"
       >
+        {/* ФИО */}
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <Label htmlFor="lastName">Фамилия</Label>
             <Input
               className="w-[300px]"
-              placeholder="Фамилия"
               id="lastName"
-              type="text"
-              {...register("lastName", { required: "Это поле обязательно" })}
+              {...register("lastName")}
             />
             {errors.lastName && (
               <p className="text-sm text-red-500">{errors.lastName.message}</p>
@@ -180,10 +161,8 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
             <Label htmlFor="firstName">Имя</Label>
             <Input
               className="w-[300px]"
-              placeholder="Имя"
               id="firstName"
-              type="text"
-              {...register("firstName", { required: "Это поле обязательно" })}
+              {...register("firstName")}
             />
             {errors.firstName && (
               <p className="text-sm text-red-500">{errors.firstName.message}</p>
@@ -191,23 +170,16 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
           </div>
         </div>
 
+        {/* Отчество и ДР */}
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <Label htmlFor="fatherName">Отчество</Label>
             <Input
               className="w-[300px]"
-              placeholder="Отчество"
               id="fatherName"
-              type="text"
-              {...register("fatherName", { required: "Это поле обязательно" })}
+              {...register("fatherName")}
             />
-            {errors.fatherName && (
-              <p className="text-sm text-red-500">
-                {errors.fatherName.message}
-              </p>
-            )}
           </div>
-
           <div className="flex flex-col gap-2">
             <Label htmlFor="dob">Дата рождения</Label>
             <DatePicker
@@ -216,63 +188,32 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
                 setValue("dob", dateStr || "", { shouldValidate: true })
               }
             />
-            {errors.dob && (
-              <p className="text-sm text-red-500">{errors.dob.message}</p>
-            )}
           </div>
         </div>
 
+        {/* Телефон и Должность */}
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <Label htmlFor="phoneNumber">Номер телефона</Label>
             <Input
               className="w-[300px]"
-              placeholder="+79999999999"
               id="phoneNumber"
-              type="text"
-              {...register("phoneNumber", { required: "Это поле обязательно" })}
+              {...register("phoneNumber")}
             />
-            {errors.phoneNumber && (
-              <p className="text-sm text-red-500">
-                {errors.phoneNumber.message}
-              </p>
-            )}
           </div>
-
           <div className="flex flex-col gap-2">
             <Label htmlFor="position">Должность</Label>
             <PositionSelectForForms
               className="w-[300px]"
               selectedPosition={selectedPosition as Positions}
-              onSelectChange={(position) => setValue("position", position)}
+              onSelectChange={(pos) => setValue("position", pos)}
             />
-            {errors.position && (
-              <p className="text-sm text-red-500">{errors.position.message}</p>
-            )}
-          </div>
-        </div>
-
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="startWorkDate">Дата начала работы</Label>
-            <DatePicker
-              selected={watch("startWorkDate") || undefined}
-              onSelect={(dateStr) =>
-                setValue("startWorkDate", dateStr || "", {
-                  shouldValidate: true,
-                })
-              }
-            />
-            {errors.startWorkDate && (
-              <p className="text-sm text-red-500">
-                {errors.startWorkDate.message}
-              </p>
-            )}
           </div>
         </div>
 
         <div className="mt-6 mb-0 w-[450px] mx-auto h-px bg-border" />
 
+        {/* Объект и Размеры */}
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <Label htmlFor="objectId">Объект</Label>
@@ -281,34 +222,17 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
               isEmptyElement
               objects={objects}
               selectedObjectId={selectedObjectId}
-              onSelectChange={(objectId) => {
-                if (objectId) {
-                  setValue("objectId", objectId);
-                } else {
-                  setValue("objectId", "");
-                }
-              }}
+              onSelectChange={(id) => setValue("objectId", id || "")}
             />
-            {errors.objectId && (
-              <p className="text-sm text-red-500">{errors.objectId.message}</p>
-            )}
           </div>
-
           <div className="flex flex-col gap-2">
             <Label htmlFor="footwearSize">Размер обуви</Label>
             <SizeSelectForForms
               className="w-[300px]"
-              onSelectChange={(footwearSize) =>
-                setValue("footwearSizeId", footwearSize)
-              }
+              onSelectChange={(val) => setValue("footwearSizeId", val)}
               selectedSize={selectedFootwearSize}
               type="FOOTWEAR"
             />
-            {errors.footwearSizeId && (
-              <p className="text-sm text-red-500">
-                {errors.footwearSizeId.message}
-              </p>
-            )}
           </div>
         </div>
 
@@ -317,31 +241,18 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
             <Label htmlFor="clothingSize">Размер одежды</Label>
             <SizeSelectForForms
               className="w-[300px]"
-              onSelectChange={(clothingSize) =>
-                setValue("clothingSizeId", clothingSize)
-              }
+              onSelectChange={(val) => setValue("clothingSizeId", val)}
               selectedSize={selectedClosthingSize}
               type="CLOTHING"
             />
-            {errors.clothingSizeId && (
-              <p className="text-sm text-red-500">
-                {errors.clothingSizeId.message}
-              </p>
-            )}
           </div>
-
           <div className="flex flex-col gap-2">
             <Label>Ростовка</Label>
             <HeightSelectForForms
               className="w-[300px]"
               selectedHeight={selectedClothingHeight}
-              onSelectChange={(height) => setValue("clothingHeightId", height)}
+              onSelectChange={(val) => setValue("clothingHeightId", val)}
             />
-            {errors.clothingHeightId && (
-              <p className="text-sm text-red-500">
-                {errors.clothingHeightId.message}
-              </p>
-            )}
           </div>
         </div>
 
@@ -353,14 +264,36 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
 
           <div className="flex justify-between">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="passportSerial">Гражданство</Label>
+              <Label htmlFor="country">Гражданство</Label>
               <SelectCountry
                 selectedCountry={selectedCountry}
-                onSelectChange={(country) => setValue("country", country)}
+                onSelectChange={(country) => {
+                  setValue("country", country, { shouldValidate: true });
+
+                  // Логика автоподстановки при смене страны
+                  let code = "";
+                  switch (country) {
+                    case "KZ":
+                      code = "KZT";
+                      break;
+                    case "KG":
+                      code = "KGZ";
+                      break;
+                    case "AZ":
+                      code = "AZE";
+                      break;
+                    case "TJ":
+                      code = "TJK";
+                      break;
+                    case "BY":
+                      code = "BYN";
+                      break;
+                    default:
+                      code = "";
+                  }
+                  setValue("passportSerial", code, { shouldValidate: true });
+                }}
               />
-              {errors.country && (
-                <p className="text-sm text-red-500">{errors.country.message}</p>
-              )}
             </div>
           </div>
 
@@ -369,39 +302,35 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
               <Label htmlFor="passportSerial">
                 {selectedCountry === "RU" ? "Серия" : "Код"}
               </Label>
-              <Input
-                className="w-[300px]"
-                placeholder={
-                  selectedCountry === "RU" ? "1234" : "KZT / KGZ / TJK"
-                }
-                id="passportSerial"
-                type="text"
-                value={
-                  selectedCountry === "RU"
-                    ? watch("passportSerial")
-                    : selectedCountry === "KZ"
-                    ? "KZT"
-                    : selectedCountry === "KG"
-                    ? "KGZ"
-                    : selectedCountry === "AZ"
-                    ? "AZE"
-                    : selectedCountry === "TJ"
-                    ? "TJK"
-                    : watch("passportSerial")
-                }
-                readOnly={selectedCountry !== "RU"}
-                onChange={(e) => {
-                  if (selectedCountry === "RU") {
-                    setValue("passportSerial", e.target.value, {
-                      shouldValidate: true,
-                    });
+
+              {selectedCountry === "KZ" ? (
+                <Select
+                  value={watch("passportSerial")}
+                  onValueChange={(val) =>
+                    setValue("passportSerial", val, { shouldValidate: true })
                   }
-                }}
-              />
-              {errors.passportSerial && (
-                <p className="text-sm text-red-500">
-                  {errors.passportSerial.message}
-                </p>
+                >
+                  <SelectTrigger className="w-[300px]">
+                    <SelectValue placeholder="Выберите код" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="KZT">KZT</SelectItem>
+                    <SelectItem value="KAZ">KAZ</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input
+                  className="w-[300px]"
+                  placeholder={
+                    selectedCountry === "RU" ? "1234" : "Код паспорта"
+                  }
+                  id="passportSerial"
+                  readOnly={
+                    selectedCountry !== "RU" &&
+                    (selectedCountry as string) !== "KZ"
+                  }
+                  {...register("passportSerial")}
+                />
               )}
             </div>
 
@@ -409,16 +338,9 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
               <Label htmlFor="passportNumber">Номер</Label>
               <Input
                 className="w-[300px]"
-                placeholder="567890"
                 id="passportNumber"
-                type="text"
                 {...register("passportNumber")}
               />
-              {errors.passportNumber && (
-                <p className="text-sm text-red-500">
-                  {errors.passportNumber.message}
-                </p>
-              )}
             </div>
           </div>
 
@@ -427,29 +349,16 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
               <Label htmlFor="whereIssued">Кем выдан</Label>
               <Input
                 className="w-[300px]"
-                placeholder="ГУ МВД России по г. Москве"
                 id="whereIssued"
-                type="text"
                 {...register("whereIssued")}
               />
-              {errors.whereIssued && (
-                <p className="text-sm text-red-500">
-                  {errors.whereIssued.message}
-                </p>
-              )}
             </div>
-
             <div className="flex flex-col gap-2">
               <Label htmlFor="issueDate">Дата выдачи</Label>
               <DatePicker
-                selected={watch("issueDate") || undefined} // передаём строку напрямую
+                selected={watch("issueDate") || undefined}
                 onSelect={(dateStr) => setValue("issueDate", dateStr || "")}
               />
-              {errors.issueDate && (
-                <p className="text-sm text-red-500">
-                  {errors.issueDate.message}
-                </p>
-              )}
             </div>
           </div>
         </div>
@@ -459,90 +368,40 @@ export function EmployeeUpdate({ employee }: EmployeeUpdateProps) {
         {/* 🏠 Адрес регистрации */}
         <div className="flex flex-col gap-6">
           <p className="text-center text-xl">Адрес регистрации</p>
-
           <div className="flex justify-between">
             <div className="flex flex-col gap-2">
               <Label htmlFor="registrationRegion">Регион</Label>
               <Input
                 className="w-[300px]"
-                placeholder="Московская область"
                 id="registrationRegion"
-                type="text"
                 {...register("registrationRegion")}
               />
-              {errors.registrationRegion && (
-                <p className="text-sm text-red-500">
-                  {errors.registrationRegion.message}
-                </p>
-              )}
             </div>
-
             <div className="flex flex-col gap-2">
               <Label htmlFor="registrationCity">Населенный пункт</Label>
               <Input
                 className="w-[300px]"
-                placeholder="Москва"
                 id="registrationCity"
-                type="text"
                 {...register("registrationCity")}
               />
-              {errors.registrationCity && (
-                <p className="text-sm text-red-500">
-                  {errors.registrationCity.message}
-                </p>
-              )}
             </div>
           </div>
-
           <div className="flex justify-between">
             <div className="flex flex-col gap-2">
               <Label htmlFor="registrationStreet">Улица</Label>
               <Input
                 className="w-[300px]"
-                placeholder="ул. Ленина"
                 id="registrationStreet"
-                type="text"
                 {...register("registrationStreet")}
               />
-              {errors.registrationStreet && (
-                <p className="text-sm text-red-500">
-                  {errors.registrationStreet.message}
-                </p>
-              )}
             </div>
-
             <div className="flex flex-col gap-2">
               <Label htmlFor="registrationBuild">Дом</Label>
               <Input
                 className="w-[300px]"
-                placeholder="12"
                 id="registrationBuild"
-                type="text"
                 {...register("registrationBuild")}
               />
-              {errors.registrationBuild && (
-                <p className="text-sm text-red-500">
-                  {errors.registrationBuild.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex justify-between">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="registrationFlat">Квартира (необязательно)</Label>
-              <Input
-                className="w-[300px]"
-                placeholder="45"
-                id="registrationFlat"
-                type="text"
-                {...register("registrationFlat")}
-              />
-              {errors.registrationFlat && (
-                <p className="text-sm text-red-500">
-                  {errors.registrationFlat.message}
-                </p>
-              )}
             </div>
           </div>
         </div>

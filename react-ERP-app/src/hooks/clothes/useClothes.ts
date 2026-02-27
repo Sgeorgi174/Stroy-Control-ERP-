@@ -32,6 +32,7 @@ import {
   deleteProvider,
   getAllProviders,
   returnFromEmployee,
+  getClothesCatalog,
 } from "@/services/api/clothes.api";
 import type {
   CreateClothesDto,
@@ -58,7 +59,7 @@ export const useClothes = (
     objectId?: string | null;
     season?: Seasons | null;
   },
-  enabled = true
+  enabled = true,
 ) => {
   return useQuery({
     queryKey: ["clothes", params],
@@ -547,5 +548,15 @@ export const useDeleteProvider = () => {
         error?.response?.data?.message || "Не удалось удалить поставщика";
       toast.error(message);
     },
+  });
+};
+
+// ===== CLOTHES CATALOG =====
+
+export const useClothesCatalog = (enabled = true) => {
+  return useQuery({
+    queryKey: ["clothes-catalog"],
+    queryFn: () => getClothesCatalog(),
+    enabled,
   });
 };

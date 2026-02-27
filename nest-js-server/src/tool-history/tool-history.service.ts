@@ -72,8 +72,6 @@ export class ToolHistoryService {
   }
 
   public async delete(historyId: string) {
-    console.log(historyId);
-
     try {
       return await this.prismaService.toolHistory.delete({
         where: { id: historyId },

@@ -52,8 +52,6 @@ export function ClothesTable({
 
   const sortedClothes = useMemo(() => sortClothes(clothes), [clothes]);
 
-  console.log(sortedClothes);
-
   return (
     <>
       <div className="bg-muted p-2 pl-4 rounded-xl mt-5 flex items-center gap-10">

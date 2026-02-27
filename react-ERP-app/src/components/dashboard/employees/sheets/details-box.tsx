@@ -22,8 +22,6 @@ export function EmployeeDetailsBox({
     .filter(Boolean)
     .join(" ");
 
-  console.log(employee);
-
   return (
     <div className="flex flex-col gap-5">
       <Card>

@@ -88,4 +88,29 @@ export class TelegramBotService {
       );
     }
   }
+
+  public async sendBulkRequestNotifications(phones: string[], text: string) {
+    // 1. Находим пользователей в базе по телефонам
+    const telegramUsers = await this.prismaService.telegramUser.findMany({
+      where: { phone: { in: phones } },
+    });
+
+    // 2. Отправляем сообщения
+    const sendPromises = telegramUsers.map(async (user) => {
+      try {
+        // Формируем тестовое сообщение: добавляем имя того, кому оно ПРЕДНАЗНАЧАЛОСЬ
+        const testText = `${text}`;
+
+        await this.bot.telegram.sendMessage(836996470, testText);
+
+        console.log(
+          `Тестовое уведомление для ${user.chatId} отправлено в ваш чат`,
+        );
+      } catch (error) {
+        console.error(`Ошибка отправки для ${user.phone}:`, error);
+      }
+    });
+
+    await Promise.allSettled(sendPromises);
+  }
 }

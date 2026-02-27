@@ -50,6 +50,8 @@ export type EmployeeDocument = {
   expDate: string | null;
   docSrc: string;
   createdAt: string;
+  isIndefinite: boolean; // Добавляем сюда
+  comment?: string;
 };
 
 export type Employee = {

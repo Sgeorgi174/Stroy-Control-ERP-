@@ -25,3 +25,8 @@ export interface CreateClothesRequestDto {
 }
 
 export type UpdateClothesRequestDto = Partial<CreateClothesRequestDto>;
+
+export interface UpdateRequestStatusDto {
+  status: RequestStatus; // Или используй Enum из Prisma, если прокидываешь типы
+  text?: string;
+}

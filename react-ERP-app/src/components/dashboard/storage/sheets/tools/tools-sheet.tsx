@@ -67,8 +67,6 @@ export function ToolsSheet() {
     <Sheet open={isOpen} onOpenChange={closeSheet}>
       <SheetContent
         className="w-[700px] sm:max-w-[1000px] overflow-auto"
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
         <SheetHeader>
@@ -99,7 +97,7 @@ export function ToolsSheet() {
                 <div className="w-full flex justify-start mt-5">
                   <Badge
                     className={`${getStatusColor(
-                      selectedTool ? selectedTool.status : "ON_OBJECT"
+                      selectedTool ? selectedTool.status : "ON_OBJECT",
                     )} flex items-center gap-1`}
                   >
                     {selectedTool && getStatusIcon(selectedTool.status)}

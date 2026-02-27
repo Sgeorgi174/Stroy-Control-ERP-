@@ -50,8 +50,6 @@ export function ObjectNotification({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { mutate: activateObject, isPending } = useActivateObject();
 
-  console.log(clothes);
-
   const handleConfirm = () => {
     activateObject(objectId, {
       onSuccess: () => {

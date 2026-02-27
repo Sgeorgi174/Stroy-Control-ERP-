@@ -20,8 +20,6 @@ export default function Step4Summary({
   const selectedEmployees = employeeSelections.filter((e) => e.selected);
   const absentEmployees = employeeSelections.filter((e) => !e.selected);
 
-  console.log(employeeSelections);
-
   return (
     <div className="flex-1 overflow-y-auto space-y-6 p-3 border rounded-md">
       <div>
@@ -45,7 +43,7 @@ export default function Step4Summary({
                 <TableRow key={emp.id}>
                   <TableCell>
                     {`${emp.lastName} ${emp.firstName.charAt(
-                      0
+                      0,
                     )}.${emp.fatherName.charAt(0)}.`}
                   </TableCell>
                   <TableCell className="pl-6">
@@ -80,7 +78,7 @@ export default function Step4Summary({
                 <TableRow key={emp.id}>
                   <TableCell>
                     {`${emp.lastName} ${emp.firstName.charAt(
-                      0
+                      0,
                     )}.${emp.fatherName.charAt(0)}.`}
                   </TableCell>
                   <TableCell className="pl-6">
