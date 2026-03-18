@@ -152,6 +152,7 @@ export function ClothesEdit({ clothes }: ClothesEditProps) {
           <div className="flex flex-col gap-2">
             <Label htmlFor="quantity">Количество</Label>
             <Input
+              disabled
               id="quantity"
               className="w-[300px]"
               type="number"

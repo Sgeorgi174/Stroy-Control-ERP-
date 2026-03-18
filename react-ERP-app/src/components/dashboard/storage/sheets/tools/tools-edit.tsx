@@ -172,6 +172,7 @@ export function ToolsEdit({ tool }: ToolEditProps) {
             <Label htmlFor="quantity">Количество *</Label>
             <Input
               id="quantity"
+              disabled
               type="number"
               placeholder="Введите количество"
               {...register("quantity", { valueAsNumber: true })}
