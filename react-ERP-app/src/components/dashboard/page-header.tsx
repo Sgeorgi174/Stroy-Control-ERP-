@@ -25,6 +25,7 @@ const pathToTabMap = {
   "/reports": "Отчеты",
   "/requests": "Заявки",
   "/addtitionalStorage": "Доп. склады",
+  "/work-log": "Журналы",
 };
 
 export function PageHeader({ location }: PageHeaderProps) {

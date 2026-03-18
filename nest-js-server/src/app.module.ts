@@ -25,6 +25,7 @@ import { S3Module } from './s3/s3.module';
 import { AdditionalStorageModule } from './additional-storage/additional-storage.module';
 import { SentItemModule } from './sent-item/sent-item.module';
 import { ClothesRequestModule } from './clothes-request/clothes-request.module';
+import { WorkLogModule } from './work-log/work-log.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { ClothesRequestModule } from './clothes-request/clothes-request.module';
     AdditionalStorageModule,
     SentItemModule,
     ClothesRequestModule,
+    WorkLogModule,
   ],
 })
 export class AppModule {}

@@ -15,6 +15,7 @@ import MyObjectPanelWrapper from "@/components/dashboard/my-object/my-object-pan
 import { ReportPage } from "@/pages/reports/Reports";
 import { Requests } from "@/pages/requests/Requests";
 import { AdditionalStorage } from "@/pages/additional-storage/AdditionalStorage";
+import { WorkLog } from "@/pages/work-log/WorkLog";
 
 export const router = createBrowserRouter([
   { path: "/login", element: <Auth /> },
@@ -36,6 +37,7 @@ export const router = createBrowserRouter([
           { path: "/reports", element: <ReportPage /> },
           { path: "/requests", element: <Requests /> },
           { path: "/addtitionalStorage", element: <AdditionalStorage /> },
+          { path: "/work-log", element: <WorkLog /> },
         ],
       },
 
