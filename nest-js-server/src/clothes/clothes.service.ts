@@ -287,7 +287,12 @@ export class ClothesService {
 
   async update(id: string, dto: UpdateDto) {
     try {
-      await this.getById(id); // чтобы вызвать NotFound заранее
+      const clothes = await this.getById(id); // чтобы вызвать NotFound заранее
+
+      if (dto.quantity !== clothes.quantity)
+        throw new BadRequestException(
+          'В редакции нельзя менять кол-во спец. одежды/обуви. Используйте для этого опции списания или пополнения',
+        );
 
       return await this.prismaService.clothes.update({
         where: { id },
