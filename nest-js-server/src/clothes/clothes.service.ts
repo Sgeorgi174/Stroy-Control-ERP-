@@ -311,10 +311,12 @@ export class ClothesService {
         },
       });
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
       handlePrismaError(error, {
         conflictMessage: 'Обновление нарушает уникальность данных',
         notFoundMessage: 'Одежда для обновления не найдена',
-        defaultMessage: 'Ошибка обновления одежды',
+        defaultMessage: errorMessage,
       });
     }
   }
