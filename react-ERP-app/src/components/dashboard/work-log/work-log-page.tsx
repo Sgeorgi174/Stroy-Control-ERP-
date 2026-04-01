@@ -59,7 +59,7 @@ export function WorkLogPage() {
           Выберите объект, чтобы просмотреть или создать записи в журнале
         </div>
       ) : (
-        <div className="rounded-md border overflow-hidden bg-white">
+        <div className="rounded-md border overflow-hidden bg-muted">
           <div className="hidden md:block">
             <Table>
               <TableHeader>
