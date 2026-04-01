@@ -5,8 +5,9 @@ import {
 } from '@nestjs/common';
 import { Prisma, RequestStatus, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+// import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { ClothesRequestService } from './clothes-request.service';
+import { MaxBotService } from 'src/max-bot/max-bot.service';
 
 const requestWithRelations =
   Prisma.validator<Prisma.ClothesRequestDefaultArgs>()({
@@ -23,7 +24,9 @@ type ClothesRequestWithRelations = Prisma.ClothesRequestGetPayload<
 export class ClothesRequestStatusService {
   constructor(
     private prisma: PrismaService,
-    private telegram: TelegramBotService,
+    // private telegram: TelegramBotService,
+    private maxBot: MaxBotService,
+
     private clothesRequestService: ClothesRequestService,
   ) {}
 
@@ -114,7 +117,7 @@ export class ClothesRequestStatusService {
     statusNote: string,
   ) {
     const phones = request.participants.map((p) => p.phone);
-    await this.telegram.sendBulkRequestNotifications(phones, statusNote);
+    await this.maxBot.sendBulkRequestNotifications(phones, statusNote);
   }
 
   // 2. Уведомляем только автора (оборачиваем телефон в массив [phone])
@@ -123,7 +126,7 @@ export class ClothesRequestStatusService {
     statusNote: string,
   ) {
     const phones = request.participants.map((p) => p.phone);
-    await this.telegram.sendBulkRequestNotifications(phones, statusNote);
+    await this.maxBot.sendBulkRequestNotifications(phones, statusNote);
   }
 
   // 3. Уведомляем только автора
@@ -132,7 +135,7 @@ export class ClothesRequestStatusService {
     statusNote: string,
   ) {
     const phones = request.participants.map((p) => p.phone);
-    await this.telegram.sendBulkRequestNotifications(phones, statusNote);
+    await this.maxBot.sendBulkRequestNotifications(phones, statusNote);
   }
 
   private async onProgress(
@@ -140,7 +143,7 @@ export class ClothesRequestStatusService {
     statusNote: string,
   ) {
     const phones = request.participants.map((p) => p.phone);
-    await this.telegram.sendBulkRequestNotifications(phones, statusNote);
+    await this.maxBot.sendBulkRequestNotifications(phones, statusNote);
   }
 
   // 4. Уведомляем автора (исправлен тип аргумента на Relations)
@@ -150,7 +153,7 @@ export class ClothesRequestStatusService {
   ) {
     // Здесь будет логика списания со склада (this.warehouseService...)
     const phones = request.participants.map((p) => p.phone);
-    await this.telegram.sendBulkRequestNotifications(phones, statusNote);
+    await this.maxBot.sendBulkRequestNotifications(phones, statusNote);
   }
 
   private validateTransition(current: RequestStatus, next: RequestStatus) {

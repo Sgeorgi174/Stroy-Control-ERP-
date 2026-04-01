@@ -11,16 +11,18 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Request, Response } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { ConfigService } from '@nestjs/config';
-import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+// import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { User } from '@prisma/client';
+import { MaxBotService } from 'src/max-bot/max-bot.service';
 
 @Injectable()
 export class AuthService {
   public constructor(
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
-    private readonly telegramBotService: TelegramBotService,
+    // private readonly telegramBotService: TelegramBotService,
+    private readonly maxBotService: MaxBotService,
   ) {}
 
   public async register(req: Request, dto: RegisterDto) {
@@ -82,7 +84,7 @@ export class AuthService {
         'Пользователь с таким номером не зарегистрирован. Пожалуйста, обратитесь к администратору ',
       );
 
-    await this.telegramBotService.sendOtp({
+    await this.maxBotService.sendOtp({
       phone: user.phone,
       userId: user.id,
     });

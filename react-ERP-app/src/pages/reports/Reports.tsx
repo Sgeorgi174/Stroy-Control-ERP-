@@ -30,6 +30,7 @@ import {
 import { useShiftsWithFilters } from "@/hooks/shift/useShift";
 import type { Shift } from "@/types/shift";
 import { ReportShiftPDFButton } from "@/components/dashboard/reports/pdf button/report-pdf-generate-shift";
+import { WorkLogReport } from "@/components/dashboard/reports/work-log/work-log-report";
 
 /* ===================== utils ===================== */
 function getMonthRange(year: number, month: number) {
@@ -196,7 +197,7 @@ export function ReportPage() {
         <TabsTrigger value="shifts">
           <Clock className="h-4 w-4 mr-2" /> Смены
         </TabsTrigger>
-        <TabsTrigger disabled value="work-list">
+        <TabsTrigger value="work-list">
           <ListChecks className="h-4 w-4 mr-2" /> Журналы
         </TabsTrigger>
       </TabsList>
@@ -375,6 +376,11 @@ export function ReportPage() {
             )}
           </CardContent>
         </Card>
+      </TabsContent>
+
+      {/* Контент журналов */}
+      <TabsContent value="work-list">
+        <WorkLogReport />
       </TabsContent>
     </Tabs>
   );

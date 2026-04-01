@@ -20,17 +20,19 @@ import { UpdateStatusDto } from './dto/update-status.dto';
 import { GetToolsQueryDto } from 'src/tool/dto/get-tools-query.dto';
 import { RejectDeviceTransferDto } from './dto/reject-transfer.dto';
 import { UserService } from 'src/user/user.service';
-import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+// import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { WriteOffDeviceInTransferDto } from './dto/write-off-in-transit.dto';
 import { CancelDeviceTransferDto } from './dto/cancel-transfer.dto';
 import { RetransferDeviceDto } from './dto/retransfer.dto';
+import { MaxBotService } from 'src/max-bot/max-bot.service';
 
 @Controller('devices')
 export class DeviceController {
   constructor(
     private readonly deviceService: DeviceService,
     private readonly userService: UserService,
-    private readonly telegramBotService: TelegramBotService,
+    // private readonly telegramBotService: TelegramBotService,
+    private readonly maxBotService: MaxBotService,
   ) {}
 
   @Authorization(
@@ -192,7 +194,7 @@ export class DeviceController {
       transferId,
       'DEVICE',
     );
-    await this.telegramBotService.sendRequestTransferPhoto(phone);
+    await this.maxBotService.sendRequestTransferPhoto(phone);
     return { success: true };
   }
 

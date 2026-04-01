@@ -3,13 +3,20 @@ export interface CreateWorkLogItemDto {
 }
 
 export interface CreateWorkLogDto {
-  date: string; // ISO string
+  date: string;
   objectId: string;
   items: CreateWorkLogItemDto[];
-  photos?: string[]; // Массив URL после загрузки
+  photos?: File[]; // Именно File (из input), а не строки URL
 }
 
 export interface GetWorkLogFilterDto {
   year: number;
   month: number;
+}
+
+export interface UpdateWorkLogDto {
+  date?: string;
+  items?: { text: string }[];
+  photos?: File[];
+  removedPhotoIds?: string[];
 }

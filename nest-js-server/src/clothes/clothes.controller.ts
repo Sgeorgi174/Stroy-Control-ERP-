@@ -24,7 +24,7 @@ import { WriteOffDto } from './dto/write-off.dto';
 import { GiveClothingDto } from './dto/give-clothing.dto';
 import { GetClothesQueryDto } from './dto/get-clothes-query.dto';
 import { RejectClothesTransferDto } from './dto/reject-transfer.dto';
-import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+// import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { UserService } from 'src/user/user.service';
 import { RetransferClothesDto } from './dto/retransfer.dto';
 import { CancelClothesTransferDto } from './dto/cancel-transfer.dto';
@@ -35,13 +35,15 @@ import { AddHeightForClothingDto } from './dto/add-height-for-clothing.dto';
 import { AddProviderDto } from './dto/add-provider.dto';
 import { UpdateProviderDto } from './dto/update-provider.dto';
 import { ReturnFromEmployeeDto } from './dto/return-from-employee.dto';
+import { MaxBotService } from 'src/max-bot/max-bot.service';
 
 @Controller('clothes')
 export class ClothesController {
   constructor(
     private readonly clothesService: ClothesService,
     private readonly userService: UserService,
-    private readonly telegramBotService: TelegramBotService,
+    // private readonly telegramBotService: TelegramBotService,
+    private readonly maxBotService: MaxBotService,
   ) {}
 
   @Authorization(
@@ -335,7 +337,7 @@ export class ClothesController {
     Roles.FOREMAN,
   )
   @Post('request-photo-transfer/:id')
-  async rejectToolTransfer(
+  async rejectClothesTransfer(
     @Param('id') transferId: string,
     @Authorized('phone') phone: string,
   ) {
@@ -344,7 +346,7 @@ export class ClothesController {
       transferId,
       'CLOTHES',
     );
-    await this.telegramBotService.sendRequestTransferPhoto(phone);
+    await this.maxBotService.sendRequestTransferPhoto(phone);
     return { success: true };
   }
 

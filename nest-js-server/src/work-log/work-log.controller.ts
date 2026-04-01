@@ -6,12 +6,15 @@ import {
   Param,
   Post,
   Query,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { WorkLogService } from './work-log.service';
 import { Authorization } from 'src/auth/decorators/auth.decorator';
 import { Roles } from '@prisma/client';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { CreateWorkLogDto } from './dto/create-work-log.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('work-log')
 export class WorkLogController {
@@ -23,12 +26,26 @@ export class WorkLogController {
     Roles.ACCOUNTANT,
     Roles.ADMIN,
     Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
   )
   @Post('create')
-  create(@Authorized('id') userId: string, @Body() dto: CreateWorkLogDto) {
-    return this.workLogService.create(userId, dto);
+  @UseInterceptors(FilesInterceptor('photos', 3))
+  create(
+    @Authorized('id') userId: string,
+    @Body() dto: CreateWorkLogDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    return this.workLogService.create(userId, dto, files);
   }
 
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('object/:objectId')
   getArchive(
     @Param('objectId') objectId: string,
@@ -38,6 +55,14 @@ export class WorkLogController {
     return this.workLogService.findByMonth(objectId, +year, +month);
   }
 
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Get('object/:objectId/calendar-highlights')
   getCalendarHighlights(
     @Param('objectId') objectId: string,
@@ -47,8 +72,36 @@ export class WorkLogController {
     return this.workLogService.getActiveDates(objectId, +year, +month);
   }
 
+  @Authorization(
+    Roles.MASTER,
+    Roles.OWNER,
+    Roles.ACCOUNTANT,
+    Roles.ADMIN,
+    Roles.ASSISTANT_MANAGER,
+    Roles.FOREMAN,
+  )
   @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.workLogService.remove(id);
   }
+
+  // @Authorization(
+  //   Roles.MASTER,
+  //   Roles.OWNER,
+  //   Roles.ACCOUNTANT,
+  //   Roles.ADMIN,
+  //   Roles.ASSISTANT_MANAGER,
+  //   Roles.FOREMAN,
+  // )
+  // @Patch('update/:id')
+  // @UseInterceptors(FilesInterceptor('photos'))
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() dto: UpdateWorkLogDto,
+  //   @UploadedFiles() files: Express.Multer.File[],
+  // ) {
+  //   console.log(dto);
+
+  //   return this.workLogService.update(id, dto, files);
+  // }
 }

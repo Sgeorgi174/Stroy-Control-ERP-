@@ -5,10 +5,12 @@ import {
   getWorkLogArchive,
   getCalendarHighlights,
   deleteWorkLog,
+  updateWorkLog,
 } from "@/services/api/work-log.api";
 import type {
   CreateWorkLogDto,
   GetWorkLogFilterDto,
+  UpdateWorkLogDto,
 } from "@/types/dto/work-log.dto";
 import type { AppAxiosError } from "@/types/error-response";
 import type { WorkLog } from "@/types/work-log";
@@ -54,6 +56,32 @@ export const useCreateWorkLog = (objectId: string) => {
     onError: (error: AppAxiosError) => {
       const message =
         error?.response?.data?.message || "Не удалось сохранить запись";
+      toast.error(message);
+    },
+  });
+};
+
+// 🔹 Обновить запись
+export const useUpdateWorkLog = (objectId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateWorkLogDto }) =>
+      updateWorkLog(id, data),
+
+    onSuccess: () => {
+      toast.success("Запись обновлена");
+
+      queryClient.invalidateQueries({ queryKey: ["work-logs", objectId] });
+      queryClient.invalidateQueries({
+        queryKey: ["work-log-calendar", objectId],
+      });
+    },
+
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось обновить запись";
+
       toast.error(message);
     },
   });

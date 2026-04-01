@@ -521,7 +521,7 @@ export class UserService {
     type: TransferType,
   ) {
     try {
-      const telegramUser = await this.prismaService.telegramUser.update({
+      const maxUser = await this.prismaService.maxUser.update({
         where: { phone },
         data: {
           photoRequestedTransferId: transferId,
@@ -529,7 +529,7 @@ export class UserService {
         },
       });
 
-      return telegramUser;
+      return maxUser;
     } catch (error) {
       handlePrismaError(error, {
         defaultMessage: 'Не удалось найти айди перемещения',

@@ -16,7 +16,7 @@ import { DeviceModule } from './device/device.module';
 import { DeviceHistoryModule } from './device-history/device-history.module';
 import { TabletModule } from './tablet/tablet.module';
 import { TabletHistoryModule } from './tablet-history/tablet-history.module';
-import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
+// import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
 import { SkillModule } from './skill/skill.module';
 import { ShiftModule } from './shift/shift.module';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -26,6 +26,8 @@ import { AdditionalStorageModule } from './additional-storage/additional-storage
 import { SentItemModule } from './sent-item/sent-item.module';
 import { ClothesRequestModule } from './clothes-request/clothes-request.module';
 import { WorkLogModule } from './work-log/work-log.module';
+import { MaxBotModule } from './max-bot/max-bot.module';
+import { MaxModule } from 'nestjs-max';
 
 @Module({
   imports: [
@@ -38,6 +40,13 @@ import { WorkLogModule } from './work-log/work-log.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         token: configService.getOrThrow<string>('TELEGRAM_BOT_TOKEN'),
+      }),
+    }),
+    MaxModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        token: configService.getOrThrow<string>('MAX_BOT_TOKEN'),
       }),
     }),
     ScheduleModule.forRoot(),
@@ -55,7 +64,7 @@ import { WorkLogModule } from './work-log/work-log.module';
     DeviceHistoryModule,
     TabletModule,
     TabletHistoryModule,
-    TelegramBotModule,
+    // TelegramBotModule,
     SkillModule,
     ShiftModule,
     ShiftTemplateModule,
@@ -64,6 +73,7 @@ import { WorkLogModule } from './work-log/work-log.module';
     SentItemModule,
     ClothesRequestModule,
     WorkLogModule,
+    MaxBotModule,
   ],
 })
 export class AppModule {}

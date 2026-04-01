@@ -3,13 +3,34 @@ import type { WorkLog } from "@/types/work-log";
 import type {
   CreateWorkLogDto,
   GetWorkLogFilterDto,
+  UpdateWorkLogDto,
 } from "@/types/dto/work-log.dto";
 
 // Создать запись в журнале
 export const createWorkLog = async (
   data: CreateWorkLogDto,
 ): Promise<WorkLog> => {
-  const res = await api.post("/work-log/create", data);
+  const formData = new FormData();
+
+  formData.append("date", data.date);
+  formData.append("objectId", data.objectId);
+
+  // Массив объектов превращаем в JSON-строку
+  // (на бэкенде наш @Transform его распарсит)
+  formData.append("items", JSON.stringify(data.items));
+
+  // Добавляем файлы
+  if (data.photos) {
+    data.photos.forEach((file) => {
+      formData.append("photos", file);
+    });
+  }
+
+  const res = await api.post("/work-log/create", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };
 
@@ -33,6 +54,40 @@ export const getCalendarHighlights = async (
     `/work-log/object/${objectId}/calendar-highlights`,
     { params: filters },
   );
+  return res.data;
+};
+
+// 🔹 Обновить запись
+export const updateWorkLog = async (
+  id: string,
+  data: UpdateWorkLogDto,
+): Promise<WorkLog> => {
+  const formData = new FormData();
+
+  if (data.date) {
+    formData.append("date", data.date);
+  }
+
+  if (data.items) {
+    formData.append("items", JSON.stringify(data.items));
+  }
+
+  if (data.removedPhotoIds) {
+    formData.append("removedPhotoIds", JSON.stringify(data.removedPhotoIds));
+  }
+
+  if (data.photos) {
+    data.photos.forEach((file) => {
+      formData.append("photos", file);
+    });
+  }
+
+  const res = await api.patch(`/work-log/update/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
   return res.data;
 };
 

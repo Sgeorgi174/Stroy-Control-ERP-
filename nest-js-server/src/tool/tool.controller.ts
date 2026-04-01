@@ -20,7 +20,7 @@ import { TransferDto } from './dto/transfer.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { GetToolsQueryDto } from './dto/get-tools-query.dto';
 import { UserService } from 'src/user/user.service';
-import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+// import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { RejectToolTransferDto } from './dto/reject-transfer.dto';
 import { RetransferToolDto } from './dto/retransfer.dto';
 import { WriteOffToolInTransferDto } from './dto/write-off-in-transit.dto';
@@ -31,13 +31,15 @@ import { AddToolCommentDto } from './dto/add-tool-comment.dto';
 import { AddQuantityToolDto } from './dto/add-quantity-tool.dto';
 import { WriteOffQuantityDto } from './dto/write-off-quantity-tool.dto';
 import { Roles, User } from '@prisma/client';
+import { MaxBotService } from 'src/max-bot/max-bot.service';
 
 @Controller('tools')
 export class ToolController {
   constructor(
     private readonly toolService: ToolService,
     private readonly userService: UserService,
-    private readonly telegramBotService: TelegramBotService,
+    // private readonly telegramBotService: TelegramBotService,
+    private readonly maxBotService: MaxBotService,
   ) {}
 
   @Authorization(
@@ -328,7 +330,7 @@ export class ToolController {
     @Authorized('phone') phone: string,
   ) {
     await this.userService.setPhotoRequestTransferId(phone, transferId, 'TOOL');
-    await this.telegramBotService.sendRequestTransferPhoto(phone);
+    await this.maxBotService.sendRequestTransferPhoto(phone);
     return { success: true };
   }
 

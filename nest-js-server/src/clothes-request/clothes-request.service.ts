@@ -8,13 +8,15 @@ import { CreateClothesRequestDto } from './dto/create-clothes-request.dto';
 import { UpdateClothesRequestDto } from './dto/update-clothes-request.dto';
 import { ClothesActions, RequestStatus, Roles, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+// import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+import { MaxBotService } from 'src/max-bot/max-bot.service';
 
 @Injectable()
 export class ClothesRequestService {
   constructor(
     private readonly prisma: PrismaService,
-    private telegram: TelegramBotService,
+    // private telegram: TelegramBotService,
+    private maxBot: MaxBotService,
   ) {}
 
   async findOne(id: string, user: User) {
@@ -257,10 +259,7 @@ export class ClothesRequestService {
 
       // Внедряем TelegramBotService в ClothesRequestService или вызываем через сторонний механизм
       // (Не забудь добавить private readonly telegram: TelegramBotService в конструктор)
-      await this.telegram.sendBulkRequestNotifications(
-        phones,
-        notificationText,
-      );
+      await this.maxBot.sendBulkRequestNotifications(phones, notificationText);
     }
 
     return newComment;

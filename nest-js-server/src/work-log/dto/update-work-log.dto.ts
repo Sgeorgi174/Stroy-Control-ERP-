@@ -1,28 +1,26 @@
 import {
-  IsString,
-  IsDateString,
-  IsUUID,
   IsArray,
-  ValidateNested,
+  IsDateString,
   IsOptional,
+  IsString,
+  ValidateNested,
 } from 'class-validator';
 import { Type, Transform, TransformFnParams } from 'class-transformer';
 
-class CreateWorkLogItemDto {
+class UpdateWorkLogItemDto {
   @IsString()
   text: string;
 }
 
-export class CreateWorkLogDto {
+export class UpdateWorkLogDto {
+  @IsOptional()
   @IsDateString()
-  date: string;
+  date?: string;
 
-  @IsUUID()
-  objectId: string;
-
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateWorkLogItemDto)
+  @Type(() => UpdateWorkLogItemDto)
   @Transform(({ value }: TransformFnParams) => {
     // Если данные пришли через multipart/form-data, они будут строкой
     if (typeof value === 'string') {
@@ -30,15 +28,26 @@ export class CreateWorkLogDto {
         const parsed = JSON.parse(value);
         return Array.isArray(parsed) ? parsed : [parsed];
       } catch {
-        return value;
+        return [];
       }
     }
     return value;
   })
-  items: CreateWorkLogItemDto[];
+  items?: UpdateWorkLogItemDto[];
 
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  @IsOptional()
-  photos?: string[];
+  @Transform(({ value }: TransformFnParams) => {
+    if (!value) return [];
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return [value];
+      }
+    }
+    return value;
+  })
+  removedPhotoIds?: string[];
 }
