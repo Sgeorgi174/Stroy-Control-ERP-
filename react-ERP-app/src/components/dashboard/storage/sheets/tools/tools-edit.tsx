@@ -47,13 +47,7 @@ export function ToolsEdit({ tool }: { tool: Tool }) {
   const updateTool = useUpdateTool(tool.id);
   const { closeSheet } = useToolsSheetStore();
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<FormData>({
+  const { register, handleSubmit, setValue, watch } = useForm<FormData>({
     resolver: zodResolver(toolSchema) as unknown as Resolver<FormData>,
     defaultValues: {
       name: tool.name,

@@ -60,22 +60,15 @@ export function EditWorkLogDialog({
 
   const { mutate: updateLog, isPending } = useUpdateWorkLog(objectId);
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    reset,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      date: new Date(log.date),
-      items: log.items.map((i) => ({ text: i.text })),
-      newPhotos: [],
-    },
-  });
+  const { register, control, handleSubmit, reset, setValue, watch } =
+    useForm<FormValues>({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+        date: new Date(log.date),
+        items: log.items.map((i) => ({ text: i.text })),
+        newPhotos: [],
+      },
+    });
 
   const { fields, append, remove } = useFieldArray({
     control,

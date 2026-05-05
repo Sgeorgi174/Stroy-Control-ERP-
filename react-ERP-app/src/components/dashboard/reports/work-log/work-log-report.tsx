@@ -29,7 +29,6 @@ import {
 import { ImageIcon, Loader2, Package } from "lucide-react";
 import { format } from "date-fns";
 import type { Object } from "@/types/object";
-import type { WorkLog } from "@/types/work-log";
 import { PhotoViewer } from "@/components/ui/photo-viewer";
 
 const months = [
