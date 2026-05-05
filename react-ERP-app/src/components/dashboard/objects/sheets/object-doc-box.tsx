@@ -209,7 +209,7 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
                 <Plus className="h-4 w-4" /> Добавить
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg max-h-[90vh] flex flex-col p-0">
+            <DialogContent className="max-w-lg max-h-[90vh] flex flex-col p-0 overflow-auto">
               <DialogHeader className="p-6 pb-0">
                 <DialogTitle>
                   {editingDoc ? "Редактировать" : "Новый документ"}
