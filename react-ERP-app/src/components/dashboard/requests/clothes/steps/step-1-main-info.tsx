@@ -72,6 +72,15 @@ export function Step1MainInfo({
             className="w-full"
           />
         </div>
+
+        <div className="space-y-2">
+          <Label>Поставщик</Label>
+          <CustomerSelectForRequest
+            selectedCustomer={form.customer}
+            onSelectChange={(val) => setForm({ ...form, customer: val })}
+            className="w-full"
+          />
+        </div>
       </div>
 
       {/* Участники */}

@@ -9,6 +9,7 @@ export interface CreateToolDto {
   description?: string;
   originalSerial?: string;
   marketUrl?: string;
+  brandId?: string; // ID бренда из справочника
 }
 
 export interface UpdateToolDto extends CreateToolDto {
@@ -66,4 +67,8 @@ export interface AddQuantityTool {
 export interface WriteOffQuantityTool {
   quantity: number;
   comment: string;
+}
+
+export interface CreateBrandDto {
+  name: string;
 }

@@ -16,7 +16,10 @@ export interface GetWorkLogFilterDto {
 
 export interface UpdateWorkLogDto {
   date?: string;
-  items?: { text: string }[];
+  objectId?: string;
+  items: CreateWorkLogItemDto[];
+  // Массив URL фотографий, которые пользователь НЕ удалил
+  existingPhotos: string[];
+  // Новые файлы (File) из input
   photos?: File[];
-  removedPhotoIds?: string[];
 }

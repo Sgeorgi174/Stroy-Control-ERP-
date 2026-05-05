@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   UploadedFiles,
@@ -15,6 +16,7 @@ import { Roles } from '@prisma/client';
 import { Authorized } from 'src/auth/decorators/authorized.decorator';
 import { CreateWorkLogDto } from './dto/create-work-log.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { UpdateWorkLogDto } from './dto/update-work-log.dto';
 
 @Controller('work-log')
 export class WorkLogController {
@@ -85,23 +87,14 @@ export class WorkLogController {
     return this.workLogService.remove(id);
   }
 
-  // @Authorization(
-  //   Roles.MASTER,
-  //   Roles.OWNER,
-  //   Roles.ACCOUNTANT,
-  //   Roles.ADMIN,
-  //   Roles.ASSISTANT_MANAGER,
-  //   Roles.FOREMAN,
-  // )
-  // @Patch('update/:id')
-  // @UseInterceptors(FilesInterceptor('photos'))
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() dto: UpdateWorkLogDto,
-  //   @UploadedFiles() files: Express.Multer.File[],
-  // ) {
-  //   console.log(dto);
-
-  //   return this.workLogService.update(id, dto, files);
-  // }
+  @Authorization(Roles.MASTER, Roles.OWNER, Roles.ADMIN, Roles.FOREMAN)
+  @Patch('update/:id')
+  @UseInterceptors(FilesInterceptor('photos', 3))
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateWorkLogDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    return this.workLogService.update(id, dto, files);
+  }
 }

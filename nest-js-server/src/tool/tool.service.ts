@@ -49,6 +49,7 @@ export class ToolService {
           description: dto.description ?? undefined,
           originalSerial: dto.originalSerial ?? undefined,
           marketUrl: dto.marketUrl ?? undefined,
+          brandId: dto.brandId,
         },
         include: { storage: true },
       });
@@ -252,6 +253,7 @@ export class ToolService {
       },
       include: {
         bagItems: true,
+        brand: true,
         inTransit: { select: { quantity: true, status: true } },
         storage: {
           select: {
@@ -282,6 +284,7 @@ export class ToolService {
           quantity: dto.quantity ?? undefined,
           originalSerial: dto.originalSerial ?? undefined,
           marketUrl: dto.marketUrl ?? undefined,
+          brandId: dto.brandId,
         },
         include: { storage: true },
       });

@@ -113,6 +113,7 @@ export class ShiftService {
       },
       include: {
         object: { select: { id: true, name: true } },
+        createdBy: { select: { lastName: true, firstName: true } },
         employees: {
           include: {
             employee: {

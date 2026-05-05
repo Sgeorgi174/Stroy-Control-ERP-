@@ -57,25 +57,27 @@ export const getCalendarHighlights = async (
   return res.data;
 };
 
-// 🔹 Обновить запись
+// Удалить запись
+export const deleteWorkLog = async (id: string): Promise<void> => {
+  await api.delete(`/work-log/delete/${id}`);
+};
+
 export const updateWorkLog = async (
   id: string,
   data: UpdateWorkLogDto,
 ): Promise<WorkLog> => {
   const formData = new FormData();
 
-  if (data.date) {
-    formData.append("date", data.date);
-  }
+  if (data.date) formData.append("date", data.date);
+  if (data.objectId) formData.append("objectId", data.objectId);
 
-  if (data.items) {
-    formData.append("items", JSON.stringify(data.items));
-  }
+  // Сериализуем массив работ
+  formData.append("items", JSON.stringify(data.items));
 
-  if (data.removedPhotoIds) {
-    formData.append("removedPhotoIds", JSON.stringify(data.removedPhotoIds));
-  }
+  // Сериализуем список оставшихся фото (бэкенд их распарсит и сохранит)
+  formData.append("existingPhotos", JSON.stringify(data.existingPhotos));
 
+  // Добавляем НОВЫЕ файлы
   if (data.photos) {
     data.photos.forEach((file) => {
       formData.append("photos", file);
@@ -87,11 +89,5 @@ export const updateWorkLog = async (
       "Content-Type": "multipart/form-data",
     },
   });
-
   return res.data;
-};
-
-// Удалить запись
-export const deleteWorkLog = async (id: string): Promise<void> => {
-  await api.delete(`/work-log/delete/${id}`);
 };

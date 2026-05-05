@@ -188,7 +188,7 @@ export function ReportPage() {
       className="w-full mt-6"
     >
       <TabsList className="grid w-full grid-cols-4">
-        <TabsTrigger disabled value="tools">
+        <TabsTrigger value="tools">
           <Wrench className="h-4 w-4 mr-2" /> Инструмент
         </TabsTrigger>
         <TabsTrigger disabled value="clothes">

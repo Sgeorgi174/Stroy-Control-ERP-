@@ -114,6 +114,8 @@ export function MyObjectMasterPanel({ object }: MyObjectMasterPanelProps) {
     0,
   );
 
+  console.log(shiftData);
+
   return (
     <div>
       <div className="grid grid-cols-5 gap-3 mt-6">
@@ -216,7 +218,14 @@ export function MyObjectMasterPanel({ object }: MyObjectMasterPanelProps) {
             {/* Таблица с сотрудниками, которые работают */}
             <Card className="p-5 border rounded-2xl">
               <div className="flex items-center justify-between">
-                <h4 className="font-medium mb-4">Сотрудники на смене</h4>
+                <div className="flex gap-5">
+                  <h4 className="font-medium mb-4">Сотрудники на смене</h4>{" "}
+                  <p className="text-muted-foreground">
+                    Кто открыл: {shiftData[0].createdBy.lastName}{" "}
+                    {shiftData[0].createdBy.firstName}
+                  </p>
+                </div>
+
                 {shiftData[0].updatedReason && (
                   <div className="flex items-center gap-5">
                     <p className="text-muted-foreground">

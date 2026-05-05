@@ -18,6 +18,7 @@ import { ClothesSettingsDropdown } from "./сlothes-settings-dropdown";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { useLocation } from "react-router";
+import { ToolsSettingsDropdown } from "./tool-setting-dropdown";
 
 type StorageFiltersProps = {
   isBulk: boolean;
@@ -30,7 +31,7 @@ export function StorageFilters({ isBulk, setIsBulk }: StorageFiltersProps) {
   const { activeTab, searchQuery, setSearchQuery } = useFilterPanelStore();
   const [localSearch, setLocalSearch, debouncedSearch] = useDebouncedState(
     searchQuery,
-    700
+    700,
   );
 
   useEffect(() => {
@@ -77,16 +78,18 @@ export function StorageFilters({ isBulk, setIsBulk }: StorageFiltersProps) {
           <TypeTabs />
 
           {activeTab === "tool" && (
-            <Tabs
-              value={isBulk ? "true" : "false"}
-              onValueChange={(val) => setIsBulk(val === "true")}
-              className="w-[400px]"
-            >
-              <TabsList>
-                <TabsTrigger value="false">Одиночные</TabsTrigger>
-                <TabsTrigger value="true">Групповые</TabsTrigger>
-              </TabsList>
-            </Tabs>
+            <div className="flex flex-row gap-3">
+              <Tabs
+                value={isBulk ? "true" : "false"}
+                onValueChange={(val) => setIsBulk(val === "true")}
+              >
+                <TabsList>
+                  <TabsTrigger value="false">Одиночные</TabsTrigger>
+                  <TabsTrigger value="true">Групповые</TabsTrigger>
+                </TabsList>
+              </Tabs>
+              <ToolsSettingsDropdown />
+            </div>
           )}
           {(activeTab === "clothing" || activeTab === "footwear") && (
             <ClothesSettingsDropdown />

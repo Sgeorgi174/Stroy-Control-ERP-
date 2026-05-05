@@ -8,6 +8,15 @@ export type ToolStatus =
   | "LOST"
   | "WRITTEN_OFF";
 
+export type ToolBrand = {
+  id: string;
+  name: string;
+  createdAt: string;
+  _count?: {
+    tools: number;
+  };
+};
+
 export type Tool = {
   id: string;
   createdAt: string;
@@ -26,4 +35,6 @@ export type Tool = {
   quantity: number;
   originalSerial: string;
   marketUrl: string | undefined;
+  brandId?: string;
+  brand?: ToolBrand;
 };

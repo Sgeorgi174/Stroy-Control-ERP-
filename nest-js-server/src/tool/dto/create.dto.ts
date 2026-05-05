@@ -39,6 +39,10 @@ export class CreateDto {
   @IsOptional()
   objectId?: string;
 
+  @IsString({ message: 'brand_id должен быть строкой' })
+  @IsOptional()
+  brandId?: string;
+
   @IsString({ message: 'Описание должно быть строкой' })
   @IsOptional()
   description?: string;

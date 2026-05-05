@@ -2,6 +2,7 @@ import type { Object } from "@/types/object";
 import { EmployeesOnObjectTable } from "../tables/employees-on-object";
 import { useEmployees } from "@/hooks/employee/useEmployees";
 import { ObjectDetailsBox } from "./object-details-box";
+import { ObjectDocumentsBox } from "./object-doc-box";
 
 type ObjectDetailsProps = { object: Object };
 
@@ -15,6 +16,7 @@ export function ObjectDetails({ object }: ObjectDetailsProps) {
   return (
     <div className="p-5 flex flex-col gap-5 mt-4">
       <ObjectDetailsBox object={object} />
+      <ObjectDocumentsBox objectId={object.id} />
       <EmployeesOnObjectTable
         employees={employees}
         isError={isError}

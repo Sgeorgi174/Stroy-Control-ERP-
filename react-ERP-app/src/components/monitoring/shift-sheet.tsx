@@ -132,6 +132,9 @@ export function ShiftSheet({
         <div>
           <div className="flex justify-between">
             <h4 className="text-lg font-medium mb-2">Присутствующие</h4>
+            <p className="text-muted-foreground">
+              Кто открыл: {shift.createdBy.lastName} {shift.createdBy.firstName}
+            </p>
             {shift.updatedReason && (
               <div className="flex items-center gap-5">
                 <p className="text-muted-foreground">
@@ -158,7 +161,7 @@ export function ShiftSheet({
               </div>
             )}
           </div>
-          <Table className="mb-6">
+          <Table className="mb-6 mt-5">
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[180px]">ФИО</TableHead>

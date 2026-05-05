@@ -14,6 +14,8 @@ const truncateUrl = (url: string, maxLength = 20) => {
 };
 
 export function ToolsDetailsBox({ tool }: DetailsBoxProps) {
+  console.log(tool);
+
   return (
     <>
       <div className="flex flex-col gap-5">
@@ -40,6 +42,16 @@ export function ToolsDetailsBox({ tool }: DetailsBoxProps) {
                   <p className="font-medium">
                     {tool.isBulk ? tool.quantity : tool.serialNumber}
                   </p>
+                </div>
+              </div>
+
+              <div className="col-span-2">
+                <p className="text-sm text-muted-foreground">
+                  {"Марка (Бренд"}
+                </p>
+                <div className="flex gap-2 items-center">
+                  <Hash className="w-5 h-5" />
+                  <p className="font-medium">{tool.brand?.name}</p>
                 </div>
               </div>
 

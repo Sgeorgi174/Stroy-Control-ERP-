@@ -1,53 +1,16 @@
-import {
-  IsArray,
-  IsDateString,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
-import { Type, Transform, TransformFnParams } from 'class-transformer';
+// dto/update-work-log.dto.ts
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateWorkLogDto } from './create-work-log.dto';
+import { IsArray, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
-class UpdateWorkLogItemDto {
-  @IsString()
-  text: string;
-}
-
-export class UpdateWorkLogDto {
-  @IsOptional()
-  @IsDateString()
-  date?: string;
-
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => UpdateWorkLogItemDto)
-  @Transform(({ value }: TransformFnParams) => {
-    // Если данные пришли через multipart/form-data, они будут строкой
-    if (typeof value === 'string') {
-      try {
-        const parsed = JSON.parse(value);
-        return Array.isArray(parsed) ? parsed : [parsed];
-      } catch {
-        return [];
-      }
-    }
-    return value;
-  })
-  items?: UpdateWorkLogItemDto[];
-
-  @IsOptional()
+export class UpdateWorkLogDto extends PartialType(CreateWorkLogDto) {
   @IsArray()
   @IsString({ each: true })
-  @Transform(({ value }: TransformFnParams) => {
-    if (!value) return [];
-    if (typeof value === 'string') {
-      try {
-        return JSON.parse(value);
-      } catch {
-        return [value];
-      }
-    }
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') return JSON.parse(value);
     return value;
   })
-  removedPhotoIds?: string[];
+  existingPhotos?: string[]; // URL-ы фотографий, которые мы решили ОСТАВИТЬ
 }

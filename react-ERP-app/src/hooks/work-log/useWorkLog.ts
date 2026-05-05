@@ -61,32 +61,6 @@ export const useCreateWorkLog = (objectId: string) => {
   });
 };
 
-// 🔹 Обновить запись
-export const useUpdateWorkLog = (objectId: string) => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateWorkLogDto }) =>
-      updateWorkLog(id, data),
-
-    onSuccess: () => {
-      toast.success("Запись обновлена");
-
-      queryClient.invalidateQueries({ queryKey: ["work-logs", objectId] });
-      queryClient.invalidateQueries({
-        queryKey: ["work-log-calendar", objectId],
-      });
-    },
-
-    onError: (error: AppAxiosError) => {
-      const message =
-        error?.response?.data?.message || "Не удалось обновить запись";
-
-      toast.error(message);
-    },
-  });
-};
-
 // 🔹 Удалить запись
 export const useDeleteWorkLog = (objectId: string) => {
   const queryClient = useQueryClient();
@@ -104,6 +78,29 @@ export const useDeleteWorkLog = (objectId: string) => {
       console.log(error);
 
       toast.error("Ошибка при удалении");
+    },
+  });
+};
+
+// 🔹 Обновить запись
+export const useUpdateWorkLog = (objectId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateWorkLogDto }) =>
+      updateWorkLog(id, data),
+    onSuccess: () => {
+      toast.success("Запись обновлена");
+      // Обновляем список и календарь для текущего объекта
+      queryClient.invalidateQueries({ queryKey: ["work-logs", objectId] });
+      queryClient.invalidateQueries({
+        queryKey: ["work-log-calendar", objectId],
+      });
+    },
+    onError: (error: AppAxiosError) => {
+      const message =
+        error?.response?.data?.message || "Не удалось обновить запись";
+      toast.error(message);
     },
   });
 };

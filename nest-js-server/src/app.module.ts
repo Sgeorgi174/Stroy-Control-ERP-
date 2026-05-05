@@ -28,6 +28,8 @@ import { ClothesRequestModule } from './clothes-request/clothes-request.module';
 import { WorkLogModule } from './work-log/work-log.module';
 import { MaxBotModule } from './max-bot/max-bot.module';
 import { MaxModule } from 'nestjs-max';
+import { MaterialDeliveriesModule } from './material-deliveries/material-deliveries.module';
+import { ObjectDocumentModule } from './object-document/object-document.module';
 
 @Module({
   imports: [
@@ -74,6 +76,8 @@ import { MaxModule } from 'nestjs-max';
     ClothesRequestModule,
     WorkLogModule,
     MaxBotModule,
+    MaterialDeliveriesModule,
+    ObjectDocumentModule,
   ],
 })
 export class AppModule {}

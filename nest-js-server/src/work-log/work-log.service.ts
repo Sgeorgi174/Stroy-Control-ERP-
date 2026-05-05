@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateWorkLogDto } from './dto/create-work-log.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { S3WorkLogPhotosService } from 'src/s3/s3-work-log-photo.service';
+import { UpdateWorkLogDto } from './dto/update-work-log.dto';
 
 @Injectable()
 export class WorkLogService {
@@ -94,65 +95,61 @@ export class WorkLogService {
     return activeDays.sort((a, b) => a - b);
   }
 
-  // async update(
-  //   id: string,
-  //   dto: UpdateWorkLogDto,
-  //   files: Express.Multer.File[],
-  // ) {
-  //   const uploadedPhotoUrls = await this.s3Photos.uploadPhotos(files);
-
-  //   return this.prisma.$transaction(async (tx) => {
-  //     // 2. Удаляем фото (если есть)
-  //     if (dto.removedPhotoIds?.length) {
-  //       const photosToDelete = await tx.workLogPhoto.findMany({
-  //         where: { id: { in: dto.removedPhotoIds } },
-  //       });
-
-  //       // удаляем из S3
-  //       await Promise.all(
-  //         photosToDelete.map((p) => this.s3Photos.deletePhoto(p.url)),
-  //       );
-
-  //       // удаляем из БД
-  //       await tx.workLogPhoto.deleteMany({
-  //         where: { id: { in: dto.removedPhotoIds } },
-  //       });
-  //     }
-
-  //     // 3. Обновляем сам лог
-  //     const updated = await tx.workLog.update({
-  //       where: { id },
-  //       data: {
-  //         ...(dto.date && { date: new Date(dto.date) }),
-
-  //         // полностью пересоздаём items (самый простой и надежный способ)
-  //         ...(dto.items && {
-  //           items: {
-  //             deleteMany: {}, // удаляем старые
-  //             create: dto.items.map((item) => ({
-  //               text: item.text,
-  //             })),
-  //           },
-  //         }),
-
-  //         // добавляем новые фото
-  //         ...(uploadedPhotoUrls.length && {
-  //           photos: {
-  //             create: uploadedPhotoUrls.map((url) => ({ url })),
-  //           },
-  //         }),
-  //       },
-  //       include: {
-  //         items: true,
-  //         photos: true,
-  //       },
-  //     });
-
-  //     return updated;
-  //   });
-  // }
-
   async remove(id: string) {
     return this.prisma.workLog.delete({ where: { id } });
+  }
+
+  async update(
+    id: string,
+    dto: UpdateWorkLogDto,
+    newFiles: Express.Multer.File[],
+  ) {
+    // 1. Получаем текущую запись с фото и пунктами
+    const currentLog = await this.prisma.workLog.findUnique({
+      where: { id },
+      include: { photos: true, items: true },
+    });
+
+    if (!currentLog) throw new Error('Запись не найдена');
+
+    // 2. Работа с фотографиями
+    const existingPhotosUrls = dto.existingPhotos || [];
+    const photosToDelete = currentLog.photos.filter(
+      (p) => !existingPhotosUrls.includes(p.url),
+    );
+
+    // Удаляем файлы из S3
+    if (photosToDelete.length > 0) {
+      await Promise.all(
+        photosToDelete.map((p) => this.s3Photos.deletePhoto(p.url)),
+      );
+    }
+
+    // Загружаем новые фото
+    const uploadedPhotoUrls = await this.s3Photos.uploadPhotos(newFiles);
+    const finalPhotoUrls = [...existingPhotosUrls, ...uploadedPhotoUrls];
+
+    // 3. Транзакция в БД
+    return this.prisma.workLog.update({
+      where: { id },
+      data: {
+        date: dto.date ? new Date(dto.date) : currentLog.date,
+        objectId: dto.objectId || currentLog.objectId,
+        // Обновляем пункты: удаляем старые и создаем новые
+        items: {
+          deleteMany: {},
+          create: dto.items?.map((item) => ({ text: item.text })) || [],
+        },
+        // Обновляем фото в БД
+        photos: {
+          deleteMany: {},
+          create: finalPhotoUrls.map((url) => ({ url })),
+        },
+      },
+      include: {
+        items: true,
+        photos: true,
+      },
+    });
   }
 }

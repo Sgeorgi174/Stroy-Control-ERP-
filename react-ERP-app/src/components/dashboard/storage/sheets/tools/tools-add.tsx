@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { Resolver } from "react-hook-form";
 import { ObjectSelectForForms } from "@/components/dashboard/select-object-for-form";
+import { SelectPreffixForInventory } from "@/components/dashboard/select-preffix-inventory";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,12 +15,12 @@ import { useState, useEffect } from "react";
 import { useTools } from "@/hooks/tool/useTools";
 import { generateInventoryNumber } from "@/lib/utils/generateInventaryNumber";
 import type { Tool } from "@/types/tool";
-import { SelectPreffixForInventory } from "@/components/dashboard/select-preffix-inventory";
+import { BrandSelectForForms } from "@/components/dashboard/select-tool-brand";
 
-// ✅ Единая схема, которая учитывает оба варианта (штучный / групповой)
 const toolSchema = z
   .object({
     name: z.string().min(1, "Это поле обязательно"),
+    brandId: z.string().optional(),
     objectId: z.string().min(1, "Выберите объект"),
     isBulk: z.boolean().default(false),
     serialNumber: z.string().optional(),
@@ -55,21 +56,18 @@ export function ToolsAdd() {
     searchQuery: "",
     status: "OPEN",
   });
-
   const { data: tools = [] } = useTools({
     isBulk: false,
     searchQuery: "",
     objectId: "all",
-    status: undefined,
     includeAllStatuses: "true",
   });
   const usedNumbers = tools
     .map((tool: Tool) => tool.serialNumber)
     .filter(Boolean);
-
   const createTool = useCreateTool();
-
   const [prefix, setPrefix] = useState<string | null>(null);
+  const { closeSheet } = useToolsSheetStore();
 
   const {
     register,
@@ -79,9 +77,10 @@ export function ToolsAdd() {
     reset,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(toolSchema) as unknown as Resolver<FormData>, // ✅ фикс ошибки типов
+    resolver: zodResolver(toolSchema) as unknown as Resolver<FormData>,
     defaultValues: {
       name: "",
+      brandId: "",
       serialNumber: "",
       objectId: "",
       isBulk: false,
@@ -93,28 +92,22 @@ export function ToolsAdd() {
   });
 
   const isBulk = watch("isBulk");
-
-  const { closeSheet } = useToolsSheetStore();
   const selectedObjectId = watch("objectId");
+  const selectedBrandId = watch("brandId");
 
   const onSubmit = (data: FormData) => {
     const payload = {
+      ...data,
       name: data.name.trim().replace(/\s+/g, " "),
-      objectId: data.objectId,
-      description: data.description ? data.description.trim() : undefined,
-      marketUrl: data.marketUrl ?? "",
-      originalSerial: data.originalSerial
-        ? data.originalSerial.trim()
-        : undefined,
-      isBulk: data.isBulk,
+      brandId: data.brandId || undefined,
+      description: data.description?.trim() || undefined,
+      originalSerial: data.originalSerial?.trim() || undefined,
       ...(data.isBulk
         ? { quantity: data.quantity }
         : { serialNumber: data.serialNumber?.trim() }),
     };
 
-    const mutation = createTool;
-
-    mutation.mutate(payload, {
+    createTool.mutate(payload, {
       onSuccess: () => {
         reset();
         closeSheet();
@@ -123,20 +116,12 @@ export function ToolsAdd() {
   };
 
   useEffect(() => {
-    if (isBulk) {
-      // Групповой: очищаем Инвентарный номер, ставим quantity по умолчанию
-      setValue("serialNumber", "");
-      setValue("quantity", 1);
-    } else {
-      // Одиночный: очищаем quantity
-      setValue("quantity", undefined);
-      setValue("serialNumber", "");
-    }
+    setValue("serialNumber", "");
+    setValue("quantity", isBulk ? 1 : undefined);
   }, [isBulk, setValue]);
 
   return (
     <div className="p-5">
-      {/* 🔹 Переключатель типа инструмента */}
       <Tabs
         value={isBulk ? "true" : "false"}
         onValueChange={(val) => setValue("isBulk", val === "true")}
@@ -149,33 +134,26 @@ export function ToolsAdd() {
       </Tabs>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-        {/* Чекбокс */}
-        {/* {!isBulk && (
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="isBag"
-              checked={isBag}
-              onCheckedChange={(checked) => setIsBag(!!checked)}
-            />
-            <Label htmlFor="isBag">Создать сумку расключника</Label>
-          </div>
-        )} */}
-
-        {/* Имя */}
         <div className="flex flex-col gap-2 w-[400px]">
           <Label htmlFor="name">Наименование *</Label>
           <Input
             id="name"
-            type="text"
-            placeholder="Введите наименование"
             {...register("name")}
+            placeholder="Введите наименование"
           />
           {errors.name && (
             <p className="text-sm text-red-500">{errors.name.message}</p>
           )}
         </div>
 
-        {/* Серийник или количество */}
+        <div className="flex flex-col gap-2 w-[400px]">
+          <Label>Марка (Бренд)</Label>
+          <BrandSelectForForms
+            selectedBrandId={selectedBrandId}
+            onSelectChange={(id) => setValue("brandId", id)}
+          />
+        </div>
+
         {!isBulk ? (
           <>
             <div className="flex gap-2">
@@ -183,15 +161,9 @@ export function ToolsAdd() {
                 <Label htmlFor="serialNumber">Инвентарный № *</Label>
                 <Input
                   id="serialNumber"
-                  placeholder="Инвентарный №"
-                  type="text"
                   {...register("serialNumber")}
+                  placeholder="Инвентарный №"
                 />
-                {errors.serialNumber && (
-                  <p className="text-sm text-red-500">
-                    {errors.serialNumber.message}
-                  </p>
-                )}
               </div>
               <div className="flex flex-col gap-2">
                 <Label>Генерация</Label>
@@ -202,20 +174,16 @@ export function ToolsAdd() {
                   className="w-[230px]"
                 />
               </div>
-
-              <div className="flex flex-col gap-2">
-                <Label className="text-transparent">Генерация</Label>
+              <div className="flex flex-col gap-2 pt-8">
                 <Button
                   type="button"
                   disabled={!prefix}
-                  onClick={() => {
-                    if (!prefix) return;
-                    const generated = generateInventoryNumber(
-                      prefix,
-                      usedNumbers,
-                    );
-                    setValue("serialNumber", generated);
-                  }}
+                  onClick={() =>
+                    setValue(
+                      "serialNumber",
+                      generateInventoryNumber(prefix!, usedNumbers),
+                    )
+                  }
                 >
                   Сгенерировать
                 </Button>
@@ -225,15 +193,9 @@ export function ToolsAdd() {
               <Label htmlFor="originalSerial">Серийный №</Label>
               <Input
                 id="originalSerial"
-                placeholder="Введите серийный номер"
-                type="text"
                 {...register("originalSerial")}
+                placeholder="Заводской номер"
               />
-              {errors.originalSerial && (
-                <p className="text-sm text-red-500">
-                  {errors.originalSerial.message}
-                </p>
-              )}
             </div>
           </>
         ) : (
@@ -242,60 +204,36 @@ export function ToolsAdd() {
             <Input
               id="quantity"
               type="number"
-              placeholder="Введите количество"
               {...register("quantity", { valueAsNumber: true })}
             />
-            {errors.quantity && (
-              <p className="text-sm text-red-500">{errors.quantity.message}</p>
-            )}
           </div>
         )}
 
         <div className="flex flex-col gap-2 w-[400px]">
-          <Label htmlFor="description">Описание \ Детали</Label>
+          <Label htmlFor="description">Описание</Label>
           <Input
             id="description"
-            type="text"
-            placeholder="Укажите детали или описание"
             {...register("description")}
+            placeholder="Детали..."
           />
-          {errors.description && (
-            <p className="text-sm text-red-500">{errors.description.message}</p>
-          )}
         </div>
 
-        <div className="flex flex-col gap-2 w-[400px]">
-          <Label htmlFor="marketUrl">Ссылка на товар</Label>
-          <Input
-            id="marketUrl"
-            type="text"
-            placeholder="Укажите ссылку"
-            {...register("marketUrl")}
-          />
-          {errors.marketUrl && (
-            <p className="text-sm text-red-500">{errors.marketUrl.message}</p>
-          )}
-        </div>
-
-        {/* Объект */}
         <div className="flex flex-col gap-2">
           <Label>Место хранения *</Label>
           <ObjectSelectForForms
             selectedObjectId={selectedObjectId}
-            onSelectChange={(id) => {
-              if (id) setValue("objectId", id);
-            }}
+            onSelectChange={(id) => id && setValue("objectId", id)}
             objects={objects}
           />
-          {errors.objectId && (
-            <p className="text-sm text-red-500">{errors.objectId.message}</p>
-          )}
         </div>
 
-        {/* Кнопка */}
-        <div className="flex justify-center mt-10">
-          <Button type="submit" className="w-[300px]">
-            "Добавить инструмент"
+        <div className="flex justify-center mt-6">
+          <Button
+            type="submit"
+            className="w-[300px]"
+            disabled={createTool.isPending}
+          >
+            Добавить инструмент
           </Button>
         </div>
       </form>

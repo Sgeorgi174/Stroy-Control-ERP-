@@ -64,7 +64,7 @@ const sidebarItems = [
     url: "/work-log",
     tab: "work-log",
     icon: Logs,
-    roles: ["ADMIN"],
+    roles: ["ADMIN", "FOREMAN", "MASTER", "ASSISTANT_MANAGER"],
   },
   {
     title: "Склад",
