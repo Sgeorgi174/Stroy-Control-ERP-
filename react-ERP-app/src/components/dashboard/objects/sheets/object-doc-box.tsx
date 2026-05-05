@@ -44,7 +44,6 @@ import type { Tool } from "@/types/tool";
 import type { Device } from "@/types/device";
 import { DOC_TYPE_LABELS } from "./doc-box/object-document-conts";
 import { useDebouncedState } from "@/hooks/useDebounceState";
-import { CommentPopover } from "../../storage/comment-popover";
 import { DescriptionPopover } from "../../storage/description-popover";
 
 type FilterType = ObjectDocType;
