@@ -44,6 +44,8 @@ import type { Tool } from "@/types/tool";
 import type { Device } from "@/types/device";
 import { DOC_TYPE_LABELS } from "./doc-box/object-document-conts";
 import { useDebouncedState } from "@/hooks/useDebounceState";
+import { CommentPopover } from "../../storage/comment-popover";
+import { DescriptionPopover } from "../../storage/description-popover";
 
 type FilterType = ObjectDocType;
 
@@ -223,7 +225,7 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
                       <div className="flex items-center gap-3 p-3 border rounded-lg bg-muted/50">
                         <FileText className="h-5 w-5 text-primary" />
                         <span className="flex-1 text-sm truncate">
-                          {file.name}
+                          <DescriptionPopover text={file.name} maxLength={15} />
                         </span>
                         <Button
                           variant="ghost"
