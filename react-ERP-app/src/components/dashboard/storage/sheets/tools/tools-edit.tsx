@@ -52,7 +52,7 @@ export function ToolsEdit({ tool }: { tool: Tool }) {
     defaultValues: {
       name: tool.name,
       brandId: tool.brandId ?? "",
-      serialNumber: tool.serialNumber ?? "",
+      serialNumber: tool.serialNumber ?? null,
       objectId: tool.objectId,
       isBulk: tool.isBulk,
       quantity: tool.quantity,
@@ -66,19 +66,28 @@ export function ToolsEdit({ tool }: { tool: Tool }) {
   const selectedBrandId = watch("brandId");
 
   const onSubmit = (data: FormData) => {
-    updateTool.mutate(
-      {
-        ...data,
-        brandId: data.brandId || undefined,
-        status: tool.status,
-        ...(tool.isBulk
-          ? { quantity: data.quantity }
-          : { serialNumber: data.serialNumber?.trim() }),
-      },
-      {
-        onSuccess: () => closeSheet(),
-      },
-    );
+    // Создаем чистый объект для отправки
+    const payload: any = {
+      ...data,
+      brandId: data.brandId || undefined,
+      status: tool.status,
+    };
+
+    if (tool.isBulk) {
+      // Для группового инструмента ГАРАНТИРУЕМ отсутствие серийников
+      payload.serialNumber = null;
+      payload.originalSerial = null;
+      payload.quantity = Number(data.quantity);
+    } else {
+      // Для одиночного — чистим пробелы
+      payload.serialNumber = data.serialNumber?.trim() || null;
+      payload.originalSerial = data.originalSerial?.trim() || null;
+      delete payload.quantity; // Одиночному инструменту количество не нужно
+    }
+
+    updateTool.mutate(payload, {
+      onSuccess: () => closeSheet(),
+    });
   };
 
   return (
