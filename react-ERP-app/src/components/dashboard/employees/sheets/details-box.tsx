@@ -33,7 +33,7 @@ export function EmployeeDetailsBox({
     CANCELED: { label: "Отменен", variant: "destructive" },
   };
 
-  const activePenalties = employee.penalties.filter(
+  const activePenalties = (employee.penalties ?? []).filter(
     (p) => p.status !== "REJECTED" && p.status !== "CANCELED",
   );
 
