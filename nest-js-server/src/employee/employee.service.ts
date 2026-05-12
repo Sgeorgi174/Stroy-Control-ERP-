@@ -73,6 +73,9 @@ export class EmployeeService {
           workPlace: { select: { name: true, address: true, id: true } },
           archive: { select: { id: true, comment: true, archivedAt: true } },
           warnings: true,
+          penalties: {
+            select: { amount: true, date: true, reason: true, status: true },
+          },
           clothing: {
             select: {
               id: true,
@@ -163,6 +166,15 @@ export class EmployeeService {
         warnings: true,
         skills: { select: { skill: true, id: true } },
         workPlace: { select: { name: true, address: true, id: true } },
+        penalties: {
+          select: {
+            amount: true,
+            date: true,
+            reason: true,
+            status: true,
+            object: { select: { name: true } },
+          },
+        },
         archive: {
           select: {
             id: true,

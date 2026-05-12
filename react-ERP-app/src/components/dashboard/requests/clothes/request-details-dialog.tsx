@@ -79,19 +79,32 @@ export function RequestDetailsDialog({
           <DialogHeader className="flex flex-row items-center justify-between mt-5">
             <div className="space-y-1">
               <div className="flex items-center gap-3">
-                <DialogTitle className="text-2xl font-bold">
+                <DialogTitle className="text-3xl font-bold flex gap-8">
                   {request.title}
+                  <p className="text-3xl">{`Заявка №-${request.number.toString().padStart(5, "0")}`}</p>
                 </DialogTitle>
                 {isRequestLoading && (
                   <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                 )}
               </div>
-              <div className="flex gap-5 items-center">
-                <p className="text-sm text-muted-foreground">
-                  {request.customer}
-                </p>
-                <StatusBadgeRequests status={request.status} />
-                <p>{`Заявка №-${request.number.toString().padStart(5, "0")}`}</p>
+              <div className="flex flex-col gap-3">
+                <div className="flex gap-3">
+                  <p className="text-muted-foreground">
+                    Заказчик:{" "}
+                    <span className="text-primary font-bold">
+                      {request.customer}
+                    </span>
+                  </p>
+                  <p className="text-muted-foreground">
+                    Поставщик:{" "}
+                    <span className="text-primary font-bold">
+                      {request.provider}
+                    </span>
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <StatusBadgeRequests status={request.status} />
+                </div>
               </div>
             </div>
 

@@ -1,12 +1,13 @@
 import { cn } from "@/lib/utils";
 import type { RequestStatus } from "@/types/clothes-request";
+import type { PenaltyStatus } from "@/types/penalty";
 
 type Props = {
-  status: RequestStatus;
+  status: RequestStatus | PenaltyStatus;
 };
 
 const statusConfig: Record<
-  RequestStatus,
+  RequestStatus | PenaltyStatus,
   { bg: string; text: string; label: string }
 > = {
   CREATED: {
@@ -29,6 +30,11 @@ const statusConfig: Record<
     text: "text-red-700",
     label: "Отклонено",
   },
+  CANCELED: {
+    bg: "bg-yellow-50",
+    text: "text-yellow-700",
+    label: "Отменено",
+  },
   IN_PROGRESS: {
     bg: "bg-blue-50",
     text: "text-blue-700",
@@ -43,6 +49,11 @@ const statusConfig: Record<
     bg: "bg-slate-100",
     text: "text-slate-700",
     label: "Закрыто",
+  },
+  PROCESSED: {
+    bg: "bg-emerald-50",
+    text: "text-emerald-700",
+    label: "Завершено",
   },
 };
 

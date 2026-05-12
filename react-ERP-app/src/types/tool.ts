@@ -36,5 +36,5 @@ export type Tool = {
   originalSerial: string;
   marketUrl: string | undefined;
   brandId?: string;
-  brand?: ToolBrand;
+  brand?: ToolBrand | undefined;
 };

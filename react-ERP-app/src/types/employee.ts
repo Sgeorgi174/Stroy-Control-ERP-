@@ -1,5 +1,6 @@
 import type { EmployeeClothingItem } from "./employeesClothing";
 import type { Object } from "./object";
+import type { EmployeePenalty } from "./penalty";
 import type { User } from "./user";
 
 export type EmployeeStatuses = "OK" | "WARNING" | "OVERDUE" | "INACTIVE";
@@ -87,4 +88,5 @@ export type Employee = {
   registrationFlat: string | undefined;
   warnings: EmployeeWarning[];
   documents: EmployeeDocument[];
+  penalties: EmployeePenalty[];
 };

@@ -44,6 +44,7 @@ export function ClothesRequestDialog({
   const [form, setForm] = useState<CreateClothesRequestDto>({
     title: "",
     customer: "",
+    provider: "",
     participantsIds: [],
     clothes: [],
   });
@@ -56,6 +57,7 @@ export function ClothesRequestDialog({
         setForm({
           title: initialData.title,
           customer: initialData.customer,
+          provider: initialData.provider,
           // Маппим участников в массив ID
           participantsIds: initialData.participants?.map((p) => p.id) || [],
           // Маппим одежду, проверяя существование массива
@@ -78,6 +80,7 @@ export function ClothesRequestDialog({
           customer: "",
           participantsIds: [],
           clothes: [],
+          provider: "",
         });
       }
       // Сбрасываем на первый шаг при каждом открытии

@@ -30,6 +30,8 @@ import { MaxBotModule } from './max-bot/max-bot.module';
 import { MaxModule } from 'nestjs-max';
 import { MaterialDeliveriesModule } from './material-deliveries/material-deliveries.module';
 import { ObjectDocumentModule } from './object-document/object-document.module';
+import { RequestPenaltyModule } from './request-penalty/request-penalty.module';
+import { RequestOvertimeModule } from './request-overtime/request-overtime.module';
 
 @Module({
   imports: [
@@ -78,6 +80,8 @@ import { ObjectDocumentModule } from './object-document/object-document.module';
     MaxBotModule,
     MaterialDeliveriesModule,
     ObjectDocumentModule,
+    RequestPenaltyModule,
+    RequestOvertimeModule,
   ],
 })
 export class AppModule {}

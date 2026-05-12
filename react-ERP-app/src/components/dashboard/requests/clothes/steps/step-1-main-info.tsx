@@ -5,6 +5,16 @@ import type { CreateClothesRequestDto } from "@/types/dto/clothes-request.dto";
 import type { User } from "@/types/user";
 import { CustomerSelectForRequest } from "../request-customer-select";
 import { useEffect } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useProviders } from "@/hooks/clothes/useClothes";
 
 type Props = {
   form: CreateClothesRequestDto;
@@ -48,6 +58,8 @@ export function Step1MainInfo({
   const isValid =
     form.title?.trim().length > 0 && !!form.customer && hasOtherParticipants;
 
+  const { data: providers = [] } = useProviders();
+
   useEffect(() => {
     onValidityChange?.(isValid);
   }, [isValid, onValidityChange]);
@@ -75,11 +87,24 @@ export function Step1MainInfo({
 
         <div className="space-y-2">
           <Label>Поставщик</Label>
-          <CustomerSelectForRequest
-            selectedCustomer={form.customer}
-            onSelectChange={(val) => setForm({ ...form, customer: val })}
-            className="w-full"
-          />
+          <Select
+            value={form.provider}
+            onValueChange={(val) => setForm({ ...form, provider: val })}
+          >
+            <SelectTrigger className={"w-full"}>
+              <SelectValue placeholder="Поставщик" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Поставщик</SelectLabel>
+                {providers.map((provider) => (
+                  <SelectItem key={provider.id} value={provider.name}>
+                    {provider.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

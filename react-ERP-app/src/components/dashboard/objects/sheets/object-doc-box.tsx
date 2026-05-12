@@ -47,11 +47,13 @@ import { useDebouncedState } from "@/hooks/useDebounceState";
 import { DescriptionPopover } from "../../storage/description-popover";
 
 type FilterType = ObjectDocType;
+type InventoryType = "tool" | "device" | "bulk-tool";
 
 interface InventoryItem {
   id: string;
   name: string;
   type: "tool" | "device";
+  serialNumber?: string | null; // Добавляем опциональное поле
 }
 
 export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
@@ -65,7 +67,7 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
   const [name, setName] = useState("");
   const [comment, setComment] = useState("");
   const [docType, setDocType] = useState<ObjectDocType>("IMPORT");
-  const [inventoryType, setInventoryType] = useState<"tool" | "device">("tool");
+  const [inventoryType, setInventoryType] = useState<InventoryType>("tool");
   const [searchQuery, setSearchQuery, debouncedSearchQuery] = useDebouncedState(
     "",
     500,
@@ -84,23 +86,52 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
     { searchQuery: debouncedSearchQuery, isBulk: false },
     inventoryType === "tool" && !!searchQuery,
   );
+
+  const { data: bulkToolsData } = useTools(
+    { searchQuery: debouncedSearchQuery, isBulk: true },
+    inventoryType === "bulk-tool" && !!searchQuery,
+  );
+
   const { data: devicesData } = useDevices(
     { searchQuery: debouncedSearchQuery },
     inventoryType === "device" && !!searchQuery,
   );
 
   const itemsList = useMemo(() => {
-    // Используем debounced значение, чтобы список отрисовывался
-    // только когда данные от API загрузятся под этот запрос
     if (!debouncedSearchQuery.trim()) return [];
 
-    return inventoryType === "tool"
-      ? (toolsData || []).map((t: Tool) => ({ ...t, type: "tool" as const }))
-      : (devicesData || []).map((d: Device) => ({
-          ...d,
+    switch (inventoryType) {
+      case "tool":
+        return (toolsData || []).map((t: Tool) => ({
+          id: t.id,
+          name: t.name,
+          serialNumber: t.serialNumber,
+          type: "tool" as const,
+        }));
+      case "bulk-tool":
+        return (bulkToolsData || []).map((t: Tool) => ({
+          id: t.id,
+          name: t.name,
+          serialNumber: t.serialNumber,
+          type: "tool" as const,
+        }));
+      case "device":
+        return (devicesData || []).map((d: Device) => ({
+          id: d.id,
+          name: d.name,
+          serialNumber: d.serialNumber,
           type: "device" as const,
         }));
-  }, [inventoryType, debouncedSearchQuery, toolsData, devicesData]);
+      default:
+        return [];
+    }
+  }, [
+    inventoryType,
+    debouncedSearchQuery,
+    toolsData,
+    bulkToolsData,
+    devicesData,
+  ]);
 
   const resetForm = useCallback(() => {
     setFile(null);
@@ -109,7 +140,7 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
     setDocType("IMPORT");
     setEditingDoc(null);
     setSelectedItems([]);
-    setSearchQuery(""); // Это сбросит и локальное, и debounced состояние
+    setSearchQuery("");
   }, [setSearchQuery]);
 
   const handleEdit = (doc: ObjectDocument) => {
@@ -118,14 +149,23 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
     setComment(doc.comment || "");
     setDocType(doc.type);
     setSelectedItems([
-      ...(doc.tools || []).map((t) => ({ ...t, type: "tool" as const })),
-      ...(doc.devices || []).map((d) => ({ ...d, type: "device" as const })),
+      ...(doc.tools || []).map((t) => ({
+        id: t.id,
+        name: t.name,
+        serialNumber: t.serialNumber,
+        type: "tool" as const,
+      })),
+      ...(doc.devices || []).map((d) => ({
+        id: d.id,
+        name: d.name,
+        serialNumber: d.serialNumber,
+        type: "device" as const,
+      })),
     ]);
     setOpen(true);
   };
 
   const handleSave = async () => {
-    // Формируем списки ID явно
     const toolIds = selectedItems
       .filter((i) => i.type === "tool")
       .map((i) => i.id);
@@ -139,7 +179,6 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
       type: docType,
       comment,
       objectId,
-      // Гарантируем, что это массивы, даже если они пустые
       toolIds: Array.isArray(toolIds) ? toolIds : [],
       deviceIds: Array.isArray(deviceIds) ? deviceIds : [],
       file: file || undefined,
@@ -148,7 +187,7 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
     if (editingDoc) {
       await updateMutation.mutateAsync({
         id: editingDoc.id,
-        data: payload, // Если хуки типизированы строго, лучше создать интерфейс для Payload
+        data: payload,
       });
     } else {
       await createMutation.mutateAsync(payload);
@@ -160,9 +199,7 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
 
   const filteredDocuments = useMemo(() => {
     return documents.filter((d) => {
-      // 3. Упрощаем условие (теперь всегда фильтруем по типу)
       const matchesType = d.type === filterType;
-
       const s = documentSearchQuery.toLowerCase();
       const matchesSearch =
         !documentSearchQuery ||
@@ -174,8 +211,6 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
       return matchesType && matchesSearch;
     });
   }, [documents, filterType, documentSearchQuery]);
-
-  console.log(documents);
 
   return (
     <Card className="overflow-hidden">
@@ -271,7 +306,6 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
                                         : "bg-amber-500"
                                 }`}
                               />
-
                               {label}
                             </span>
                           </SelectItem>
@@ -294,15 +328,18 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
                     <div className="flex gap-2">
                       <Select
                         value={inventoryType}
-                        onValueChange={(v: "tool" | "device") =>
+                        onValueChange={(v: InventoryType) =>
                           setInventoryType(v)
                         }
                       >
-                        <SelectTrigger className="w-[140px]">
+                        <SelectTrigger className="w-[160px]">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="tool">Инструмент</SelectItem>
+                          <SelectItem value="bulk-tool">
+                            Мелк. инструмент
+                          </SelectItem>
                           <SelectItem value="device">Быт. инв.</SelectItem>
                         </SelectContent>
                       </Select>
@@ -314,7 +351,7 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
                     </div>
 
                     {searchQuery && itemsList.length > 0 && (
-                      <div className="border rounded-lg max-h-32 overflow-y-auto">
+                      <div className="border rounded-lg max-h-32 overflow-y-auto bg-popover">
                         {itemsList.map((item: any) => (
                           <div
                             key={item.id}
@@ -329,14 +366,17 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
                                     )
                                   : [...selectedItems, item],
                               );
+                              setSearchQuery(""); // <-- Очищаем поиск после выбора
                             }}
                             className="flex items-center justify-between p-2 hover:bg-muted cursor-pointer text-sm"
                           >
                             <span className="flex gap-2">
                               {item.name}
-                              <span className="text-muted-foreground">
-                                {item.serialNumber}
-                              </span>
+                              {item.serialNumber && (
+                                <span className="text-muted-foreground">
+                                  ({item.serialNumber})
+                                </span>
+                              )}
                             </span>
                             {selectedItems.some((i) => i.id === item.id) && (
                               <Check className="h-4 w-4 text-primary" />
@@ -351,17 +391,30 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
                         <Badge
                           key={item.id}
                           variant="secondary"
-                          className="gap-1"
+                          className="gap-1.5 px-2.5 py-1.5 h-auto text-base"
                         >
-                          {item.name}
-                          <X
-                            className="h-3 w-3 cursor-pointer"
-                            onClick={() =>
+                          <span className="flex flex-col items-start leading-tight">
+                            <span>{item.name}</span>
+                            {item.serialNumber && (
+                              <span className="text-[11px] opacity-70 font-mono">
+                                {item.serialNumber}
+                              </span>
+                            )}
+                          </span>
+                          {/* Кнопка удаления на бадже */}
+                          <button
+                            type="button" // Важно, чтобы не срабатывал сабмит формы
+                            className="ml-1.5 p-0.5 hover:bg-muted-foreground/20 rounded-full transition-colors"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation(); // Чтобы клик не улетел родителю
                               setSelectedItems((prev) =>
                                 prev.filter((i) => i.id !== item.id),
-                              )
-                            }
-                          />
+                              );
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
                         </Badge>
                       ))}
                     </div>
@@ -392,10 +445,10 @@ export function ObjectDocumentsBox({ objectId }: { objectId: string }) {
         </div>
       </CardHeader>
 
+      {/* Остальная часть компонента без изменений */}
       <div className="border-b bg-muted/20 px-4">
         <Tabs value={filterType} onValueChange={(v) => setFilterType(v as any)}>
           <TabsList className="h-auto bg-transparent p-0 gap-0">
-            {/* 4. Удалили ручной TabsTrigger для "Все" */}
             {Object.entries(DOC_TYPE_LABELS).map(([key, label]) => (
               <TabsTrigger
                 key={key}

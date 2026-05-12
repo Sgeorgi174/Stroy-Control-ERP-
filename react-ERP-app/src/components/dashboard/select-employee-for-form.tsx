@@ -21,6 +21,7 @@ type EmployeeAutocompleteProps = {
   selectedEmployeeId: string | null;
   onSelectChange: (id: string) => void;
   disabled?: boolean;
+  width?: string
 };
 
 export function EmployeeAutocomplete({
@@ -28,6 +29,7 @@ export function EmployeeAutocomplete({
   selectedEmployeeId,
   onSelectChange,
   disabled,
+  width = "300"
 }: EmployeeAutocompleteProps) {
   const [open, setOpen] = useState(false);
 
@@ -52,14 +54,14 @@ export function EmployeeAutocomplete({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="justify-between w-[300px]"
+          className={`justify-between w-[${width}px]`}
           disabled={disabled}
         >
           {selectedLabel || "Выберите сотрудника"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0 max-h-60 overflow-auto">
+      <PopoverContent className={`w-[${width}px] p-0 max-h-60 overflow-auto`}>
         <Command>
           <CommandInput placeholder="Поиск..." />
           <CommandEmpty>Совпадений не найдено</CommandEmpty>

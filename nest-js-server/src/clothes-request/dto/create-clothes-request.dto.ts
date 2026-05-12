@@ -43,6 +43,9 @@ export class CreateClothesRequestDto {
   @IsString()
   customer: string;
 
+  @IsString()
+  provider: string;
+
   @IsOptional()
   @IsEnum(RequestStatus)
   status?: RequestStatus;

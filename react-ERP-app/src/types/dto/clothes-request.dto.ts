@@ -8,6 +8,7 @@ export interface CreateClothesRequestDto {
   title: string;
   customer: string;
   status?: RequestStatus;
+  provider: string;
 
   clothes?: {
     type: ClothesType;

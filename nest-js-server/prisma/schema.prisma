@@ -41,10 +41,20 @@ model User {
   archiveHistory       EmployeeArchive[]
   clothesRequests      ClothesRequest[]
   requestComments      RequestComment[]
+  penaltyComments      EmployeePenaltyComment[]
+  overtimeComments     EmployeeOvertimeComment[]
   actionLogs           ActionLog[]
   workLogs             WorkLog[]
   materialsDelivery    MaterialDelivery[]
   objectDocuments      ObjectDocument[]
+
+  createdPenalties   EmployeePenalty[] @relation("CreatedPenalties")
+  approvedPenalties  EmployeePenalty[] @relation("ApprovedPenalties")
+  processedPenalties EmployeePenalty[] @relation("ProcessedPenalties")
+
+  createdOvertimes   EmployeeOvertime[] @relation("CreatedOvertimes")
+  approvedOvertimes  EmployeeOvertime[] @relation("ApprovedOvertimes")
+  processedOvertimes EmployeeOvertime[] @relation("ProcessedOvertimes")
 }
 
 enum Roles {
@@ -143,6 +153,9 @@ model Object {
 
   fromPendingTransfersClothes PendingTransfersClothes[] @relation("pending_clothes_from_object_fk")
   toPendingTransfersClothes   PendingTransfersClothes[] @relation("pending_clothes_to_object_fk")
+
+  penalties EmployeePenalty[]
+  overtimes EmployeeOvertime[]
 
   @@unique([name, address], name: "object_name_address_unique")
 }
@@ -657,6 +670,8 @@ model Employee {
   shiftsTemplate ShiftTemplateEmployee[]
   archive        EmployeeArchive?
   documents      EmployeeDocument[]
+  penalties      EmployeePenalty[]
+  overtimes      EmployeeOvertime[]
 
   workPlace Object? @relation(fields: [objectId], references: [id])
   objectId  String? @map("object_id")
@@ -892,6 +907,8 @@ model ClothesRequest {
   createdBy User   @relation(fields: [userId], references: [id])
   userId    String @map("user_id")
 
+  provider String @default("Не указано")
+
   comments RequestComment[]
 
   clothes      RequestClothes[] // теперь массив
@@ -1103,4 +1120,133 @@ model ObjectDocument {
 
   @@index([objectId])
   @@index([masterId])
+}
+
+enum PenaltyStatus {
+  PENDING // Ожидает согласования (первый этап)
+  APPROVED // Согласовано (готов к обработке бухгалтером)
+  PROCESSED // Обработано бухгалтером (вычтено из зп / финал)
+  REJECTED // Отклонено
+  CANCELED // Отменена
+}
+
+model EmployeePenalty {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  date   DateTime // Фактическая дата
+  number Int      @unique @default(autoincrement())
+
+  // Кто оштрафован
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String   @map("employee_id")
+
+  // К какому объекту относится нарушение 🆕
+  object   Object @relation(fields: [objectId], references: [id])
+  objectId String @map("object_id")
+
+  // Кто создал заявку (Мастер/Прораб)
+  creator   User   @relation("CreatedPenalties", fields: [creatorId], references: [id])
+  creatorId String @map("creator_id")
+
+  // Кто согласовал (Первый уровень)
+  approver   User?   @relation("ApprovedPenalties", fields: [approverId], references: [id])
+  approverId String? @map("approver_id")
+
+  // Кто закрыл (Бухгалтер)
+  accountant   User?   @relation("ProcessedPenalties", fields: [accountantId], references: [id])
+  accountantId String? @map("accountant_id")
+
+  amount      Float // Сумма штрафа
+  reason      String // Причина (категория или краткий заголовок)
+  description String? // Подробное описание ситуации
+
+  status PenaltyStatus @default(PENDING)
+
+  processedAt DateTime? @map("processed_at") // Дата проведения бухгалтером
+
+  comments EmployeePenaltyComment[]
+
+  @@map("employee_penalties")
+}
+
+model EmployeePenaltyComment {
+  id String @id @default(uuid())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  text String
+
+  createdBy       User    @relation(fields: [userId], references: [id])
+  userId          String  @map("user_id")
+  isSystemComment Boolean @default(false)
+
+  request           EmployeePenalty @relation(fields: [employeePenaltyId], references: [id])
+  employeePenaltyId String // убрали @unique, теперь можно несколько записей на один request
+}
+
+enum OvertimeStatus {
+  PENDING // Ожидает согласования мастером/менеджером
+  APPROVED // Согласовано, ждет обработки бухгалтером
+  PROCESSED // Учтено в выплатах (финал)
+  REJECTED // Отклонено
+  CANCELED // Отменено создателем
+}
+
+model EmployeeOvertime {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  date   DateTime // Дата, когда были отработаны доп. часы
+  number Int      @unique @default(autoincrement())
+
+  // Сотрудник, которому начисляем часы
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String   @map("employee_id")
+
+  // Объект, на котором велись работы
+  object   Object @relation(fields: [objectId], references: [id])
+  objectId String @map("object_id")
+
+  // Кто подал заявку
+  creator   User   @relation("CreatedOvertimes", fields: [creatorId], references: [id])
+  creatorId String @map("creator_id")
+
+  // Кто согласовал (Менеджер)
+  approver   User?   @relation("ApprovedOvertimes", fields: [approverId], references: [id])
+  approverId String? @map("approver_id")
+
+  // Кто обработал (Бухгалтер)
+  accountant   User?   @relation("ProcessedOvertimes", fields: [accountantId], references: [id])
+  accountantId String? @map("accountant_id")
+
+  hours       Float // Количество дополнительных часов
+  description String? // Описание работ (что делал в доп. время)
+
+  status OvertimeStatus @default(PENDING)
+
+  processedAt DateTime? @map("processed_at")
+
+  comments EmployeeOvertimeComment[]
+
+  @@map("employee_overtimes")
+}
+
+model EmployeeOvertimeComment {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  text      String
+
+  createdBy User   @relation(fields: [userId], references: [id])
+  userId    String @map("user_id")
+
+  isSystemComment Boolean @default(false)
+
+  overtime   EmployeeOvertime @relation(fields: [overtimeId], references: [id], onDelete: Cascade)
+  overtimeId String           @map("overtime_id")
+
+  @@map("employee_overtime_comments")
 }

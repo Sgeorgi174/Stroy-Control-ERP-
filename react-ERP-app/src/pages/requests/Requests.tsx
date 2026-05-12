@@ -1,6 +1,8 @@
 import { RequestClothesTab } from "@/components/dashboard/requests/clothes/request-clothes-tab";
+import { RequestEmployeeTab } from "@/components/dashboard/requests/employee/request-employe-tab";
+import { RequestOvertimeTab } from "@/components/dashboard/requests/overtime/request-overtime-tab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutList, Shirt, Users, Wrench } from "lucide-react";
+import { Shirt, Users, Wrench } from "lucide-react";
 import { useState } from "react";
 
 export function Requests() {
@@ -18,16 +20,24 @@ export function Requests() {
         <TabsTrigger disabled value="tools">
           <Wrench className="h-4 w-4 mr-2" /> Инструмент
         </TabsTrigger>
-        <TabsTrigger disabled value="employment">
-          <Users className="h-4 w-4 mr-2" /> Трудоустройство
+        <TabsTrigger value="penalties">
+          <Users className="h-4 w-4 mr-2" /> Штрафы
         </TabsTrigger>
-        <TabsTrigger disabled value="other">
-          <LayoutList className="h-4 w-4 mr-2" /> Разное
+        <TabsTrigger value="overtime">
+          <Users className="h-4 w-4 mr-2" /> Доп. Часы
         </TabsTrigger>
       </TabsList>
 
       <TabsContent value="clothes" className="space-y-4 mt-6">
         <RequestClothesTab />
+      </TabsContent>
+
+      <TabsContent value="penalties" className="space-y-4 mt-6">
+        <RequestEmployeeTab />
+      </TabsContent>
+
+      <TabsContent value="overtime" className="space-y-4 mt-6">
+        <RequestOvertimeTab />
       </TabsContent>
     </Tabs>
   );

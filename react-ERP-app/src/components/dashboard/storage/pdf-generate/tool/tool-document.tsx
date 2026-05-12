@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
-import type { Tool } from "@/types/tool"; // Предполагая тип Tool в вашем проекте
+import type { Tool } from "@/types/tool";
 import { statusMap } from "@/constants/statusMap";
 
 // ----------------- Регистрируем шрифты -----------------
@@ -53,11 +53,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#000",
     paddingVertical: 1,
   },
-  subRow: {
-    flexDirection: "row",
-    paddingVertical: 1,
-    backgroundColor: "#f9f9f9", // Легкий фон для выделения подпунктов
-  },
   cell: {
     borderRightWidth: 1,
     borderRightColor: "#000",
@@ -68,15 +63,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 1,
   },
-  smallCell: { flex: 0.3 }, // Для №
-  nameCell: { flex: 2.5 }, // Для name
-  serialCell: { flex: 1.4 }, // Для serialNumber
-  descCell: { flex: 2.5 }, // Для description (расширен для bagItems)
-  statusCell: { flex: 1.5 }, // Для toolStatus
-  originalSerialCell: { flex: 2 }, // Для comment
-  manualCell: { flex: 2.9 }, // Для ручного заполнения (пустое)
+  smallCell: { flex: 0.3 },
+  nameCell: { flex: 2.2 }, // Немного уменьшил, чтобы влез бренд
+  brandCell: { flex: 1.2 }, // Новый столбец для бренда
+  serialCell: { flex: 1.4 },
+  descCell: { flex: 2.2 }, // Немного уменьшил
+  statusCell: { flex: 1.3 }, // Немного уменьшил
+  originalSerialCell: { flex: 1.8 }, // Немного уменьшил
+  manualCell: { flex: 2.5 }, // Немного уменьшил
   bold: { fontWeight: "bold" },
-  indent: { marginLeft: 10 }, // Для отступа в подпунктах
   subFooter: {
     marginTop: 4,
     marginBottom: 10,
@@ -107,7 +102,7 @@ export const ToolDocument: React.FC<ToolDocumentProps> = ({ tools }) => {
             {date}
           </Text>
           <Text style={[styles.bold, { fontSize: 12, marginRight: 12 }]}>
-            {tools[0].storage.name}
+            {tools[0]?.storage?.name}
           </Text>
 
           <Text style={[styles.bold, { fontSize: 12 }]}>
@@ -121,6 +116,10 @@ export const ToolDocument: React.FC<ToolDocumentProps> = ({ tools }) => {
             <Text style={[styles.smallCell, styles.bold, styles.cell]}>№</Text>
             <Text style={[styles.nameCell, styles.bold, styles.cell]}>
               Название
+            </Text>
+            {/* Заголовок БРЕНД */}
+            <Text style={[styles.brandCell, styles.bold, styles.cell]}>
+              Бренд
             </Text>
             <Text style={[styles.serialCell, styles.bold, styles.cell]}>
               Инвент. номер
@@ -138,13 +137,17 @@ export const ToolDocument: React.FC<ToolDocumentProps> = ({ tools }) => {
               Ручное заполнение
             </Text>
           </View>
+
           {tools.map((tool, index) => (
             <React.Fragment key={tool.id}>
-              {/* Основная строка инструмента */}
               <View style={styles.tableRow}>
                 <Text style={[styles.smallCell, styles.cell]}>{index + 1}</Text>
                 <Text style={[styles.nameCell, styles.cell, styles.bold]}>
                   {tool.name}
+                </Text>
+                {/* Ячейка БРЕНД */}
+                <Text style={[styles.brandCell, styles.cell]}>
+                  {tool.brand ? tool.brand.name : "-"}
                 </Text>
                 <Text style={[styles.serialCell, styles.cell]}>
                   {tool.serialNumber}
@@ -159,11 +162,11 @@ export const ToolDocument: React.FC<ToolDocumentProps> = ({ tools }) => {
                   {tool.originalSerial}
                 </Text>
                 <Text style={[styles.manualCell, styles.lastCell]} />
-                {/* Пустое поле */}
               </View>
             </React.Fragment>
           ))}
         </View>
+
         <View style={styles.subFooter}>
           <Text style={[styles.bold]}>ИТОГО: {tools.length}</Text>
         </View>

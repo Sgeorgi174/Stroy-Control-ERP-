@@ -23,6 +23,7 @@ export interface ClothesRequest {
   createdBy: User;
   clothes?: RequestClothes[];
   comments?: RequestComment[];
+  provider: string;
 
   participants: User[];
   notifyUsers: User[];

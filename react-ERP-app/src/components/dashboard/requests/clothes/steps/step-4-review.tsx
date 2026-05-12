@@ -112,6 +112,13 @@ export function Step4Review({
                 {new Date().toLocaleDateString()}
               </p>
             </div>
+
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase">
+                Поставщик
+              </p>
+              <p className="text-lg font-medium">{form.provider}</p>
+            </div>
           </div>
         </CardContent>
       </Card>

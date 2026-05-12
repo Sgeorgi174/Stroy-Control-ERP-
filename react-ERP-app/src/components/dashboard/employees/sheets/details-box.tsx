@@ -1,10 +1,13 @@
+import { Badge } from "@/components/ui/badge";
 import { BootIcon } from "@/components/ui/boot";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils/format-date";
 import type { Employee } from "@/types/employee";
 import {
+  AlertCircle,
   Building,
   FileText,
+  Gavel,
   HardHat,
   MapPinCheck,
   Phone,
@@ -22,8 +25,21 @@ export function EmployeeDetailsBox({
     .filter(Boolean)
     .join(" ");
 
+  const penaltyStatusMap: Record<string, { label: string; variant: string }> = {
+    PENDING: { label: "Ожидает", variant: "outline" },
+    APPROVED: { label: "Одобрен", variant: "secondary" },
+    PROCESSED: { label: "Выплачен", variant: "default" },
+    REJECTED: { label: "Отклонен", variant: "destructive" },
+    CANCELED: { label: "Отменен", variant: "destructive" },
+  };
+
+  const activePenalties = employee.penalties.filter(
+    (p) => p.status !== "REJECTED" && p.status !== "CANCELED",
+  );
+
   return (
     <div className="flex flex-col gap-5">
+      {/* Информация о сотруднике */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
@@ -112,6 +128,7 @@ export function EmployeeDetailsBox({
         </CardContent>
       </Card>
 
+      {/* Паспортные данные */}
       <Card className={`${isWarning ? "bg-yellow-300/10" : ""}`}>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
@@ -151,6 +168,7 @@ export function EmployeeDetailsBox({
         </CardContent>
       </Card>
 
+      {/* Адрес регистрации */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
@@ -193,6 +211,64 @@ export function EmployeeDetailsBox({
               </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Штрафы — теперь в общем стиле без выделения цветом и суммами */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Gavel className="w-5 h-5 text-muted-foreground" />
+              Штрафы
+            </div>
+            {activePenalties.length > 0 && (
+              <Badge
+                variant="outline"
+                className="font-normal text-muted-foreground"
+              >
+                Всего: {activePenalties.length}
+              </Badge>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {activePenalties.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              {activePenalties.map((penalty) => (
+                <div
+                  key={penalty.id}
+                  className="flex items-center justify-between py-2 border-b last:border-0 last:pb-0"
+                >
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">
+                      {penalty.reason}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {formatDate(penalty.date)} • {penalty.object?.name || "-"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-semibold whitespace-nowrap">
+                      {penalty.amount.toLocaleString()} ₽
+                    </span>
+                    <Badge
+                      variant={penaltyStatusMap[penalty.status]?.variant as any}
+                      className="text-[10px] px-2 h-5"
+                    >
+                      {penaltyStatusMap[penalty.status]?.label ||
+                        penalty.status}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-muted-foreground text-sm">
+              <AlertCircle className="w-4 h-4" />
+              Актуальных штрафов нет
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

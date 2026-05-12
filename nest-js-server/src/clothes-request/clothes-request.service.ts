@@ -101,6 +101,7 @@ export class ClothesRequestService {
       data: {
         title: dto.title,
         customer: dto.customer,
+        provider: dto.provider,
         status: dto.status ?? RequestStatus.CREATED,
 
         createdBy: {
@@ -154,6 +155,7 @@ export class ClothesRequestService {
         title: dto.title,
         customer: dto.customer,
         status: dto.status,
+        provider: dto.provider,
 
         participants: dto.participantsIds
           ? { set: dto.participantsIds.map((id) => ({ id })) }
