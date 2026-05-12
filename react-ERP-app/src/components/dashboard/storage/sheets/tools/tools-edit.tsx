@@ -15,14 +15,14 @@ import { BrandSelectForForms } from "@/components/dashboard/select-tool-brand";
 const toolSchema = z
   .object({
     name: z.string().min(1, "Это поле обязательно"),
-    brandId: z.string().optional(),
+    brandId: z.string().optional(), // Добавили nullable
     objectId: z.string().min(1, "Выберите объект"),
     isBulk: z.boolean().default(false),
-    serialNumber: z.string().optional(),
-    originalSerial: z.string().optional(),
-    description: z.string().optional(),
-    quantity: z.number().optional(),
-    marketUrl: z.string().optional(),
+    serialNumber: z.string().optional().nullable(), // Добавили nullable
+    originalSerial: z.string().optional().nullable(), // Добавили nullable
+    description: z.string().optional().nullable(),
+    quantity: z.coerce.number().optional(), // Используем coerce для корректного преобразования из input
+    marketUrl: z.string().optional().nullable(),
   })
   .superRefine((data, ctx) => {
     if (
@@ -47,12 +47,18 @@ export function ToolsEdit({ tool }: { tool: Tool }) {
   const updateTool = useUpdateTool(tool.id);
   const { closeSheet } = useToolsSheetStore();
 
-  const { register, handleSubmit, setValue, watch } = useForm<FormData>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<FormData>({
     resolver: zodResolver(toolSchema) as unknown as Resolver<FormData>,
     defaultValues: {
       name: tool.name,
       brandId: tool.brandId ?? "",
-      serialNumber: tool.serialNumber ?? null,
+      serialNumber: tool.serialNumber ?? "", // Используем пустую строку для input, но в onSubmit превратим в null
       objectId: tool.objectId,
       isBulk: tool.isBulk,
       quantity: tool.quantity,
@@ -66,23 +72,19 @@ export function ToolsEdit({ tool }: { tool: Tool }) {
   const selectedBrandId = watch("brandId");
 
   const onSubmit = (data: FormData) => {
-    // Создаем чистый объект для отправки
     const payload: any = {
       ...data,
-      brandId: data.brandId || undefined,
+      brandId: data.brandId || null,
       status: tool.status,
     };
 
     if (tool.isBulk) {
-      // Для группового инструмента ГАРАНТИРУЕМ отсутствие серийников
       payload.serialNumber = null;
       payload.originalSerial = null;
-      payload.quantity = Number(data.quantity);
     } else {
-      // Для одиночного — чистим пробелы
       payload.serialNumber = data.serialNumber?.trim() || null;
       payload.originalSerial = data.originalSerial?.trim() || null;
-      delete payload.quantity; // Одиночному инструменту количество не нужно
+      delete payload.quantity;
     }
 
     updateTool.mutate(payload, {
