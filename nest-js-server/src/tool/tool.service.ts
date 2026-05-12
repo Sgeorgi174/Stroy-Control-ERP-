@@ -278,7 +278,7 @@ export class ToolService {
         data: {
           name: dto.name,
           status: dto.status,
-          serialNumber: dto.serialNumber,
+          serialNumber: dto.serialNumber ?? null,
           objectId: dto.objectId,
           description: dto.description ?? undefined,
           quantity: dto.quantity ?? undefined,
