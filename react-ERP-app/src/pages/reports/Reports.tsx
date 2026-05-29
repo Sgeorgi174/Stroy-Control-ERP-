@@ -34,8 +34,9 @@ import { WorkLogReport } from "@/components/dashboard/reports/work-log/work-log-
 
 /* ===================== utils ===================== */
 function getMonthRange(year: number, month: number) {
-  const from = new Date(year, month - 1, 1);
-  const to = new Date(year, month, 0, 23, 59, 59);
+  // Создаем чистые даты начала и конца месяца по UTC
+  const from = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));
+  const to = new Date(Date.UTC(year, month, 0, 23, 59, 59));
   return {
     fromDate: from.toISOString(),
     toDate: to.toISOString(),
@@ -47,19 +48,22 @@ function getDateRange(from: string, to: string): string[] {
   const start = new Date(from);
   const end = new Date(to);
 
+  // Работаем строго с UTC компонентами даты, чтобы избежать локального сдвига
   const current = new Date(
-    start.getFullYear(),
-    start.getMonth(),
-    start.getDate(),
+    Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()),
   );
-  const last = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+  const last = new Date(
+    Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()),
+  );
 
   while (current <= last) {
-    const yyyy = current.getFullYear();
-    const mm = String(current.getMonth() + 1).padStart(2, "0");
-    const dd = String(current.getDate()).padStart(2, "0");
+    const yyyy = current.getUTCFullYear();
+    const mm = String(current.getUTCMonth() + 1).padStart(2, "0");
+    const dd = String(current.getUTCDate()).padStart(2, "0");
     result.push(`${yyyy}-${mm}-${dd}`);
-    current.setDate(current.getDate() + 1);
+
+    // Переход к следующему дню по UTC
+    current.setUTCDate(current.getUTCDate() + 1);
   }
   return result;
 }
