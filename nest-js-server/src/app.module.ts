@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TelegrafModule } from 'nestjs-telegraf';
 import { IS_DEV_ENV } from './libs/common/utils/is-dev.util';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
@@ -38,13 +37,6 @@ import { RequestOvertimeModule } from './request-overtime/request-overtime.modul
     ConfigModule.forRoot({
       ignoreEnvFile: !IS_DEV_ENV,
       isGlobal: true,
-    }),
-    TelegrafModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        token: configService.getOrThrow<string>('TELEGRAM_BOT_TOKEN'),
-      }),
     }),
     MaxModule.forRootAsync({
       imports: [ConfigModule],

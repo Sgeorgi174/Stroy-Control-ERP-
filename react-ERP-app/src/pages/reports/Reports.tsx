@@ -181,6 +181,9 @@ export function ReportPage() {
   }, [shiftObject, shiftMonth, shiftYear]);
 
   /* ===================== render ===================== */
+
+  console.log(shiftsData);
+
   return (
     <Tabs
       value={activeTab}
