@@ -33,37 +33,39 @@ import { ReportShiftPDFButton } from "@/components/dashboard/reports/pdf button/
 import { WorkLogReport } from "@/components/dashboard/reports/work-log/work-log-report";
 
 /* ===================== utils ===================== */
+
+// Функция форматирует объект даты в чистую строку YYYY-MM-DD
+function formatPureDate(date: Date): string {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 function getMonthRange(year: number, month: number) {
-  // Создаем чистые даты начала и конца месяца по UTC
-  const from = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));
-  const to = new Date(Date.UTC(year, month, 0, 23, 59, 59));
+  // Для отправки на бэкенд мы берем даты с запасом в 1 день в обе стороны,
+  // чтобы покрыть любые сдвиги часовых поясов, происходящие в базе данных.
+  const from = new Date(year, month - 1, 1, 0, 0, 0);
+  from.setDate(from.getDate() - 1); // -1 день запас
+
+  const to = new Date(year, month, 0, 23, 59, 59);
+  to.setDate(to.getDate() + 1); // +1 день запас
+
   return {
     fromDate: from.toISOString(),
     toDate: to.toISOString(),
   };
 }
 
-function getDateRange(from: string, to: string): string[] {
+function getDateRangeForMonth(year: number, month: number): string[] {
   const result: string[] = [];
-  const start = new Date(from);
-  const end = new Date(to);
-
-  // Работаем строго с UTC компонентами даты, чтобы избежать локального сдвига
-  const current = new Date(
-    Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()),
-  );
-  const last = new Date(
-    Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()),
-  );
+  // Строим календарную сетку строго для выбранного месяца (от 1 до последнего числа)
+  const current = new Date(year, month - 1, 1);
+  const last = new Date(year, month, 0);
 
   while (current <= last) {
-    const yyyy = current.getUTCFullYear();
-    const mm = String(current.getUTCMonth() + 1).padStart(2, "0");
-    const dd = String(current.getUTCDate()).padStart(2, "0");
-    result.push(`${yyyy}-${mm}-${dd}`);
-
-    // Переход к следующему дню по UTC
-    current.setUTCDate(current.getUTCDate() + 1);
+    result.push(formatPureDate(current));
+    current.setDate(current.getDate() + 1);
   }
   return result;
 }
@@ -104,10 +106,18 @@ export function ReportPage() {
     objectId: string;
     fromDate: string;
     toDate: string;
+    year: number;
+    month: number;
   } | null>(null);
 
   const { data: shiftsData = [], isLoading } = useShiftsWithFilters(
-    appliedFilters ?? {},
+    appliedFilters
+      ? {
+          objectId: appliedFilters.objectId,
+          fromDate: appliedFilters.fromDate,
+          toDate: appliedFilters.toDate,
+        }
+      : {},
     Boolean(appliedFilters),
   );
 
@@ -116,7 +126,12 @@ export function ReportPage() {
     if (!appliedFilters)
       return { dateColumns: [], rows: [], totalByDate: {}, totalAll: 0 };
 
-    const dates = getDateRange(appliedFilters.fromDate, appliedFilters.toDate);
+    // Генерируем стабильную сетку дат для выбранного месяца (ключи вида "2026-05-01")
+    const dates = getDateRangeForMonth(
+      appliedFilters.year,
+      appliedFilters.month,
+    );
+
     const totalByDate: Record<string, number> = Object.fromEntries(
       dates.map((d) => [d, 0]),
     );
@@ -140,12 +155,13 @@ export function ReportPage() {
         const emp = se.employee;
         if (!emp) return;
 
-        // Локальная дата shiftDate
-        const shiftDate = new Date(shift.shiftDate);
-        const year = shiftDate.getUTCFullYear();
-        const month = String(shiftDate.getUTCMonth() + 1).padStart(2, "0");
-        const day = String(shiftDate.getUTCDate()).padStart(2, "0");
-        const dateKey = `${year}-${month}-${day}`;
+        // КОРНЕВОЕ РЕШЕНИЕ:
+        // Извлекаем дату напрямую из строки базы данных, игнорируя часовые пояса.
+        // Если shiftDate = "2026-05-24T02:35:20.000Z", то dateKey станет "2026-05-24"
+        const dateKey = shift.shiftDate.split("T")[0];
+
+        // Если смена из-за запаса фильтра попала из соседнего месяца, мы её игнорируем в таблице текущего месяца
+        if (!(dateKey in totalByDate)) return;
 
         if (!employeesMap.has(emp.id)) {
           employeesMap.set(emp.id, {
@@ -162,10 +178,10 @@ export function ReportPage() {
         const row = employeesMap.get(emp.id)!;
         const hours = se.workedHours ?? 0;
 
-        // Увеличиваем часы
+        // Суммируем часы строго по текстовому совпадению ключей YYYY-MM-DD
         row.hoursByDate[dateKey] += hours;
         row.totalHours += hours;
-        if (dateKey in totalByDate) totalByDate[dateKey] += hours;
+        totalByDate[dateKey] += hours;
         totalAll += hours;
       });
     });
@@ -185,8 +201,6 @@ export function ReportPage() {
   }, [shiftObject, shiftMonth, shiftYear]);
 
   /* ===================== render ===================== */
-
-  console.log(shiftsData);
 
   return (
     <Tabs
@@ -272,11 +286,17 @@ export function ReportPage() {
               className="mt-4"
               disabled={!shiftObject || !shiftMonth || !shiftYear}
               onClick={() => {
-                const { fromDate, toDate } = getMonthRange(
-                  Number(shiftYear),
-                  Number(shiftMonth),
-                );
-                setAppliedFilters({ objectId: shiftObject, fromDate, toDate });
+                const yearNum = Number(shiftYear);
+                const monthNum = Number(shiftMonth);
+                const { fromDate, toDate } = getMonthRange(yearNum, monthNum);
+
+                setAppliedFilters({
+                  objectId: shiftObject,
+                  fromDate,
+                  toDate,
+                  year: yearNum,
+                  month: monthNum,
+                });
               }}
             >
               Сформировать отчет
@@ -323,18 +343,18 @@ export function ReportPage() {
                       <TableHead className="sticky left-0 bg-background border-r min-w-[200px]">
                         Сотрудник
                       </TableHead>
-                      {dateColumns.map((date) => (
-                        <TableHead
-                          key={date}
-                          className="text-center min-w-[40px]"
-                        >
-                          {new Intl.DateTimeFormat("ru-RU", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            timeZone: "UTC", // <--- Добавь это свойство
-                          }).format(new Date(date))}
-                        </TableHead>
-                      ))}
+                      {dateColumns.map((dateStr) => {
+                        // Разбираем строку "YYYY-MM-DD" без влияния таймзон
+                        const [, mm, dd] = dateStr.split("-");
+                        return (
+                          <TableHead
+                            key={dateStr}
+                            className="text-center min-w-[40px]"
+                          >
+                            {`${dd}.${mm}`}
+                          </TableHead>
+                        );
+                      })}
                       <TableHead className="text-center min-w-[60px]">
                         Итого
                       </TableHead>
