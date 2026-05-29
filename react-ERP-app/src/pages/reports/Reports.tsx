@@ -122,7 +122,6 @@ export function ReportPage() {
   );
 
   /* ===================== aggregation ===================== */
-  /* ===================== aggregation ===================== */
   const { dateColumns, rows, totalByDate, totalAll } = useMemo(() => {
     if (!appliedFilters)
       return { dateColumns: [], rows: [], totalByDate: {}, totalAll: 0 };
@@ -156,7 +155,30 @@ export function ReportPage() {
       return new Date(a.shiftDate).getTime() - new Date(b.shiftDate).getTime();
     });
 
-    sortedShifts.forEach((shift: Shift) => {
+    const uniqueShiftsMap = new Map<string, Shift>();
+
+    sortedShifts.forEach((shift) => {
+      const d = new Date(shift.shiftDate);
+      const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+      if (!uniqueShiftsMap.has(dateKey)) {
+        uniqueShiftsMap.set(dateKey, shift);
+      } else {
+        // Если смена на этот день уже есть, проверяем, какая создана позже
+        const existingShift = uniqueShiftsMap.get(dateKey)!;
+        if (
+          new Date(shift.createdAt).getTime() >
+          new Date(existingShift.createdAt).getTime()
+        ) {
+          uniqueShiftsMap.set(dateKey, shift);
+        }
+      }
+    });
+
+    // Теперь пускаем в оборот только уникальные смены
+    const finalShifts = Array.from(uniqueShiftsMap.values());
+
+    finalShifts.forEach((shift: Shift) => {
       shift.employees.forEach((se) => {
         const emp = se.employee;
         if (!emp) return;
