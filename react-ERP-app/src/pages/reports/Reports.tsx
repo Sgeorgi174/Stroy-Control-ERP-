@@ -122,11 +122,12 @@ export function ReportPage() {
   );
 
   /* ===================== aggregation ===================== */
+  /* ===================== aggregation ===================== */
   const { dateColumns, rows, totalByDate, totalAll } = useMemo(() => {
     if (!appliedFilters)
       return { dateColumns: [], rows: [], totalByDate: {}, totalAll: 0 };
 
-    // 1. Генерируем стабильную сетку дат для выбранного месяца (ключи вида "2026-05-01")
+    // Генерируем стабильную календарную сетку месяца (строки "YYYY-MM-DD")
     const dates = getDateRangeForMonth(
       appliedFilters.year,
       appliedFilters.month,
@@ -150,23 +151,28 @@ export function ReportPage() {
       }
     >();
 
-    // 2. Сортируем смены по shiftDate, чтобы гарантировать правильный хронологический порядок
+    // Сортируем смены по фактическому времени (чтобы логика была хронологичной)
     const sortedShifts = [...shiftsData].sort((a, b) => {
-      const dateA = new Date(a.shiftDate).getTime();
-      const dateB = new Date(b.shiftDate).getTime();
-      return dateA - dateB;
+      return new Date(a.shiftDate).getTime() - new Date(b.shiftDate).getTime();
     });
 
-    // 3. Обходим отсортированные смены
     sortedShifts.forEach((shift: Shift) => {
       shift.employees.forEach((se) => {
         const emp = se.employee;
         if (!emp) return;
 
-        // Корректное извлечение чистой даты YYYY-MM-DD без влияния локальной таймзоны
-        const dateKey = shift.shiftDate.split("T")[0];
+        // КОРНЕВОЕ РЕШЕНИЕ:
+        // Корректируем дату с учетом локального смещения часового пояса компьютера.
+        // Если пришло "2026-05-27T19:00:00.000Z", локальный JS превратит это в 28 мая (00:00:00)
+        const d = new Date(shift.shiftDate);
 
-        // Если смена из-за запаса фильтра попала из соседнего месяца, мы её игнорируем
+        // Формируем железобетонный локальный YYYY-MM-DD
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        const dateKey = `${yyyy}-${mm}-${dd}`;
+
+        // Если смена из-за запаса фильтра вылетела в соседний месяц — игнорируем
         if (!(dateKey in totalByDate)) return;
 
         if (!employeesMap.has(emp.id)) {
@@ -184,7 +190,7 @@ export function ReportPage() {
         const row = employeesMap.get(emp.id)!;
         const hours = se.workedHours ?? 0;
 
-        // Суммируем часы строго по текстовому совпадению ключей YYYY-MM-DD
+        // Суммируем часы строго по скорректированному локальному ключу
         row.hoursByDate[dateKey] += hours;
         row.totalHours += hours;
         totalByDate[dateKey] += hours;
@@ -192,7 +198,6 @@ export function ReportPage() {
       });
     });
 
-    // 4. Сортируем сотрудников по алфавиту для красивого вывода в таблице
     const sortedRows = Array.from(employeesMap.values()).sort(
       (a, b) =>
         a.employeeLastName.localeCompare(b.employeeLastName) ||
@@ -208,6 +213,8 @@ export function ReportPage() {
   }, [shiftObject, shiftMonth, shiftYear]);
 
   /* ===================== render ===================== */
+
+  console.log(shiftsData);
 
   return (
     <Tabs
