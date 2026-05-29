@@ -138,9 +138,9 @@ export function ReportPage() {
 
         // Локальная дата shiftDate
         const shiftDate = new Date(shift.shiftDate);
-        const year = shiftDate.getFullYear();
-        const month = String(shiftDate.getMonth() + 1).padStart(2, "0");
-        const day = String(shiftDate.getDate()).padStart(2, "0");
+        const year = shiftDate.getUTCFullYear();
+        const month = String(shiftDate.getUTCMonth() + 1).padStart(2, "0");
+        const day = String(shiftDate.getUTCDate()).padStart(2, "0");
         const dateKey = `${year}-${month}-${day}`;
 
         if (!employeesMap.has(emp.id)) {
@@ -327,6 +327,7 @@ export function ReportPage() {
                           {new Intl.DateTimeFormat("ru-RU", {
                             day: "2-digit",
                             month: "2-digit",
+                            timeZone: "UTC", // <--- Добавь это свойство
                           }).format(new Date(date))}
                         </TableHead>
                       ))}
