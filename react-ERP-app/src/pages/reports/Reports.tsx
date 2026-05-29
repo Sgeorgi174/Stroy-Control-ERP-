@@ -126,7 +126,7 @@ export function ReportPage() {
     if (!appliedFilters)
       return { dateColumns: [], rows: [], totalByDate: {}, totalAll: 0 };
 
-    // Генерируем стабильную сетку дат для выбранного месяца (ключи вида "2026-05-01")
+    // 1. Генерируем стабильную сетку дат для выбранного месяца (ключи вида "2026-05-01")
     const dates = getDateRangeForMonth(
       appliedFilters.year,
       appliedFilters.month,
@@ -150,17 +150,23 @@ export function ReportPage() {
       }
     >();
 
-    shiftsData.forEach((shift: Shift) => {
+    // 2. Сортируем смены по shiftDate, чтобы гарантировать правильный хронологический порядок
+    const sortedShifts = [...shiftsData].sort((a, b) => {
+      const dateA = new Date(a.shiftDate).getTime();
+      const dateB = new Date(b.shiftDate).getTime();
+      return dateA - dateB;
+    });
+
+    // 3. Обходим отсортированные смены
+    sortedShifts.forEach((shift: Shift) => {
       shift.employees.forEach((se) => {
         const emp = se.employee;
         if (!emp) return;
 
-        // КОРНЕВОЕ РЕШЕНИЕ:
-        // Извлекаем дату напрямую из строки базы данных, игнорируя часовые пояса.
-        // Если shiftDate = "2026-05-24T02:35:20.000Z", то dateKey станет "2026-05-24"
+        // Корректное извлечение чистой даты YYYY-MM-DD без влияния локальной таймзоны
         const dateKey = shift.shiftDate.split("T")[0];
 
-        // Если смена из-за запаса фильтра попала из соседнего месяца, мы её игнорируем в таблице текущего месяца
+        // Если смена из-за запаса фильтра попала из соседнего месяца, мы её игнорируем
         if (!(dateKey in totalByDate)) return;
 
         if (!employeesMap.has(emp.id)) {
@@ -186,6 +192,7 @@ export function ReportPage() {
       });
     });
 
+    // 4. Сортируем сотрудников по алфавиту для красивого вывода в таблице
     const sortedRows = Array.from(employeesMap.values()).sort(
       (a, b) =>
         a.employeeLastName.localeCompare(b.employeeLastName) ||
